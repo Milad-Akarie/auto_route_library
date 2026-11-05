@@ -50,7 +50,9 @@ void main() {
     // with the route type; tap the page below the text. Then do the same
     // with Flutter's own page of that kind in a plain Navigator.
     // Should: auto_route plays the alert sound exactly when Flutter does.
-    testWidgets('a tap on a page of $name sounds as on the same Flutter page', (tester) async {
+    testWidgets('a tap on a page of $name sounds as on the same Flutter page', (
+      tester,
+    ) async {
       final router = RootStackRouter.build(
         routes: [
           AutoRoute(
@@ -63,13 +65,19 @@ void main() {
       addTearDown(router.dispose);
       final autoRouteSounds = await _soundsOfTap(
         tester,
-        WidgetsApp.router(color: const Color(0xFFFFFFFF), routerConfig: router.config()),
+        WidgetsApp.router(
+          color: const Color(0xFFFFFFFF),
+          routerConfig: router.config(),
+        ),
       );
       final flutterSounds = await _soundsOfTap(
         tester,
         WidgetsApp(
           color: const Color(0xFFFFFFFF),
-          builder: (_, _) => Navigator(pages: [flutterPage()], onDidRemovePage: ignoreArgument),
+          builder: (_, _) => Navigator(
+            pages: [flutterPage()],
+            onDidRemovePage: ignoreArgument,
+          ),
         ),
       );
       expect(autoRouteSounds, flutterSounds);
@@ -77,34 +85,47 @@ void main() {
   }
 
   // The reported setup: the default route type, on macOS.
-  testWidgets('a tap on a page of the default route type under WidgetsApp.router plays no sound on macOS', (
-    tester,
-  ) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('HomeRoute', builder: (_) => content),
+  testWidgets(
+    'a tap on a page of the default route type under WidgetsApp.router plays no sound on macOS',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo('HomeRoute', builder: (_) => content),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+      final sounds = await _soundsOfTap(
+        tester,
+        WidgetsApp.router(
+          color: const Color(0xFFFFFFFF),
+          routerConfig: router.config(),
         ),
-      ],
-    );
-    addTearDown(router.dispose);
-    final sounds = await _soundsOfTap(
-      tester,
-      WidgetsApp.router(color: const Color(0xFFFFFFFF), routerConfig: router.config()),
-    );
-    expect(sounds, isEmpty);
-  }, variant: TargetPlatformVariant.only(.macOS));
+      );
+      expect(sounds, isEmpty);
+    },
+    variant: TargetPlatformVariant.only(.macOS),
+  );
 }
 
 /// Shows [app], taps it below its text, and returns the sounds played.
 Future<List<Object?>> _soundsOfTap(WidgetTester tester, Widget app) async {
   final sounds = <Object?>[];
-  tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
-    if (call.method == 'SystemSound.play') sounds.add(call.arguments);
-    return null;
-  });
-  addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, null));
+  tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+    SystemChannels.platform,
+    (call) async {
+      if (call.method == 'SystemSound.play') sounds.add(call.arguments);
+      return null;
+    },
+  );
+  addTearDown(
+    () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      null,
+    ),
+  );
   await tester.pumpWidget(app);
   await tester.pumpAndSettle();
   expect(find.text('Home Page'), findsOneWidget);

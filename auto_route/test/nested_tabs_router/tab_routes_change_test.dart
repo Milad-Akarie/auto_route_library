@@ -36,8 +36,9 @@ void _runRoutesChangeTests(_TabsKind kind) {
     expect(find.text(_FirstTabRoute.name), findsOneWidget);
   }
 
-  TabsRouter tabsRouterOf(WidgetTester tester) =>
-      AutoTabsRouter.of(tester.element(find.text(_FirstTabRoute.name, skipOffstage: false)));
+  TabsRouter tabsRouterOf(WidgetTester tester) => AutoTabsRouter.of(
+    tester.element(find.text(_FirstTabRoute.name, skipOffstage: false)),
+  );
 
   // Reproduces https://github.com/Milad-Akarie/auto_route_library/issues/2314
   // Steps: an AutoTabsRouter has routes [first, second, signedIn ? account :
@@ -45,23 +46,28 @@ void _runRoutesChangeTests(_TabsKind kind) {
   // changes.
   // Happens: the first and second tab pages are disposed and built again.
   // Should: the first tab page keeps its state; only the third tab changes.
-  testWidgets('${kind.name}: swapping one route in AutoTabsRouter.routes keeps the state of the active tab', (
-    tester,
-  ) async {
-    await pumpTabs(tester);
-    expect(_CountedPageState.initCounts[_FirstTabRoute.name], 1);
+  testWidgets(
+    '${kind.name}: swapping one route in AutoTabsRouter.routes keeps the state of the active tab',
+    (tester) async {
+      await pumpTabs(tester);
+      expect(_CountedPageState.initCounts[_FirstTabRoute.name], 1);
 
-    _signedInNotifier.value = true;
-    await tester.pumpAndSettle();
-    expect(find.text(_FirstTabRoute.name), findsOneWidget);
-    expect(_CountedPageState.disposeCounts[_FirstTabRoute.name], isNull);
-    expect(_CountedPageState.initCounts[_FirstTabRoute.name], 1, reason: 'after _signedInNotifier.value = true');
+      _signedInNotifier.value = true;
+      await tester.pumpAndSettle();
+      expect(find.text(_FirstTabRoute.name), findsOneWidget);
+      expect(_CountedPageState.disposeCounts[_FirstTabRoute.name], isNull);
+      expect(
+        _CountedPageState.initCounts[_FirstTabRoute.name],
+        1,
+        reason: 'after _signedInNotifier.value = true',
+      );
 
-    // The swapped tab shows its new route.
-    tabsRouterOf(tester).setActiveIndex(2);
-    await tester.pumpAndSettle();
-    expect(find.text(_AccountTabRoute.name), findsOneWidget);
-  });
+      // The swapped tab shows its new route.
+      tabsRouterOf(tester).setActiveIndex(2);
+      await tester.pumpAndSettle();
+      expect(find.text(_AccountTabRoute.name), findsOneWidget);
+    },
+  );
 
   // Reproduces https://github.com/Milad-Akarie/auto_route_library/issues/2314
   // for a tab that is loaded but not active.
@@ -69,29 +75,34 @@ void _runRoutesChangeTests(_TabsKind kind) {
   // one, then flip signedIn.
   // Happens: the second tab page is disposed and built again.
   // Should: the second tab page keeps its state.
-  testWidgets('${kind.name}: swapping one route in AutoTabsRouter.routes keeps the state of a loaded inactive tab', (
-    tester,
-  ) async {
-    await pumpTabs(tester);
-    tabsRouterOf(tester).setActiveIndex(1);
-    await tester.pumpAndSettle();
-    expect(find.text(_SecondTabRoute.name), findsOneWidget);
-    tabsRouterOf(tester).setActiveIndex(0);
-    await tester.pumpAndSettle();
-    expect(_CountedPageState.initCounts[_SecondTabRoute.name], 1);
+  testWidgets(
+    '${kind.name}: swapping one route in AutoTabsRouter.routes keeps the state of a loaded inactive tab',
+    (tester) async {
+      await pumpTabs(tester);
+      tabsRouterOf(tester).setActiveIndex(1);
+      await tester.pumpAndSettle();
+      expect(find.text(_SecondTabRoute.name), findsOneWidget);
+      tabsRouterOf(tester).setActiveIndex(0);
+      await tester.pumpAndSettle();
+      expect(_CountedPageState.initCounts[_SecondTabRoute.name], 1);
 
-    _signedInNotifier.value = true;
-    await tester.pumpAndSettle();
-    expect(_CountedPageState.disposeCounts[_SecondTabRoute.name], isNull);
-    tabsRouterOf(tester).setActiveIndex(1);
-    await tester.pumpAndSettle();
-    expect(find.text(_SecondTabRoute.name), findsOneWidget, reason: 'after tabsRouterOf(tester).setActiveIndex(1)');
-    expect(
-      _CountedPageState.initCounts[_SecondTabRoute.name],
-      1,
-      reason: 'after tabsRouterOf(tester).setActiveIndex(1)',
-    );
-  });
+      _signedInNotifier.value = true;
+      await tester.pumpAndSettle();
+      expect(_CountedPageState.disposeCounts[_SecondTabRoute.name], isNull);
+      tabsRouterOf(tester).setActiveIndex(1);
+      await tester.pumpAndSettle();
+      expect(
+        find.text(_SecondTabRoute.name),
+        findsOneWidget,
+        reason: 'after tabsRouterOf(tester).setActiveIndex(1)',
+      );
+      expect(
+        _CountedPageState.initCounts[_SecondTabRoute.name],
+        1,
+        reason: 'after tabsRouterOf(tester).setActiveIndex(1)',
+      );
+    },
+  );
 }
 
 enum _TabsKind { indexedStack, pageView, tabBar, builder }
@@ -118,7 +129,8 @@ abstract final class _TabsHostRoute {
           .tabBar => AutoTabsRouter.tabBar(routes: routes),
           .builder => AutoTabsRouter.builder(
             routes: routes,
-            builder: (context, children, tabsRouter) => IndexedStack(index: tabsRouter.activeIndex, children: children),
+            builder: (context, children, tabsRouter) =>
+                IndexedStack(index: tabsRouter.activeIndex, children: children),
           ),
         };
       },
@@ -130,14 +142,20 @@ class _FirstTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_FirstTabRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const _CountedPage(name));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const _CountedPage(name),
+  );
 }
 
 class _SecondTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_SecondTabRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const _CountedPage(name));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const _CountedPage(name),
+  );
 }
 
 // Counts how often each tab page's state is created and disposed.
@@ -174,12 +192,18 @@ class _SignInTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_SignInTabRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text(name)),
+  );
 }
 
 class _AccountTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_AccountTabRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text(name)),
+  );
 }

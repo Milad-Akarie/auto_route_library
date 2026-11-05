@@ -54,32 +54,38 @@ void main() {
     );
   });
 
-  testWidgets('A CustomRoute pushed in a nested router uses its own transitionsBuilder', (tester) async {
-    await pumpRouterConfigApp(tester, router.config());
-    unawaited(router.navigatePath('/devices/add'));
-    await tester.pumpAndSettle();
-    used.clear();
+  testWidgets(
+    'A CustomRoute pushed in a nested router uses its own transitionsBuilder',
+    (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
+      unawaited(router.navigatePath('/devices/add'));
+      await tester.pumpAndSettle();
+      used.clear();
 
-    unawaited(router.navigatePath('/devices/1/controller'));
-    await tester.pumpAndSettle();
+      unawaited(router.navigatePath('/devices/1/controller'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('Controller'), findsOneWidget);
-    expect(used, contains('slideTop:ControllerRoute'));
-    expect(used, isNot(contains('default:ControllerRoute')));
-  });
+      expect(find.text('Controller'), findsOneWidget);
+      expect(used, contains('slideTop:ControllerRoute'));
+      expect(used, isNot(contains('default:ControllerRoute')));
+    },
+  );
 
-  testWidgets('A CustomRoute opened with its shell uses its own transitionsBuilder', (tester) async {
-    await pumpRouterConfigApp(tester, router.config());
-    used.clear();
+  testWidgets(
+    'A CustomRoute opened with its shell uses its own transitionsBuilder',
+    (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
+      used.clear();
 
-    unawaited(router.navigatePath('/devices/1/controller'));
-    await tester.pumpAndSettle();
+      unawaited(router.navigatePath('/devices/1/controller'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('Controller'), findsOneWidget);
-    expect(used, contains('default:ShellRoute'));
-    expect(used, contains('slideTop:ControllerRoute'));
-    expect(used, isNot(contains('default:ControllerRoute')));
-  });
+      expect(find.text('Controller'), findsOneWidget);
+      expect(used, contains('default:ShellRoute'));
+      expect(used, contains('slideTop:ControllerRoute'));
+      expect(used, isNot(contains('default:ControllerRoute')));
+    },
+  );
 }
 
 abstract final class _ShellRoute {
@@ -88,8 +94,14 @@ abstract final class _ShellRoute {
 }
 
 class _PageRoute {
-  static final PageInfo homePage = PageInfo('HomeRoute', builder: (_) => const Scaffold(body: Text('Home')));
-  static final PageInfo addPage = PageInfo('AddRoute', builder: (_) => const Scaffold(body: Text('Add')));
+  static final PageInfo homePage = PageInfo(
+    'HomeRoute',
+    builder: (_) => const Scaffold(body: Text('Home')),
+  );
+  static final PageInfo addPage = PageInfo(
+    'AddRoute',
+    builder: (_) => const Scaffold(body: Text('Add')),
+  );
   static final PageInfo controllerPage = PageInfo(
     'ControllerRoute',
     builder: (_) => const Scaffold(body: Text('Controller')),

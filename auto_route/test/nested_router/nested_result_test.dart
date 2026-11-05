@@ -16,7 +16,9 @@ void main() {
           path: '/home',
           page: _HomeRoute.page,
           initial: true,
-          children: [AutoRoute(path: 'content/:index', page: _ContentRoute.page)],
+          children: [
+            AutoRoute(path: 'content/:index', page: _ContentRoute.page),
+          ],
         ),
       ],
     );
@@ -27,14 +29,17 @@ void main() {
   // /home/content/:index awaiting a bool, and the content page pops itself
   // with true. Entering the content page threw "type 'AutoRoutePage<dynamic>'
   // is not a subtype of type 'AutoRoutePage<bool>' in type cast".
-  testWidgets('Pushing a nested route by its full path awaiting a bool shows it', (tester) async {
-    await pumpRouterConfigApp(tester, router.config());
-    unawaited(router.pushPath<bool>('/home/content/1'));
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(find.text('Content 1'), findsOneWidget);
-    expect(router.urlState.url, '/home/content/1');
-  });
+  testWidgets(
+    'Pushing a nested route by its full path awaiting a bool shows it',
+    (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
+      unawaited(router.pushPath<bool>('/home/content/1'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Content 1'), findsOneWidget);
+      expect(router.urlState.url, '/home/content/1');
+    },
+  );
 
   // The push future belongs to the route pushed. Pushing the content route
   // itself, or its path relative to /home, puts it in the existing home's
@@ -43,10 +48,14 @@ void main() {
     ('push()', (StackRouter root) => root.push<bool>(_ContentRoute('1'))),
     (
       "pushPath('content/1') on the home's router",
-      (StackRouter root) => root.innerRouterOf<StackRouter>(_HomeRoute.name)!.pushPath<bool>('content/1'),
+      (StackRouter root) => root
+          .innerRouterOf<StackRouter>(_HomeRoute.name)!
+          .pushPath<bool>('content/1'),
     ),
   ]) {
-    testWidgets('A nested route pushed with $how returns its bool result', (tester) async {
+    testWidgets('A nested route pushed with $how returns its bool result', (
+      tester,
+    ) async {
       await pumpRouterConfigApp(tester, router.config());
       bool? result;
       var completed = false;
@@ -63,7 +72,11 @@ void main() {
 
       await tester.tap(find.byIcon(Icons.arrow_back));
       await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull, reason: 'after tester.tap(find.byIcon(Icons.arrow_back))');
+      expect(
+        tester.takeException(),
+        isNull,
+        reason: 'after tester.tap(find.byIcon(Icons.arrow_back))',
+      );
       expect(find.text('Content 1'), findsNothing);
       expect(find.text('Home'), findsOneWidget);
       expect(completed, isTrue);
@@ -71,18 +84,25 @@ void main() {
     });
   }
 
-  testWidgets("pushPath('/home/content/1') with the home on top returns the content's bool", (tester) async {
-    await pumpRouterConfigApp(tester, router.config());
-    bool? result;
-    unawaited(router.pushPath<bool>('/home/content/1').then((value) => result = value));
-    await tester.pumpAndSettle();
-    expect(router.stack.map((page) => page.name), ['HomeRoute']);
+  testWidgets(
+    "pushPath('/home/content/1') with the home on top returns the content's bool",
+    (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
+      bool? result;
+      unawaited(
+        router
+            .pushPath<bool>('/home/content/1')
+            .then((value) => result = value),
+      );
+      await tester.pumpAndSettle();
+      expect(router.stack.map((page) => page.name), ['HomeRoute']);
 
-    await tester.tap(find.byIcon(Icons.arrow_back));
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(result, isTrue);
-  });
+      await tester.tap(find.byIcon(Icons.arrow_back));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(result, isTrue);
+    },
+  );
 
   // When the parent is the page on top, its router takes the content page, so
   // the push future belongs to the content page as in the tests above. When
@@ -93,34 +113,53 @@ void main() {
   // pending. That is intended; the content page alone is pushed with
   // push(_ContentRoute) or the path relative to the home's router.
   for (final (how, push) in [
-    ("pushPath('/home/content/1')", (StackRouter root) => root.pushPath<bool>('/home/content/1')),
+    (
+      "pushPath('/home/content/1')",
+      (StackRouter root) => root.pushPath<bool>('/home/content/1'),
+    ),
     (
       'push(HomeRoute(children: [ContentRoute]))',
-      (StackRouter root) => root.push<bool>(_HomeRoute(children: [_ContentRoute('1')])),
+      (StackRouter root) =>
+          root.push<bool>(_HomeRoute(children: [_ContentRoute('1')])),
     ),
   ]) {
-    testWidgets('$how with another page on top pushes a new parent whose future waits for the parent', (tester) async {
-      await pumpRouterConfigApp(tester, router.config());
-      unawaited(router.push(const _OtherRoute()));
-      await tester.pumpAndSettle();
-      expect(router.stack.map((page) => page.name), ['HomeRoute', 'OtherRoute']);
-      var completed = false;
-      unawaited(push(router).then((_) => completed = true));
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      expect(router.stack.map((page) => page.name), ['HomeRoute', 'OtherRoute', 'HomeRoute']);
-      expect(find.text('Content 1'), findsOneWidget);
+    testWidgets(
+      '$how with another page on top pushes a new parent whose future waits for the parent',
+      (tester) async {
+        await pumpRouterConfigApp(tester, router.config());
+        unawaited(router.push(const _OtherRoute()));
+        await tester.pumpAndSettle();
+        expect(router.stack.map((page) => page.name), [
+          'HomeRoute',
+          'OtherRoute',
+        ]);
+        var completed = false;
+        unawaited(push(router).then((_) => completed = true));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(router.stack.map((page) => page.name), [
+          'HomeRoute',
+          'OtherRoute',
+          'HomeRoute',
+        ]);
+        expect(find.text('Content 1'), findsOneWidget);
 
-      await tester.tap(find.byIcon(Icons.arrow_back));
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull, reason: 'after tester.tap(find.byIcon(Icons.arrow_back))');
-      expect(completed, isFalse);
-    });
+        await tester.tap(find.byIcon(Icons.arrow_back));
+        await tester.pumpAndSettle();
+        expect(
+          tester.takeException(),
+          isNull,
+          reason: 'after tester.tap(find.byIcon(Icons.arrow_back))',
+        );
+        expect(completed, isFalse);
+      },
+    );
   }
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const new({required List<PageRouteInfo> children}) : super(name, initialChildren: children);
+  const new({required List<PageRouteInfo> children})
+    : super(name, initialChildren: children);
 
   static const String name = 'HomeRoute';
   static final PageInfo page = PageInfo(
@@ -145,7 +184,10 @@ class _ContentRoute extends PageRouteInfo<void> {
     builder: (data) => Builder(
       builder: (context) => Scaffold(
         appBar: AppBar(
-          leading: GestureDetector(child: const Icon(Icons.arrow_back), onTap: () => context.router.pop(true)),
+          leading: GestureDetector(
+            child: const Icon(Icons.arrow_back),
+            onTap: () => context.router.pop(true),
+          ),
         ),
         body: Text('Content ${data.inheritedPathParams.getString('index')}'),
       ),
@@ -157,5 +199,8 @@ class _OtherRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'OtherRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Other')));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text('Other')),
+  );
 }

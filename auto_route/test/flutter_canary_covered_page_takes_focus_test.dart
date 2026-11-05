@@ -23,43 +23,49 @@ import 'router_test_utils.dart';
 // If this test fails after a Flutter upgrade, Flutter keeps focus in the
 // current route: drop this canary.
 void main() {
-  testWidgets('a covered page that builds an autofocus field takes focus from the page on screen', (tester) async {
-    final showField = ValueNotifier(false);
-    addTearDown(showField.dispose);
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo(
-            'HomeRoute',
-            builder: (_) => Scaffold(
-              body: ValueListenableBuilder(
-                valueListenable: showField,
-                builder: (_, show, _) =>
-                    show ? const TextField(key: Key('home'), autofocus: true) : const Text('HomeRoute'),
+  testWidgets(
+    'a covered page that builds an autofocus field takes focus from the page on screen',
+    (tester) async {
+      final showField = ValueNotifier(false);
+      addTearDown(showField.dispose);
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => Scaffold(
+                body: ValueListenableBuilder(
+                  valueListenable: showField,
+                  builder: (_, show, _) => show
+                      ? const TextField(key: Key('home'), autofocus: true)
+                      : const Text('HomeRoute'),
+                ),
               ),
             ),
           ),
-        ),
-        AutoRoute(
-          path: '/second',
-          page: PageInfo(
-            'SecondRoute',
-            builder: (_) => const Scaffold(body: TextField(key: Key('second'), autofocus: true)),
+          AutoRoute(
+            path: '/second',
+            page: PageInfo(
+              'SecondRoute',
+              builder: (_) => const Scaffold(
+                body: TextField(key: Key('second'), autofocus: true),
+              ),
+            ),
           ),
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(const NamedRoute('SecondRoute')));
-    await tester.pumpAndSettle();
-    expect(_focusedField(), const Key('second'));
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      unawaited(router.push(const NamedRoute('SecondRoute')));
+      await tester.pumpAndSettle();
+      expect(_focusedField(), const Key('second'));
 
-    showField.value = true;
-    await tester.pumpAndSettle();
-    expect(router.topRoute.name, 'SecondRoute');
-    expect(_focusedField(), const Key('home'));
-  });
+      showField.value = true;
+      await tester.pumpAndSettle();
+      expect(router.topRoute.name, 'SecondRoute');
+      expect(_focusedField(), const Key('home'));
+    },
+  );
 
   // Canary for Flutter bug https://github.com/flutter/flutter/issues/46235,
   // the same cause with a dialog on top.
@@ -68,41 +74,53 @@ void main() {
   // dialog.
   // Today the field under the dialog takes focus from the dialog's button.
   // If this test fails after a Flutter upgrade, drop it with the test above.
-  testWidgets('a page under a dialog that builds an autofocus field takes focus from the dialog', (tester) async {
-    final showField = ValueNotifier(false);
-    addTearDown(showField.dispose);
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo(
-            'HomeRoute',
-            builder: (_) => Scaffold(
-              body: ValueListenableBuilder(
-                valueListenable: showField,
-                builder: (_, show, _) =>
-                    show ? const TextField(key: Key('home'), autofocus: true) : const Text('HomeRoute'),
+  testWidgets(
+    'a page under a dialog that builds an autofocus field takes focus from the dialog',
+    (tester) async {
+      final showField = ValueNotifier(false);
+      addTearDown(showField.dispose);
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => Scaffold(
+                body: ValueListenableBuilder(
+                  valueListenable: showField,
+                  builder: (_, show, _) => show
+                      ? const TextField(key: Key('home'), autofocus: true)
+                      : const Text('HomeRoute'),
+                ),
               ),
             ),
           ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      showDialog<void>(
+        context: router.navigatorKey.currentContext!,
+        builder: (_) => const AlertDialog(
+          actions: [
+            TextButton(autofocus: true, onPressed: noOp, child: Text('OK')),
+          ],
         ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    showDialog<void>(
-      context: router.navigatorKey.currentContext!,
-      builder: (_) => const AlertDialog(
-        actions: [TextButton(autofocus: true, onPressed: noOp, child: Text('OK'))],
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(FocusManager.instance.primaryFocus?.context?.findAncestorWidgetOfExactType<TextButton>(), isNotNull);
+      );
+      await tester.pumpAndSettle();
+      expect(
+        FocusManager.instance.primaryFocus?.context
+            ?.findAncestorWidgetOfExactType<TextButton>(),
+        isNotNull,
+      );
 
-    showField.value = true;
-    await tester.pumpAndSettle();
-    expect(find.text('OK'), findsOneWidget);
-    expect(_focusedField(), const Key('home'));
-  });
+      showField.value = true;
+      await tester.pumpAndSettle();
+      expect(find.text('OK'), findsOneWidget);
+      expect(_focusedField(), const Key('home'));
+    },
+  );
 }
 
-Key? _focusedField() => FocusManager.instance.primaryFocus?.context?.findAncestorWidgetOfExactType<TextField>()?.key;
+Key? _focusedField() => FocusManager.instance.primaryFocus?.context
+    ?.findAncestorWidgetOfExactType<TextField>()
+    ?.key;

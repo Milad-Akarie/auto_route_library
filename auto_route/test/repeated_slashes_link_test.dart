@@ -18,7 +18,11 @@ void main() {
       ),
       AutoRoute(
         path: '/items/:id',
-        page: PageInfo('ItemRoute', builder: (data) => Text('Item ${data.inheritedPathParams.getString('id')}')),
+        page: PageInfo(
+          'ItemRoute',
+          builder: (data) =>
+              Text('Item ${data.inheritedPathParams.getString('id')}'),
+        ),
       ),
     ],
   );
@@ -37,7 +41,11 @@ void main() {
 
     final running = await pumpAtLink(tester, '/');
     await sendPlatformLink(tester, '/items//1//');
-    expect(find.text('Item 1'), findsOneWidget, reason: 'after sendPlatformLink(tester, /items//1//)');
+    expect(
+      find.text('Item 1'),
+      findsOneWidget,
+      reason: 'after sendPlatformLink(tester, /items//1//)',
+    );
     expect(running.currentUrl, '/items/1');
   });
 }

@@ -20,36 +20,54 @@ import 'router_test_utils.dart';
 // If this test fails after a Flutter upgrade, the selection area no longer
 // measures a page that was never laid out: drop this canary.
 void main() {
-  testWidgets('a selection area over a page never laid out asserts when it sorts its selectables', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('ShellRoute', builder: (_) => const SelectionArea(child: AutoRouter())),
-          children: [
-            AutoRoute(
-              path: '',
-              page: PageInfo('BackgroundRoute', builder: (_) => const Scaffold(body: Text('background'))),
+  testWidgets(
+    'a selection area over a page never laid out asserts when it sorts its selectables',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'ShellRoute',
+              builder: (_) => const SelectionArea(child: AutoRouter()),
             ),
-            AutoRoute(
-              path: 'foreground',
-              page: PageInfo('ForegroundRoute', builder: (_) => const Scaffold(body: Text('foreground'))),
-            ),
-          ],
-        ),
-      ],
-    );
-    final errors = <Object>[];
-    await runZonedGuarded(
-      () => pumpRouterApp(tester, router, initialLink: '/foreground'),
-      (error, _) => errors.add(error),
-    );
-    expect(router.innerRouterOf<StackRouter>('ShellRoute')!.stack.map((page) => page.name), [
-      'BackgroundRoute',
-      'ForegroundRoute',
-    ]);
-    expect(find.text('foreground'), findsOneWidget);
-    expect(errors, isNotEmpty);
-    expect(errors.firstOrNull?.toString(), contains('RenderBox was not laid out'));
-  });
+            children: [
+              AutoRoute(
+                path: '',
+                page: PageInfo(
+                  'BackgroundRoute',
+                  builder: (_) => const Scaffold(body: Text('background')),
+                ),
+              ),
+              AutoRoute(
+                path: 'foreground',
+                page: PageInfo(
+                  'ForegroundRoute',
+                  builder: (_) => const Scaffold(body: Text('foreground')),
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+      final errors = <Object>[];
+      await runZonedGuarded(
+        () => pumpRouterApp(tester, router, initialLink: '/foreground'),
+        (error, _) => errors.add(error),
+      );
+      expect(
+        router
+            .innerRouterOf<StackRouter>('ShellRoute')!
+            .stack
+            .map((page) => page.name),
+        ['BackgroundRoute', 'ForegroundRoute'],
+      );
+      expect(find.text('foreground'), findsOneWidget);
+      expect(errors, isNotEmpty);
+      expect(
+        errors.firstOrNull?.toString(),
+        contains('RenderBox was not laid out'),
+      );
+    },
+  );
 }

@@ -14,7 +14,11 @@ void main() {
         AutoRoute(path: '/', page: _First1Route.page),
         // Its own path: two routes at '/' fail in debug builds
         // (flutter/flutter#190741), and the reported bug doesn't need one.
-        CustomRoute(path: '/modal', page: _Modal1Route.page, customRouteBuilder: _modalSheetBuilder),
+        CustomRoute(
+          path: '/modal',
+          page: _Modal1Route.page,
+          customRouteBuilder: _modalSheetBuilder,
+        ),
       ],
     );
   });
@@ -25,30 +29,55 @@ void main() {
   // context.router.popAndPush(First1Route()), while the sheet is still
   // sliding in. The sheet should close and a new First1Route open, without
   // the 'renderObject.child == child' and 'Future already completed' errors.
-  for (final elapsed in const [Duration(milliseconds: 120), Duration(milliseconds: 170), Duration(milliseconds: 220)]) {
-    testWidgets('popAndPush from a modal ${elapsed.inMilliseconds}ms into its animation', (tester) async {
-      await pumpRouterConfigApp(tester, router.config());
-      await tester.tap(find.text('Open modal'));
-      await tester.pump();
-      await tester.pump(elapsed);
-      expect(router.stack.map((p) => p.name), [_First1Route.name, _Modal1Route.name]);
-      expect(ModalRoute.of(tester.element(find.text('Test')))!.animation!.status, AnimationStatus.forward);
+  for (final elapsed in const [
+    Duration(milliseconds: 120),
+    Duration(milliseconds: 170),
+    Duration(milliseconds: 220),
+  ]) {
+    testWidgets(
+      'popAndPush from a modal ${elapsed.inMilliseconds}ms into its animation',
+      (tester) async {
+        await pumpRouterConfigApp(tester, router.config());
+        await tester.tap(find.text('Open modal'));
+        await tester.pump();
+        await tester.pump(elapsed);
+        expect(router.stack.map((p) => p.name), [
+          _First1Route.name,
+          _Modal1Route.name,
+        ]);
+        expect(
+          ModalRoute.of(tester.element(find.text('Test')))!.animation!.status,
+          AnimationStatus.forward,
+        );
 
-      await tester.tap(find.text('Test'));
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      expect(router.stack.map((p) => p.name), [_First1Route.name, _First1Route.name]);
-      expect(find.text('Test'), findsNothing);
-      // Web only: with the modal at a url of its own, popAndPush during its
-      // animation fails with "Both Router.navigate and Router.neglect have
-      // been called in this build cycle", a bug of its own found with
-      // flutter/flutter#190741. The modal used to share '/' with the page.
-    }, skip: kIsWeb);
+        await tester.tap(find.text('Test'));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(router.stack.map((p) => p.name), [
+          _First1Route.name,
+          _First1Route.name,
+        ]);
+        expect(find.text('Test'), findsNothing);
+        // Web only: with the modal at a url of its own, popAndPush during its
+        // animation fails with "Both Router.navigate and Router.neglect have
+        // been called in this build cycle", a bug of its own found with
+        // flutter/flutter#190741. The modal used to share '/' with the page.
+      },
+      skip: kIsWeb,
+    );
   }
 }
 
-Route<T> _modalSheetBuilder<T>(BuildContext _, Widget child, AutoRoutePage<T> page) {
-  return ModalBottomSheetRoute(settings: page, builder: (context) => child, isScrollControlled: true);
+Route<T> _modalSheetBuilder<T>(
+  BuildContext _,
+  Widget child,
+  AutoRoutePage<T> page,
+) {
+  return ModalBottomSheetRoute(
+    settings: page,
+    builder: (context) => child,
+    isScrollControlled: true,
+  );
 }
 
 class _First1Route extends PageRouteInfo<void> {

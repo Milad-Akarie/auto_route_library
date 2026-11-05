@@ -38,7 +38,8 @@ void main() {
     ],
   );
 
-  TabsRouter tabsRouter() => RestorableRouterApp.router.innerRouterOf('BottomNavigationRoute')!;
+  TabsRouter tabsRouter() =>
+      RestorableRouterApp.router.innerRouterOf('BottomNavigationRoute')!;
 
   Future<void> selectTab(WidgetTester tester, int index) async {
     tabsRouter().setActiveIndex(index);
@@ -51,12 +52,20 @@ void main() {
   // tab, switch to the second tab, then let the platform end and restore
   // the app. The second tab should show, and the first tab should still
   // show InternalRoute, not HomeRoute.
-  testWidgets('a tab that is not active keeps its stack after restoration', (tester) async {
+  testWidgets('a tab that is not active keeps its stack after restoration', (
+    tester,
+  ) async {
     await tester.pumpWidget(RestorableRouterApp(buildRouter));
     await tester.pumpAndSettle();
-    unawaited(RestorableRouterApp.router.replace(const NamedRoute('BottomNavigationRoute')));
+    unawaited(
+      RestorableRouterApp.router.replace(
+        const NamedRoute('BottomNavigationRoute'),
+      ),
+    );
     await tester.pumpAndSettle();
-    unawaited(RestorableRouterApp.router.push(const NamedRoute('InternalRoute')));
+    unawaited(
+      RestorableRouterApp.router.push(const NamedRoute('InternalRoute')),
+    );
     await tester.pumpAndSettle();
     expect(find.text('InternalRoute'), findsOneWidget);
     await selectTab(tester, 1);
@@ -67,7 +76,11 @@ void main() {
     expect(find.text('TransitionsRoute'), findsOneWidget);
     await selectTab(tester, 0);
     expect(find.text('HomeRoute'), findsNothing);
-    expect(find.text('InternalRoute'), findsOneWidget, reason: 'after selectTab(tester, 0)');
+    expect(
+      find.text('InternalRoute'),
+      findsOneWidget,
+      reason: 'after selectTab(tester, 0)',
+    );
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
     expect(find.text('HomeRoute'), findsOneWidget);
@@ -80,14 +93,26 @@ void main() {
   testWidgets('every tab keeps its stack after restoration', (tester) async {
     await tester.pumpWidget(RestorableRouterApp(buildRouter));
     await tester.pumpAndSettle();
-    unawaited(RestorableRouterApp.router.replace(const NamedRoute('BottomNavigationRoute')));
+    unawaited(
+      RestorableRouterApp.router.replace(
+        const NamedRoute('BottomNavigationRoute'),
+      ),
+    );
     await tester.pumpAndSettle();
-    unawaited(RestorableRouterApp.router.push(const NamedRoute('InternalRoute')));
+    unawaited(
+      RestorableRouterApp.router.push(const NamedRoute('InternalRoute')),
+    );
     await tester.pumpAndSettle();
-    unawaited(RestorableRouterApp.router.push(const NamedRoute('InternalRoute')));
+    unawaited(
+      RestorableRouterApp.router.push(const NamedRoute('InternalRoute')),
+    );
     await tester.pumpAndSettle();
     await selectTab(tester, 1);
-    unawaited(RestorableRouterApp.router.push(const NamedRoute('TransitionDetailsRoute')));
+    unawaited(
+      RestorableRouterApp.router.push(
+        const NamedRoute('TransitionDetailsRoute'),
+      ),
+    );
     await tester.pumpAndSettle();
     await selectTab(tester, 2);
 
@@ -109,7 +134,10 @@ void main() {
           ),
           HierarchySegment(
             'TransitionsTabRoute',
-            children: [HierarchySegment('TransitionsRoute'), HierarchySegment('TransitionDetailsRoute')],
+            children: [
+              HierarchySegment('TransitionsRoute'),
+              HierarchySegment('TransitionDetailsRoute'),
+            ],
           ),
           HierarchySegment('SettingsRoute'),
         ],
@@ -122,7 +150,11 @@ void main() {
     expect(find.text('InternalRoute'), findsOneWidget);
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
-    expect(find.text('InternalRoute'), findsOneWidget, reason: 'after tester.binding.handlePopRoute()');
+    expect(
+      find.text('InternalRoute'),
+      findsOneWidget,
+      reason: 'after tester.binding.handlePopRoute()',
+    );
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
     expect(find.text('HomeRoute'), findsOneWidget);
@@ -132,7 +164,11 @@ void main() {
 final _bottomNavigationPage = PageInfo(
   'BottomNavigationRoute',
   builder: (_) => AutoTabsRouter(
-    routes: const [NamedRoute('HomeTabRoute'), NamedRoute('TransitionsTabRoute'), NamedRoute('SettingsRoute')],
+    routes: const [
+      NamedRoute('HomeTabRoute'),
+      NamedRoute('TransitionsTabRoute'),
+      NamedRoute('SettingsRoute'),
+    ],
     builder: (_, child) => child,
   ),
 );

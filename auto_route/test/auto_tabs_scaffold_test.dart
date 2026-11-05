@@ -13,17 +13,23 @@ void main() {
     router = _TabsScaffoldRouter();
   });
 
-  testWidgets('AutoTabsScaffold should show first tab by default', (tester) async {
+  testWidgets('AutoTabsScaffold should show first tab by default', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     expect(find.text(FirstRoute.name), findsOneWidget);
   });
 
-  testWidgets('AutoTabsScaffold should render bottom navigation', (tester) async {
+  testWidgets('AutoTabsScaffold should render bottom navigation', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     expect(find.byType(BottomNavigationBar), findsOneWidget);
   });
 
-  testWidgets('AutoTabsScaffold should switch tabs via bottom navigation', (tester) async {
+  testWidgets('AutoTabsScaffold should switch tabs via bottom navigation', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     expect(find.text(FirstRoute.name), findsOneWidget);
     // can I get a screenshot here
@@ -39,26 +45,34 @@ void main() {
     expect(find.text('My App Bar'), findsOneWidget);
   });
 
-  testWidgets('AutoTabsScaffold should use default routes if no children are provided', (tester) async {
-    final localRouter = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          page: _TabsScaffoldDefaultRoute.page,
-          initial: true,
-          children: [
-            AutoRoute(page: FirstRoute.page),
-            AutoRoute(page: SecondRoute.page),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, localRouter);
-    final tabsRouter = localRouter.innerRouterOf(_TabsScaffoldDefaultRoute.name);
-    expect(tabsRouter, isA<TabsRouter>());
-    expect(tabsRouter!.pageCount, 2);
-    expect(tabsRouter.stackData.map((e) => e.name), [FirstRoute.name, SecondRoute.name]);
-    expect(find.text(FirstRoute.name), findsOneWidget);
-  });
+  testWidgets(
+    'AutoTabsScaffold should use default routes if no children are provided',
+    (tester) async {
+      final localRouter = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            page: _TabsScaffoldDefaultRoute.page,
+            initial: true,
+            children: [
+              AutoRoute(page: FirstRoute.page),
+              AutoRoute(page: SecondRoute.page),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, localRouter);
+      final tabsRouter = localRouter.innerRouterOf(
+        _TabsScaffoldDefaultRoute.name,
+      );
+      expect(tabsRouter, isA<TabsRouter>());
+      expect(tabsRouter!.pageCount, 2);
+      expect(tabsRouter.stackData.map((e) => e.name), [
+        FirstRoute.name,
+        SecondRoute.name,
+      ]);
+      expect(find.text(FirstRoute.name), findsOneWidget);
+    },
+  );
 
   // should throw if building default routes when one has required arguments
   testWidgets(
@@ -113,8 +127,15 @@ abstract final class _TabsScaffoldRoute {
           currentIndex: tabsRouter.activeIndex,
           onTap: tabsRouter.setActiveIndex,
           items: const [
-            BottomNavigationBarItem(label: 'Tab 1 Label', icon: Icon(Icons.one_k)),
-            BottomNavigationBarItem(label: 'Tab 2 Label', icon: Icon(Icons.two_k), key: ValueKey('tab2Key')),
+            BottomNavigationBarItem(
+              label: 'Tab 1 Label',
+              icon: Icon(Icons.one_k),
+            ),
+            BottomNavigationBarItem(
+              label: 'Tab 2 Label',
+              icon: Icon(Icons.two_k),
+              key: ValueKey('tab2Key'),
+            ),
           ],
         );
       },
@@ -124,7 +145,10 @@ abstract final class _TabsScaffoldRoute {
 
 abstract final class _TabsScaffoldDefaultRoute {
   static const String name = 'TabsScaffoldDefaultRoute';
-  static final PageInfo page = PageInfo(name, builder: (data) => const AutoTabsScaffold());
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (data) => const AutoTabsScaffold(),
+  );
 }
 
 // A test route whose page reads a required argument.

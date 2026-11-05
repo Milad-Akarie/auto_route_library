@@ -10,18 +10,23 @@ final _tabEvents = <String>[];
 class _TabsObserver extends AutoRouterObserver {
   @override
   void didInitTabRoute(TabPageRoute route, TabPageRoute? previousRoute) =>
-      _tabEvents.add('didInitTabRoute ${route.name} from ${previousRoute?.name ?? 'null'}');
+      _tabEvents.add(
+        'didInitTabRoute ${route.name} from ${previousRoute?.name ?? 'null'}',
+      );
 
   @override
   void didChangeTabRoute(TabPageRoute route, TabPageRoute previousRoute) =>
-      _tabEvents.add('didChangeTabRoute ${route.name} from ${previousRoute.name}');
+      _tabEvents.add(
+        'didChangeTabRoute ${route.name} from ${previousRoute.name}',
+      );
 }
 
 class _Route extends PageRouteInfo<void> {
   const new(super.name);
 }
 
-PageInfo _tabPage(String name) => .new(name, builder: (_) => Center(child: Text(name)));
+PageInfo _tabPage(String name) =>
+    .new(name, builder: (_) => Center(child: Text(name)));
 
 const _kTabs = [_Route('Tab1'), _Route('Tab2'), _Route('Tab3')];
 
@@ -39,8 +44,14 @@ RootStackRouter _router(Widget Function() tabsRouter) => .build(
   ],
 );
 
-Future<void> _expectSwipesInitNewTabs(WidgetTester tester, RootStackRouter router) async {
-  await pumpRouterConfigApp(tester, router.config(navigatorObservers: () => [_TabsObserver()]));
+Future<void> _expectSwipesInitNewTabs(
+  WidgetTester tester,
+  RootStackRouter router,
+) async {
+  await pumpRouterConfigApp(
+    tester,
+    router.config(navigatorObservers: () => [_TabsObserver()]),
+  );
   final tabsRouter = router.innerRouterOf<TabsRouter>('TabsRoute')!;
   expect(_tabEvents, ['didInitTabRoute Tab1 from null']);
 
@@ -59,7 +70,11 @@ Future<void> _expectSwipesInitNewTabs(WidgetTester tester, RootStackRouter route
   // Swipes forward to the second tab again: opened before, so a change.
   await tester.fling(find.text('Tab1'), const Offset(-400, 0), 1000);
   await tester.pumpAndSettle();
-  expect(tabsRouter.activeIndex, 1, reason: 'after tester.fling(find.text(Tab1), const Offset(-400, 0), 100');
+  expect(
+    tabsRouter.activeIndex,
+    1,
+    reason: 'after tester.fling(find.text(Tab1), const Offset(-400, 0), 100',
+  );
   expect(_tabEvents.lastOrNull, 'didChangeTabRoute Tab2 from Tab1');
 }
 
@@ -73,16 +88,30 @@ void main() {
   // page view loads the neighbor tab during the drag without telling
   // observers, so when the swipe makes it active it looks already opened.
   // Should: a tab's first opening fires didInitTabRoute, as a tap does.
-  testWidgets('Swiping AutoTabsRouter.pageView to a tab never opened fires didInitTabRoute', (tester) async {
-    await _expectSwipesInitNewTabs(tester, _router(() => const AutoTabsRouter.pageView(routes: _kTabs)));
-  });
+  testWidgets(
+    'Swiping AutoTabsRouter.pageView to a tab never opened fires didInitTabRoute',
+    (tester) async {
+      await _expectSwipesInitNewTabs(
+        tester,
+        _router(() => const AutoTabsRouter.pageView(routes: _kTabs)),
+      );
+    },
+  );
 
   // Same steps with AutoTabsRouter.tabBar, whose tab view loads the neighbor
   // tab during the drag the same way.
-  testWidgets('Swiping AutoTabsRouter.tabBar to a tab never opened fires didInitTabRoute', (tester) async {
-    await _expectSwipesInitNewTabs(
-      tester,
-      _router(() => AutoTabsRouter.tabBar(routes: _kTabs, builder: (context, child, controller) => child)),
-    );
-  });
+  testWidgets(
+    'Swiping AutoTabsRouter.tabBar to a tab never opened fires didInitTabRoute',
+    (tester) async {
+      await _expectSwipesInitNewTabs(
+        tester,
+        _router(
+          () => AutoTabsRouter.tabBar(
+            routes: _kTabs,
+            builder: (context, child, controller) => child,
+          ),
+        ),
+      );
+    },
+  );
 }

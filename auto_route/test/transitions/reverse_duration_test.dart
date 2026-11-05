@@ -26,12 +26,19 @@ void main() {
           duration: const Duration(milliseconds: 600),
           reverseDuration: .zero,
         ),
-        CustomRoute(page: _InstantRoute.page, path: '/instant', duration: .zero, reverseDuration: .zero),
+        CustomRoute(
+          page: _InstantRoute.page,
+          path: '/instant',
+          duration: .zero,
+          reverseDuration: .zero,
+        ),
       ],
     );
   });
 
-  testWidgets('a pop takes the reverseDuration, not the duration', (tester) async {
+  testWidgets('a pop takes the reverseDuration, not the duration', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
 
     unawaited(router.push(const _SlowRoute()));
@@ -45,7 +52,9 @@ void main() {
     expect(find.text('Home'), findsOneWidget);
   });
 
-  testWidgets('the push keeps its duration while the reverse is zero', (tester) async {
+  testWidgets('the push keeps its duration while the reverse is zero', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
 
     unawaited(router.push(const _SlowRoute()));
@@ -56,37 +65,49 @@ void main() {
     expect(tester.hasRunningAnimations, isFalse);
   });
 
-  testWidgets('the milliseconds spelling of both durations disables the animation', (tester) async {
-    await pumpRouterApp(tester, router);
+  testWidgets(
+    'the milliseconds spelling of both durations disables the animation',
+    (tester) async {
+      await pumpRouterApp(tester, router);
 
-    unawaited(router.push(const _InstantRoute()));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 1));
-    expect(find.text('Instant'), findsOneWidget);
-    expect(tester.hasRunningAnimations, isFalse);
+      unawaited(router.push(const _InstantRoute()));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 1));
+      expect(find.text('Instant'), findsOneWidget);
+      expect(tester.hasRunningAnimations, isFalse);
 
-    router.pop();
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 1));
-    expect(find.text('Instant'), findsNothing);
-  });
+      router.pop();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 1));
+      expect(find.text('Instant'), findsNothing);
+    },
+  );
 }
 
 abstract final class _HomeRoute {
   static const String name = 'HomeRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text('Home')),
+  );
 }
 
 class _SlowRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'SlowRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Slow')));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text('Slow')),
+  );
 }
 
 class _InstantRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'InstantRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Instant')));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text('Instant')),
+  );
 }

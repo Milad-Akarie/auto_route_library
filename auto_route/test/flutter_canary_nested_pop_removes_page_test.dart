@@ -28,7 +28,9 @@ void main() {
       'rebuild does not push the page again', (tester) async {
     final pushed = <String?>[];
     final removed = <String?>[];
-    final pages = <Page<void>>[const MaterialPage(name: 'first', child: Text('first'))];
+    final pages = <Page<void>>[
+      const MaterialPage(name: 'first', child: Text('first')),
+    ];
     late StateSetter setParentState;
     await tester.pumpWidget(
       MaterialApp(
@@ -47,7 +49,10 @@ void main() {
         ),
       ),
     );
-    setParentState(() => pages.add(const MaterialPage(name: 'second', child: Text('second'))));
+    setParentState(
+      () =>
+          pages.add(const MaterialPage(name: 'second', child: Text('second'))),
+    );
     await tester.pumpAndSettle();
     expect(pushed, ['first', 'second']);
 
@@ -57,7 +62,11 @@ void main() {
     setParentState(noOp);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 50));
-    expect(find.text('second'), findsOneWidget, reason: 'the pop animation is still running');
+    expect(
+      find.text('second'),
+      findsOneWidget,
+      reason: 'the pop animation is still running',
+    );
     await tester.pumpAndSettle();
     expect(pushed, ['first', 'second']);
     expect(find.text('second'), findsNothing);
@@ -70,5 +79,6 @@ class _PushObserver extends NavigatorObserver {
   final List<String?> pushed;
 
   @override
-  void didPush(Route<Object?> route, Route<Object?>? previousRoute) => pushed.add(route.settings.name);
+  void didPush(Route<Object?> route, Route<Object?>? previousRoute) =>
+      pushed.add(route.settings.name);
 }

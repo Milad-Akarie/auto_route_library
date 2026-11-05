@@ -19,11 +19,17 @@ void main() {
   // Steps: open Home, push A, then B, then C with router.push; every page's
   // widget is not const.
   // Should: each page builds once; the pages under the new one don't build.
-  testWidgets('Pushing pages does not build the pages under them again', (tester) async {
+  testWidgets('Pushing pages does not build the pages under them again', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(page: countedPage('Home', builds), path: '/'),
-        for (final name in ['A', 'B', 'C']) AutoRoute(page: countedPage(name, builds), path: '/${name.toLowerCase()}'),
+        for (final name in ['A', 'B', 'C'])
+          AutoRoute(
+            page: countedPage(name, builds),
+            path: '/${name.toLowerCase()}',
+          ),
       ],
     );
     await pumpRouterApp(tester, router);
@@ -40,28 +46,31 @@ void main() {
   // Child is pushed in it.
   // Steps: open Home, push Details, then push Child inside Details.
   // Should: Home and Details build once each.
-  testWidgets('Pushing a page in a nested router does not build its host again', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: countedPage('Home', builds), path: '/'),
-        AutoRoute(
-          page: countedPage('Details', builds, body: const AutoRouter()),
-          path: '/details',
-          children: [
-            AutoRoute(page: countedPage('Overview', builds), path: ''),
-            AutoRoute(page: countedPage('Child', builds), path: 'child'),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(const NamedRoute('Details')));
-    await tester.pumpAndSettle();
-    final detailsRouter = router.innerRouterOf<StackRouter>('Details')!;
-    unawaited(detailsRouter.push(const NamedRoute('Child')));
-    await tester.pumpAndSettle();
-    expectTopPage(detailsRouter, 'Child');
+  testWidgets(
+    'Pushing a page in a nested router does not build its host again',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: countedPage('Home', builds), path: '/'),
+          AutoRoute(
+            page: countedPage('Details', builds, body: const AutoRouter()),
+            path: '/details',
+            children: [
+              AutoRoute(page: countedPage('Overview', builds), path: ''),
+              AutoRoute(page: countedPage('Child', builds), path: 'child'),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      unawaited(router.push(const NamedRoute('Details')));
+      await tester.pumpAndSettle();
+      final detailsRouter = router.innerRouterOf<StackRouter>('Details')!;
+      unawaited(detailsRouter.push(const NamedRoute('Child')));
+      await tester.pumpAndSettle();
+      expectTopPage(detailsRouter, 'Child');
 
-    expect(builds, {'Home': 1, 'Details': 1, 'Overview': 1, 'Child': 1});
-  });
+      expect(builds, {'Home': 1, 'Details': 1, 'Overview': 1, 'Child': 1});
+    },
+  );
 }

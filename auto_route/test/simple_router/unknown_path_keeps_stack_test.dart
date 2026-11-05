@@ -12,9 +12,13 @@ import '../router_test_utils.dart';
 // unknown page goes on top and back returns to Details, then Home. Without
 // one, the push reports RouteNotFoundFailure, or throws, and the stack stays.
 void main() {
-  List<String> names(StackRouter router) => router.stack.map((page) => page.routeData.name).toList();
+  List<String> names(StackRouter router) =>
+      router.stack.map((page) => page.routeData.name).toList();
 
-  Future<RootStackRouter> openDetails(WidgetTester tester, {required bool withWildcard}) async {
+  Future<RootStackRouter> openDetails(
+    WidgetTester tester, {
+    required bool withWildcard,
+  }) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(page: _page('Home'), path: '/', initial: true),
@@ -28,35 +32,43 @@ void main() {
     return router;
   }
 
-  testWidgets('with a wildcard route, the unknown page goes on top and back returns', (tester) async {
-    final router = await openDetails(tester, withWildcard: true);
+  testWidgets(
+    'with a wildcard route, the unknown page goes on top and back returns',
+    (tester) async {
+      final router = await openDetails(tester, withWildcard: true);
 
-    unawaited(router.pushPath('/nope'));
-    await tester.pumpAndSettle();
-    expect(names(router), ['Home', 'Details', 'Unknown']);
-    expectTopPage(router, 'Unknown');
+      unawaited(router.pushPath('/nope'));
+      await tester.pumpAndSettle();
+      expect(names(router), ['Home', 'Details', 'Unknown']);
+      expectTopPage(router, 'Unknown');
 
-    router.pop();
-    await tester.pumpAndSettle();
-    expectTopPage(router, 'Details');
-    router.pop();
-    await tester.pumpAndSettle();
-    expectTopPage(router, 'Home');
-  });
+      router.pop();
+      await tester.pumpAndSettle();
+      expectTopPage(router, 'Details');
+      router.pop();
+      await tester.pumpAndSettle();
+      expectTopPage(router, 'Home');
+    },
+  );
 
-  testWidgets('without one, onFailure hears RouteNotFoundFailure and the stack stays', (tester) async {
-    final router = await openDetails(tester, withWildcard: false);
-    final failures = <NavigationFailure>[];
+  testWidgets(
+    'without one, onFailure hears RouteNotFoundFailure and the stack stays',
+    (tester) async {
+      final router = await openDetails(tester, withWildcard: false);
+      final failures = <NavigationFailure>[];
 
-    unawaited(router.pushPath('/nope', onFailure: failures.add));
-    await tester.pumpAndSettle();
+      unawaited(router.pushPath('/nope', onFailure: failures.add));
+      await tester.pumpAndSettle();
 
-    expect(failures.singleOrNull, isA<RouteNotFoundFailure>());
-    expect(names(router), ['Home', 'Details']);
-    expectTopPage(router, 'Details');
-  });
+      expect(failures.singleOrNull, isA<RouteNotFoundFailure>());
+      expect(names(router), ['Home', 'Details']);
+      expectTopPage(router, 'Details');
+    },
+  );
 
-  testWidgets('without one or onFailure, the push throws and the stack stays', (tester) async {
+  testWidgets('without one or onFailure, the push throws and the stack stays', (
+    tester,
+  ) async {
     final router = await openDetails(tester, withWildcard: false);
 
     expect(() => router.pushPath('/nope'), throwsFlutterError);
@@ -67,4 +79,5 @@ void main() {
   });
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));

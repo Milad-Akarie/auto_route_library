@@ -15,38 +15,51 @@ void main() {
   // which leaves the stack and the url as they are. redirectUntil() is not it:
   // it opens the route it is given on top, so redirecting to the page already
   // on top shows that page twice, as push() does.
-  testWidgets('A guard rejecting a push from the top page leaves the stack as it was (flutter/flutter#99096)', (
-    tester,
-  ) async {
-    final router = RootStackRouter.build(
-      routes: [
-        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => const CenteredNamedPage('HomeRoute')),
-        NamedRouteDef(
-          name: 'ChatListRoute',
-          path: '/chat_list',
-          builder: (_, _) => const CenteredNamedPage('ChatListRoute'),
-        ),
-        NamedRouteDef.guarded(
-          name: 'ChatRoute',
-          path: '/chat',
-          onNavigation: (resolver, _) {
-            if (resolver.route.queryParams.optString('user') != null) return resolver.next();
-            resolver.reject();
-          },
-          builder: (_, _) => const CenteredNamedPage('ChatRoute'),
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router, initialLink: '/chat_list');
-    expect(router.stack.map((e) => e.name), ['HomeRoute', 'ChatListRoute']);
+  testWidgets(
+    'A guard rejecting a push from the top page leaves the stack as it was (flutter/flutter#99096)',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          NamedRouteDef(
+            name: 'HomeRoute',
+            path: '/',
+            builder: (_, _) => const CenteredNamedPage('HomeRoute'),
+          ),
+          NamedRouteDef(
+            name: 'ChatListRoute',
+            path: '/chat_list',
+            builder: (_, _) => const CenteredNamedPage('ChatListRoute'),
+          ),
+          NamedRouteDef.guarded(
+            name: 'ChatRoute',
+            path: '/chat',
+            onNavigation: (resolver, _) {
+              if (resolver.route.queryParams.optString('user') != null)
+                return resolver.next();
+              resolver.reject();
+            },
+            builder: (_, _) => const CenteredNamedPage('ChatRoute'),
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router, initialLink: '/chat_list');
+      expect(router.stack.map((e) => e.name), ['HomeRoute', 'ChatListRoute']);
 
-    unawaited(router.pushPath('/chat'));
-    await tester.pumpAndSettle();
-    expect(router.stack.map((e) => e.name), ['HomeRoute', 'ChatListRoute'], reason: 'after router.pushPath(/chat))');
-    expect(router.urlState.url, '/chat_list');
+      unawaited(router.pushPath('/chat'));
+      await tester.pumpAndSettle();
+      expect(router.stack.map((e) => e.name), [
+        'HomeRoute',
+        'ChatListRoute',
+      ], reason: 'after router.pushPath(/chat))');
+      expect(router.urlState.url, '/chat_list');
 
-    unawaited(router.pushPath('/chat?user=1'));
-    await tester.pumpAndSettle();
-    expect(router.stack.map((e) => e.name), ['HomeRoute', 'ChatListRoute', 'ChatRoute']);
-  });
+      unawaited(router.pushPath('/chat?user=1'));
+      await tester.pumpAndSettle();
+      expect(router.stack.map((e) => e.name), [
+        'HomeRoute',
+        'ChatListRoute',
+        'ChatRoute',
+      ]);
+    },
+  );
 }

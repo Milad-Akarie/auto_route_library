@@ -18,16 +18,29 @@ void main() {
 
   Widget page(String name) => Scaffold(body: Center(child: Text(name)));
 
-  AutoRouteGuard protectedGuard() =>
-      AutoRouteGuardCallback((resolver, _) => isAllowed ? resolver.next() : resolver.reject());
+  AutoRouteGuard protectedGuard() => AutoRouteGuardCallback(
+    (resolver, _) => isAllowed ? resolver.next() : resolver.reject(),
+  );
 
   setUp(() => isAllowed = false);
 
   RootStackRouter buildRouter() => .build(
     routes: [
-      NamedRouteDef(name: 'InitialRoute', path: '/', builder: (_, _) => page('InitialRoute')),
-      NamedRouteDef(name: 'FooRoute', path: '/foo', builder: (_, _) => page('FooRoute')),
-      NamedRouteDef(name: 'OtherRoute', path: '/other', builder: (_, _) => page('OtherRoute')),
+      NamedRouteDef(
+        name: 'InitialRoute',
+        path: '/',
+        builder: (_, _) => page('InitialRoute'),
+      ),
+      NamedRouteDef(
+        name: 'FooRoute',
+        path: '/foo',
+        builder: (_, _) => page('FooRoute'),
+      ),
+      NamedRouteDef(
+        name: 'OtherRoute',
+        path: '/other',
+        builder: (_, _) => page('OtherRoute'),
+      ),
       NamedRouteDef(
         name: 'ProtectedRoute',
         path: '/protected',
@@ -38,8 +51,16 @@ void main() {
         name: 'ShellRoute',
         path: '/shell',
         children: [
-          NamedRouteDef(name: 'NestedInitialRoute', path: '', builder: (_, _) => page('NestedInitialRoute')),
-          NamedRouteDef(name: 'NestedFooRoute', path: 'foo', builder: (_, _) => page('NestedFooRoute')),
+          NamedRouteDef(
+            name: 'NestedInitialRoute',
+            path: '',
+            builder: (_, _) => page('NestedInitialRoute'),
+          ),
+          NamedRouteDef(
+            name: 'NestedFooRoute',
+            path: 'foo',
+            builder: (_, _) => page('NestedFooRoute'),
+          ),
           NamedRouteDef(
             name: 'NestedProtectedRoute',
             path: 'protected',
@@ -51,9 +72,12 @@ void main() {
     ],
   );
 
-  List<String> namesOf(StackRouter router) => router.stack.map((page) => page.routeData.name).toList();
+  List<String> namesOf(StackRouter router) =>
+      router.stack.map((page) => page.routeData.name).toList();
 
-  testWidgets('A replaceAll rejected by a guard keeps the stack (#2299)', (tester) async {
+  testWidgets('A replaceAll rejected by a guard keeps the stack (#2299)', (
+    tester,
+  ) async {
     final router = buildRouter();
     await pumpRouterConfigApp(tester, router.config());
     unawaited(router.push(const NamedRoute('FooRoute')));
@@ -71,17 +95,27 @@ void main() {
     expect(namesOf(router), ['InitialRoute', 'FooRoute', 'OtherRoute']);
   });
 
-  testWidgets('A replaceAll with a rejected route later in the batch keeps the stack (#2299)', (tester) async {
-    final router = buildRouter();
-    await pumpRouterConfigApp(tester, router.config());
+  testWidgets(
+    'A replaceAll with a rejected route later in the batch keeps the stack (#2299)',
+    (tester) async {
+      final router = buildRouter();
+      await pumpRouterConfigApp(tester, router.config());
 
-    unawaited(router.replaceAll([const NamedRoute('OtherRoute'), const NamedRoute('ProtectedRoute')]));
-    await tester.pumpAndSettle();
-    expect(namesOf(router), ['InitialRoute']);
-    expectTopPage(router, 'InitialRoute');
-  });
+      unawaited(
+        router.replaceAll([
+          const NamedRoute('OtherRoute'),
+          const NamedRoute('ProtectedRoute'),
+        ]),
+      );
+      await tester.pumpAndSettle();
+      expect(namesOf(router), ['InitialRoute']);
+      expectTopPage(router, 'InitialRoute');
+    },
+  );
 
-  testWidgets('A replaceAll accepted by its guard replaces the stack (#2299)', (tester) async {
+  testWidgets('A replaceAll accepted by its guard replaces the stack (#2299)', (
+    tester,
+  ) async {
     isAllowed = true;
     final router = buildRouter();
     await pumpRouterConfigApp(tester, router.config());
@@ -94,18 +128,21 @@ void main() {
     expectTopPage(router, 'ProtectedRoute');
   });
 
-  testWidgets('A replaceAll rejected by a guard in a nested router keeps the nested stack (#2299)', (tester) async {
-    final router = buildRouter();
-    await pumpRouterConfigApp(tester, router.config());
-    unawaited(router.push(const NamedRoute('ShellRoute')));
-    await tester.pumpAndSettle();
-    final nested = router.innerRouterOf<StackRouter>('ShellRoute')!;
-    unawaited(nested.push(const NamedRoute('NestedFooRoute')));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'A replaceAll rejected by a guard in a nested router keeps the nested stack (#2299)',
+    (tester) async {
+      final router = buildRouter();
+      await pumpRouterConfigApp(tester, router.config());
+      unawaited(router.push(const NamedRoute('ShellRoute')));
+      await tester.pumpAndSettle();
+      final nested = router.innerRouterOf<StackRouter>('ShellRoute')!;
+      unawaited(nested.push(const NamedRoute('NestedFooRoute')));
+      await tester.pumpAndSettle();
 
-    unawaited(nested.replaceAll([const NamedRoute('NestedProtectedRoute')]));
-    await tester.pumpAndSettle();
-    expect(namesOf(nested), ['NestedInitialRoute', 'NestedFooRoute']);
-    expectTopPage(router, 'NestedFooRoute');
-  });
+      unawaited(nested.replaceAll([const NamedRoute('NestedProtectedRoute')]));
+      await tester.pumpAndSettle();
+      expect(namesOf(nested), ['NestedInitialRoute', 'NestedFooRoute']);
+      expectTopPage(router, 'NestedFooRoute');
+    },
+  );
 }

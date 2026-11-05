@@ -21,34 +21,52 @@ void main() {
 
   testWidgets('Simple observer test', (tester) async {
     final mockObserver = MockAutoRouterObserver();
-    await pumpRouterConfigApp(tester, router.config(navigatorObservers: () => [mockObserver]));
+    await pumpRouterConfigApp(
+      tester,
+      router.config(navigatorObservers: () => [mockObserver]),
+    );
     expect(
-      (verify(mockObserver.didPush(captureAny, any)).captured.singleOrNull as Route<Object?>?)?.settings.name,
+      (verify(mockObserver.didPush(captureAny, any)).captured.singleOrNull
+              as Route<Object?>?)
+          ?.settings
+          .name,
       FirstRoute.name,
     );
 
     unawaited(router.push(const SecondRoute()));
     await tester.pumpAndSettle();
     expect(
-      (verify(mockObserver.didPush(captureAny, any)).captured.singleOrNull as Route<Object?>?)?.settings.name,
+      (verify(mockObserver.didPush(captureAny, any)).captured.singleOrNull
+              as Route<Object?>?)
+          ?.settings
+          .name,
       SecondRoute.name,
     );
 
     unawaited(router.maybePop());
     await tester.pumpAndSettle();
     expect(
-      (verify(mockObserver.didPop(captureAny, any)).captured.singleOrNull as Route<Object?>?)?.settings.name,
+      (verify(mockObserver.didPop(captureAny, any)).captured.singleOrNull
+              as Route<Object?>?)
+          ?.settings
+          .name,
       SecondRoute.name,
     );
 
     unawaited(router.replace(const SecondRoute()));
     await tester.pumpAndSettle();
     expect(
-      (verify(mockObserver.didRemove(captureAny, any)).captured.singleOrNull as Route<Object?>?)?.settings.name,
+      (verify(mockObserver.didRemove(captureAny, any)).captured.singleOrNull
+              as Route<Object?>?)
+          ?.settings
+          .name,
       FirstRoute.name,
     );
     expect(
-      (verify(mockObserver.didPush(captureAny, any)).captured.singleOrNull as Route<Object?>?)?.settings.name,
+      (verify(mockObserver.didPush(captureAny, any)).captured.singleOrNull
+              as Route<Object?>?)
+          ?.settings
+          .name,
       SecondRoute.name,
       reason: 'after )',
     );

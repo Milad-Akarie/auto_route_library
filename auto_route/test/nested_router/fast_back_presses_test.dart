@@ -19,8 +19,14 @@ import '../router_test_utils.dart';
 // open.
 void main() {
   Future<void> platformBack(WidgetTester tester) {
-    final message = const JSONMethodCodec().encodeMethodCall(const MethodCall('popRoute'));
-    return tester.binding.defaultBinaryMessenger.handlePlatformMessage('flutter/navigation', message, ignoreArgument);
+    final message = const JSONMethodCodec().encodeMethodCall(
+      const MethodCall('popRoute'),
+    );
+    return tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+      'flutter/navigation',
+      message,
+      ignoreArgument,
+    );
   }
 
   final presses = <String, Future<void> Function(WidgetTester)>{
@@ -40,16 +46,24 @@ void main() {
   };
 
   for (final MapEntry(key: pace, value: pressTwice) in presses.entries) {
-    testWidgets('two back presses made $pace pop two nested pages', (tester) async {
+    testWidgets('two back presses made $pace pop two nested pages', (
+      tester,
+    ) async {
       final router = RootStackRouter.build(
         routes: [
           AutoRoute(
             path: '/',
-            page: PageInfo('HomeRoute', builder: (_) => const Text('HomeRoute')),
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => const Text('HomeRoute'),
+            ),
           ),
           AutoRoute(
             path: '/host',
-            page: PageInfo('HostRoute', builder: (_) => const Scaffold(body: AutoRouter())),
+            page: PageInfo(
+              'HostRoute',
+              builder: (_) => const Scaffold(body: AutoRouter()),
+            ),
             children: [
               for (final name in ['A', 'B', 'C'])
                 AutoRoute(

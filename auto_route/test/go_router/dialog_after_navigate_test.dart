@@ -39,7 +39,8 @@ void main() {
 
   final navigations = <String, void Function(StackRouter)>{
     'navigate': (router) => unawaited(router.navigatePath('/')),
-    'replaceAll': (router) => unawaited(router.replaceAll([const PageRouteInfo('ARoute')])),
+    'replaceAll': (router) =>
+        unawaited(router.replaceAll([const PageRouteInfo('ARoute')])),
   };
 
   final overlays = {
@@ -55,13 +56,18 @@ void main() {
     'bottom sheet': (
       find.text('Sheet'),
       (BuildContext context) {
-        showModalBottomSheet<void>(context: context, builder: (_) => const Text('Sheet'));
+        showModalBottomSheet<void>(
+          context: context,
+          builder: (_) => const Text('Sheet'),
+        );
       },
     ),
   };
 
-  for (final MapEntry(key: navigation, value: navigate) in navigations.entries) {
-    for (final MapEntry(key: overlay, value: (finder, open)) in overlays.entries) {
+  for (final MapEntry(key: navigation, value: navigate)
+      in navigations.entries) {
+    for (final MapEntry(key: overlay, value: (finder, open))
+        in overlays.entries) {
       for (final afterFrame in [false, true]) {
         // Steps: stack [ARoute, BRoute]; on BRoute call navigate or
         // replaceAll back to ARoute, then open a dialog or sheet with the
@@ -69,28 +75,29 @@ void main() {
         // Should: ARoute is the only page. In the same frame, the dialog or
         // sheet closes with BRoute; after the next frame, it shows on ARoute.
         final when = afterFrame ? 'after the next frame' : 'in the same frame';
-        testWidgets('a $overlay opened $when as $navigation ${afterFrame ? 'shows' : 'closes with the old page'}', (
-          tester,
-        ) async {
-          final router = buildRouter();
-          await pumpRouterApp(tester, router);
-          unawaited(router.pushPath('/b'));
-          await tester.pumpAndSettle();
-          expectCurrentPage(router, 'BRoute');
+        testWidgets(
+          'a $overlay opened $when as $navigation ${afterFrame ? 'shows' : 'closes with the old page'}',
+          (tester) async {
+            final router = buildRouter();
+            await pumpRouterApp(tester, router);
+            unawaited(router.pushPath('/b'));
+            await tester.pumpAndSettle();
+            expectCurrentPage(router, 'BRoute');
 
-          navigate(router);
-          // pump(Duration.zero) runs the pending microtasks before the frame,
-          // as the engine does; a bare pump() runs them after it when no frame
-          // is scheduled yet, so the stack change would land a frame late.
-          if (afterFrame) await tester.pump(.zero);
-          open(router.navigatorKey.currentContext!);
-          await tester.pumpAndSettle();
+            navigate(router);
+            // pump(Duration.zero) runs the pending microtasks before the frame,
+            // as the engine does; a bare pump() runs them after it when no frame
+            // is scheduled yet, so the stack change would land a frame late.
+            if (afterFrame) await tester.pump(.zero);
+            open(router.navigatorKey.currentContext!);
+            await tester.pumpAndSettle();
 
-          expect(router.stack.map((page) => page.name), ['ARoute']);
-          expect(find.text('ARoute'), findsOneWidget);
-          expect(finder, afterFrame ? findsOneWidget : findsNothing);
-          expect(tester.takeException(), isNull);
-        });
+            expect(router.stack.map((page) => page.name), ['ARoute']);
+            expect(find.text('ARoute'), findsOneWidget);
+            expect(finder, afterFrame ? findsOneWidget : findsNothing);
+            expect(tester.takeException(), isNull);
+          },
+        );
       }
     }
   }

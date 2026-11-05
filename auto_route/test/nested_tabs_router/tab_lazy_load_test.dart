@@ -19,7 +19,9 @@ void main() {
 
   for (final kind in _Kind.values) {
     group('${kind.name}:', () {
-      testWidgets('lazyLoad: false builds every tab before the first switch', (tester) async {
+      testWidgets('lazyLoad: false builds every tab before the first switch', (
+        tester,
+      ) async {
         final observer = _TabObserver();
         final router = _buildRouter(kind, lazyLoad: false);
         await pumpRouterApp(tester, router, observers: () => [observer]);
@@ -32,23 +34,30 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.text(_kLastTab), findsOneWidget);
-        expect(_builds, {
-          for (final name in _kTabNames) name: 1,
-        }, reason: 'after router.innerRouterOf<TabsRouter>(TabsRoute)!.setActiveIn');
+        expect(
+          _builds,
+          {for (final name in _kTabNames) name: 1},
+          reason:
+              'after router.innerRouterOf<TabsRouter>(TabsRoute)!.setActiveIn',
+        );
         expect(
           observer.initialized,
           _kTabNames,
-          reason: 'after router.innerRouterOf<TabsRouter>(TabsRoute)!.setActiveIn',
+          reason:
+              'after router.innerRouterOf<TabsRouter>(TabsRoute)!.setActiveIn',
         );
         expect(observer.changed, [_kLastTab]);
       });
 
-      testWidgets('by default only the active tab is built before the first switch', (tester) async {
-        final router = _buildRouter(kind);
-        await pumpRouterApp(tester, router);
+      testWidgets(
+        'by default only the active tab is built before the first switch',
+        (tester) async {
+          final router = _buildRouter(kind);
+          await pumpRouterApp(tester, router);
 
-        expect(_builds, {_kFirstTab: 1});
-      });
+          expect(_builds, {_kFirstTab: 1});
+        },
+      );
     });
   }
 }
@@ -70,7 +79,10 @@ RootStackRouter _buildRouter(_Kind kind, {bool? lazyLoad}) {
         page: PageInfo(
           'TabsRoute',
           builder: (_) => switch ((kind, lazyLoad)) {
-            (.tabBar, final bool explicitLazyLoad) => AutoTabsRouter.tabBar(routes: routes, lazyLoad: explicitLazyLoad),
+            (.tabBar, final bool explicitLazyLoad) => AutoTabsRouter.tabBar(
+              routes: routes,
+              lazyLoad: explicitLazyLoad,
+            ),
             (.tabBar, null) => AutoTabsRouter.tabBar(routes: routes),
             (.pageView, final bool explicitLazyLoad) => AutoTabsRouter.pageView(
               routes: routes,
@@ -80,7 +92,10 @@ RootStackRouter _buildRouter(_Kind kind, {bool? lazyLoad}) {
           },
         ),
         path: '/',
-        children: [for (final name in _kTabNames) AutoRoute(page: _page(name), path: name)],
+        children: [
+          for (final name in _kTabNames)
+            AutoRoute(page: _page(name), path: name),
+        ],
       ),
     ],
   );
@@ -113,10 +128,12 @@ class _TabObserver extends AutoRouterObserver {
   final changed = <String>[];
 
   @override
-  void didInitTabRoute(TabPageRoute route, TabPageRoute? previousRoute) => initialized.add(route.name);
+  void didInitTabRoute(TabPageRoute route, TabPageRoute? previousRoute) =>
+      initialized.add(route.name);
 
   @override
-  void didChangeTabRoute(TabPageRoute route, TabPageRoute previousRoute) => changed.add(route.name);
+  void didChangeTabRoute(TabPageRoute route, TabPageRoute previousRoute) =>
+      changed.add(route.name);
 }
 
 class _Route extends PageRouteInfo<void> {

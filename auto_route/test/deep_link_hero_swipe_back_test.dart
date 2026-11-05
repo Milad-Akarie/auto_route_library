@@ -13,37 +13,47 @@ void main() {
   // Should: Page1 shows, with no error. Flutter threw "box.hasSize" from the
   // Hero and "_backGestureController != null" from the route, since Page1 was
   // never laid out.
-  testWidgets('Swiping back from a deep link into a page with a Hero returns to the page below without an error', (
-    tester,
-  ) async {
-    final router = RootStackRouter.build(
-      defaultRouteType: const RouteType.cupertino(),
-      routes: [
-        AutoRoute(page: _page1, path: '/'),
-        AutoRoute(page: _page2, path: '/page2'),
-      ],
-    );
-    final config = router.config(
-      includePrefixMatches: true,
-      deepLinkBuilder: (link) => link.initial ? const DeepLink.path('/page2') : link,
-    );
-    addTearDown(router.dispose);
-    addTearDown((config.routerDelegate as AutoRouterDelegate).dispose);
-    await tester.pumpWidget(MaterialApp.router(theme: iosTheme, routerConfig: config));
-    await tester.pumpAndSettle();
-    expect(router.stack.map((p) => p.name), ['Page1Route', 'Page2Route']);
-    expect(find.text('Page 2'), findsOneWidget);
+  testWidgets(
+    'Swiping back from a deep link into a page with a Hero returns to the page below without an error',
+    (tester) async {
+      final router = RootStackRouter.build(
+        defaultRouteType: const RouteType.cupertino(),
+        routes: [
+          AutoRoute(page: _page1, path: '/'),
+          AutoRoute(page: _page2, path: '/page2'),
+        ],
+      );
+      final config = router.config(
+        includePrefixMatches: true,
+        deepLinkBuilder: (link) =>
+            link.initial ? const DeepLink.path('/page2') : link,
+      );
+      addTearDown(router.dispose);
+      addTearDown((config.routerDelegate as AutoRouterDelegate).dispose);
+      await tester.pumpWidget(
+        MaterialApp.router(theme: iosTheme, routerConfig: config),
+      );
+      await tester.pumpAndSettle();
+      expect(router.stack.map((p) => p.name), ['Page1Route', 'Page2Route']);
+      expect(find.text('Page 2'), findsOneWidget);
 
-    await swipeBack(tester);
-    expect(tester.takeException(), isNull);
-    expect(router.stack.map((p) => p.name), ['Page1Route']);
-    expect(find.text('Page 1'), findsOneWidget);
-  });
+      await swipeBack(tester);
+      expect(tester.takeException(), isNull);
+      expect(router.stack.map((p) => p.name), ['Page1Route']);
+      expect(find.text('Page 1'), findsOneWidget);
+    },
+  );
 }
 
-final _page1 = PageInfo('Page1Route', builder: (_) => const _HeroPage('Page 1', .zero));
+final _page1 = PageInfo(
+  'Page1Route',
+  builder: (_) => const _HeroPage('Page 1', .zero),
+);
 
-final _page2 = PageInfo('Page2Route', builder: (_) => const _HeroPage('Page 2', .only(left: 100)));
+final _page2 = PageInfo(
+  'Page2Route',
+  builder: (_) => const _HeroPage('Page 2', .only(left: 100)),
+);
 
 class _HeroPage extends StatelessWidget {
   const new(this.label, this.padding);

@@ -48,27 +48,35 @@ void main() {
   // Happened: the delegate, url provider and navigation history the router
   // created stayed undisposed.
   // Should: disposing the router disposes all of them.
-  testWidgets('Disposing a root router disposes its delegate, url provider and history', (tester) async {
-    final objects = _RootObjects();
-    final router = await _openAndCloseApp(tester);
+  testWidgets(
+    'Disposing a root router disposes its delegate, url provider and history',
+    (tester) async {
+      final objects = _RootObjects();
+      final router = await _openAndCloseApp(tester);
 
-    router.dispose();
-    objects.expectAllDisposed();
-  });
+      router.dispose();
+      objects.expectAllDisposed();
+    },
+  );
 
   // Steps: as above, but dispose the router's delegate instead.
   // Should: disposing the delegate disposes the router and all it created.
-  testWidgets('Disposing a root router delegate disposes the router and all it created', (tester) async {
-    final objects = _RootObjects();
-    final router = await _openAndCloseApp(tester);
+  testWidgets(
+    'Disposing a root router delegate disposes the router and all it created',
+    (tester) async {
+      final objects = _RootObjects();
+      final router = await _openAndCloseApp(tester);
 
-    router.delegate().dispose();
-    objects.expectAllDisposed();
-  });
+      router.delegate().dispose();
+      objects.expectAllDisposed();
+    },
+  );
 
   // Steps: dispose the router, then its delegate, then the router again.
   // Should: the later calls do nothing and throw nothing.
-  testWidgets('Disposing a root router and its delegate twice throws nothing', (tester) async {
+  testWidgets('Disposing a root router and its delegate twice throws nothing', (
+    tester,
+  ) async {
     final objects = _RootObjects();
     final router = await _openAndCloseApp(tester);
 

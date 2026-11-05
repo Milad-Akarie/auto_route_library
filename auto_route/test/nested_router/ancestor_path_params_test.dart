@@ -12,19 +12,27 @@ void main() {
   // context.navigateTo(FinishOrderingRoute()) from its page. The ordering
   // page should open under 'acme' and read its inherited 'businessCustomId',
   // not fail to parse it from null.
-  testWidgets('navigateTo() a child keeps the path param its parent holds', (tester) async {
+  testWidgets('navigateTo() a child keeps the path param its parent holds', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(page: _HomeRoute.page, path: '/', initial: true),
         AutoRoute(
           page: _BusinessRoute.page,
           path: '/:businessCustomId',
-          children: [AutoRoute(page: _FinishOrderingRoute.page, path: 'new-order')],
+          children: [
+            AutoRoute(page: _FinishOrderingRoute.page, path: 'new-order'),
+          ],
         ),
       ],
     );
     await pumpRouterApp(tester, router, initialLink: '/acme');
-    unawaited(tester.element(find.text('Business acme')).navigateTo(const _FinishOrderingRoute()));
+    unawaited(
+      tester
+          .element(find.text('Business acme'))
+          .navigateTo(const _FinishOrderingRoute()),
+    );
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(find.text('New order at acme'), findsOneWidget);
@@ -37,39 +45,52 @@ void main() {
   // router.navigate(BookRoute(id: 1, someQueryParam: 1234)). The url should
   // be '/books/1/overview?someQueryParam=1234' and the page should read id 1,
   // not show '/books/:id/overview' and fail to parse 'id' from null.
-  testWidgets("navigate() to a route fills its path param into its ancestor's path", (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: _HomeRoute.page, path: '/', initial: true),
-        AutoRoute(
-          page: _BookShellRoute.page,
-          path: '/books/:id',
-          children: [
-            AutoRoute(
-              page: _BookRoute.page,
-              path: '',
-              children: [
-                AutoRoute(page: _BookTabRoute.pageFor('BookOverviewRoute'), path: 'overview', initial: true),
-                AutoRoute(page: _BookTabRoute.pageFor('BookPricingRoute'), path: 'pricing'),
-              ],
-            ),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterConfigApp(tester, router.config());
-    unawaited(router.navigate(_BookRoute(id: 1, someQueryParam: 1234)));
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(find.text('Book 1, query 1234'), findsOneWidget);
-    expect(find.text('BookOverviewRoute'), findsOneWidget);
-    expect(router.urlState.url, '/books/1/overview?someQueryParam=1234');
-  });
+  testWidgets(
+    "navigate() to a route fills its path param into its ancestor's path",
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: _HomeRoute.page, path: '/', initial: true),
+          AutoRoute(
+            page: _BookShellRoute.page,
+            path: '/books/:id',
+            children: [
+              AutoRoute(
+                page: _BookRoute.page,
+                path: '',
+                children: [
+                  AutoRoute(
+                    page: _BookTabRoute.pageFor('BookOverviewRoute'),
+                    path: 'overview',
+                    initial: true,
+                  ),
+                  AutoRoute(
+                    page: _BookTabRoute.pageFor('BookPricingRoute'),
+                    path: 'pricing',
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterConfigApp(tester, router.config());
+      unawaited(router.navigate(_BookRoute(id: 1, someQueryParam: 1234)));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Book 1, query 1234'), findsOneWidget);
+      expect(find.text('BookOverviewRoute'), findsOneWidget);
+      expect(router.urlState.url, '/books/1/overview?someQueryParam=1234');
+    },
+  );
 }
 
 abstract final class _HomeRoute {
   static const String pageName = 'HomeRoute';
-  static final PageInfo page = PageInfo(pageName, builder: (_) => const Text('Home'));
+  static final PageInfo page = PageInfo(
+    pageName,
+    builder: (_) => const Text('Home'),
+  );
 }
 
 abstract final class _BusinessRoute {
@@ -78,7 +99,9 @@ abstract final class _BusinessRoute {
     pageName,
     builder: (data) => Column(
       children: [
-        Text('Business ${data.inheritedPathParams.getString('businessCustomId')}'),
+        Text(
+          'Business ${data.inheritedPathParams.getString('businessCustomId')}',
+        ),
         const Expanded(child: AutoRouter()),
       ],
     ),
@@ -92,19 +115,28 @@ class _FinishOrderingRoute extends PageRouteInfo<void> {
   static final PageInfo page = PageInfo(
     pageName,
     // As generated for a constructor parameter marked @PathParam.inherit('businessCustomId').
-    builder: (data) => Text('New order at ${data.inheritedPathParams.getString('businessCustomId')}'),
+    builder: (data) => Text(
+      'New order at ${data.inheritedPathParams.getString('businessCustomId')}',
+    ),
   );
 }
 
 abstract final class _BookShellRoute {
   static const String pageName = 'BookShellRoute';
-  static final PageInfo page = PageInfo(pageName, builder: (_) => const AutoRouter());
+  static final PageInfo page = PageInfo(
+    pageName,
+    builder: (_) => const AutoRouter(),
+  );
 }
 
 class _BookRoute extends PageRouteInfo<void> {
   // As generated for @PathParam('id') and @queryParam someQueryParam.
   new({required int id, required int someQueryParam})
-    : super(pageName, rawPathParams: {'id': id}, rawQueryParams: {'someQueryParam': someQueryParam});
+    : super(
+        pageName,
+        rawPathParams: {'id': id},
+        rawQueryParams: {'someQueryParam': someQueryParam},
+      );
 
   static const String pageName = 'BookRoute';
   static final PageInfo page = PageInfo(
@@ -121,5 +153,6 @@ class _BookRoute extends PageRouteInfo<void> {
 }
 
 class _BookTabRoute {
-  static PageInfo pageFor(String name) => .new(name, builder: (_) => Text(name));
+  static PageInfo pageFor(String name) =>
+      .new(name, builder: (_) => Text(name));
 }

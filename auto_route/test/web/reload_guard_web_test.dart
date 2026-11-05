@@ -21,22 +21,32 @@ void main() {
   for (final includePrefixMatches in [false, true]) {
     testWidgets('On web, a reload on a page whose guard awaits, then calls next(true), shows that page '
         '(includePrefixMatches: $includePrefixMatches)', (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(page: _page('HomeRoute'), path: '/', initial: true),
-          AutoRoute(
-            page: _page('DashboardRoute'),
-            path: '/dashboard',
-            guards: [
-              AutoRouteGuard.simple((resolver, _) async {
-                await Future<void>.delayed(const Duration(milliseconds: 100));
-                resolver.next();
-              }),
+      final router =
+          RootStackRouter.build(
+            routes: [
+              AutoRoute(page: _page('HomeRoute'), path: '/', initial: true),
+              AutoRoute(
+                page: _page('DashboardRoute'),
+                path: '/dashboard',
+                guards: [
+                  AutoRouteGuard.simple((resolver, _) async {
+                    await Future<void>.delayed(
+                      const Duration(milliseconds: 100),
+                    );
+                    resolver.next();
+                  }),
+                ],
+              ),
             ],
-          ),
-        ],
-      )..routeInfoProvider(initialRouteInformation: RouteInformation(uri: Uri.parse('/dashboard')));
-      await pumpRouterConfigApp(tester, router.config(includePrefixMatches: includePrefixMatches));
+          )..routeInfoProvider(
+            initialRouteInformation: RouteInformation(
+              uri: Uri.parse('/dashboard'),
+            ),
+          );
+      await pumpRouterConfigApp(
+        tester,
+        router.config(includePrefixMatches: includePrefixMatches),
+      );
       await tester.pump(const Duration(milliseconds: 200));
       await settleBrowser(tester);
 
@@ -46,4 +56,5 @@ void main() {
   }
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));

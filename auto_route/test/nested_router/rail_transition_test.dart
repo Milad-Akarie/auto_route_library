@@ -13,7 +13,9 @@ import '../router_test_utils.dart';
 // Should: the nested navigator stays right of the rail and clips its pages
 // there, and the rail doesn't move.
 void main() {
-  testWidgets('A nested page transition stays beside the navigation rail', (tester) async {
+  testWidgets('A nested page transition stays beside the navigation rail', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         NamedRouteDef(
@@ -38,7 +40,11 @@ void main() {
               initial: true,
               builder: (_, _) => const Text('library'),
             ),
-            NamedRouteDef(name: 'SettingsRoute', path: 'settings', builder: (_, _) => const Text('settings')),
+            NamedRouteDef(
+              name: 'SettingsRoute',
+              path: 'settings',
+              builder: (_, _) => const Text('settings'),
+            ),
           ],
         ),
       ],
@@ -48,13 +54,23 @@ void main() {
 
     unawaited(router.navigate(const NamedRoute('SettingsRoute')));
     await tester.pump();
-    final navigator = find.descendant(of: find.byType(AutoRouter), matching: find.byType(Navigator));
-    final overlay = find.descendant(of: navigator, matching: find.byType(Overlay));
+    final navigator = find.descendant(
+      of: find.byType(AutoRouter),
+      matching: find.byType(Navigator),
+    );
+    final overlay = find.descendant(
+      of: navigator,
+      matching: find.byType(Overlay),
+    );
     for (var i = 0; i < 5; i++) {
       await tester.pump(const Duration(milliseconds: 60));
       // A page may slide out of its area, but the navigator clips it there.
       expect(tester.getRect(navigator).left, 80, reason: 'frame $i');
-      expect(tester.widget<Overlay>(overlay).clipBehavior, isNot(Clip.none), reason: 'frame $i');
+      expect(
+        tester.widget<Overlay>(overlay).clipBehavior,
+        isNot(Clip.none),
+        reason: 'frame $i',
+      );
       expect(tester.getRect(find.text('rail')), railRect);
     }
     await tester.pumpAndSettle();

@@ -35,7 +35,10 @@ void main() {
         AutoRoute(
           page: PageInfo(
             'ShellRoute',
-            builder: (_) => AutoRouter(navigatorObservers: () => [shellObserver], inheritNavigatorObservers: false),
+            builder: (_) => AutoRouter(
+              navigatorObservers: () => [shellObserver],
+              inheritNavigatorObservers: false,
+            ),
           ),
           path: '/',
           initial: true,
@@ -45,7 +48,10 @@ void main() {
     );
   });
 
-  Future<void> openAndPickFromMenu(WidgetTester tester, {required bool useRootNavigator}) async {
+  Future<void> openAndPickFromMenu(
+    WidgetTester tester, {
+    required bool useRootNavigator,
+  }) async {
     await tester.tap(find.text(useRootNavigator ? 'Root menu' : 'Menu'));
     await tester.pumpAndSettle();
     expect(find.text('Item'), findsOneWidget);
@@ -60,24 +66,31 @@ void main() {
   // same read, RouteData.of, finds the page holding the nested navigator.
   // Steps: open a menu on a page of a nested router, pick its item.
   // Should: the menu opens and closes, and the observer reads ShellRoute.
-  testWidgets('An observer reading RouteData when a menu opens in a nested router finds its host page', (tester) async {
-    await pumpRouterApp(tester, router, observers: () => [rootObserver]);
-    await openAndPickFromMenu(tester, useRootNavigator: false);
-    expect(shellObserver.found, ['ShellRoute']);
-    expect(rootObserver.found, isEmpty);
-  });
+  testWidgets(
+    'An observer reading RouteData when a menu opens in a nested router finds its host page',
+    (tester) async {
+      await pumpRouterApp(tester, router, observers: () => [rootObserver]);
+      await openAndPickFromMenu(tester, useRootNavigator: false);
+      expect(shellObserver.found, ['ShellRoute']);
+      expect(rootObserver.found, isEmpty);
+    },
+  );
 
   // flutter/flutter#159593, the root navigator: nothing above it holds
   // RouteData, so the read throws a FlutterError the observer can catch,
   // and the menu works.
-  testWidgets('An observer reading RouteData when a menu opens on the root navigator gets an error it can catch', (
-    tester,
-  ) async {
-    await pumpRouterApp(tester, router, observers: () => [rootObserver]);
-    await openAndPickFromMenu(tester, useRootNavigator: true);
-    expect(rootObserver.found.singleOrNull, startsWith('error: RouteData operation requested with a context'));
-    expect(shellObserver.found, isEmpty);
-  });
+  testWidgets(
+    'An observer reading RouteData when a menu opens on the root navigator gets an error it can catch',
+    (tester) async {
+      await pumpRouterApp(tester, router, observers: () => [rootObserver]);
+      await openAndPickFromMenu(tester, useRootNavigator: true);
+      expect(
+        rootObserver.found.singleOrNull,
+        startsWith('error: RouteData operation requested with a context'),
+      );
+      expect(shellObserver.found, isEmpty);
+    },
+  );
 }
 
 final _menuPage = PageInfo(

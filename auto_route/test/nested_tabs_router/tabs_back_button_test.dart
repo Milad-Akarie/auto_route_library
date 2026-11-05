@@ -14,54 +14,71 @@ void main() {
   // SectionB, each a Scaffold with an AppBar; switch to SectionB, which has
   // not been shown before, then back to SectionA.
   // Should: both sections show a back button, and it goes back to Home.
-  for (final (label, leading) in [('the AppBar default', null), ('AutoLeadingButton', const AutoLeadingButton())]) {
-    testWidgets('Every tab of a pushed tabs page shows a back button, with $label (flutter/flutter#188295)', (
-      tester,
-    ) async {
-      PageInfo section(String name) => .new(
-        name,
-        builder: (_) => Scaffold(
-          appBar: AppBar(leading: leading, title: Text(name)),
-        ),
-      );
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            page: PageInfo('Home', builder: (_) => const Scaffold(body: Text('Home'))),
-            path: '/',
+  for (final (label, leading) in [
+    ('the AppBar default', null),
+    ('AutoLeadingButton', const AutoLeadingButton()),
+  ]) {
+    testWidgets(
+      'Every tab of a pushed tabs page shows a back button, with $label (flutter/flutter#188295)',
+      (tester) async {
+        PageInfo section(String name) => .new(
+          name,
+          builder: (_) => Scaffold(
+            appBar: AppBar(leading: leading, title: Text(name)),
           ),
-          AutoRoute(
-            page: PageInfo(
-              'TabsHost',
-              builder: (_) => const AutoTabsRouter(routes: [_Route('SectionA'), _Route('SectionB')]),
+        );
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              page: PageInfo(
+                'Home',
+                builder: (_) => const Scaffold(body: Text('Home')),
+              ),
+              path: '/',
             ),
-            path: '/tabs',
-            children: [
-              AutoRoute(page: section('SectionA'), path: 'a'),
-              AutoRoute(page: section('SectionB'), path: 'b'),
-            ],
-          ),
-        ],
-      );
-      await pumpRouterApp(tester, router);
-      unawaited(router.push(const _Route('TabsHost')));
-      await tester.pumpAndSettle();
-      final tabs = router.innerRouterOf<TabsRouter>('TabsHost')!;
-      expect(find.byType(BackButton), findsOneWidget);
+            AutoRoute(
+              page: PageInfo(
+                'TabsHost',
+                builder: (_) => const AutoTabsRouter(
+                  routes: [_Route('SectionA'), _Route('SectionB')],
+                ),
+              ),
+              path: '/tabs',
+              children: [
+                AutoRoute(page: section('SectionA'), path: 'a'),
+                AutoRoute(page: section('SectionB'), path: 'b'),
+              ],
+            ),
+          ],
+        );
+        await pumpRouterApp(tester, router);
+        unawaited(router.push(const _Route('TabsHost')));
+        await tester.pumpAndSettle();
+        final tabs = router.innerRouterOf<TabsRouter>('TabsHost')!;
+        expect(find.byType(BackButton), findsOneWidget);
 
-      tabs.setActiveIndex(1);
-      await tester.pumpAndSettle();
-      expect(find.text('SectionB'), findsOneWidget);
-      expect(find.byType(BackButton), findsOneWidget, reason: 'after tabs.setActiveIndex(1)');
+        tabs.setActiveIndex(1);
+        await tester.pumpAndSettle();
+        expect(find.text('SectionB'), findsOneWidget);
+        expect(
+          find.byType(BackButton),
+          findsOneWidget,
+          reason: 'after tabs.setActiveIndex(1)',
+        );
 
-      tabs.setActiveIndex(0);
-      await tester.pumpAndSettle();
-      expect(find.byType(BackButton), findsOneWidget, reason: 'after tabs.setActiveIndex(0)');
+        tabs.setActiveIndex(0);
+        await tester.pumpAndSettle();
+        expect(
+          find.byType(BackButton),
+          findsOneWidget,
+          reason: 'after tabs.setActiveIndex(0)',
+        );
 
-      await tester.tap(find.byType(BackButton));
-      await tester.pumpAndSettle();
-      expectTopPage(router, 'Home');
-    });
+        await tester.tap(find.byType(BackButton));
+        await tester.pumpAndSettle();
+        expectTopPage(router, 'Home');
+      },
+    );
   }
 }
 

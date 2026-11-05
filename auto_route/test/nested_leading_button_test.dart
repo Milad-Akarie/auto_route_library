@@ -35,54 +35,77 @@ void main() {
   // page inside it.
   // Should: the list page and the add page both show a back button; the first
   // tap goes to the list page, the second to the profile page.
-  testWidgets('AutoLeadingButton shows a back button on the pages of a nested router', (tester) async {
-    await pumpRouterConfigApp(tester, router.config());
-    expect(find.byType(BackButton), findsNothing);
+  testWidgets(
+    'AutoLeadingButton shows a back button on the pages of a nested router',
+    (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
+      expect(find.byType(BackButton), findsNothing);
 
-    unawaited(router.push(const _AddressesShellRoute()));
-    await tester.pumpAndSettle();
-    expect(find.text(_ListRoute.name), findsOneWidget);
-    expect(find.byType(BackButton), findsOneWidget);
+      unawaited(router.push(const _AddressesShellRoute()));
+      await tester.pumpAndSettle();
+      expect(find.text(_ListRoute.name), findsOneWidget);
+      expect(find.byType(BackButton), findsOneWidget);
 
-    unawaited(router.push(const _AddressesShellRoute(children: [_AddRoute()])));
-    await tester.pumpAndSettle();
-    expect(find.text(_AddRoute.name), findsOneWidget);
-    expect(
-      find.byType(BackButton),
-      findsOneWidget,
-      reason: 'after router.push(const _AddressesShellRoute(children: [_AddRo',
-    );
+      unawaited(
+        router.push(const _AddressesShellRoute(children: [_AddRoute()])),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(_AddRoute.name), findsOneWidget);
+      expect(
+        find.byType(BackButton),
+        findsOneWidget,
+        reason:
+            'after router.push(const _AddressesShellRoute(children: [_AddRo',
+      );
 
-    await tester.tap(find.byType(BackButton));
-    await tester.pumpAndSettle();
-    expect(find.text(_ListRoute.name), findsOneWidget, reason: 'after tester.tap(find.byType(BackButton))');
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      expect(
+        find.text(_ListRoute.name),
+        findsOneWidget,
+        reason: 'after tester.tap(find.byType(BackButton))',
+      );
 
-    await tester.tap(find.byType(BackButton));
-    await tester.pumpAndSettle();
-    expect(find.text(_ProfileRoute.name), findsOneWidget);
-  });
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      expect(find.text(_ProfileRoute.name), findsOneWidget);
+    },
+  );
 }
 
 abstract final class _ProfileRoute {
   static const String name = '_ProfileRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const LeadingButtonPage(name));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const LeadingButtonPage(name),
+  );
 }
 
 class _AddressesShellRoute extends PageRouteInfo<void> {
-  const new({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
+  const new({List<PageRouteInfo>? children})
+    : super(name, initialChildren: children);
 
   static const String name = '_AddressesShellRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const AutoRouter(),
+  );
 }
 
 abstract final class _ListRoute {
   static const String name = '_ListRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const LeadingButtonPage(name));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const LeadingButtonPage(name),
+  );
 }
 
 class _AddRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_AddRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const LeadingButtonPage(name));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const LeadingButtonPage(name),
+  );
 }

@@ -22,7 +22,9 @@ void main() {
   // A RedirectRoute can name query params in redirectTo, and the link's own
   // query params go along with them. Open '/store?color=red': the page should
   // read both src=redirect and color=red, and the url should show both.
-  testWidgets('A redirect adds the link query params to those in redirectTo', (tester) async {
+  testWidgets('A redirect adds the link query params to those in redirectTo', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router, initialLink: '/store?color=red');
     expect(find.text('Shop color=red src=redirect'), findsOneWidget);
     expect(router.urlState.uri.toString(), '/shop?src=redirect&color=red');

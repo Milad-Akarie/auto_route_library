@@ -20,13 +20,18 @@ void main() {
     // BRoute; rebuild the app with $change changed, then back again.
     // Should: the stack stays [ARoute, BRoute], ARoute's state is not
     // created again, and going back shows ARoute.
-    testWidgets('changing MaterialApp.router $change keeps the stack', (tester) async {
+    testWidgets('changing MaterialApp.router $change keeps the stack', (
+      tester,
+    ) async {
       var created = 0;
       final router = RootStackRouter.build(
         routes: [
           AutoRoute(
             path: '/',
-            page: PageInfo('ARoute', builder: (_) => _CountingPage(onCreate: () => created++)),
+            page: PageInfo(
+              'ARoute',
+              builder: (_) => _CountingPage(onCreate: () => created++),
+            ),
           ),
           AutoRoute(
             path: '/b',
@@ -45,7 +50,9 @@ void main() {
             routerConfig: config,
             showPerformanceOverlay: appSettings.showPerformanceOverlay,
             showSemanticsDebugger: appSettings.showSemanticsDebugger,
-            builder: appSettings.wrap ? (_, child) => ColoredBox(color: Colors.white, child: child) : null,
+            builder: appSettings.wrap
+                ? (_, child) => ColoredBox(color: Colors.white, child: child)
+                : null,
           ),
         ),
       );
@@ -71,7 +78,11 @@ void main() {
 }
 
 class _AppSettings {
-  const new({this.showPerformanceOverlay = false, this.showSemanticsDebugger = false, this.wrap = false});
+  const new({
+    this.showPerformanceOverlay = false,
+    this.showSemanticsDebugger = false,
+    this.wrap = false,
+  });
 
   final bool showPerformanceOverlay;
   final bool showSemanticsDebugger;

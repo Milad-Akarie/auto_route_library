@@ -47,26 +47,37 @@ void main() {
 
   Future<void> pumpApp(WidgetTester tester) async {
     platformStates = [];
-    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.navigation, (call) async {
-      if (call.method == 'routeInformationUpdated') {
-        platformStates.add((call.arguments as Map)['state']);
-      }
-      return null;
-    });
-    addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.navigation, null));
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.navigation,
+      (call) async {
+        if (call.method == 'routeInformationUpdated') {
+          platformStates.add((call.arguments as Map)['state']);
+        }
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.navigation,
+        null,
+      ),
+    );
     await pumpRouterConfigApp(tester, router.config());
   }
 
   // The saved pages, which the configuration keeps next to the launch link.
   List<Object?> savedRoutes() =>
-      (router.delegate().currentConfiguration!.savedRoutes! as Map)['routes'] as List<Object?>;
+      (router.delegate().currentConfiguration!.savedRoutes! as Map)['routes']
+          as List<Object?>;
 
   // Groundwork for restoring every page of the app, for
   // https://github.com/Milad-Akarie/auto_route_library/issues/2040 and
   // https://github.com/Milad-Akarie/auto_route_library/issues/2041:
   // the router's configuration holds the pages of every stack, with their
   // path and query params, even when the url doesn't change.
-  testWidgets('the configuration holds every page of the stacks', (tester) async {
+  testWidgets('the configuration holds every page of the stacks', (
+    tester,
+  ) async {
     await pumpApp(tester);
     unawaited(router.pushPath('/books/7?edition=2'));
     await tester.pumpAndSettle();
@@ -96,9 +107,15 @@ void main() {
     ]);
   }, skip: kIsWeb);
 
-  testWidgets('a tabs router saves every tab, the active one last', (tester) async {
+  testWidgets('a tabs router saves every tab, the active one last', (
+    tester,
+  ) async {
     await pumpApp(tester);
-    unawaited(router.navigate(const NamedRoute('TabsRoute', children: [NamedRoute('FeedTabRoute')])));
+    unawaited(
+      router.navigate(
+        const NamedRoute('TabsRoute', children: [NamedRoute('FeedTabRoute')]),
+      ),
+    );
     await tester.pumpAndSettle();
     unawaited(router.push(const NamedRoute('PostRoute')));
     await tester.pumpAndSettle();

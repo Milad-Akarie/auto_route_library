@@ -14,7 +14,9 @@ void main() {
   // then give the delegate the initial route path once more. The stack
   // should stay as it is; it used to rebuild from the initial route, which
   // popped the second page or failed with "args can not be null".
-  testWidgets('The initial route handed over again leaves the stack as it is', (tester) async {
+  testWidgets('The initial route handed over again leaves the stack as it is', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(page: FirstRoute.page, path: '/', initial: true),
@@ -28,13 +30,16 @@ void main() {
 
     final delegate = router.delegate();
     addTearDown(delegate.dispose);
-    final configuration = await router.defaultRouteParser().parseRouteInformation(
-      RouteInformation(uri: Uri.parse('/')),
-    );
+    final configuration = await router
+        .defaultRouteParser()
+        .parseRouteInformation(RouteInformation(uri: Uri.parse('/')));
     await delegate.setInitialRoutePath(configuration);
     await tester.pumpAndSettle();
 
-    expect(router.stackData.map((data) => data.name), [FirstRoute.name, SecondRoute.name]);
+    expect(router.stackData.map((data) => data.name), [
+      FirstRoute.name,
+      SecondRoute.name,
+    ]);
     expectTopPage(router, SecondRoute.name);
   });
 }

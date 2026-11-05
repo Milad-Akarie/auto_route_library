@@ -15,33 +15,50 @@ import 'router_test_utils.dart';
 // Should: the widget shows and nothing throws.
 void main() {
   final opens = <String, void Function(BuildContext)>{
-    'showDialog': (context) => showDialog<void>(context: context, builder: (_) => const _AwareText()),
-    'showGeneralDialog': (context) =>
-        showGeneralDialog<void>(context: context, pageBuilder: (_, _, _) => const _AwareText()),
+    'showDialog': (context) =>
+        showDialog<void>(context: context, builder: (_) => const _AwareText()),
+    'showGeneralDialog': (context) => showGeneralDialog<void>(
+      context: context,
+      pageBuilder: (_, _, _) => const _AwareText(),
+    ),
   };
 
   for (final MapEntry(key: name, value: open) in opens.entries) {
-    testWidgets('a route aware widget in a dialog opened by $name shows without throwing', (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            path: '/',
-            page: PageInfo('HomeRoute', builder: (_) => const Text('HomeRoute')),
-          ),
-        ],
-      );
-      await pumpRouterApp(tester, router, observers: () => [AutoRouteObserver()]);
+    testWidgets(
+      'a route aware widget in a dialog opened by $name shows without throwing',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              path: '/',
+              page: PageInfo(
+                'HomeRoute',
+                builder: (_) => const Text('HomeRoute'),
+              ),
+            ),
+          ],
+        );
+        await pumpRouterApp(
+          tester,
+          router,
+          observers: () => [AutoRouteObserver()],
+        );
 
-      open(router.navigatorKey.currentContext!);
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      expect(find.text('Aware'), findsOneWidget);
+        open(router.navigatorKey.currentContext!);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.text('Aware'), findsOneWidget);
 
-      router.navigatorKey.currentState!.pop();
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull, reason: 'after router.navigatorKey.currentState!.pop()');
-      expect(find.text('Aware'), findsNothing);
-    });
+        router.navigatorKey.currentState!.pop();
+        await tester.pumpAndSettle();
+        expect(
+          tester.takeException(),
+          isNull,
+          reason: 'after router.navigatorKey.currentState!.pop()',
+        );
+        expect(find.text('Aware'), findsNothing);
+      },
+    );
   }
 }
 
@@ -52,7 +69,8 @@ class _AwareText extends StatefulWidget {
   State<_AwareText> createState() => _AwareTextState();
 }
 
-class _AwareTextState extends State<_AwareText> with AutoRouteAwareStateMixin<_AwareText> {
+class _AwareTextState extends State<_AwareText>
+    with AutoRouteAwareStateMixin<_AwareText> {
   @override
   Widget build(BuildContext context) => const Text('Aware');
 }

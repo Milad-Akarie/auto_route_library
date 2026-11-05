@@ -25,7 +25,9 @@ void main() {
   // with bookId 'some-id-2', then call back(). The native history dropped the
   // second Book's entry because its url equals the first's, so back() went
   // straight to Home. On web, back() moves the browser's own history.
-  testWidgets('back() returns to a page with the same url as the current one', (tester) async {
+  testWidgets('back() returns to a page with the same url as the current one', (
+    tester,
+  ) async {
     await pumpRouterConfigApp(tester, router.config());
     unawaited(router.push(_BookRoute(bookId: 'some-id')));
     await tester.pumpAndSettle();
@@ -44,7 +46,9 @@ void main() {
   // Push a route without arguments twice, then call back(). The two pages'
   // routes compare equal, so the url was never rebuilt for the second page,
   // which got no history entry, and back() went straight to Home.
-  testWidgets('back() returns to the same route pushed with equal arguments', (tester) async {
+  testWidgets('back() returns to the same route pushed with equal arguments', (
+    tester,
+  ) async {
     await pumpRouterConfigApp(tester, router.config());
     unawaited(router.push(const SecondRoute()));
     await tester.pumpAndSettle();
@@ -62,24 +66,30 @@ void main() {
   // navigate() to the page on top with other arguments replaces that page in
   // place, so there is no page under it to return to: back() goes to the page
   // before, like maybePop().
-  testWidgets('back() after navigate() replaced a page in place goes to the page before', (tester) async {
-    await pumpRouterConfigApp(tester, router.config());
-    unawaited(router.navigate(_BookRoute(bookId: 'some-id')));
-    await tester.pumpAndSettle();
-    unawaited(router.navigate(_BookRoute(bookId: 'some-id-2')));
-    await tester.pumpAndSettle();
-    expect(find.text('Book some-id-2'), findsOneWidget);
-    expect(router.stack.length, 2);
-    expect(router.navigationHistory.length, 2);
+  testWidgets(
+    'back() after navigate() replaced a page in place goes to the page before',
+    (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
+      unawaited(router.navigate(_BookRoute(bookId: 'some-id')));
+      await tester.pumpAndSettle();
+      unawaited(router.navigate(_BookRoute(bookId: 'some-id-2')));
+      await tester.pumpAndSettle();
+      expect(find.text('Book some-id-2'), findsOneWidget);
+      expect(router.stack.length, 2);
+      expect(router.navigationHistory.length, 2);
 
-    router.back();
-    await tester.pumpAndSettle();
-    expect(router.current.name, FirstRoute.name);
-    expect(router.stack.length, 1);
-  }, skip: kIsWeb);
+      router.back();
+      await tester.pumpAndSettle();
+      expect(router.current.name, FirstRoute.name);
+      expect(router.stack.length, 1);
+    },
+    skip: kIsWeb,
+  );
 
   // Rebuilding the url of the page on top adds no entry.
-  testWidgets('Rebuilding the url of the same page adds no history entry', (tester) async {
+  testWidgets('Rebuilding the url of the same page adds no history entry', (
+    tester,
+  ) async {
     await pumpRouterConfigApp(tester, router.config());
     unawaited(router.push(_BookRoute(bookId: 'some-id')));
     await tester.pumpAndSettle();
@@ -101,7 +111,10 @@ class _BookRoute extends PageRouteInfo<_BookArgs> {
   static const String name = 'BookRoute';
   static final PageInfo page = PageInfo(
     name,
-    builder: (data) =>
-        Scaffold(body: Text('Book ${data.argsAs<_BookArgs>(orElse: () => const _BookArgs()).bookId ?? 'null'}')),
+    builder: (data) => Scaffold(
+      body: Text(
+        'Book ${data.argsAs<_BookArgs>(orElse: () => const _BookArgs()).bookId ?? 'null'}',
+      ),
+    ),
   );
 }

@@ -22,28 +22,37 @@ void main() {
     router = RootStackRouter.build(
       routes: [
         AutoRoute(
-          page: PageInfo('FirstRoute', builder: (_) => const Text('FirstRoute')),
+          page: PageInfo(
+            'FirstRoute',
+            builder: (_) => const Text('FirstRoute'),
+          ),
           path: '/',
           initial: true,
         ),
         AutoRoute(
-          page: PageInfo('SecondRoute', builder: (_) => const Text('SecondRoute')),
+          page: PageInfo(
+            'SecondRoute',
+            builder: (_) => const Text('SecondRoute'),
+          ),
           path: '/second',
         ),
       ],
     );
   });
 
-  testWidgets('the config has a back button dispatcher, and the back key pops the page on top', (tester) async {
-    final config = router.config();
-    expect(config.backButtonDispatcher, isA<RootBackButtonDispatcher>());
+  testWidgets(
+    'the config has a back button dispatcher, and the back key pops the page on top',
+    (tester) async {
+      final config = router.config();
+      expect(config.backButtonDispatcher, isA<RootBackButtonDispatcher>());
 
-    await pumpRouterConfigApp(tester, config);
-    unawaited(router.pushPath('/second'));
-    await tester.pumpAndSettle();
-    expectTopPage(router, 'SecondRoute');
+      await pumpRouterConfigApp(tester, config);
+      unawaited(router.pushPath('/second'));
+      await tester.pumpAndSettle();
+      expectTopPage(router, 'SecondRoute');
 
-    await systemBack(tester);
-    expectTopPage(router, 'FirstRoute');
-  });
+      await systemBack(tester);
+      expectTopPage(router, 'FirstRoute');
+    },
+  );
 }

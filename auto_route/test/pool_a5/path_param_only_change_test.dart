@@ -6,7 +6,10 @@ import 'package:material_ui/material_ui.dart';
 
 import '../router_test_utils.dart';
 
-PageInfo _quiz() => .new('QuizRoute', builder: (data) => Text('Quiz ${data.inheritedPathParams.getString('id')}'));
+PageInfo _quiz() => .new(
+  'QuizRoute',
+  builder: (data) => Text('Quiz ${data.inheritedPathParams.getString('id')}'),
+);
 
 // https://github.com/Milad-Akarie/auto_route_library/issues/1112
 // Steps: under /quiz, a nested route ':id' shows quiz 1. Go to quiz 2, which
@@ -45,14 +48,17 @@ void main() {
   };
 
   for (final MapEntry(key: name, value: go) in ways.entries) {
-    testWidgets('$name to the same route with another path param shows the new page', (tester) async {
-      await pumpRouterApp(tester, router, initialLink: '/quiz/1');
-      expect(find.text('Quiz 1'), findsOneWidget);
+    testWidgets(
+      '$name to the same route with another path param shows the new page',
+      (tester) async {
+        await pumpRouterApp(tester, router, initialLink: '/quiz/1');
+        expect(find.text('Quiz 1'), findsOneWidget);
 
-      unawaited(go('2'));
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      expect(find.text('Quiz 2'), findsOneWidget);
-    });
+        unawaited(go('2'));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.text('Quiz 2'), findsOneWidget);
+      },
+    );
   }
 }

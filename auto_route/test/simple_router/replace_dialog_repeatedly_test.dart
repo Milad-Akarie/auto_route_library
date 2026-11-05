@@ -12,28 +12,39 @@ import '../router_test_utils.dart';
 // with item 3 (the reporter's arrow buttons).
 // Should: each replace shows the new item.
 void main() {
-  testWidgets('Replacing a dialog route with itself several times shows each item', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        NamedRouteDef(name: 'HomeRoute', path: '/', initial: true, builder: (_, _) => const Text('home')),
-        NamedRouteDef(
-          name: 'ItemRoute',
-          path: '/item/:id',
-          type: RouteType.custom(opaque: false),
-          builder: (_, data) => Center(child: Text('item ${data.params.getString('id')}')),
-        ),
-      ],
-    );
-    await pumpRouterConfigApp(tester, router.config());
-    unawaited(router.push(const NamedRoute('ItemRoute', params: {'id': '1'})));
-    await tester.pumpAndSettle();
-    for (final id in ['2', '3']) {
-      unawaited(router.replace(NamedRoute('ItemRoute', params: {'id': id})));
+  testWidgets(
+    'Replacing a dialog route with itself several times shows each item',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          NamedRouteDef(
+            name: 'HomeRoute',
+            path: '/',
+            initial: true,
+            builder: (_, _) => const Text('home'),
+          ),
+          NamedRouteDef(
+            name: 'ItemRoute',
+            path: '/item/:id',
+            type: RouteType.custom(opaque: false),
+            builder: (_, data) =>
+                Center(child: Text('item ${data.params.getString('id')}')),
+          ),
+        ],
+      );
+      await pumpRouterConfigApp(tester, router.config());
+      unawaited(
+        router.push(const NamedRoute('ItemRoute', params: {'id': '1'})),
+      );
       await tester.pumpAndSettle();
-      expect(find.text('item $id'), findsOneWidget);
-      expect(router.currentUrl, '/item/$id');
-    }
-    expect(router.stack.map((p) => p.name), ['HomeRoute', 'ItemRoute']);
-    expect(find.text('home'), findsOneWidget);
-  });
+      for (final id in ['2', '3']) {
+        unawaited(router.replace(NamedRoute('ItemRoute', params: {'id': id})));
+        await tester.pumpAndSettle();
+        expect(find.text('item $id'), findsOneWidget);
+        expect(router.currentUrl, '/item/$id');
+      }
+      expect(router.stack.map((p) => p.name), ['HomeRoute', 'ItemRoute']);
+      expect(find.text('home'), findsOneWidget);
+    },
+  );
 }

@@ -16,36 +16,62 @@ void main() {
   // navigate pushes a page that isn't in the stack, so it keeps the loading
   // page below; replaceAll does what the report's go does.
   for (final (how, goHome, stack) in [
-    ('replaceAll', (StackRouter router) => router.replaceAll([const _Route('HomeRoute')]), ['HomeRoute']),
-    ('navigate', (StackRouter router) => router.navigate(const _Route('HomeRoute')), ['LoadingRoute', 'HomeRoute']),
-    ('navigatePath', (StackRouter router) => router.navigatePath('/home'), ['LoadingRoute', 'HomeRoute']),
+    (
+      'replaceAll',
+      (StackRouter router) => router.replaceAll([const _Route('HomeRoute')]),
+      ['HomeRoute'],
+    ),
+    (
+      'navigate',
+      (StackRouter router) => router.navigate(const _Route('HomeRoute')),
+      ['LoadingRoute', 'HomeRoute'],
+    ),
+    (
+      'navigatePath',
+      (StackRouter router) => router.navigatePath('/home'),
+      ['LoadingRoute', 'HomeRoute'],
+    ),
   ]) {
-    testWidgets('Going back to the tabs with $how while they animate out shows them', (tester) async {
-      late final RootStackRouter router;
-      router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            path: '/home',
-            initial: true,
-            page: PageInfo('HomeRoute', builder: (_) => const AutoTabsRouter(routes: [_Route('TabRoute')])),
-            children: [AutoRoute(path: '', page: _page('TabRoute'))],
-          ),
-          AutoRoute(
-            path: '/loading',
-            page: PageInfo('LoadingRoute', builder: (_) => _LoadingPage(() => goHome(router))),
-          ),
-        ],
-      );
-      await pumpRouterConfigApp(tester, router.config());
-      expect(find.text('TabRoute'), findsOneWidget);
+    testWidgets(
+      'Going back to the tabs with $how while they animate out shows them',
+      (tester) async {
+        late final RootStackRouter router;
+        router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              path: '/home',
+              initial: true,
+              page: PageInfo(
+                'HomeRoute',
+                builder: (_) =>
+                    const AutoTabsRouter(routes: [_Route('TabRoute')]),
+              ),
+              children: [AutoRoute(path: '', page: _page('TabRoute'))],
+            ),
+            AutoRoute(
+              path: '/loading',
+              page: PageInfo(
+                'LoadingRoute',
+                builder: (_) => _LoadingPage(() => goHome(router)),
+              ),
+            ),
+          ],
+        );
+        await pumpRouterConfigApp(tester, router.config());
+        expect(find.text('TabRoute'), findsOneWidget);
 
-      unawaited(router.replaceAll([const _Route('LoadingRoute')]));
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      expect(router.stack.map((page) => page.name), stack);
-      expect(find.text('TabRoute'), findsOneWidget, reason: 'after router.replaceAll([const _Route(LoadingRoute)]))');
-      expect(find.text('Loading'), findsNothing);
-    });
+        unawaited(router.replaceAll([const _Route('LoadingRoute')]));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(router.stack.map((page) => page.name), stack);
+        expect(
+          find.text('TabRoute'),
+          findsOneWidget,
+          reason: 'after router.replaceAll([const _Route(LoadingRoute)]))',
+        );
+        expect(find.text('Loading'), findsNothing);
+      },
+    );
   }
 }
 
@@ -77,7 +103,8 @@ class _LoadingPageState extends State<_LoadingPage> {
   Widget build(BuildContext context) => const Scaffold(body: Text('Loading'));
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
   const new(super.name);

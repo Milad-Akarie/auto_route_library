@@ -6,7 +6,8 @@ import 'package:material_ui/material_ui.dart';
 
 import 'router_test_utils.dart';
 
-PageInfo _page(String name) => .new(name, builder: (_) => Center(child: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Center(child: Text(name)));
 
 void main() {
   // #554: an AutoTabsScaffold whose `routes` list depends on state (a tab
@@ -39,7 +40,10 @@ void main() {
                     onTap: tabs.setActiveIndex,
                     items: [
                       for (var i = 0; i < tabs.pageCount; i++)
-                        BottomNavigationBarItem(icon: const Icon(Icons.abc), label: 'item$i'),
+                        BottomNavigationBarItem(
+                          icon: const Icon(Icons.abc),
+                          label: 'item$i',
+                        ),
                     ],
                   ),
                 ),
@@ -79,15 +83,19 @@ void main() {
   // #549: AutoTabsScaffold wrapped the app bar in a PreferredSize of
   // kToolbarHeight, so a taller AppBar was cut. Steps: appBarBuilder returns
   // an AppBar with toolbarHeight 120. Should: the app bar is 120 tall.
-  testWidgets('#549 appBarBuilder keeps the height of the app bar it returns', (tester) async {
+  testWidgets('#549 appBarBuilder keeps the height of the app bar it returns', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(
           initial: true,
           page: PageInfo(
             'HostRoute',
-            builder: (_) =>
-                AutoTabsScaffold(appBarBuilder: (_, _) => AppBar(title: const Text('Tall'), toolbarHeight: 120)),
+            builder: (_) => AutoTabsScaffold(
+              appBarBuilder: (_, _) =>
+                  AppBar(title: const Text('Tall'), toolbarHeight: 120),
+            ),
           ),
           children: [
             AutoRoute(page: _page('ATab')),
@@ -110,14 +118,21 @@ void main() {
       routes: [
         AutoRoute(initial: true, page: _page('HomeRoute')),
         AutoRoute(page: _page('MiddleRoute')),
-        AutoRoute(page: PageInfo('DashboardRoute', builder: (_) => const _Counting())),
+        AutoRoute(
+          page: PageInfo('DashboardRoute', builder: (_) => const _Counting()),
+        ),
       ],
     );
     await pumpRouterApp(tester, router);
     unawaited(router.push(const PageRouteInfo('MiddleRoute')));
     await tester.pumpAndSettle();
 
-    unawaited(router.pushAndPopUntil(const PageRouteInfo('DashboardRoute'), predicate: (_) => false));
+    unawaited(
+      router.pushAndPopUntil(
+        const PageRouteInfo('DashboardRoute'),
+        predicate: (_) => false,
+      ),
+    );
     await tester.pumpAndSettle();
 
     expect(_initStates, 1);

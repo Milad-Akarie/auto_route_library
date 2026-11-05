@@ -29,7 +29,9 @@ void main() {
   late RootStackRouter router;
   setUp(() {
     router = RootStackRouter.build(
-      defaultRouteType: const RouteType.material(enablePredictiveBackGesture: true),
+      defaultRouteType: const RouteType.material(
+        enablePredictiveBackGesture: true,
+      ),
       routes: [
         NamedRouteDef(
           name: 'FirstRoute',
@@ -47,7 +49,9 @@ void main() {
   });
 
   Future<void> pushSecond(WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp.router(theme: androidTheme, routerConfig: router.config()));
+    await tester.pumpWidget(
+      MaterialApp.router(theme: androidTheme, routerConfig: router.config()),
+    );
     await tester.pumpAndSettle();
     unawaited(router.pushPath('/second'));
     await tester.pumpAndSettle();
@@ -56,7 +60,11 @@ void main() {
 
   // Sends one back gesture message the way the engine does and returns
   // Flutter's reply.
-  Future<Object?> send(WidgetTester tester, String method, [Map<String, Object?>? arguments]) async {
+  Future<Object?> send(
+    WidgetTester tester,
+    String method, [
+    Map<String, Object?>? arguments,
+  ]) async {
     const codec = StandardMethodCodec();
     Object? reply;
     await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
@@ -75,9 +83,12 @@ void main() {
   }
 
   bool animatingBack(WidgetTester tester) =>
-      ModalRoute.of(tester.element(find.text('SecondRoute')))!.popGestureInProgress;
+      ModalRoute.of(tester.element(find.text('SecondRoute')))!
+          .popGestureInProgress;
 
-  testWidgets('an edge swipe still starts the predictive back animation', (tester) async {
+  testWidgets('an edge swipe still starts the predictive back animation', (
+    tester,
+  ) async {
     await pushSecond(tester);
     Map<String, Object?> swipe(double x, double progress) => {
       'touchOffset': [x, 300.0],
@@ -102,7 +113,14 @@ void main() {
       'swipeEdge': 2,
     };
     final started = await send(tester, 'startBackGesture', button(0));
-    expect(started, isA<PlatformException>().having((error) => error.message, 'message', contains('RangeError')));
+    expect(
+      started,
+      isA<PlatformException>().having(
+        (error) => error.message,
+        'message',
+        contains('RangeError'),
+      ),
+    );
     await send(tester, 'updateBackGestureProgress', button(0.5));
     expect(animatingBack(tester), isFalse);
 

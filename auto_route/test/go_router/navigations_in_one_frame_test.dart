@@ -51,12 +51,18 @@ void main() {
     },
   };
   for (final MapEntry(key: name, value: pushBoth) in pushes.entries) {
-    testWidgets('two ${name}es in one frame push both pages in order', (tester) async {
+    testWidgets('two ${name}es in one frame push both pages in order', (
+      tester,
+    ) async {
       final router = buildRouter();
       await pumpRouterApp(tester, router);
       pushBoth(router);
       await tester.pumpAndSettle();
-      expect(router.stack.map((page) => page.name), ['ARoute', 'TopXRoute', 'TopYRoute']);
+      expect(router.stack.map((page) => page.name), [
+        'ARoute',
+        'TopXRoute',
+        'TopYRoute',
+      ]);
       expect(find.text('TopYRoute'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
@@ -65,17 +71,20 @@ void main() {
   // Steps: ARoute shows, with two buttons that navigate to its children
   // XRoute and YRoute; tap both in one frame. Should: YRoute, the last
   // navigation, is the child shown, and nothing throws.
-  testWidgets('two navigations to child pages tapped in one frame land on the last', (tester) async {
-    final router = buildRouter();
-    await pumpRouterApp(tester, router);
-    await tester.tap(find.text('to x'));
-    await tester.tap(find.text('to y'));
-    await tester.pumpAndSettle();
-    expect(router.stack.map((page) => page.name), ['ARoute']);
-    expect(router.topMatch.name, 'YRoute');
-    expect(find.text('YRoute'), findsOneWidget);
-    expect(tester.takeException(), isNull);
-  });
+  testWidgets(
+    'two navigations to child pages tapped in one frame land on the last',
+    (tester) async {
+      final router = buildRouter();
+      await pumpRouterApp(tester, router);
+      await tester.tap(find.text('to x'));
+      await tester.tap(find.text('to y'));
+      await tester.pumpAndSettle();
+      expect(router.stack.map((page) => page.name), ['ARoute']);
+      expect(router.topMatch.name, 'YRoute');
+      expect(find.text('YRoute'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 }
 
 class _Buttons extends StatelessWidget {
@@ -84,8 +93,14 @@ class _Buttons extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Column(
     children: [
-      TextButton(onPressed: () => context.router.navigate(const PageRouteInfo('XRoute')), child: const Text('to x')),
-      TextButton(onPressed: () => context.router.navigate(const PageRouteInfo('YRoute')), child: const Text('to y')),
+      TextButton(
+        onPressed: () => context.router.navigate(const PageRouteInfo('XRoute')),
+        child: const Text('to x'),
+      ),
+      TextButton(
+        onPressed: () => context.router.navigate(const PageRouteInfo('YRoute')),
+        child: const Text('to y'),
+      ),
       const Expanded(child: AutoRouter()),
     ],
   );

@@ -17,8 +17,10 @@ class _CounterState extends State<_Counter> {
   int count = 0;
 
   @override
-  Widget build(BuildContext context) =>
-      TextButton(onPressed: () => setState(() => count++), child: Text('Home count $count'));
+  Widget build(BuildContext context) => TextButton(
+    onPressed: () => setState(() => count++),
+    child: Text('Home count $count'),
+  );
 }
 
 // flutter/flutter#153916: a redirect triggered by the router refreshing sent
@@ -28,54 +30,67 @@ class _CounterState extends State<_Counter> {
 // kept, once after the login is gone and the guard redirects to LoginRoute.
 // Should: the home page keeps its State below, on every step.
 void main() {
-  testWidgets('Reevaluating guards keeps the State of a page below the guarded one (flutter/flutter#153916)', (
-    tester,
-  ) async {
-    final loggedIn = ValueNotifier(true);
-    addTearDown(loggedIn.dispose);
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('HomeRoute', builder: (_) => const _Counter()),
-        ),
-        AutoRoute(
-          path: '/details',
-          page: PageInfo('DetailsRoute', builder: (_) => const Text('DetailsRoute')),
-          guards: [
-            AutoRouteGuard.simple((resolver, _) {
-              if (loggedIn.value) {
-                resolver.next();
-              } else {
-                unawaited(resolver.redirectUntil(const NamedRoute('LoginRoute')));
-              }
-            }),
-          ],
-        ),
-        AutoRoute(
-          path: '/login',
-          page: PageInfo('LoginRoute', builder: (_) => const Text('LoginRoute')),
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router, reevaluationNotifier: loggedIn);
-    await tester.tap(find.text('Home count 0'));
-    await tester.pump();
-    unawaited(router.push(const NamedRoute('DetailsRoute')));
-    await tester.pumpAndSettle();
-    expect(find.text('DetailsRoute'), findsOneWidget);
+  testWidgets(
+    'Reevaluating guards keeps the State of a page below the guarded one (flutter/flutter#153916)',
+    (tester) async {
+      final loggedIn = ValueNotifier(true);
+      addTearDown(loggedIn.dispose);
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo('HomeRoute', builder: (_) => const _Counter()),
+          ),
+          AutoRoute(
+            path: '/details',
+            page: PageInfo(
+              'DetailsRoute',
+              builder: (_) => const Text('DetailsRoute'),
+            ),
+            guards: [
+              AutoRouteGuard.simple((resolver, _) {
+                if (loggedIn.value) {
+                  resolver.next();
+                } else {
+                  unawaited(
+                    resolver.redirectUntil(const NamedRoute('LoginRoute')),
+                  );
+                }
+              }),
+            ],
+          ),
+          AutoRoute(
+            path: '/login',
+            page: PageInfo(
+              'LoginRoute',
+              builder: (_) => const Text('LoginRoute'),
+            ),
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router, reevaluationNotifier: loggedIn);
+      await tester.tap(find.text('Home count 0'));
+      await tester.pump();
+      unawaited(router.push(const NamedRoute('DetailsRoute')));
+      await tester.pumpAndSettle();
+      expect(find.text('DetailsRoute'), findsOneWidget);
 
-    unawaited(router.reevaluateGuards());
-    await tester.pumpAndSettle();
-    expect(find.text('DetailsRoute'), findsOneWidget, reason: 'after router.reevaluateGuards())');
+      unawaited(router.reevaluateGuards());
+      await tester.pumpAndSettle();
+      expect(
+        find.text('DetailsRoute'),
+        findsOneWidget,
+        reason: 'after router.reevaluateGuards())',
+      );
 
-    loggedIn.value = false;
-    await tester.pumpAndSettle();
-    expect(find.text('LoginRoute'), findsOneWidget);
-    expect(tester.takeException(), isNull);
+      loggedIn.value = false;
+      await tester.pumpAndSettle();
+      expect(find.text('LoginRoute'), findsOneWidget);
+      expect(tester.takeException(), isNull);
 
-    router.pop();
-    await tester.pumpAndSettle();
-    expect(find.text('Home count 1'), findsOneWidget);
-  });
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(find.text('Home count 1'), findsOneWidget);
+    },
+  );
 }

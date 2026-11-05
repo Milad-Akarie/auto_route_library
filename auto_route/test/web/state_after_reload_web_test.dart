@@ -23,31 +23,44 @@ void main() {
   // keeps for the app, {serialCount: 0, state: 'saved'}, then start the app
   // there, as the browser does when it comes back.
   // Should: router.pathState is 'saved', and the entry keeps it.
-  testWidgets('An app started on a browser entry it saved a state in reads that state', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('P1', builder: (_) => const Text('P1')),
-        ),
-        AutoRoute(
-          path: '/p2',
-          page: PageInfo('P2', builder: (_) => const Text('P2')),
-        ),
-      ],
-    );
-    addTearDown(router.dispose);
-    final dispatcher = tester.binding.platformDispatcher;
-    addTearDown(dispatcher.clearDefaultRouteNameTestValue);
-    dispatcher.defaultRouteNameTestValue = '/p2';
-    window.history.replaceState({'serialCount': 0, 'state': 'saved'}.jsify(), '', '#/p2');
+  testWidgets(
+    'An app started on a browser entry it saved a state in reads that state',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo('P1', builder: (_) => const Text('P1')),
+          ),
+          AutoRoute(
+            path: '/p2',
+            page: PageInfo('P2', builder: (_) => const Text('P2')),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+      final dispatcher = tester.binding.platformDispatcher;
+      addTearDown(dispatcher.clearDefaultRouteNameTestValue);
+      dispatcher.defaultRouteNameTestValue = '/p2';
+      window.history.replaceState(
+        {'serialCount': 0, 'state': 'saved'}.jsify(),
+        '',
+        '#/p2',
+      );
 
-    await pumpAsRunApp(tester, MaterialApp.router(routerConfig: router.config()));
+      await pumpAsRunApp(
+        tester,
+        MaterialApp.router(routerConfig: router.config()),
+      );
 
-    expect(tester.takeException(), isNull);
-    expect(router.stack.map((page) => page.name), ['P2']);
-    expect(router.pathState, 'saved');
-    expect(window.history.state.dartify(), {'serialCount': 0, 'state': 'saved'});
-    await tester.pumpWidget(const SizedBox());
-  });
+      expect(tester.takeException(), isNull);
+      expect(router.stack.map((page) => page.name), ['P2']);
+      expect(router.pathState, 'saved');
+      expect(window.history.state.dartify(), {
+        'serialCount': 0,
+        'state': 'saved',
+      });
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
 }

@@ -17,15 +17,25 @@ void main() {
   // AddCriTemplateRoute. navigatePath to the deepest page, wait 3
   // seconds; then pushPath to its sibling and wait again.
   // Should: each page stays, with its full path in the url.
-  testWidgets('A page three levels deep stays open with its full path', (tester) async {
+  testWidgets('A page three levels deep stays open with its full path', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
-        NamedRouteDef(name: 'SplashRoute', path: '/', builder: (_, _) => const NamedPage('SplashRoute')),
+        NamedRouteDef(
+          name: 'SplashRoute',
+          path: '/',
+          builder: (_, _) => const NamedPage('SplashRoute'),
+        ),
         NamedRouteDef.shell(
           name: 'AuthWrapperRoute',
           path: '/home_screen',
           children: [
-            NamedRouteDef(name: 'HomeRoute', path: '', builder: (_, _) => const NamedPage('HomeRoute')),
+            NamedRouteDef(
+              name: 'HomeRoute',
+              path: '',
+              builder: (_, _) => const NamedPage('HomeRoute'),
+            ),
             NamedRouteDef(
               name: 'DrugDatabaseRoute',
               path: 'drug_database_screen',
@@ -56,18 +66,32 @@ void main() {
     );
     await pumpRouterApp(tester, router);
 
-    unawaited(router.navigatePath('/home_screen/drug_database_screen/add_drug_template_screen'));
+    unawaited(
+      router.navigatePath(
+        '/home_screen/drug_database_screen/add_drug_template_screen',
+      ),
+    );
     await tester.pumpAndSettle();
     await tester.pump(const Duration(seconds: 3));
     await tester.pumpAndSettle();
     expect(find.text('AddDrugTemplateRoute'), findsOneWidget);
-    expect(router.urlState.url, '/home_screen/drug_database_screen/add_drug_template_screen');
+    expect(
+      router.urlState.url,
+      '/home_screen/drug_database_screen/add_drug_template_screen',
+    );
 
-    unawaited(router.pushPath('/home_screen/drug_database_screen/add_cri_template_screen'));
+    unawaited(
+      router.pushPath(
+        '/home_screen/drug_database_screen/add_cri_template_screen',
+      ),
+    );
     await tester.pumpAndSettle();
     await tester.pump(const Duration(seconds: 3));
     await tester.pumpAndSettle();
     expect(find.text('AddCriTemplateRoute'), findsOneWidget);
-    expect(router.urlState.url, '/home_screen/drug_database_screen/add_cri_template_screen');
+    expect(
+      router.urlState.url,
+      '/home_screen/drug_database_screen/add_cri_template_screen',
+    );
   });
 }

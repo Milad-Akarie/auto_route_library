@@ -24,36 +24,42 @@ void main() {
   // Steps: push BRoute over ARoute, show a modal bottom sheet, press the
   // browser's back button.
   // Should: the sheet and BRoute close, ARoute shows at '/', with no error.
-  testWidgets('The browser back button with a bottom sheet open goes to the page before', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        NamedRouteDef(
-          name: 'ARoute',
-          path: '/',
-          builder: (_, _) => const Scaffold(body: Text('ARoute')),
-        ),
-        NamedRouteDef(
-          name: 'BRoute',
-          path: '/b',
-          builder: (_, _) => const Scaffold(body: Text('BRoute')),
-        ),
-      ],
-    );
-    await pumpRouterConfigApp(tester, router.config());
-    await settleBrowser(tester);
-    final start = browserSerialCount;
-    unawaited(router.push(const NamedRoute('BRoute')));
-    await settleBrowser(tester);
-    showModalBottomSheet<void>(context: tester.element(find.text('BRoute')), builder: (_) => const Text('Sheet'));
-    await settleBrowser(tester);
-    expect(find.text('Sheet'), findsOneWidget);
+  testWidgets(
+    'The browser back button with a bottom sheet open goes to the page before',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          NamedRouteDef(
+            name: 'ARoute',
+            path: '/',
+            builder: (_, _) => const Scaffold(body: Text('ARoute')),
+          ),
+          NamedRouteDef(
+            name: 'BRoute',
+            path: '/b',
+            builder: (_, _) => const Scaffold(body: Text('BRoute')),
+          ),
+        ],
+      );
+      await pumpRouterConfigApp(tester, router.config());
+      await settleBrowser(tester);
+      final start = browserSerialCount;
+      unawaited(router.push(const NamedRoute('BRoute')));
+      await settleBrowser(tester);
+      showModalBottomSheet<void>(
+        context: tester.element(find.text('BRoute')),
+        builder: (_) => const Text('Sheet'),
+      );
+      await settleBrowser(tester);
+      expect(find.text('Sheet'), findsOneWidget);
 
-    await pressBrowserBack(tester);
-    expect(find.text('Sheet'), findsNothing);
-    expect(router.stack.map((p) => p.name), ['ARoute']);
-    expect(find.text('ARoute'), findsOneWidget);
-    expect(browserPath, '/');
-    expect(browserSerialCount, start);
-    expect(tester.takeException(), isNull);
-  });
+      await pressBrowserBack(tester);
+      expect(find.text('Sheet'), findsNothing);
+      expect(router.stack.map((p) => p.name), ['ARoute']);
+      expect(find.text('ARoute'), findsOneWidget);
+      expect(browserPath, '/');
+      expect(browserSerialCount, start);
+      expect(tester.takeException(), isNull);
+    },
+  );
 }

@@ -23,31 +23,49 @@ void main() {
   // success InfoRoute over it, then removeWhere the route whose args hold the
   // loader's key. Only the loading page should go; the success page stays on
   // top, instead of the top page being removed with it.
-  testWidgets('removeWhere removes the matching page, not the top page of the same route', (tester) async {
-    const loaderKey = ValueKey('loader');
-    await pumpRouterConfigApp(tester, router.config());
-    unawaited(router.push(const _FormRoute()));
-    await tester.pumpAndSettle();
-    unawaited(router.replace(_InfoRoute(key: loaderKey, title: 'Processing')));
-    await tester.pumpAndSettle();
-    unawaited(router.push(_InfoRoute(title: 'Success')));
-    await tester.pumpAndSettle();
-    expect(router.stack.map((p) => p.name), [_HomeRoute.name, _InfoRoute.name, _InfoRoute.name]);
+  testWidgets(
+    'removeWhere removes the matching page, not the top page of the same route',
+    (tester) async {
+      const loaderKey = ValueKey('loader');
+      await pumpRouterConfigApp(tester, router.config());
+      unawaited(router.push(const _FormRoute()));
+      await tester.pumpAndSettle();
+      unawaited(
+        router.replace(_InfoRoute(key: loaderKey, title: 'Processing')),
+      );
+      await tester.pumpAndSettle();
+      unawaited(router.push(_InfoRoute(title: 'Success')));
+      await tester.pumpAndSettle();
+      expect(router.stack.map((p) => p.name), [
+        _HomeRoute.name,
+        _InfoRoute.name,
+        _InfoRoute.name,
+      ]);
 
-    // The reporter's check: whether the route is an InfoRoute holding the key.
-    router.removeWhere((route) => route.args is _InfoRouteArgs && (route.args! as _InfoRouteArgs).key == loaderKey);
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(router.stack.map((p) => p.name), [_HomeRoute.name, _InfoRoute.name]);
-    expect(router.current.argsAs<_InfoRouteArgs>().title, 'Success');
-    expect(find.text('Success'), findsOneWidget);
-    expect(find.text('Processing'), findsNothing);
-  });
+      // The reporter's check: whether the route is an InfoRoute holding the key.
+      router.removeWhere(
+        (route) =>
+            route.args is _InfoRouteArgs &&
+            (route.args! as _InfoRouteArgs).key == loaderKey,
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(router.stack.map((p) => p.name), [
+        _HomeRoute.name,
+        _InfoRoute.name,
+      ]);
+      expect(router.current.argsAs<_InfoRouteArgs>().title, 'Success');
+      expect(find.text('Success'), findsOneWidget);
+      expect(find.text('Processing'), findsNothing);
+    },
+  );
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/1943
   // The page on top keeps its state when a page of the same route is removed
   // from below it.
-  testWidgets('removeWhere below the top page keeps the top page state', (tester) async {
+  testWidgets('removeWhere below the top page keeps the top page state', (
+    tester,
+  ) async {
     await pumpRouterConfigApp(tester, router.config());
     unawaited(router.push(_InfoRoute(title: 'Processing')));
     await tester.pumpAndSettle();
@@ -56,7 +74,9 @@ void main() {
     final topState = tester.state(find.byType(_InfoPage));
 
     router.removeWhere(
-      (route) => route.args is _InfoRouteArgs && (route.args! as _InfoRouteArgs).title == 'Processing',
+      (route) =>
+          route.args is _InfoRouteArgs &&
+          (route.args! as _InfoRouteArgs).title == 'Processing',
     );
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
@@ -67,14 +87,20 @@ void main() {
 
 abstract final class _HomeRoute {
   static const String name = 'HomeRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text('Home')),
+  );
 }
 
 class _FormRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'FormRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Form')));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text('Form')),
+  );
 }
 
 class _InfoRouteArgs {

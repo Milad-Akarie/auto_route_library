@@ -17,52 +17,64 @@ void main() {
   // stack; push SheetRoute, a CustomRoute whose customRouteBuilder makes a
   // CupertinoSheetRoute, in TabA's stack; drag the sheet down.
   // Should: only the sheet closes; TabA's first page, TabsHost and Home stay.
-  testWidgets('Dragging down a CupertinoSheetRoute pushed in a tab closes only the sheet (flutter/flutter#172010)', (
-    tester,
-  ) async {
-    PageInfo page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: page('Home'), path: '/'),
-        AutoRoute(
-          page: PageInfo('TabsHost', builder: (_) => const AutoTabsRouter(routes: [_Route('TabA'), _Route('TabB')])),
-          path: '/tabs',
-          children: [
-            AutoRoute(
-              page: const EmptyShellRoute('TabA'),
-              path: 'a',
-              children: [
-                AutoRoute(page: page('TabAHome'), path: ''),
-                CustomRoute(
-                  page: page('SheetRoute'),
-                  path: 'sheet',
-                  customRouteBuilder: <T>(_, child, page) =>
-                      CupertinoSheetRoute<T>(settings: page, scrollableBuilder: (_, _) => child),
-                ),
-              ],
+  testWidgets(
+    'Dragging down a CupertinoSheetRoute pushed in a tab closes only the sheet (flutter/flutter#172010)',
+    (tester) async {
+      PageInfo page(String name) =>
+          .new(name, builder: (_) => Scaffold(body: Text(name)));
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: page('Home'), path: '/'),
+          AutoRoute(
+            page: PageInfo(
+              'TabsHost',
+              builder: (_) => const AutoTabsRouter(
+                routes: [_Route('TabA'), _Route('TabB')],
+              ),
             ),
-            AutoRoute(page: page('TabB'), path: 'b'),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(const _Route('TabsHost')));
-    await tester.pumpAndSettle();
-    final tabA = router.innerRouterOf<TabsRouter>('TabsHost')!.stackRouterOfIndex(0)!;
-    unawaited(tabA.push(const _Route('SheetRoute')));
-    await tester.pumpAndSettle();
-    expect(find.text('SheetRoute'), findsOneWidget);
+            path: '/tabs',
+            children: [
+              AutoRoute(
+                page: const EmptyShellRoute('TabA'),
+                path: 'a',
+                children: [
+                  AutoRoute(page: page('TabAHome'), path: ''),
+                  CustomRoute(
+                    page: page('SheetRoute'),
+                    path: 'sheet',
+                    customRouteBuilder: <T>(_, child, page) =>
+                        CupertinoSheetRoute<T>(
+                          settings: page,
+                          scrollableBuilder: (_, _) => child,
+                        ),
+                  ),
+                ],
+              ),
+              AutoRoute(page: page('TabB'), path: 'b'),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      unawaited(router.push(const _Route('TabsHost')));
+      await tester.pumpAndSettle();
+      final tabA = router
+          .innerRouterOf<TabsRouter>('TabsHost')!
+          .stackRouterOfIndex(0)!;
+      unawaited(tabA.push(const _Route('SheetRoute')));
+      await tester.pumpAndSettle();
+      expect(find.text('SheetRoute'), findsOneWidget);
 
-    await tester.drag(find.text('SheetRoute'), const Offset(0, 600));
-    await tester.pumpAndSettle();
+      await tester.drag(find.text('SheetRoute'), const Offset(0, 600));
+      await tester.pumpAndSettle();
 
-    expect(tester.takeException(), isNull);
-    expect(find.text('SheetRoute'), findsNothing);
-    expect(tabA.stack.map((page) => page.name), ['TabAHome']);
-    expect(router.stack.map((page) => page.name), ['Home', 'TabsHost']);
-    expect(find.text('TabAHome'), findsOneWidget);
-  });
+      expect(tester.takeException(), isNull);
+      expect(find.text('SheetRoute'), findsNothing);
+      expect(tabA.stack.map((page) => page.name), ['TabAHome']);
+      expect(router.stack.map((page) => page.name), ['Home', 'TabsHost']);
+      expect(find.text('TabAHome'), findsOneWidget);
+    },
+  );
 }
 
 class _Route extends PageRouteInfo<void> {

@@ -19,20 +19,42 @@ void main() {
         path: '/login',
         page: PageInfo(
           'LoginRoute',
-          builder: (data) => Text(data.queryParams.rawMap.entries.map((e) => '${e.key}=${e.value}').join(', ')),
+          builder: (data) => Text(
+            data.queryParams.rawMap.entries
+                .map((e) => '${e.key}=${e.value}')
+                .join(', '),
+          ),
         ),
       ),
     ],
   );
 
-  Future<void> expectLinkReads(WidgetTester tester, String link, String params) async {
-    await pumpAtDeepLink(tester, buildRouter(), link, includePrefixMatches: false);
+  Future<void> expectLinkReads(
+    WidgetTester tester,
+    String link,
+    String params,
+  ) async {
+    await pumpAtDeepLink(
+      tester,
+      buildRouter(),
+      link,
+      includePrefixMatches: false,
+    );
     expect(find.text(params), findsOneWidget, reason: 'opened at $link');
     await tester.pumpWidget(const SizedBox());
 
-    await pumpAtDeepLink(tester, buildRouter(), '/', includePrefixMatches: false);
+    await pumpAtDeepLink(
+      tester,
+      buildRouter(),
+      '/',
+      includePrefixMatches: false,
+    );
     await sendPlatformLink(tester, link);
-    expect(find.text(params), findsOneWidget, reason: '$link sent while running');
+    expect(
+      find.text(params),
+      findsOneWidget,
+      reason: '$link sent while running',
+    );
   }
 
   // flutter/flutter#133567: a link with an encoded '+' and '@' in a query
@@ -41,7 +63,11 @@ void main() {
   // the same link while it runs: the page reads test+2@example.com. The same
   // for an encoded '&', '=', '/' and '%'.
   testWidgets('A link keeps an encoded "+" in a query param', (tester) async {
-    await expectLinkReads(tester, 'myapp://host/login?email=test%2B2%40example.com', 'email=test+2@example.com');
+    await expectLinkReads(
+      tester,
+      'myapp://host/login?email=test%2B2%40example.com',
+      'email=test+2@example.com',
+    );
     await expectLinkReads(tester, '/login?q=a%26b%3Dc%2Fd%25e', 'q=a&b=c/d%e');
   });
 
@@ -49,14 +75,20 @@ void main() {
   // as nothing. Open the app at /login?email=test%2B23%40example.com, and send
   // it while the app runs: the page reads test+23@example.com.
   testWidgets('A link keeps "%2B" in a query param as "+"', (tester) async {
-    await expectLinkReads(tester, '/login?email=test%2B23%40example.com', 'email=test+23@example.com');
+    await expectLinkReads(
+      tester,
+      '/login?email=test%2B23%40example.com',
+      'email=test+23@example.com',
+    );
   });
 
   // flutter/flutter#140139: a query param holding an encoded url, which holds
   // another encoded url, read back as two params, decoded twice. Open the app
   // at the reporter's link, and send it while the app runs: the page reads one
   // param, url, decoded once, its inner url still encoded.
-  testWidgets('A link decodes a query param holding an encoded url once', (tester) async {
+  testWidgets('A link decodes a query param holding an encoded url once', (
+    tester,
+  ) async {
     await expectLinkReads(
       tester,
       'myapp:///login?url=https%3A%2F%2Fwww.example.com%3Ffoo%3Dbar%26url2%3Dhttps%253A%252F%252Fwww.example.com',

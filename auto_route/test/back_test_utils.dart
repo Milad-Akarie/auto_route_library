@@ -29,7 +29,9 @@ Future<void> swipeBack(WidgetTester tester) async {
 /// the engine sends while the user drags, then lets go past the threshold.
 Future<void> predictiveBack(WidgetTester tester) async {
   Future<void> send(String method, [Map<String, Object?>? arguments]) {
-    final message = const StandardMethodCodec().encodeMethodCall(MethodCall(method, arguments));
+    final message = const StandardMethodCodec().encodeMethodCall(
+      MethodCall(method, arguments),
+    );
     return tester.binding.defaultBinaryMessenger.handlePlatformMessage(
       SystemChannels.backGesture.name,
       message,
@@ -79,6 +81,8 @@ class FrameworkHandlesBackRecorder {
         }
         return null;
       });
-    addTearDown(() => messenger.setMockMethodCallHandler(SystemChannels.platform, null));
+    addTearDown(
+      () => messenger.setMockMethodCallHandler(SystemChannels.platform, null),
+    );
   }
 }

@@ -11,28 +11,35 @@ void main() {
   // failed an assertion in go_router. In auto_route they recursed until the
   // stack overflowed. Steps: on '/', push '/a'. The push must fail with an
   // error that names both paths, and the stack stays as it was.
-  testWidgets('RedirectRoutes pointing at each other report the loop (flutter/flutter#104441)', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => const CenteredNamedPage('HomeRoute')),
-        RedirectRoute(path: '/a', redirectTo: '/b'),
-        RedirectRoute(path: '/b', redirectTo: '/a'),
-      ],
-    );
-    await pumpRouterApp(tester, router);
+  testWidgets(
+    'RedirectRoutes pointing at each other report the loop (flutter/flutter#104441)',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          NamedRouteDef(
+            name: 'HomeRoute',
+            path: '/',
+            builder: (_, _) => const CenteredNamedPage('HomeRoute'),
+          ),
+          RedirectRoute(path: '/a', redirectTo: '/b'),
+          RedirectRoute(path: '/b', redirectTo: '/a'),
+        ],
+      );
+      await pumpRouterApp(tester, router);
 
-    expect(
-      () => router.pushPath('/a'),
-      throwsA(
-        isA<FlutterError>().having(
-          (e) => e.toString(),
-          'message',
-          allOf(contains('Redirect loop'), contains('/a'), contains('/b')),
+      expect(
+        () => router.pushPath('/a'),
+        throwsA(
+          isA<FlutterError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(contains('Redirect loop'), contains('/a'), contains('/b')),
+          ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(router.stack.map((e) => e.name), ['HomeRoute']);
-    expectCurrentPage(router, 'HomeRoute');
-  });
+      );
+      await tester.pumpAndSettle();
+      expect(router.stack.map((e) => e.name), ['HomeRoute']);
+      expectCurrentPage(router, 'HomeRoute');
+    },
+  );
 }

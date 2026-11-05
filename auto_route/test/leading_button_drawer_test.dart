@@ -33,7 +33,11 @@ void main() {
                 AutoRoute(page: _text('FeedDetailsRoute'), path: 'details'),
               ],
             ),
-            AutoRoute(page: _text('CommentsRoute'), path: 'comments', fullscreenDialog: true),
+            AutoRoute(
+              page: _text('CommentsRoute'),
+              path: 'comments',
+              fullscreenDialog: true,
+            ),
           ],
         ),
       ],
@@ -47,37 +51,46 @@ void main() {
     expect(find.byType(BackButton), findsNothing);
   }
 
-  testWidgets('AutoLeadingButton should keep the drawer icon when the MaterialApp rebuilds', (tester) async {
-    Future<void> pumpApp({Key? key, Brightness brightness = .light, Locale? locale}) async {
-      await tester.pumpWidget(
-        MaterialApp.router(
-          key: key,
-          theme: ThemeData(brightness: brightness),
-          locale: locale,
-          routerConfig: router.config(),
-        ),
-      );
-      await tester.pumpAndSettle();
-    }
+  testWidgets(
+    'AutoLeadingButton should keep the drawer icon when the MaterialApp rebuilds',
+    (tester) async {
+      Future<void> pumpApp({
+        Key? key,
+        Brightness brightness = .light,
+        Locale? locale,
+      }) async {
+        await tester.pumpWidget(
+          MaterialApp.router(
+            key: key,
+            theme: ThemeData(brightness: brightness),
+            locale: locale,
+            routerConfig: router.config(),
+          ),
+        );
+        await tester.pumpAndSettle();
+      }
 
-    await pumpApp();
-    expectDrawerIcon();
+      await pumpApp();
+      expectDrawerIcon();
 
-    await pumpApp(brightness: .dark);
-    expectDrawerIcon();
+      await pumpApp(brightness: .dark);
+      expectDrawerIcon();
 
-    await pumpApp(brightness: .dark, locale: const Locale('fr'));
-    expectDrawerIcon();
+      await pumpApp(brightness: .dark, locale: const Locale('fr'));
+      expectDrawerIcon();
 
-    await pumpApp(key: const ValueKey('fr'), locale: const Locale('fr'));
-    expectDrawerIcon();
-    expect(router.stack.map((page) => page.name), ['HomeEmptyRoute']);
-  });
+      await pumpApp(key: const ValueKey('fr'), locale: const Locale('fr'));
+      expectDrawerIcon();
+      expect(router.stack.map((page) => page.name), ['HomeEmptyRoute']);
+    },
+  );
 }
 
-PageInfo _emptyRouter(String name) => .new(name, builder: (_) => const AutoRouter());
+PageInfo _emptyRouter(String name) =>
+    .new(name, builder: (_) => const AutoRouter());
 
-PageInfo _text(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _text(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 final _feedListing = PageInfo(
   'FeedListingRoute',

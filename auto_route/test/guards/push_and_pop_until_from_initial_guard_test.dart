@@ -14,28 +14,36 @@ void main() {
   // Steps: the first page's guard calls
   // pushAndPopUntil(LoginRoute(), predicate: (_) => false) and leaves its resolver waiting.
   // Should: no error, and LoginRoute shows alone.
-  testWidgets('pushAndPopUntil from the guard of the first page on cold start shows the page', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        NamedRouteDef.guarded(
-          name: 'HomeRoute',
-          path: '/',
-          onNavigation: (resolver, guardedRouter) {
-            unawaited(guardedRouter.pushAndPopUntil(const NamedRoute('LoginRoute'), predicate: (_) => false));
-          },
-          builder: (_, _) => const Scaffold(body: Text('HomeRoute')),
-        ),
-        NamedRouteDef(
-          name: 'LoginRoute',
-          path: '/login',
-          builder: (_, _) => const Scaffold(body: Text('LoginRoute')),
-        ),
-      ],
-    );
-    await pumpRouterConfigApp(tester, router.config());
+  testWidgets(
+    'pushAndPopUntil from the guard of the first page on cold start shows the page',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          NamedRouteDef.guarded(
+            name: 'HomeRoute',
+            path: '/',
+            onNavigation: (resolver, guardedRouter) {
+              unawaited(
+                guardedRouter.pushAndPopUntil(
+                  const NamedRoute('LoginRoute'),
+                  predicate: (_) => false,
+                ),
+              );
+            },
+            builder: (_, _) => const Scaffold(body: Text('HomeRoute')),
+          ),
+          NamedRouteDef(
+            name: 'LoginRoute',
+            path: '/login',
+            builder: (_, _) => const Scaffold(body: Text('LoginRoute')),
+          ),
+        ],
+      );
+      await pumpRouterConfigApp(tester, router.config());
 
-    expect(tester.takeException(), isNull);
-    expect(router.stack.map((p) => p.name), ['LoginRoute']);
-    expect(find.text('LoginRoute'), findsOneWidget);
-  });
+      expect(tester.takeException(), isNull);
+      expect(router.stack.map((p) => p.name), ['LoginRoute']);
+      expect(find.text('LoginRoute'), findsOneWidget);
+    },
+  );
 }

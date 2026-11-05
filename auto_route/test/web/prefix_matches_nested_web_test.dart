@@ -22,29 +22,42 @@ void main() {
   // button, then its forward button, then type the second tab's nested page's
   // url, then '/'.
   // Should: each step shows the tab and page its url names.
-  testWidgets('With includePrefixMatches on web, tabs follow the browser buttons and typed urls', (tester) async {
-    final router = NestedTabsRouter();
-    await pumpRouterConfigApp(tester, router.config(includePrefixMatches: true));
-    await settleBrowser(tester);
-    unawaited(router.navigate(const Tab2Route()));
-    await settleBrowser(tester);
-    unawaited(router.navigate(const Tab3Route()));
-    await settleBrowser(tester);
-    expect(browserPath, '/tab3');
+  testWidgets(
+    'With includePrefixMatches on web, tabs follow the browser buttons and typed urls',
+    (tester) async {
+      final router = NestedTabsRouter();
+      await pumpRouterConfigApp(
+        tester,
+        router.config(includePrefixMatches: true),
+      );
+      await settleBrowser(tester);
+      unawaited(router.navigate(const Tab2Route()));
+      await settleBrowser(tester);
+      unawaited(router.navigate(const Tab3Route()));
+      await settleBrowser(tester);
+      expect(browserPath, '/tab3');
 
-    await pressBrowserBack(tester);
-    expect(browserPath, '/tab2');
-    expect(find.text(Tab2Nested1Route.name), findsOneWidget);
+      await pressBrowserBack(tester);
+      expect(browserPath, '/tab2');
+      expect(find.text(Tab2Nested1Route.name), findsOneWidget);
 
-    await browserMove(tester, () => window.history.forward());
-    expect(browserPath, '/tab3', reason: 'after browserMove(tester, () => window.history.forward())');
-    expect(find.text(Tab3Nested1Route.name), findsOneWidget);
+      await browserMove(tester, () => window.history.forward());
+      expect(
+        browserPath,
+        '/tab3',
+        reason: 'after browserMove(tester, () => window.history.forward())',
+      );
+      expect(find.text(Tab3Nested1Route.name), findsOneWidget);
 
-    await browserMove(tester, () => window.location.hash = '/tab2/tab2Nested2');
-    expect(find.text(Tab2Nested2Route.name), findsOneWidget);
-    expectTopPage(router, Tab2Nested2Route.name);
+      await browserMove(
+        tester,
+        () => window.location.hash = '/tab2/tab2Nested2',
+      );
+      expect(find.text(Tab2Nested2Route.name), findsOneWidget);
+      expectTopPage(router, Tab2Nested2Route.name);
 
-    await browserMove(tester, () => window.location.hash = '/');
-    expect(find.text(Tab1Route.name), findsOneWidget);
-  });
+      await browserMove(tester, () => window.location.hash = '/');
+      expect(find.text(Tab1Route.name), findsOneWidget);
+    },
+  );
 }

@@ -4,7 +4,10 @@ import 'package:material_ui/material_ui.dart';
 
 part 'picker_router.gr.dart';
 
-@AutoRouterConfig(replaceInRouteName: 'View,Route', generateForDir: ['test/generic_page'])
+@AutoRouterConfig(
+  replaceInRouteName: 'View,Route',
+  generateForDir: ['test/generic_page'],
+)
 class PickerRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
@@ -25,7 +28,11 @@ class PickerHomeView extends StatelessWidget {
 /// kind of page #2050 asks to route to.
 @RoutePage()
 class PickerView<T> extends StatelessWidget {
-  const new({super.key, this.items = const [], @QueryParam() this.title = 'Pick'});
+  const new({
+    super.key,
+    this.items = const [],
+    @QueryParam() this.title = 'Pick',
+  });
 
   final List<T> items;
   final String title;
@@ -36,7 +43,10 @@ class PickerView<T> extends StatelessWidget {
       children: [
         Text('$title from ${items.length}'),
         for (final item in items)
-          TextButton(onPressed: () => context.router.maybePop<T>(item), child: Text('Item $item')),
+          TextButton(
+            onPressed: () => context.router.maybePop<T>(item),
+            child: Text('Item $item'),
+          ),
       ],
     ),
   );

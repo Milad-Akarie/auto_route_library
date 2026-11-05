@@ -11,23 +11,26 @@ void main() {
   // Reported: the scaffold wrapped it in a PreferredSize of kToolbarHeight, so
   // the height could not be chosen.
   // Should: the scaffold's app bar has the height the builder's widget asks for.
-  testWidgets('the app bar of AutoTabsScaffold has the height its builder asks for', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          page: _HostRoute.page,
-          path: '/',
-          children: [AutoRoute(page: _TabRoute.page, path: 'tab')],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
+  testWidgets(
+    'the app bar of AutoTabsScaffold has the height its builder asks for',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            page: _HostRoute.page,
+            path: '/',
+            children: [AutoRoute(page: _TabRoute.page, path: 'tab')],
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
 
-    final bar = find.byKey(const ValueKey('bar'));
-    expect(bar, findsOneWidget);
-    expect(tester.getSize(bar).height, 120);
-    expect(tester.getTopLeft(find.text('Tab')).dy, greaterThanOrEqualTo(120));
-  });
+      final bar = find.byKey(const ValueKey('bar'));
+      expect(bar, findsOneWidget);
+      expect(tester.getSize(bar).height, 120);
+      expect(tester.getTopLeft(find.text('Tab')).dy, greaterThanOrEqualTo(120));
+    },
+  );
 }
 
 abstract final class _HostRoute {
@@ -52,5 +55,8 @@ class _TabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'TabRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Text('Tab'));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Text('Tab'),
+  );
 }

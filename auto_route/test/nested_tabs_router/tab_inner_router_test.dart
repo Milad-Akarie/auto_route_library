@@ -18,47 +18,60 @@ void main() {
     // Reported: innerRouterOf returns null after the routes change, with the
     // page-view kind only.
     // Should: it returns the nested router, which pops to its first page.
-    testWidgets("${kind.name}: innerRouterOf finds the tab's nested router after the routes change", (tester) async {
-      addTearDown(() => _extraNotifier.value = false);
-      _tabsKind = kind;
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            page: _HostRoute.page,
-            path: '/',
-            initial: true,
-            children: [
-              AutoRoute(
-                page: _NestedHostRoute.page,
-                path: 'nested',
-                initial: true,
-                children: [
-                  AutoRoute(page: _NestedFirstRoute.page, path: '', initial: true),
-                  AutoRoute(page: _NestedSecondRoute.page, path: 'second'),
-                ],
-              ),
-              AutoRoute(page: _ExtraRoute.page, path: 'extra'),
-              AutoRoute(page: _SecondRoute.page, path: 'second'),
-            ],
-          ),
-        ],
-      );
-      await pumpRouterConfigApp(tester, router.config());
-      final tabsRouter = router.innerRouterOf<TabsRouter>(_HostRoute.name)!;
-      unawaited(tabsRouter.innerRouterOf<StackRouter>(_NestedHostRoute.name)!.push(const _NestedSecondRoute()));
-      await tester.pumpAndSettle();
-      expect(find.text(_NestedSecondRoute.name), findsOneWidget);
+    testWidgets(
+      "${kind.name}: innerRouterOf finds the tab's nested router after the routes change",
+      (tester) async {
+        addTearDown(() => _extraNotifier.value = false);
+        _tabsKind = kind;
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              page: _HostRoute.page,
+              path: '/',
+              initial: true,
+              children: [
+                AutoRoute(
+                  page: _NestedHostRoute.page,
+                  path: 'nested',
+                  initial: true,
+                  children: [
+                    AutoRoute(
+                      page: _NestedFirstRoute.page,
+                      path: '',
+                      initial: true,
+                    ),
+                    AutoRoute(page: _NestedSecondRoute.page, path: 'second'),
+                  ],
+                ),
+                AutoRoute(page: _ExtraRoute.page, path: 'extra'),
+                AutoRoute(page: _SecondRoute.page, path: 'second'),
+              ],
+            ),
+          ],
+        );
+        await pumpRouterConfigApp(tester, router.config());
+        final tabsRouter = router.innerRouterOf<TabsRouter>(_HostRoute.name)!;
+        unawaited(
+          tabsRouter
+              .innerRouterOf<StackRouter>(_NestedHostRoute.name)!
+              .push(const _NestedSecondRoute()),
+        );
+        await tester.pumpAndSettle();
+        expect(find.text(_NestedSecondRoute.name), findsOneWidget);
 
-      _extraNotifier.value = true;
-      await tester.pumpAndSettle();
-      final innerRouter = tabsRouter.innerRouterOf<StackRouter>(tabsRouter.current.name);
-      expect(innerRouter, isNotNull);
-      expect(innerRouter!.canPop(), isTrue);
-      innerRouter.popUntilRoot();
-      await tester.pumpAndSettle();
-      expect(find.text(_NestedFirstRoute.name), findsOneWidget);
-      expect(find.text(_NestedSecondRoute.name), findsNothing);
-    });
+        _extraNotifier.value = true;
+        await tester.pumpAndSettle();
+        final innerRouter = tabsRouter.innerRouterOf<StackRouter>(
+          tabsRouter.current.name,
+        );
+        expect(innerRouter, isNotNull);
+        expect(innerRouter!.canPop(), isTrue);
+        innerRouter.popUntilRoot();
+        await tester.pumpAndSettle();
+        expect(find.text(_NestedFirstRoute.name), findsOneWidget);
+        expect(find.text(_NestedSecondRoute.name), findsNothing);
+      },
+    );
   }
 }
 
@@ -75,14 +88,19 @@ abstract final class _HostRoute {
     builder: (_) => ValueListenableBuilder<bool>(
       valueListenable: _extraNotifier,
       builder: (context, extra, _) {
-        final routes = [const _NestedHostRoute(), if (extra) const _ExtraRoute(), const _SecondRoute()];
+        final routes = [
+          const _NestedHostRoute(),
+          if (extra) const _ExtraRoute(),
+          const _SecondRoute(),
+        ];
         return switch (_tabsKind) {
           .indexedStack => AutoTabsRouter(routes: routes),
           .pageView => AutoTabsRouter.pageView(routes: routes),
           .tabBar => AutoTabsRouter.tabBar(routes: routes),
           .builder => AutoTabsRouter.builder(
             routes: routes,
-            builder: (context, children, tabsRouter) => IndexedStack(index: tabsRouter.activeIndex, children: children),
+            builder: (context, children, tabsRouter) =>
+                IndexedStack(index: tabsRouter.activeIndex, children: children),
           ),
         };
       },
@@ -94,31 +112,46 @@ class _NestedHostRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_NestedHostRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const AutoRouter(),
+  );
 }
 
 abstract final class _NestedFirstRoute {
   static const String name = '_NestedFirstRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text(name)),
+  );
 }
 
 class _NestedSecondRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_NestedSecondRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text(name)),
+  );
 }
 
 class _ExtraRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_ExtraRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text(name)),
+  );
 }
 
 class _SecondRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_SecondRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text(name)),
+  );
 }

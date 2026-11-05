@@ -15,47 +15,56 @@ import '../router_test_utils.dart';
 // pops the settings page.
 void main() {
   for (final useRootNavigator in [true, false]) {
-    testWidgets('System back closes a dialog opened with useRootNavigator: $useRootNavigator first', (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          NamedRouteDef(
-            name: 'ShellRoute',
-            path: '/',
-            initial: true,
-            builder: (_, _) => const AutoRouter(),
-            children: [
-              NamedRouteDef(name: 'HomeRoute', path: 'home', initial: true, builder: (_, _) => const Text('home')),
-              NamedRouteDef(
-                name: 'SettingsRoute',
-                path: 'settings',
-                builder: (context, _) => TextButton(
-                  onPressed: () => showDialog<void>(
-                    context: context,
-                    useRootNavigator: useRootNavigator,
-                    builder: (_) => const AlertDialog(content: Text('dialog')),
-                  ),
-                  child: const Text('settings'),
+    testWidgets(
+      'System back closes a dialog opened with useRootNavigator: $useRootNavigator first',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            NamedRouteDef(
+              name: 'ShellRoute',
+              path: '/',
+              initial: true,
+              builder: (_, _) => const AutoRouter(),
+              children: [
+                NamedRouteDef(
+                  name: 'HomeRoute',
+                  path: 'home',
+                  initial: true,
+                  builder: (_, _) => const Text('home'),
                 ),
-              ),
-            ],
-          ),
-        ],
-      );
-      await pumpRouterConfigApp(tester, router.config());
-      unawaited(router.push(const NamedRoute('SettingsRoute')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('settings'));
-      await tester.pumpAndSettle();
-      expect(find.text('dialog'), findsOneWidget);
+                NamedRouteDef(
+                  name: 'SettingsRoute',
+                  path: 'settings',
+                  builder: (context, _) => TextButton(
+                    onPressed: () => showDialog<void>(
+                      context: context,
+                      useRootNavigator: useRootNavigator,
+                      builder: (_) =>
+                          const AlertDialog(content: Text('dialog')),
+                    ),
+                    child: const Text('settings'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+        await pumpRouterConfigApp(tester, router.config());
+        unawaited(router.push(const NamedRoute('SettingsRoute')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('settings'));
+        await tester.pumpAndSettle();
+        expect(find.text('dialog'), findsOneWidget);
 
-      await tester.binding.handlePopRoute();
-      await tester.pumpAndSettle();
-      expect(find.text('dialog'), findsNothing);
-      expect(find.text('settings'), findsOneWidget);
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        expect(find.text('dialog'), findsNothing);
+        expect(find.text('settings'), findsOneWidget);
 
-      await tester.binding.handlePopRoute();
-      await tester.pumpAndSettle();
-      expect(find.text('home'), findsOneWidget);
-    });
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        expect(find.text('home'), findsOneWidget);
+      },
+    );
   }
 }

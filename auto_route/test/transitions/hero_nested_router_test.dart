@@ -30,7 +30,9 @@ void main() {
       );
     });
 
-    testWidgets('when the nested router page is pushed without children', (tester) async {
+    testWidgets('when the nested router page is pushed without children', (
+      tester,
+    ) async {
       await pumpRouterConfigApp(tester, router.config());
       unawaited(router.push(const _ShellRoute()));
       await _pumpUntilFlight(tester);
@@ -39,7 +41,9 @@ void main() {
       expect(find.text('to'), findsOneWidget);
     });
 
-    testWidgets('when the nested router page is pushed with its first page', (tester) async {
+    testWidgets('when the nested router page is pushed with its first page', (
+      tester,
+    ) async {
       await pumpRouterConfigApp(tester, router.config());
       unawaited(router.push(const _ShellRoute(children: [_ToRoute()])));
       await _pumpUntilFlight(tester);
@@ -48,7 +52,9 @@ void main() {
       expect(find.text('to'), findsOneWidget);
     });
 
-    testWidgets('when the nested router page is opened by its path', (tester) async {
+    testWidgets('when the nested router page is opened by its path', (
+      tester,
+    ) async {
       await pumpRouterConfigApp(tester, router.config());
       unawaited(router.pushPath('/shell'));
       await _pumpUntilFlight(tester);
@@ -63,32 +69,37 @@ void main() {
   // comments advise) pushes an account router page, a shell whose first page
   // has the same Hero.
   // Should: the Hero flies to the account page like it does to a plain page.
-  testWidgets('A Hero flies from a nested router page to the first page of a shell route', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          page: _HeroShellRoute.page,
-          path: '/',
-          children: [
-            AutoRoute(page: _FromRoute.page, path: '', initial: true),
-            AutoRoute(
-              page: _ShellRoute.page,
-              path: 'account',
-              children: [AutoRoute(page: _ToRoute.page, path: '', initial: true)],
-            ),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterConfigApp(tester, router.config());
-    expect(find.text('from'), findsOneWidget);
+  testWidgets(
+    'A Hero flies from a nested router page to the first page of a shell route',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            page: _HeroShellRoute.page,
+            path: '/',
+            children: [
+              AutoRoute(page: _FromRoute.page, path: '', initial: true),
+              AutoRoute(
+                page: _ShellRoute.page,
+                path: 'account',
+                children: [
+                  AutoRoute(page: _ToRoute.page, path: '', initial: true),
+                ],
+              ),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterConfigApp(tester, router.config());
+      expect(find.text('from'), findsOneWidget);
 
-    unawaited(router.push(const _ShellRoute()));
-    await _pumpUntilFlight(tester);
-    _expectHeroInFlight(tester);
-    await tester.pumpAndSettle();
-    expect(find.text('to'), findsOneWidget);
-  });
+      unawaited(router.push(const _ShellRoute()));
+      await _pumpUntilFlight(tester);
+      _expectHeroInFlight(tester);
+      await tester.pumpAndSettle();
+      expect(find.text('to'), findsOneWidget);
+    },
+  );
 
   // https://github.com/flutter/flutter/issues/192043
   // go_router 18.0.0: Heroes stopped flying between two pages that both live
@@ -96,31 +107,40 @@ void main() {
   // its own HeroControllerScope and a nested router, holding both pages.
   // Steps: push the second page inside the shell.
   // Should: the Hero flies, as it does between two pages of the root router.
-  testWidgets('A Hero flies between two pages of a shell route (flutter/flutter#192043)', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          page: _HeroShellRoute.page,
-          path: '/',
-          children: [
-            AutoRoute(page: _FromRoute.page, path: '', initial: true),
-            AutoRoute(page: _ToRoute.page, path: 'to'),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterConfigApp(tester, router.config());
-    expect(find.text('from'), findsOneWidget);
+  testWidgets(
+    'A Hero flies between two pages of a shell route (flutter/flutter#192043)',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            page: _HeroShellRoute.page,
+            path: '/',
+            children: [
+              AutoRoute(page: _FromRoute.page, path: '', initial: true),
+              AutoRoute(page: _ToRoute.page, path: 'to'),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterConfigApp(tester, router.config());
+      expect(find.text('from'), findsOneWidget);
 
-    unawaited(router.innerRouterOf<StackRouter>(_HeroShellRoute.name)!.push(const _ToRoute()));
-    await _pumpUntilFlight(tester);
-    _expectHeroInFlight(tester);
-    await tester.pumpAndSettle();
-    expect(find.text('to'), findsOneWidget);
-  });
+      unawaited(
+        router
+            .innerRouterOf<StackRouter>(_HeroShellRoute.name)!
+            .push(const _ToRoute()),
+      );
+      await _pumpUntilFlight(tester);
+      _expectHeroInFlight(tester);
+      await tester.pumpAndSettle();
+      expect(find.text('to'), findsOneWidget);
+    },
+  );
 
   // The flight a plain page gets, so the checks above mean something.
-  testWidgets('A Hero flies between two pages of the same router', (tester) async {
+  testWidgets('A Hero flies between two pages of the same router', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(page: _FromRoute.page, path: '/', initial: true),
@@ -136,7 +156,9 @@ void main() {
 
   // A guard needs a context, so a guarded first page is still added one frame
   // later; the page must still open.
-  testWidgets('The guarded first page of a nested router still opens', (tester) async {
+  testWidgets('The guarded first page of a nested router still opens', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(page: _FromRoute.page, path: '/', initial: true),
@@ -172,27 +194,46 @@ Future<void> _pumpUntilFlight(WidgetTester tester) async {
 // first page; the Hero's end page is at its place on the second page only at
 // the end.
 void _expectHeroInFlight(WidgetTester tester) {
-  expect(find.text('from'), findsNothing, reason: 'the source Hero should have left its page');
+  expect(
+    find.text('from'),
+    findsNothing,
+    reason: 'the source Hero should have left its page',
+  );
   final position = tester.getTopLeft(find.text('to').last);
   final size = tester.view.physicalSize / tester.view.devicePixelRatio;
-  expect(position.dy, greaterThan(size.height / 4), reason: 'the Hero should still be on its way up');
-  expect(position.dx, lessThan(size.width / 2), reason: 'the Hero should still be on its way right');
+  expect(
+    position.dy,
+    greaterThan(size.height / 4),
+    reason: 'the Hero should still be on its way up',
+  );
+  expect(
+    position.dx,
+    lessThan(size.width / 2),
+    reason: 'the Hero should still be on its way right',
+  );
 }
 
 abstract final class _FromRoute {
   static const String name = 'FromRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const HeroBoxPage('from', .bottomLeft));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const HeroBoxPage('from', .bottomLeft),
+  );
 }
 
 class _ToRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'ToRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const HeroBoxPage('to', .topRight));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const HeroBoxPage('to', .topRight),
+  );
 }
 
 class _ShellRoute extends PageRouteInfo<void> {
-  const new({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
+  const new({List<PageRouteInfo>? children})
+    : super(name, initialChildren: children);
 
   static const String name = 'ShellRoute';
   static const PageInfo page = .emptyShell(name);
@@ -200,7 +241,10 @@ class _ShellRoute extends PageRouteInfo<void> {
 
 abstract final class _HeroShellRoute {
   static const String name = 'HeroShellRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const _HeroShell());
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const _HeroShell(),
+  );
 }
 
 class _HeroShell extends StatefulWidget {
@@ -221,6 +265,9 @@ class _HeroShellState extends State<_HeroShell> {
 
   @override
   Widget build(BuildContext context) {
-    return HeroControllerScope(controller: _controller, child: const AutoRouter());
+    return HeroControllerScope(
+      controller: _controller,
+      child: const AutoRouter(),
+    );
   }
 }

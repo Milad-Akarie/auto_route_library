@@ -40,7 +40,8 @@ void main() {
   // The pages of each tab's nested router; '-' for a tab without one.
   List<String> tabStacks() => [
     for (var i = 0; i < tabsRouter.pageCount; i++)
-      tabsRouter.stackRouterOfIndex(i)?.stack.map((p) => p.name).join(', ') ?? '-',
+      tabsRouter.stackRouterOfIndex(i)?.stack.map((p) => p.name).join(', ') ??
+          '-',
   ];
 
   // Found while settling
@@ -54,71 +55,86 @@ void main() {
   // /dashboard/tests/test1: the tab was looked up by route name, which found
   // the first tests tab, and its nested router too, which found the second.
   // Should: the second tab opens, on Test2Route, and the first is left as it was.
-  testWidgets('navigate() to the second of two tabs sharing a route opens that tab', (tester) async {
-    await pumpDashboard(tester);
-    for (final index in [0, 1, 2]) {
-      tabsRouter.setActiveIndex(index);
-      await tester.pumpAndSettle();
-    }
+  testWidgets(
+    'navigate() to the second of two tabs sharing a route opens that tab',
+    (tester) async {
+      await pumpDashboard(tester);
+      for (final index in [0, 1, 2]) {
+        tabsRouter.setActiveIndex(index);
+        await tester.pumpAndSettle();
+      }
 
-    unawaited(router.navigate(const _Test2Route()));
-    await tester.pumpAndSettle();
-    expect(tabsRouter.activeIndex, 1);
-    expect(find.text(_Test2Route.name), findsOneWidget);
-    expect(router.urlState.url, '/dashboard/tests/test2');
-    expect(tabStacks(), [_Test1Route.name, _Test2Route.name, '-']);
-  });
+      unawaited(router.navigate(const _Test2Route()));
+      await tester.pumpAndSettle();
+      expect(tabsRouter.activeIndex, 1);
+      expect(find.text(_Test2Route.name), findsOneWidget);
+      expect(router.urlState.url, '/dashboard/tests/test2');
+      expect(tabStacks(), [_Test1Route.name, _Test2Route.name, '-']);
+    },
+  );
 
   // Same steps, navigating to Test1Route.
   // Happened: the first tab opened, but Test1Route was also pushed onto the
   // second tab's nested router.
-  testWidgets('navigate() to the first of two tabs sharing a route leaves the second as it was', (tester) async {
-    await pumpDashboard(tester);
-    for (final index in [0, 1, 2]) {
-      tabsRouter.setActiveIndex(index);
-      await tester.pumpAndSettle();
-    }
+  testWidgets(
+    'navigate() to the first of two tabs sharing a route leaves the second as it was',
+    (tester) async {
+      await pumpDashboard(tester);
+      for (final index in [0, 1, 2]) {
+        tabsRouter.setActiveIndex(index);
+        await tester.pumpAndSettle();
+      }
 
-    unawaited(router.navigate(const _Test1Route()));
-    await tester.pumpAndSettle();
-    expect(tabsRouter.activeIndex, 0);
-    expect(find.text(_Test1Route.name), findsOneWidget);
-    expect(router.urlState.url, '/dashboard/tests/test1');
-    expect(tabStacks(), [_Test1Route.name, _Test2Route.name, '-']);
-  });
+      unawaited(router.navigate(const _Test1Route()));
+      await tester.pumpAndSettle();
+      expect(tabsRouter.activeIndex, 0);
+      expect(find.text(_Test1Route.name), findsOneWidget);
+      expect(router.urlState.url, '/dashboard/tests/test1');
+      expect(tabStacks(), [_Test1Route.name, _Test2Route.name, '-']);
+    },
+  );
 
   // Steps: open the second tab, then the first, then go back, which opens
   // the url the second tab recorded, /dashboard/tests/test2.
   // Should: the second tab shows again, and the first is left as it was.
-  testWidgets('going back to a url of the second of two tabs sharing a route opens that tab', (tester) async {
-    await pumpDashboard(tester);
-    for (final index in [1, 0]) {
-      tabsRouter.setActiveIndex(index);
-      await tester.pumpAndSettle();
-    }
+  testWidgets(
+    'going back to a url of the second of two tabs sharing a route opens that tab',
+    (tester) async {
+      await pumpDashboard(tester);
+      for (final index in [1, 0]) {
+        tabsRouter.setActiveIndex(index);
+        await tester.pumpAndSettle();
+      }
 
-    router.back();
-    await tester.pumpAndSettle();
-    expect(tabsRouter.activeIndex, 1);
-    expect(find.text(_Test2Route.name), findsOneWidget);
-    expect(router.urlState.url, '/dashboard/tests/test2');
-    expect(tabStacks(), [_Test1Route.name, _Test2Route.name, '-']);
-    // On web, back moves the browser, whose history this runner doesn't
-    // keep; the integration test goes back there with the browser's back button.
-  }, skip: kIsWeb);
+      router.back();
+      await tester.pumpAndSettle();
+      expect(tabsRouter.activeIndex, 1);
+      expect(find.text(_Test2Route.name), findsOneWidget);
+      expect(router.urlState.url, '/dashboard/tests/test2');
+      expect(tabStacks(), [_Test1Route.name, _Test2Route.name, '-']);
+      // On web, back moves the browser, whose history this runner doesn't
+      // keep; the integration test goes back there with the browser's back button.
+    },
+    skip: kIsWeb,
+  );
 }
 
 abstract final class _DashboardRoute {
   static const String name = '_DashboardRoute';
   static final PageInfo page = PageInfo(
     name,
-    builder: (_) => const AutoTabsRouter(routes: [_Test1Route(), _Test2Route(), _Test3Route()]),
+    builder: (_) => const AutoTabsRouter(
+      routes: [_Test1Route(), _Test2Route(), _Test3Route()],
+    ),
   );
 }
 
 abstract final class _TestsRoute {
   static const String name = '_TestsRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const AutoRouter(),
+  );
 }
 
 class _Test1Route extends PageRouteInfo<void> {

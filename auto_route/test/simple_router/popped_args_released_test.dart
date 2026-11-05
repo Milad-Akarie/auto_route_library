@@ -17,7 +17,8 @@ class _DetailArgs {
 
 // Built from a parameter, so the args are not const: a const instance is never garbage collected, which is what this
 // test checks.
-NamedRoute<_DetailArgs> _detailRoute(int counter) => .new('DetailRoute', args: _DetailArgs(counter));
+NamedRoute<_DetailArgs> _detailRoute(int counter) =>
+    .new('DetailRoute', args: _DetailArgs(counter));
 
 final PageInfo _detailPage = PageInfo(
   'DetailRoute',
@@ -51,7 +52,10 @@ void main() {
         routes: [
           AutoRoute(
             path: '/',
-            page: PageInfo('HomeRoute', builder: (_) => const Text('HomeRoute')),
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => const Text('HomeRoute'),
+            ),
           ),
           AutoRoute(path: '/detail', page: _detailPage),
         ],

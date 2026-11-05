@@ -12,45 +12,49 @@ void main() {
   // Steps: an AutoTabsRouter.pageView with RedRoute('top'), whose page holds
   // an AutoTabsRouter.tabBar with BlueRoute('nested'); both read their args.
   // Should: no error; each page shows its argument.
-  testWidgets('A tab with args in a tab bar nested in a page view gets its args', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        NamedRouteDef(
-          name: 'HomeRoute',
-          path: '/',
-          builder: (_, _) => AutoTabsRouter.pageView(
-            routes: const [NamedRoute('RedRoute', args: 'top')],
-            builder: (_, child, _) => child,
-          ),
-          children: [
-            NamedRouteDef(
-              name: 'RedRoute',
-              path: 'red',
-              builder: (_, data) => AutoTabsRouter.tabBar(
-                routes: const [NamedRoute('BlueRoute', args: 'nested')],
-                builder: (_, child, _) => Column(
-                  children: [
-                    Text('red ${data.argsAs<String>()}'),
-                    Expanded(child: child),
-                  ],
-                ),
-              ),
-              children: [
-                NamedRouteDef(
-                  name: 'BlueRoute',
-                  path: 'blue',
-                  builder: (_, data) => Scaffold(body: Text('blue ${data.argsAs<String>()}')),
-                ),
-              ],
+  testWidgets(
+    'A tab with args in a tab bar nested in a page view gets its args',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          NamedRouteDef(
+            name: 'HomeRoute',
+            path: '/',
+            builder: (_, _) => AutoTabsRouter.pageView(
+              routes: const [NamedRoute('RedRoute', args: 'top')],
+              builder: (_, child, _) => child,
             ),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
+            children: [
+              NamedRouteDef(
+                name: 'RedRoute',
+                path: 'red',
+                builder: (_, data) => AutoTabsRouter.tabBar(
+                  routes: const [NamedRoute('BlueRoute', args: 'nested')],
+                  builder: (_, child, _) => Column(
+                    children: [
+                      Text('red ${data.argsAs<String>()}'),
+                      Expanded(child: child),
+                    ],
+                  ),
+                ),
+                children: [
+                  NamedRouteDef(
+                    name: 'BlueRoute',
+                    path: 'blue',
+                    builder: (_, data) =>
+                        Scaffold(body: Text('blue ${data.argsAs<String>()}')),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
 
-    expect(tester.takeException(), isNull);
-    expect(find.text('red top'), findsOneWidget);
-    expect(find.text('blue nested'), findsOneWidget);
-  });
+      expect(tester.takeException(), isNull);
+      expect(find.text('red top'), findsOneWidget);
+      expect(find.text('blue nested'), findsOneWidget);
+    },
+  );
 }

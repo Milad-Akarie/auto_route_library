@@ -25,7 +25,13 @@ void main() {
     addTearDown(router.dispose);
     expect(
       () => router.routeCollection,
-      throwsA(isA<FlutterError>().having((e) => e.message, 'message', 'Sub-paths can not start with a "/": /setting')),
+      throwsA(
+        isA<FlutterError>().having(
+          (e) => e.message,
+          'message',
+          'Sub-paths can not start with a "/": /setting',
+        ),
+      ),
     );
   });
 
@@ -35,6 +41,9 @@ void main() {
     addTearDown(router.dispose);
     final matches = router.matcher.match('/profile/setting')!;
     expect(matches.singleOrNull?.name, 'ProfileRoute');
-    expect(matches.singleOrNull?.children!.singleOrNull?.name, SecondRoute.name);
+    expect(
+      matches.singleOrNull?.children!.singleOrNull?.name,
+      SecondRoute.name,
+    );
   });
 }

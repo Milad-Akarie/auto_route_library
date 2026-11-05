@@ -43,55 +43,88 @@ void main() {
   // Both routes live in the 'UsersSellRoute' shell, which isn't open yet. They
   // should open together in one shell, so UserRoute has a back button to
   // UsersRoute, not each in its own copy of the shell.
-  testWidgets('replaceAll with two routes of a nested router opens both in one nested router', (tester) async {
-    final dashboard = await openDashboard(tester);
+  testWidgets(
+    'replaceAll with two routes of a nested router opens both in one nested router',
+    (tester) async {
+      final dashboard = await openDashboard(tester);
 
-    unawaited(dashboard.replaceAll([const _UsersRoute(), const _UserRoute(userId: 1)]));
-    await tester.pumpAndSettle();
-    expect(dashboard.stack.map((p) => p.name), [_kUsersShell]);
-    final shell = dashboard.innerRouterOf<StackRouter>(_kUsersShell)!;
-    expect(shell.stack.map((p) => p.name), [_UsersRoute.name, _UserRoute.name]);
-    expectTopPage(router, _UserRoute.name);
-    expect(find.byType(BackButton), findsOneWidget);
+      unawaited(
+        dashboard.replaceAll([
+          const _UsersRoute(),
+          const _UserRoute(userId: 1),
+        ]),
+      );
+      await tester.pumpAndSettle();
+      expect(dashboard.stack.map((p) => p.name), [_kUsersShell]);
+      final shell = dashboard.innerRouterOf<StackRouter>(_kUsersShell)!;
+      expect(shell.stack.map((p) => p.name), [
+        _UsersRoute.name,
+        _UserRoute.name,
+      ]);
+      expectTopPage(router, _UserRoute.name);
+      expect(find.byType(BackButton), findsOneWidget);
 
-    await tester.tap(find.byType(BackButton));
-    await tester.pumpAndSettle();
-    expectTopPage(router, _UsersRoute.name);
-  });
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      expectTopPage(router, _UsersRoute.name);
+    },
+  );
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/2214
   // The reporter's comment: pushAll with the same routes does the same.
-  testWidgets('pushAll with two routes of a nested router opens both in one nested router', (tester) async {
-    final dashboard = await openDashboard(tester);
+  testWidgets(
+    'pushAll with two routes of a nested router opens both in one nested router',
+    (tester) async {
+      final dashboard = await openDashboard(tester);
 
-    unawaited(dashboard.pushAll([const _UsersRoute(), const _UserRoute(userId: 1)]));
-    await tester.pumpAndSettle();
-    expect(dashboard.stack.map((p) => p.name), [_MetricsRoute.name, _kUsersShell]);
-    final shell = dashboard.innerRouterOf<StackRouter>(_kUsersShell)!;
-    expect(shell.stack.map((p) => p.name), [_UsersRoute.name, _UserRoute.name]);
-    expectTopPage(router, _UserRoute.name);
-  });
+      unawaited(
+        dashboard.pushAll([const _UsersRoute(), const _UserRoute(userId: 1)]),
+      );
+      await tester.pumpAndSettle();
+      expect(dashboard.stack.map((p) => p.name), [
+        _MetricsRoute.name,
+        _kUsersShell,
+      ]);
+      final shell = dashboard.innerRouterOf<StackRouter>(_kUsersShell)!;
+      expect(shell.stack.map((p) => p.name), [
+        _UsersRoute.name,
+        _UserRoute.name,
+      ]);
+      expectTopPage(router, _UserRoute.name);
+    },
+  );
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/2214
   // Routes that name their parent explicitly still open one parent each.
-  testWidgets('pushAll keeps a parent the caller names for each route', (tester) async {
+  testWidgets('pushAll keeps a parent the caller names for each route', (
+    tester,
+  ) async {
     final dashboard = await openDashboard(tester);
 
     unawaited(
       dashboard.pushAll([
         const PageRouteInfo(_kUsersShell, initialChildren: [_UsersRoute()]),
-        const PageRouteInfo(_kUsersShell, initialChildren: [_UserRoute(userId: 1)]),
+        const PageRouteInfo(
+          _kUsersShell,
+          initialChildren: [_UserRoute(userId: 1)],
+        ),
       ]),
     );
     await tester.pumpAndSettle();
-    expect(dashboard.stack.map((p) => p.name), [_MetricsRoute.name, _kUsersShell, _kUsersShell]);
+    expect(dashboard.stack.map((p) => p.name), [
+      _MetricsRoute.name,
+      _kUsersShell,
+      _kUsersShell,
+    ]);
   });
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/2214
   // Only a stack opens listed routes in one nested router. A tabs router whose
   // routes are [UsersRoute(), UserRoute()] shows two tabs, each in its own
   // copy of the shell.
-  testWidgets('a tabs router keeps two tabs of one nested router as two tabs', (tester) async {
+  testWidgets('a tabs router keeps two tabs of one nested router as two tabs', (
+    tester,
+  ) async {
     final tabsApp = RootStackRouter.build(
       routes: [
         AutoRoute(
@@ -124,27 +157,37 @@ const _kUsersShell = 'UsersSellRoute';
 
 abstract final class _BootRoute {
   static const String name = 'BootRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text(name)),
+  );
 }
 
 class _DashboardRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'DashboardRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: AutoRouter()));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: AutoRouter()),
+  );
 }
 
 abstract final class _TabsRoute {
   static const String name = 'TabsRoute';
   static final PageInfo page = PageInfo(
     name,
-    builder: (_) => const AutoTabsRouter(routes: [_UsersRoute(), _UserRoute(userId: 1)]),
+    builder: (_) =>
+        const AutoTabsRouter(routes: [_UsersRoute(), _UserRoute(userId: 1)]),
   );
 }
 
 abstract final class _MetricsRoute {
   static const String name = 'MetricsRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text(name)),
+  );
 }
 
 class _UsersRoute extends PageRouteInfo<void> {

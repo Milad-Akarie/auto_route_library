@@ -30,7 +30,9 @@ void main() {
   };
 
   for (final MapEntry(key: name, value: back) in backs.entries) {
-    testWidgets('$name in the frame replaceAll lands keeps the new page', (tester) async {
+    testWidgets('$name in the frame replaceAll lands keeps the new page', (
+      tester,
+    ) async {
       await pumpRouterApp(tester, router);
       unawaited(router.push(const PageRouteInfo('Second')));
       await tester.pumpAndSettle();
@@ -43,10 +45,13 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(tester.takeException(), isNull);
-      expect(router.stack.map((page) => page.routeData.name), ['Home'], reason: 'after back(tester)');
+      expect(router.stack.map((page) => page.routeData.name), [
+        'Home',
+      ], reason: 'after back(tester)');
       expectTopPage(router, 'Home');
     });
   }
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));

@@ -38,31 +38,55 @@ void main() {
   // Steps, as in the reporter's app: navigate from '/' to the tabs page, tap
   // the second tab, press the browser's back button, then its forward button.
   // Should: each button shows the tab its url names.
-  testWidgets('With includePrefixMatches on web, the browser back and forward buttons switch tabs', (tester) async {
-    await pumpRouterConfigApp(tester, router.config(includePrefixMatches: true));
-    await settleBrowser(tester);
-    unawaited(router.navigate(const _TabsRoute()));
-    await settleBrowser(tester);
-    expect(browserPath, '/tabs/tab-1');
-    await tester.tap(find.text('Show tab 2'));
-    await settleBrowser(tester);
-    expect(browserPath, '/tabs/tab-2');
-    expect(find.text('Tab 2'), findsOneWidget);
+  testWidgets(
+    'With includePrefixMatches on web, the browser back and forward buttons switch tabs',
+    (tester) async {
+      await pumpRouterConfigApp(
+        tester,
+        router.config(includePrefixMatches: true),
+      );
+      await settleBrowser(tester);
+      unawaited(router.navigate(const _TabsRoute()));
+      await settleBrowser(tester);
+      expect(browserPath, '/tabs/tab-1');
+      await tester.tap(find.text('Show tab 2'));
+      await settleBrowser(tester);
+      expect(browserPath, '/tabs/tab-2');
+      expect(find.text('Tab 2'), findsOneWidget);
 
-    await pressBrowserBack(tester);
-    expect(browserPath, '/tabs/tab-1', reason: 'after pressBrowserBack(tester)');
-    expect(find.text('Tab 1'), findsOneWidget);
-    expect(router.stack.map((p) => p.name), [_HomeRoute.name, _TabsRoute.name]);
+      await pressBrowserBack(tester);
+      expect(
+        browserPath,
+        '/tabs/tab-1',
+        reason: 'after pressBrowserBack(tester)',
+      );
+      expect(find.text('Tab 1'), findsOneWidget);
+      expect(router.stack.map((p) => p.name), [
+        _HomeRoute.name,
+        _TabsRoute.name,
+      ]);
 
-    await browserMove(tester, () => window.history.forward());
-    expect(browserPath, '/tabs/tab-2', reason: 'after browserMove(tester, () => window.history.forward())');
-    expect(find.text('Tab 2'), findsOneWidget, reason: 'after browserMove(tester, () => window.history.forward())');
-  });
+      await browserMove(tester, () => window.history.forward());
+      expect(
+        browserPath,
+        '/tabs/tab-2',
+        reason: 'after browserMove(tester, () => window.history.forward())',
+      );
+      expect(
+        find.text('Tab 2'),
+        findsOneWidget,
+        reason: 'after browserMove(tester, () => window.history.forward())',
+      );
+    },
+  );
 }
 
 abstract final class _HomeRoute {
   static const String name = 'HomeRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text('Home')),
+  );
 }
 
 class _TabsRoute extends PageRouteInfo<void> {
@@ -76,7 +100,10 @@ class _TabsRoute extends PageRouteInfo<void> {
         routes: const [_Tab1Route(), _Tab2Route()],
         builder: (context, child, tabController) => Column(
           children: [
-            TextButton(onPressed: () => tabController.animateTo(1), child: const Text('Show tab 2')),
+            TextButton(
+              onPressed: () => tabController.animateTo(1),
+              child: const Text('Show tab 2'),
+            ),
             Expanded(child: child),
           ],
         ),
@@ -89,12 +116,18 @@ class _Tab1Route extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'Tab1Route';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Text('Tab 1'));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Text('Tab 1'),
+  );
 }
 
 class _Tab2Route extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'Tab2Route';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Text('Tab 2'));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Text('Tab 2'),
+  );
 }

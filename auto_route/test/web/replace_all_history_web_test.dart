@@ -20,7 +20,9 @@ void main() {
   // Open FirstRoute, replaceAll with SecondRoute, then replaceAll with
   // FirstRoute: each replaces the browser's entry, so no back step leads to
   // the page left. navigate() adds an entry, as a link does.
-  testWidgets('replaceAll on web leaves no browser entry to go back to', (tester) async {
+  testWidgets('replaceAll on web leaves no browser entry to go back to', (
+    tester,
+  ) async {
     final router = SimpleRouter();
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);

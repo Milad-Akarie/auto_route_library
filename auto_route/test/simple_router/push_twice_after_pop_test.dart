@@ -27,7 +27,10 @@ void main() {
 
     expect(_events, ['initState', 'dispose', 'initState']);
     expect(find.text(_counted.name), findsOneWidget);
-    expect(router.stack.map((page) => page.routeData.name), ['A', _counted.name]);
+    expect(router.stack.map((page) => page.routeData.name), [
+      'A',
+      _counted.name,
+    ]);
   });
 
   testWidgets("push, pop, push in a tab's stack shows one B", (tester) async {
@@ -36,7 +39,9 @@ void main() {
         AutoRoute(
           page: PageInfo(
             'TabsScreen',
-            builder: (_) => const AutoTabsRouter(routes: [PageRouteInfo('HomeTab'), PageRouteInfo('Profile')]),
+            builder: (_) => const AutoTabsRouter(
+              routes: [PageRouteInfo('HomeTab'), PageRouteInfo('Profile')],
+            ),
           ),
           path: '/',
           children: [
@@ -54,13 +59,18 @@ void main() {
       ],
     );
     await pumpRouterApp(tester, router);
-    final tabStack = router.innerRouterOf<TabsRouter>('TabsScreen')!.innerRouterOf<StackRouter>('HomeTab')!;
+    final tabStack = router
+        .innerRouterOf<TabsRouter>('TabsScreen')!
+        .innerRouterOf<StackRouter>('HomeTab')!;
 
     await _pushPopPush(tester, tabStack);
 
     expect(_events, ['initState', 'dispose', 'initState']);
     expect(find.text(_counted.name), findsOneWidget);
-    expect(tabStack.stack.map((page) => page.routeData.name), ['A', _counted.name]);
+    expect(tabStack.stack.map((page) => page.routeData.name), [
+      'A',
+      _counted.name,
+    ]);
   });
 }
 
@@ -102,4 +112,5 @@ class _CountedPageState extends State<_CountedPage> {
   Widget build(BuildContext context) => const Scaffold(body: Text('B'));
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));

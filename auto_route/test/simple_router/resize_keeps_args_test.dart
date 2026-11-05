@@ -17,35 +17,48 @@ class _Sauce {
 // Steps: push a page with an argument, resize the window.
 // Should: the page builds again with the same argument.
 void main() {
-  testWidgets('A page keeps its arguments when the window is resized (flutter/flutter#163140)', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('HomeRoute', builder: (_) => const Text('HomeRoute')),
+  testWidgets(
+    'A page keeps its arguments when the window is resized (flutter/flutter#163140)',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => const Text('HomeRoute'),
+            ),
+          ),
+          AutoRoute(
+            path: '/sauce',
+            page: PageInfo(
+              'SauceRoute',
+              builder: (data) => Text('Sauce ${data.argsAs<_Sauce>().name}'),
+            ),
+          ),
+        ],
+      );
+      addTearDown(tester.view.reset);
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(800, 600);
+      await pumpRouterApp(tester, router);
+      unawaited(
+        router.push(
+          const NamedRoute<_Sauce>('SauceRoute', args: _Sauce('mustard')),
         ),
-        AutoRoute(
-          path: '/sauce',
-          page: PageInfo('SauceRoute', builder: (data) => Text('Sauce ${data.argsAs<_Sauce>().name}')),
-        ),
-      ],
-    );
-    addTearDown(tester.view.reset);
-    tester.view.devicePixelRatio = 1;
-    tester.view.physicalSize = const Size(800, 600);
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(const NamedRoute<_Sauce>('SauceRoute', args: _Sauce('mustard'))));
-    await tester.pumpAndSettle();
-    expect(find.text('Sauce mustard'), findsOneWidget);
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Sauce mustard'), findsOneWidget);
 
-    tester.view.physicalSize = const Size(1200, 600);
-    await tester.pumpAndSettle();
+      tester.view.physicalSize = const Size(1200, 600);
+      await tester.pumpAndSettle();
 
-    expect(tester.takeException(), isNull);
-    expect(
-      find.text('Sauce mustard'),
-      findsOneWidget,
-      reason: 'after tester.view.physicalSize = const Size(1200, 600)',
-    );
-  });
+      expect(tester.takeException(), isNull);
+      expect(
+        find.text('Sauce mustard'),
+        findsOneWidget,
+        reason: 'after tester.view.physicalSize = const Size(1200, 600)',
+      );
+    },
+  );
 }

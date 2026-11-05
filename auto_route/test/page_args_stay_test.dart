@@ -27,66 +27,87 @@ PageInfo _argsPage(String name) => .new(
 void main() {
   setUp(_builds.clear);
 
-  testWidgets('A parent and its child in a shell keep their own args when the child is popped', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('HomeRoute', builder: (_) => const Text('HomeRoute')),
-        ),
-        AutoRoute(
-          path: '/shell',
-          page: PageInfo('ShellRoute', builder: (_) => const AutoRouter()),
-          children: [
-            AutoRoute(path: 'parent', page: _argsPage('ParentRoute')),
-            AutoRoute(path: 'child', page: _argsPage('ChildRoute')),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterConfigApp(tester, router.config());
-    unawaited(router.push(const NamedRoute('ShellRoute', children: [NamedRoute('ParentRoute', args: 'p')])));
-    await tester.pumpAndSettle();
-    final inner = router.innerRouterOf<StackRouter>('ShellRoute')!;
-    unawaited(inner.push(const NamedRoute('ChildRoute', args: 'c')));
-    await tester.pumpAndSettle();
-    expect(find.text('ChildRoute c'), findsOneWidget);
-
-    await router.maybePopTop();
-    await tester.pumpAndSettle();
-    expect(find.text('ParentRoute p'), findsOneWidget);
-  });
-
-  testWidgets('A tab page keeps its args, and is built once, when the user leaves the tab and returns', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo(
-            'TabsRoute',
-            builder: (_) => const AutoTabsScaffold(
-              routes: [
-                NamedRoute('ARoute'),
-                NamedRoute('BRoute', args: 'b'),
-              ],
+  testWidgets(
+    'A parent and its child in a shell keep their own args when the child is popped',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => const Text('HomeRoute'),
             ),
           ),
-          children: [
-            AutoRoute(path: 'a', page: _argsPage('ARoute')),
-            AutoRoute(path: 'b', page: _argsPage('BRoute')),
-          ],
+          AutoRoute(
+            path: '/shell',
+            page: PageInfo('ShellRoute', builder: (_) => const AutoRouter()),
+            children: [
+              AutoRoute(path: 'parent', page: _argsPage('ParentRoute')),
+              AutoRoute(path: 'child', page: _argsPage('ChildRoute')),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterConfigApp(tester, router.config());
+      unawaited(
+        router.push(
+          const NamedRoute(
+            'ShellRoute',
+            children: [NamedRoute('ParentRoute', args: 'p')],
+          ),
         ),
-      ],
-    );
-    await pumpRouterConfigApp(tester, router.config());
-    final tabs = router.innerRouterOf<TabsRouter>('TabsRoute')!..setActiveIndex(1);
-    await tester.pumpAndSettle();
-    expect(find.text('BRoute b'), findsOneWidget);
-    tabs.setActiveIndex(0);
-    await tester.pumpAndSettle();
-    tabs.setActiveIndex(1);
-    await tester.pumpAndSettle();
-    expect(find.text('BRoute b'), findsOneWidget, reason: 'after tabs.setActiveIndex(1)');
-    expect(_builds.where((n) => n == 'BRoute'), hasLength(1));
-  });
+      );
+      await tester.pumpAndSettle();
+      final inner = router.innerRouterOf<StackRouter>('ShellRoute')!;
+      unawaited(inner.push(const NamedRoute('ChildRoute', args: 'c')));
+      await tester.pumpAndSettle();
+      expect(find.text('ChildRoute c'), findsOneWidget);
+
+      await router.maybePopTop();
+      await tester.pumpAndSettle();
+      expect(find.text('ParentRoute p'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'A tab page keeps its args, and is built once, when the user leaves the tab and returns',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'TabsRoute',
+              builder: (_) => const AutoTabsScaffold(
+                routes: [
+                  NamedRoute('ARoute'),
+                  NamedRoute('BRoute', args: 'b'),
+                ],
+              ),
+            ),
+            children: [
+              AutoRoute(path: 'a', page: _argsPage('ARoute')),
+              AutoRoute(path: 'b', page: _argsPage('BRoute')),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterConfigApp(tester, router.config());
+      final tabs = router.innerRouterOf<TabsRouter>('TabsRoute')!
+        ..setActiveIndex(1);
+      await tester.pumpAndSettle();
+      expect(find.text('BRoute b'), findsOneWidget);
+      tabs.setActiveIndex(0);
+      await tester.pumpAndSettle();
+      tabs.setActiveIndex(1);
+      await tester.pumpAndSettle();
+      expect(
+        find.text('BRoute b'),
+        findsOneWidget,
+        reason: 'after tabs.setActiveIndex(1)',
+      );
+      expect(_builds.where((n) => n == 'BRoute'), hasLength(1));
+    },
+  );
 }

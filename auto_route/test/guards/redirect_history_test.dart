@@ -26,13 +26,18 @@ void main() {
         initial: true,
         guards: [
           AutoRouteGuard.simple((resolver, _) {
-            unawaited(resolver.redirectUntil(NamedRoute('RouteARedirected', args: resolver.next)));
+            unawaited(
+              resolver.redirectUntil(
+                NamedRoute('RouteARedirected', args: resolver.next),
+              ),
+            );
           }),
         ],
         builder: (context, _) => Scaffold(
           body: Center(
             child: ElevatedButton(
-              onPressed: () => context.router.replace(const NamedRoute('RouteC')),
+              onPressed: () =>
+                  context.router.replace(const NamedRoute('RouteC')),
               child: const Text('Go to Page C (replace)'),
             ),
           ),
@@ -51,7 +56,12 @@ void main() {
         guards: [
           AutoRouteGuard.simple((resolver, _) {
             unawaited(
-              resolver.redirectUntil(NamedRoute('RouteCRedirected', args: () => resolver.reject(goBack: true))),
+              resolver.redirectUntil(
+                NamedRoute(
+                  'RouteCRedirected',
+                  args: () => resolver.reject(goBack: true),
+                ),
+              ),
             );
           }),
         ],
@@ -61,31 +71,48 @@ void main() {
         name: 'RouteCRedirected',
         builder: (_, data) => Scaffold(
           body: Center(
-            child: ElevatedButton(onPressed: data.args! as VoidCallback, child: const Text('Go back')),
+            child: ElevatedButton(
+              onPressed: data.args! as VoidCallback,
+              child: const Text('Go back'),
+            ),
           ),
         ),
       ),
     ],
   );
 
-  testWidgets('A resolved redirect leaves no history entry for back() to return to (#2331)', (tester) async {
-    final router = buildRouter();
-    await pumpRouterConfigApp(tester, router.config());
-    expect(router.stack.map((e) => e.routeData.name), ['RouteA']);
-    // The redirect page left no entry behind, so there is nothing to go back to.
-    expect(router.canNavigateBack, isFalse);
+  testWidgets(
+    'A resolved redirect leaves no history entry for back() to return to (#2331)',
+    (tester) async {
+      final router = buildRouter();
+      await pumpRouterConfigApp(tester, router.config());
+      expect(router.stack.map((e) => e.routeData.name), ['RouteA']);
+      // The redirect page left no entry behind, so there is nothing to go back to.
+      expect(router.canNavigateBack, isFalse);
 
-    await tester.tap(find.text('Go to Page C (replace)'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Go back'));
-    await tester.pumpAndSettle();
-    expect(find.text('Go to Page C (replace)'), findsOneWidget);
-    expect(router.canNavigateBack, isFalse, reason: 'after tester.tap(find.text(Go back))');
+      await tester.tap(find.text('Go to Page C (replace)'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Go back'));
+      await tester.pumpAndSettle();
+      expect(find.text('Go to Page C (replace)'), findsOneWidget);
+      expect(
+        router.canNavigateBack,
+        isFalse,
+        reason: 'after tester.tap(find.text(Go back))',
+      );
 
-    // A second back() has nowhere to go, rather than reopening RouteARedirected.
-    router.back();
-    await tester.pumpAndSettle();
-    expect(router.stack.map((e) => e.routeData.name), ['RouteA'], reason: 'after router.back()');
-    expect(find.text('Go to Page C (replace)'), findsOneWidget, reason: 'after router.back()');
-  }, skip: kIsWeb); // on web, back() moves the browser's own history; see test/web/redirect_history_web_test.dart
+      // A second back() has nowhere to go, rather than reopening RouteARedirected.
+      router.back();
+      await tester.pumpAndSettle();
+      expect(router.stack.map((e) => e.routeData.name), [
+        'RouteA',
+      ], reason: 'after router.back()');
+      expect(
+        find.text('Go to Page C (replace)'),
+        findsOneWidget,
+        reason: 'after router.back()',
+      );
+    },
+    skip: kIsWeb,
+  ); // on web, back() moves the browser's own history; see test/web/redirect_history_web_test.dart
 }

@@ -9,7 +9,12 @@ import 'package:material_ui/material_ui.dart';
 // answer false, so Android handles back, and not throw.
 void main() {
   RootStackRouter buildRouter() => .build(
-    routes: [AutoRoute(page: PageInfo('Home', builder: (_) => const Text('Home')), initial: true)],
+    routes: [
+      AutoRoute(
+        page: PageInfo('Home', builder: (_) => const Text('Home')),
+        initial: true,
+      ),
+    ],
   );
 
   testWidgets('popRoute before the first frame answers false', (tester) async {

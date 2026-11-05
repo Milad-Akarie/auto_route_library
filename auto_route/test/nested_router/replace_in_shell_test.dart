@@ -13,7 +13,9 @@ import '../router_test_utils.dart';
 // router, with no error, and the url is '/two'. Then pop: nothing is left to
 // pop in the nested router, so the app stays on TwoRoute.
 void main() {
-  testWidgets('Replacing a page inside a shell route shows the new page', (tester) async {
+  testWidgets('Replacing a page inside a shell route shows the new page', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         NamedRouteDef(
@@ -27,7 +29,8 @@ void main() {
               initial: true,
               builder: (context, _) => Scaffold(
                 body: ElevatedButton(
-                  onPressed: () => context.router.replace(const NamedRoute('TwoRoute')),
+                  onPressed: () =>
+                      context.router.replace(const NamedRoute('TwoRoute')),
                   child: const Text('navigate'),
                 ),
               ),
@@ -59,6 +62,10 @@ void main() {
       findsOneWidget,
       reason: 'after final shellRouter = router.innerRouterOf<StackRouter>(Sh',
     );
-    expect(tester.takeException(), isNull, reason: 'after final shellRouter = router.innerRouterOf<StackRouter>(Sh');
+    expect(
+      tester.takeException(),
+      isNull,
+      reason: 'after final shellRouter = router.innerRouterOf<StackRouter>(Sh',
+    );
   });
 }

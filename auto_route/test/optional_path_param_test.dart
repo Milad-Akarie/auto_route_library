@@ -24,17 +24,22 @@ void main() {
         path: '/retro-games/:consoleId',
         page: PageInfo(
           'Games',
-          builder: (data) => Text('console ${data.inheritedPathParams.optInt('consoleId') ?? 'null'}'),
+          builder: (data) => Text(
+            'console ${data.inheritedPathParams.optInt('consoleId') ?? 'null'}',
+          ),
         ),
       ),
     ],
   );
 
-  PageRouteInfo gamesRoute([int? consoleId]) => .new('Games', rawPathParams: {'consoleId': consoleId});
+  PageRouteInfo gamesRoute([int? consoleId]) =>
+      .new('Games', rawPathParams: {'consoleId': consoleId});
 
   // Steps: push the games route without a console id.
   // Should: no crash; the page opens with a null id, at /retro-games.
-  testWidgets('a route pushed without its nullable path param opens', (tester) async {
+  testWidgets('a route pushed without its nullable path param opens', (
+    tester,
+  ) async {
     final router = gamesRouter();
     await pumpRouterApp(tester, router);
     unawaited(router.push(gamesRoute()));

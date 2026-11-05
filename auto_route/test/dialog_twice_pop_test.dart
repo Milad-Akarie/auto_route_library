@@ -13,41 +13,50 @@ import 'router_test_utils.dart';
 // again, close it with router.pop() again.
 // Should: no error, and the dialog is gone each time.
 void main() {
-  testWidgets('A dialog shown and closed twice with router.pop closes both times without an error', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('HomeRoute', builder: (_) => const Text('HomeRoute')),
-        ),
-        AutoRoute(
-          path: '/settings',
-          page: PageInfo(
-            'SettingsRoute',
-            builder: (_) => Builder(
-              builder: (context) => TextButton(
-                onPressed: () => showDialog<void>(context: context, builder: (_) => const Text('Dialog')),
-                child: const Text('Show'),
+  testWidgets(
+    'A dialog shown and closed twice with router.pop closes both times without an error',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => const Text('HomeRoute'),
+            ),
+          ),
+          AutoRoute(
+            path: '/settings',
+            page: PageInfo(
+              'SettingsRoute',
+              builder: (_) => Builder(
+                builder: (context) => TextButton(
+                  onPressed: () => showDialog<void>(
+                    context: context,
+                    builder: (_) => const Text('Dialog'),
+                  ),
+                  child: const Text('Show'),
+                ),
               ),
             ),
           ),
-        ),
-      ],
-    );
-    await pumpRouterConfigApp(tester, router.config());
-    unawaited(router.push(const NamedRoute('SettingsRoute')));
-    await tester.pumpAndSettle();
+        ],
+      );
+      await pumpRouterConfigApp(tester, router.config());
+      unawaited(router.push(const NamedRoute('SettingsRoute')));
+      await tester.pumpAndSettle();
 
-    for (var i = 0; i < 2; i++) {
-      await tester.tap(find.text('Show'));
-      await tester.pumpAndSettle();
-      expect(find.text('Dialog'), findsOneWidget);
-      router.pop();
-      await tester.pumpAndSettle();
-      expect(find.text('Dialog'), findsNothing);
-      expect(find.text('Show'), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    }
-    expect(router.currentUrl, '/settings');
-  });
+      for (var i = 0; i < 2; i++) {
+        await tester.tap(find.text('Show'));
+        await tester.pumpAndSettle();
+        expect(find.text('Dialog'), findsOneWidget);
+        router.pop();
+        await tester.pumpAndSettle();
+        expect(find.text('Dialog'), findsNothing);
+        expect(find.text('Show'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      }
+      expect(router.currentUrl, '/settings');
+    },
+  );
 }

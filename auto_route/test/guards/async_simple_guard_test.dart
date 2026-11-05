@@ -12,43 +12,52 @@ import 'package:material_ui/material_ui.dart';
 // Should: the re-check waits for the running callback, which runs once, and
 // the guarded page opens.
 void main() {
-  testWidgets('a guard re-check waits for an async simple guard still running', (tester) async {
-    tester.binding.platformDispatcher.defaultRouteNameTestValue = '/profile';
-    addTearDown(tester.binding.platformDispatcher.clearDefaultRouteNameTestValue);
-    var guardCalls = 0;
-    final auth = ValueNotifier(0);
-    addTearDown(auth.dispose);
-    final router = RootStackRouter.build(
-      routes: [
-        NamedRouteDef(
-          name: 'HomeRoute',
-          path: '/',
-          builder: (_, _) => const Scaffold(body: Text('HomeRoute')),
-        ),
-        NamedRouteDef(
-          name: 'ProfileRoute',
-          path: '/profile',
-          guards: [
-            AutoRouteGuard.simple((resolver, _) async {
-              guardCalls++;
-              await Future<void>.delayed(const Duration(milliseconds: 100));
-              resolver.next();
-            }),
-          ],
-          builder: (_, _) => const Scaffold(body: Text('ProfileRoute')),
-        ),
-      ],
-    );
-    addTearDown(router.dispose);
+  testWidgets(
+    'a guard re-check waits for an async simple guard still running',
+    (tester) async {
+      tester.binding.platformDispatcher.defaultRouteNameTestValue = '/profile';
+      addTearDown(
+        tester.binding.platformDispatcher.clearDefaultRouteNameTestValue,
+      );
+      var guardCalls = 0;
+      final auth = ValueNotifier(0);
+      addTearDown(auth.dispose);
+      final router = RootStackRouter.build(
+        routes: [
+          NamedRouteDef(
+            name: 'HomeRoute',
+            path: '/',
+            builder: (_, _) => const Scaffold(body: Text('HomeRoute')),
+          ),
+          NamedRouteDef(
+            name: 'ProfileRoute',
+            path: '/profile',
+            guards: [
+              AutoRouteGuard.simple((resolver, _) async {
+                guardCalls++;
+                await Future<void>.delayed(const Duration(milliseconds: 100));
+                resolver.next();
+              }),
+            ],
+            builder: (_, _) => const Scaffold(body: Text('ProfileRoute')),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
 
-    await tester.pumpWidget(MaterialApp.router(routerConfig: router.config(reevaluateListenable: auth)));
-    auth.value++;
-    await tester.pump(const Duration(milliseconds: 200));
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: router.config(reevaluateListenable: auth),
+        ),
+      );
+      auth.value++;
+      await tester.pump(const Duration(milliseconds: 200));
+      await tester.pumpAndSettle();
 
-    expect(tester.takeException(), isNull);
-    expect(guardCalls, 1);
-    expect(router.topRoute.name, 'ProfileRoute');
-    expect(find.text('ProfileRoute'), findsOneWidget);
-  });
+      expect(tester.takeException(), isNull);
+      expect(guardCalls, 1);
+      expect(router.topRoute.name, 'ProfileRoute');
+      expect(find.text('ProfileRoute'), findsOneWidget);
+    },
+  );
 }

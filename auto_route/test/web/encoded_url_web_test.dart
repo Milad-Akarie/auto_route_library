@@ -31,10 +31,14 @@ void main() {
   // Push a page whose path param and query param are '123#456#789', then
   // refresh the browser. The address bar should hold '#' encoded, so the
   // refreshed page reads the whole '123#456#789', not '123'.
-  testWidgets('On web, a "#" in a path param survives a refresh', (tester) async {
+  testWidgets('On web, a "#" in a path param survives a refresh', (
+    tester,
+  ) async {
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
-    unawaited(router.push(_SecondsRoute(id: '123#456#789', query: '123#456#789')));
+    unawaited(
+      router.push(_SecondsRoute(id: '123#456#789', query: '123#456#789')),
+    );
     await settleBrowser(tester);
     expect(find.text('id 123#456#789, query 123#456#789'), findsOneWidget);
     expect(browserPath, '/seconds/123%23456%23789?query=123%23456%23789');
@@ -50,34 +54,40 @@ void main() {
   // https://github.com/Milad-Akarie/auto_route_library/issues/1812
   // The same with the app built from routerDelegate and routeInformationParser,
   // which leaves reporting urls to Flutter's own route information provider.
-  testWidgets('On web, a "#" in a path param survives a refresh with Flutter\'s route information provider', (
-    tester,
-  ) async {
-    await pumpRouterApp(tester, router);
-    await settleBrowser(tester);
-    unawaited(router.push(_SecondsRoute(id: '123#456#789', query: '123#456#789')));
-    await settleBrowser(tester);
-    expect(browserPath, '/seconds/123%23456%23789?query=123%23456%23789');
-  });
+  testWidgets(
+    'On web, a "#" in a path param survives a refresh with Flutter\'s route information provider',
+    (tester) async {
+      await pumpRouterApp(tester, router);
+      await settleBrowser(tester);
+      unawaited(
+        router.push(_SecondsRoute(id: '123#456#789', query: '123#456#789')),
+      );
+      await settleBrowser(tester);
+      expect(browserPath, '/seconds/123%23456%23789?query=123%23456%23789');
+    },
+  );
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/2070#issuecomment-3808830262
   // Push a page whose query param holds '&', '=', '/', '?' and '#', push another
   // page, then press the browser's back button. The address bar should keep the
   // query param encoded, so it still reads back whole.
-  testWidgets('On web, a query param keeps its reserved characters encoded after the back button', (tester) async {
-    await pumpRouterConfigApp(tester, router.config());
-    await settleBrowser(tester);
-    unawaited(router.push(_SecondsRoute(id: '1', query: 'a&b=c/d?e#f')));
-    await settleBrowser(tester);
-    const encoded = '/seconds/1?query=a%26b%3Dc%2Fd%3Fe%23f';
-    expect(browserPath, encoded);
-    unawaited(router.push(const SecondRoute()));
-    await settleBrowser(tester);
+  testWidgets(
+    'On web, a query param keeps its reserved characters encoded after the back button',
+    (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
+      await settleBrowser(tester);
+      unawaited(router.push(_SecondsRoute(id: '1', query: 'a&b=c/d?e#f')));
+      await settleBrowser(tester);
+      const encoded = '/seconds/1?query=a%26b%3Dc%2Fd%3Fe%23f';
+      expect(browserPath, encoded);
+      unawaited(router.push(const SecondRoute()));
+      await settleBrowser(tester);
 
-    await pressBrowserBack(tester);
-    expect(find.text('id 1, query a&b=c/d?e#f'), findsOneWidget);
-    expect(browserPath, encoded, reason: 'after pressBrowserBack(tester)');
-  });
+      await pressBrowserBack(tester);
+      expect(find.text('id 1, query a&b=c/d?e#f'), findsOneWidget);
+      expect(browserPath, encoded, reason: 'after pressBrowserBack(tester)');
+    },
+  );
 
   // flutter/flutter#186052: the browser's back button stopped working once a
   // path param held a ':', or another character that encodeComponent encodes.
@@ -86,64 +96,73 @@ void main() {
   // should show the page before, with its param whole, and the last one the
   // first page. The same route with other params is what broke it here, not
   // the characters.
-  testWidgets('On web, the back button walks back through one route pushed with different params', (tester) async {
-    await pumpRouterConfigApp(tester, router.config());
-    await settleBrowser(tester);
-    final start = browserSerialCount;
-    const ids = ['some:information:blabla', 'a@b', 'a+b c'];
-    for (final id in ids) {
-      unawaited(router.push(_SecondsRoute(id: id)));
+  testWidgets(
+    'On web, the back button walks back through one route pushed with different params',
+    (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
       await settleBrowser(tester);
-    }
-    expect(browserSerialCount, start + 3);
+      final start = browserSerialCount;
+      const ids = ['some:information:blabla', 'a@b', 'a+b c'];
+      for (final id in ids) {
+        unawaited(router.push(_SecondsRoute(id: id)));
+        await settleBrowser(tester);
+      }
+      expect(browserSerialCount, start + 3);
 
-    for (final id in ids.reversed.skip(1)) {
+      for (final id in ids.reversed.skip(1)) {
+        await pressBrowserBack(tester);
+        expect(find.text('id $id, query null'), findsOneWidget);
+      }
       await pressBrowserBack(tester);
-      expect(find.text('id $id, query null'), findsOneWidget);
-    }
-    await pressBrowserBack(tester);
-    expectCurrentPage(router, FirstRoute.name);
-    expect(router.stack.map((p) => p.name), [FirstRoute.name]);
-    expect(browserPath, '/');
-    expect(browserSerialCount, start);
-  });
+      expectCurrentPage(router, FirstRoute.name);
+      expect(router.stack.map((p) => p.name), [FirstRoute.name]);
+      expect(browserPath, '/');
+      expect(browserSerialCount, start);
+    },
+  );
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/1812
   // With Flutter's own route information provider, open the app at a deep
   // link whose path param holds an encoded '#'. The browser should keep one
   // history entry for it, as for a link without one; with a second entry, the
   // first back would show the same page again.
-  testWidgets("On web, a deep link to an encoded url adds no history entry with Flutter's route information provider", (
-    tester,
-  ) async {
-    for (final (link, id) in [('/seconds/12', '12'), ('/seconds/1%232', '1#2')]) {
-      await rewindBrowserHistory();
-      openBrowserAt(tester, link);
-      final linkedRouter = RootStackRouter.build(routes: router.routes);
-      addTearDown(linkedRouter.dispose);
-      await pumpAsRunApp(
-        tester,
-        MaterialApp.router(
-          routeInformationParser: linkedRouter.defaultRouteParser(),
-          routerDelegate: linkedRouter.delegate(),
-        ),
-      );
-      expect(find.text('id $id, query null'), findsOneWidget);
-      expect(browserPath, link);
-      expect(browserSerialCount, 0, reason: link);
-      expect(appWroteBrowserEntry, isTrue);
-      await tester.pumpWidget(const SizedBox());
-    }
-  });
+  testWidgets(
+    "On web, a deep link to an encoded url adds no history entry with Flutter's route information provider",
+    (tester) async {
+      for (final (link, id) in [
+        ('/seconds/12', '12'),
+        ('/seconds/1%232', '1#2'),
+      ]) {
+        await rewindBrowserHistory();
+        openBrowserAt(tester, link);
+        final linkedRouter = RootStackRouter.build(routes: router.routes);
+        addTearDown(linkedRouter.dispose);
+        await pumpAsRunApp(
+          tester,
+          MaterialApp.router(
+            routeInformationParser: linkedRouter.defaultRouteParser(),
+            routerDelegate: linkedRouter.delegate(),
+          ),
+        );
+        expect(find.text('id $id, query null'), findsOneWidget);
+        expect(browserPath, link);
+        expect(browserSerialCount, 0, reason: link);
+        expect(appWroteBrowserEntry, isTrue);
+        await tester.pumpWidget(const SizedBox());
+      }
+    },
+  );
 }
 
 class _SecondsRoute extends PageRouteInfo<void> {
-  new({required String id, String? query}) : super(name, rawPathParams: {'id': id}, rawQueryParams: {'query': query});
+  new({required String id, String? query})
+    : super(name, rawPathParams: {'id': id}, rawQueryParams: {'query': query});
 
   static const String name = 'SecondsRoute';
   static final PageInfo page = PageInfo(
     name,
-    builder: (data) =>
-        Text('id ${data.inheritedPathParams.getString('id')}, query ${data.queryParams.optString('query') ?? 'null'}'),
+    builder: (data) => Text(
+      'id ${data.inheritedPathParams.getString('id')}, query ${data.queryParams.optString('query') ?? 'null'}',
+    ),
   );
 }

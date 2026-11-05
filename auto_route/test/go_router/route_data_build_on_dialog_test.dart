@@ -19,7 +19,9 @@ void main() {
   for (final MapEntry(key: name, value: read) in reads.entries) {
     // Steps: HomeRoute's build calls $name; open showAboutDialog, then close
     // it. Should: HomeRoute is built once, before and after.
-    testWidgets('a page that calls $name in build is not rebuilt by a dialog', (tester) async {
+    testWidgets('a page that calls $name in build is not rebuilt by a dialog', (
+      tester,
+    ) async {
       var builds = 0;
       final router = RootStackRouter.build(
         routes: [
@@ -41,15 +43,27 @@ void main() {
       await pumpRouterApp(tester, router);
       expect(builds, 1);
 
-      showAboutDialog(context: router.navigatorKey.currentContext!, applicationName: 'Sample');
+      showAboutDialog(
+        context: router.navigatorKey.currentContext!,
+        applicationName: 'Sample',
+      );
       await tester.pumpAndSettle();
       expect(find.byType(AboutDialog), findsOneWidget);
-      expect(builds, 1, reason: 'after showAboutDialog(context: router.navigatorKey.currentCont');
+      expect(
+        builds,
+        1,
+        reason:
+            'after showAboutDialog(context: router.navigatorKey.currentCont',
+      );
 
       router.navigatorKey.currentState!.pop();
       await tester.pumpAndSettle();
       expect(find.byType(AboutDialog), findsNothing);
-      expect(builds, 1, reason: 'after router.navigatorKey.currentState!.pop()');
+      expect(
+        builds,
+        1,
+        reason: 'after router.navigatorKey.currentState!.pop()',
+      );
     });
   }
 }

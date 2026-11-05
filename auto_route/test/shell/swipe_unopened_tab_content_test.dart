@@ -12,15 +12,28 @@ import '../router_test_utils.dart';
 // swipe, never blank space.
 void main() {
   for (final (kind, tabsRouter) in [
-    ('AutoTabsRouter.tabBar', () => AutoTabsRouter.tabBar(routes: _kTabs, builder: (context, child, _) => child)),
-    ('AutoTabsRouter.pageView', () => const AutoTabsRouter.pageView(routes: _kTabs)),
+    (
+      'AutoTabsRouter.tabBar',
+      () => AutoTabsRouter.tabBar(
+        routes: _kTabs,
+        builder: (context, child, _) => child,
+      ),
+    ),
+    (
+      'AutoTabsRouter.pageView',
+      () => const AutoTabsRouter.pageView(routes: _kTabs),
+    ),
   ]) {
-    testWidgets('Swiping $kind to a tab never opened shows its page', (tester) async {
+    testWidgets('Swiping $kind to a tab never opened shows its page', (
+      tester,
+    ) async {
       final router = _router(tabsRouter);
       await pumpRouterApp(tester, router);
       expect(find.text('Tab1Route'), findsOneWidget);
 
-      final gesture = await tester.startGesture(tester.getCenter(find.text('Tab1Route')));
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.text('Tab1Route')),
+      );
       await gesture.moveBy(const Offset(-200, 0));
       await tester.pump();
       await gesture.moveBy(const Offset(-300, 0));
@@ -31,7 +44,11 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       expect(router.innerRouterOf<TabsRouter>('TabsRoute')!.activeIndex, 1);
-      expect(find.text('Tab2Route'), findsOneWidget, reason: 'after gesture.up()');
+      expect(
+        find.text('Tab2Route'),
+        findsOneWidget,
+        reason: 'after gesture.up()',
+      );
 
       // And on to the third, also never opened.
       await tester.fling(find.text('Tab2Route'), const Offset(-400, 0), 1000);
@@ -58,7 +75,8 @@ RootStackRouter _router(Widget Function() tabsRouter) => .build(
                 path: '',
                 page: PageInfo(
                   '${tab}Route',
-                  builder: (_) => Scaffold(body: Center(child: Text('${tab}Route'))),
+                  builder: (_) =>
+                      Scaffold(body: Center(child: Text('${tab}Route'))),
                 ),
               ),
             ],

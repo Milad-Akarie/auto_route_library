@@ -19,11 +19,18 @@ void main() {
   // pops DetailsC.
   for (final useRootNavigator in [true, false]) {
     testWidgets('System back closes a dialog over a tab page before the page, '
-        'useRootNavigator: $useRootNavigator (flutter/flutter#146045)', (tester) async {
+        'useRootNavigator: $useRootNavigator (flutter/flutter#146045)', (
+      tester,
+    ) async {
       final router = RootStackRouter.build(
         routes: [
           AutoRoute(
-            page: PageInfo('HomeRoute', builder: (_) => const AutoTabsRouter(routes: [_Route('TabA'), _Route('TabB')])),
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => const AutoTabsRouter(
+                routes: [_Route('TabA'), _Route('TabB')],
+              ),
+            ),
             path: '/',
             children: [
               AutoRoute(
@@ -40,7 +47,9 @@ void main() {
         ],
       );
       await pumpRouterApp(tester, router);
-      final tabA = router.innerRouterOf<TabsRouter>('HomeRoute')!.stackRouterOfIndex(0)!;
+      final tabA = router
+          .innerRouterOf<TabsRouter>('HomeRoute')!
+          .stackRouterOfIndex(0)!;
       unawaited(tabA.push(const _Route('DetailsC')));
       await tester.pumpAndSettle();
 
@@ -63,7 +72,8 @@ void main() {
   }
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
   const new(super.name);

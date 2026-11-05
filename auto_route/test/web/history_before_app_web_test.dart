@@ -34,7 +34,9 @@ void main() {
   // Steps: open the app in a tab with three earlier pages, then navigate to
   // SecondRoute.
   // Should: the history's length is 1, then 2, whatever the tab held before.
-  testWidgets('On web, the history counts only the pages of the app', (tester) async {
+  testWidgets('On web, the history counts only the pages of the app', (
+    tester,
+  ) async {
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
     expect(router.navigationHistory.length, 1);
@@ -50,7 +52,9 @@ void main() {
   // on the app's first page.
   // Should: the browser stays on the app, as the history's doc promises when
   // there is nothing to go back to; a guard's nextOrBack(false) relies on it.
-  testWidgets('On web, back() on the first page of the app does not leave it', (tester) async {
+  testWidgets('On web, back() on the first page of the app does not leave it', (
+    tester,
+  ) async {
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
 

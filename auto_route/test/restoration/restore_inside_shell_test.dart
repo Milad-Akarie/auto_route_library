@@ -18,19 +18,29 @@ void main() {
   ]) {
     for (final userScope in [true, false]) {
       final scope = userScope ? ' wrapped in a RestorationScope' : '';
-      testWidgets('A page in $kind$scope gets its restorable state back', (tester) async {
+      testWidgets('A page in $kind$scope gets its restorable state back', (
+        tester,
+      ) async {
         RootStackRouter buildRouter() => .build(
           routes: [
             AutoRoute(
               path: '/',
               page: PageInfo(
                 'ShellRoute',
-                builder: (_) => userScope ? RestorationScope(restorationId: 'shell_scope', child: shell()) : shell(),
+                builder: (_) => userScope
+                    ? RestorationScope(
+                        restorationId: 'shell_scope',
+                        child: shell(),
+                      )
+                    : shell(),
               ),
               children: [
                 AutoRoute(
                   path: '',
-                  page: PageInfo('CounterRoute', builder: (_) => const _CounterPage()),
+                  page: PageInfo(
+                    'CounterRoute',
+                    builder: (_) => const _CounterPage(),
+                  ),
                 ),
               ],
             ),
@@ -48,7 +58,11 @@ void main() {
         await tester.restartAndRestore();
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
-        expect(find.text('Count 2'), findsOneWidget, reason: 'after tester.restartAndRestore()');
+        expect(
+          find.text('Count 2'),
+          findsOneWidget,
+          reason: 'after tester.restartAndRestore()',
+        );
       }, skip: kIsWeb);
     }
   }
@@ -68,7 +82,8 @@ class _CounterPageState extends State<_CounterPage> with RestorationMixin {
   String get restorationId => 'counter_page';
 
   @override
-  void restoreState(RestorationBucket? oldBucket, bool initialRestore) => registerForRestoration(_count, 'count');
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) =>
+      registerForRestoration(_count, 'count');
 
   @override
   void dispose() {
@@ -78,6 +93,9 @@ class _CounterPageState extends State<_CounterPage> with RestorationMixin {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(onPressed: () => setState(() => _count.value++), child: Text('Count ${_count.value}'));
+    return TextButton(
+      onPressed: () => setState(() => _count.value++),
+      child: Text('Count ${_count.value}'),
+    );
   }
 }

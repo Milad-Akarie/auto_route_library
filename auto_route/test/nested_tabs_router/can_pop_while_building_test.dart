@@ -13,52 +13,66 @@ import '../router_test_utils.dart';
 // false on a lone tab page without throwing, and true once a page is pushed
 // inside a tab.
 void main() {
-  testWidgets('canPop in the app bar builder answers on the first frame and after a push in a tab', (tester) async {
-    final heard = <({bool tabs, bool root})>[];
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          page: PageInfo(
-            'TabsScreen',
-            builder: (_) => AutoTabsScaffold(
-              routes: const [PageRouteInfo('FeedTab'), PageRouteInfo('Profile')],
-              appBarBuilder: (context, tabsRouter) {
-                heard.add((tabs: tabsRouter.canPop(), root: context.router.root.canPop()));
-                return AppBar(title: const Text('Shell'));
-              },
+  testWidgets(
+    'canPop in the app bar builder answers on the first frame and after a push in a tab',
+    (tester) async {
+      final heard = <({bool tabs, bool root})>[];
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            page: PageInfo(
+              'TabsScreen',
+              builder: (_) => AutoTabsScaffold(
+                routes: const [
+                  PageRouteInfo('FeedTab'),
+                  PageRouteInfo('Profile'),
+                ],
+                appBarBuilder: (context, tabsRouter) {
+                  heard.add((
+                    tabs: tabsRouter.canPop(),
+                    root: context.router.root.canPop(),
+                  ));
+                  return AppBar(title: const Text('Shell'));
+                },
+              ),
             ),
+            path: '/',
+            children: [
+              AutoRoute(
+                page: _feedTab,
+                path: 'feed',
+                children: [
+                  AutoRoute(page: _page('FeedList'), path: ''),
+                  AutoRoute(page: _page('FeedPost'), path: 'post'),
+                ],
+              ),
+              AutoRoute(page: _page('Profile'), path: 'profile'),
+            ],
           ),
-          path: '/',
-          children: [
-            AutoRoute(
-              page: _feedTab,
-              path: 'feed',
-              children: [
-                AutoRoute(page: _page('FeedList'), path: ''),
-                AutoRoute(page: _page('FeedPost'), path: 'post'),
-              ],
-            ),
-            AutoRoute(page: _page('Profile'), path: 'profile'),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
+        ],
+      );
+      await pumpRouterApp(tester, router);
 
-    expect(tester.takeException(), isNull);
-    expect(heard.firstOrNull, (tabs: false, root: false));
+      expect(tester.takeException(), isNull);
+      expect(heard.firstOrNull, (tabs: false, root: false));
 
-    unawaited(router.navigatePath('/feed/post'));
-    await tester.pumpAndSettle();
-    heard.clear();
-    // The app bar builds again whenever the tabs router notifies.
-    router.innerRouterOf<TabsRouter>('TabsScreen')!.notifyAll();
-    await tester.pumpAndSettle();
+      unawaited(router.navigatePath('/feed/post'));
+      await tester.pumpAndSettle();
+      heard.clear();
+      // The app bar builds again whenever the tabs router notifies.
+      router.innerRouterOf<TabsRouter>('TabsScreen')!.notifyAll();
+      await tester.pumpAndSettle();
 
-    expect(tester.takeException(), isNull, reason: 'after router.innerRouterOf<TabsRouter>(TabsScreen)!.notifyAll(');
-    expect(router.topRoute.name, 'FeedPost');
-    expect(heard.lastOrNull, (tabs: true, root: true));
-  });
+      expect(
+        tester.takeException(),
+        isNull,
+        reason:
+            'after router.innerRouterOf<TabsRouter>(TabsScreen)!.notifyAll(',
+      );
+      expect(router.topRoute.name, 'FeedPost');
+      expect(heard.lastOrNull, (tabs: true, root: true));
+    },
+  );
 }
 
 final _feedTab = PageInfo('FeedTab', builder: (_) => const AutoRouter());

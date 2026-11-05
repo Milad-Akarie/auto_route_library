@@ -24,7 +24,9 @@ void main() {
   );
 
   // Steps: open the app at '/1'.
-  testWidgets('A deep link to a sibling route builds only that page, once', (tester) async {
+  testWidgets('A deep link to a sibling route builds only that page, once', (
+    tester,
+  ) async {
     final router = buildRouter();
     await pumpAtDeepLink(tester, router, '/1', includePrefixMatches: false);
     expect(router.stack.map((page) => page.name), ['ChildRoute']);
@@ -35,7 +37,9 @@ void main() {
   // rebuilt the page under it.
   // Steps: open the app at '/', push '/1', pop it.
   // Should: the parent builds once in all, the child once.
-  testWidgets('Pushing and popping a page does not rebuild the page under it', (tester) async {
+  testWidgets('Pushing and popping a page does not rebuild the page under it', (
+    tester,
+  ) async {
     final router = buildRouter();
     await pumpAtDeepLink(tester, router, '/', includePrefixMatches: false);
     expect(builds, {'ParentRoute': 1});
@@ -48,6 +52,9 @@ void main() {
     router.pop();
     await tester.pumpAndSettle();
     expectTopPage(router, 'ParentRoute');
-    expect(builds, {'ParentRoute': 1, 'ChildRoute': 1}, reason: 'after router.pop()');
+    expect(builds, {
+      'ParentRoute': 1,
+      'ChildRoute': 1,
+    }, reason: 'after router.pop()');
   });
 }

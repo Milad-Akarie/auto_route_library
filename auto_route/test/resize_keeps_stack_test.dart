@@ -14,38 +14,46 @@ import 'router_test_utils.dart';
 // Steps: push a page above the home page, resize the window.
 // Should: the pushed page is still on top, at the same url, and no guard ran again.
 void main() {
-  testWidgets('Resizing the window keeps the pushed page, its url, and does not run the guards again', (tester) async {
-    var guardCalls = 0;
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(path: '/', page: _page('HomeRoute')),
-        AutoRoute(
-          path: '/details',
-          guards: [
-            AutoRouteGuard.simple((resolver, _) {
-              guardCalls++;
-              resolver.next();
-            }),
-          ],
-          page: _page('DetailsRoute'),
-        ),
-      ],
-    );
-    addTearDown(tester.view.reset);
-    tester.view.devicePixelRatio = 1;
-    tester.view.physicalSize = const Size(800, 600);
-    await pumpRouterConfigApp(tester, router.config());
-    unawaited(router.push(const NamedRoute('DetailsRoute')));
-    await tester.pumpAndSettle();
-    expect(guardCalls, 1);
+  testWidgets(
+    'Resizing the window keeps the pushed page, its url, and does not run the guards again',
+    (tester) async {
+      var guardCalls = 0;
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(path: '/', page: _page('HomeRoute')),
+          AutoRoute(
+            path: '/details',
+            guards: [
+              AutoRouteGuard.simple((resolver, _) {
+                guardCalls++;
+                resolver.next();
+              }),
+            ],
+            page: _page('DetailsRoute'),
+          ),
+        ],
+      );
+      addTearDown(tester.view.reset);
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(800, 600);
+      await pumpRouterConfigApp(tester, router.config());
+      unawaited(router.push(const NamedRoute('DetailsRoute')));
+      await tester.pumpAndSettle();
+      expect(guardCalls, 1);
 
-    tester.view.physicalSize = const Size(1000, 700);
-    await tester.pumpAndSettle();
-    expectTopPage(router, 'DetailsRoute');
-    expect(router.currentUrl, '/details');
-    expect(router.stack, hasLength(2));
-    expect(guardCalls, 1, reason: 'after tester.view.physicalSize = const Size(1000, 700)');
-  });
+      tester.view.physicalSize = const Size(1000, 700);
+      await tester.pumpAndSettle();
+      expectTopPage(router, 'DetailsRoute');
+      expect(router.currentUrl, '/details');
+      expect(router.stack, hasLength(2));
+      expect(
+        guardCalls,
+        1,
+        reason: 'after tester.view.physicalSize = const Size(1000, 700)',
+      );
+    },
+  );
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));

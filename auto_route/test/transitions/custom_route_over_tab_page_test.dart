@@ -15,17 +15,27 @@ void main() {
   // CustomRoute from the root.
   // Should: the page underneath keeps its place and size while the custom
   // page opens and closes.
-  for (final (label, type) in [('material', const RouteType.material()), ('adaptive', const RouteType.adaptive())]) {
-    for (final (name, nested) in [('AlbumSongsRoute', true), ('DialogRoute', false)]) {
-      testWidgets('A $label page under $name, a CustomRoute, does not zoom', (tester) async {
+  for (final (label, type) in [
+    ('material', const RouteType.material()),
+    ('adaptive', const RouteType.adaptive()),
+  ]) {
+    for (final (name, nested) in [
+      ('AlbumSongsRoute', true),
+      ('DialogRoute', false),
+    ]) {
+      testWidgets('A $label page under $name, a CustomRoute, does not zoom', (
+        tester,
+      ) async {
         final router = RootStackRouter.build(
           defaultRouteType: type,
           routes: [
             NamedRouteDef(
               name: 'TabsRoute',
               path: '/',
-              builder: (_, _) =>
-                  AutoTabsRouter.tabBar(routes: const [NamedRoute('LibraryRoute')], builder: (_, child, _) => child),
+              builder: (_, _) => AutoTabsRouter.tabBar(
+                routes: const [NamedRoute('LibraryRoute')],
+                builder: (_, child, _) => child,
+              ),
               children: [
                 NamedRouteDef.shell(
                   name: 'LibraryRoute',
@@ -34,10 +44,15 @@ void main() {
                     NamedRouteDef(
                       name: 'HomeRoute',
                       path: '',
-                      builder: (_, _) => const Scaffold(body: Text('HomeRoute')),
+                      builder: (_, _) =>
+                          const Scaffold(body: Text('HomeRoute')),
                     ),
                     CustomRoute(
-                      page: PageInfo('AlbumSongsRoute', builder: (_) => const Scaffold(body: Text('AlbumSongsRoute'))),
+                      page: PageInfo(
+                        'AlbumSongsRoute',
+                        builder: (_) =>
+                            const Scaffold(body: Text('AlbumSongsRoute')),
+                      ),
                       path: 'album',
                       transitionsBuilder: TransitionsBuilders.slideBottom,
                       duration: const Duration(milliseconds: 200),
@@ -48,7 +63,10 @@ void main() {
               ],
             ),
             CustomRoute(
-              page: PageInfo('DialogRoute', builder: (_) => const Center(child: Text('DialogRoute'))),
+              page: PageInfo(
+                'DialogRoute',
+                builder: (_) => const Center(child: Text('DialogRoute')),
+              ),
               path: '/dialog',
               opaque: false,
               transitionsBuilder: TransitionsBuilders.fadeIn,
@@ -66,7 +84,9 @@ void main() {
         );
         await tester.pumpAndSettle();
         final resting = tester.getRect(find.text('HomeRoute'));
-        final scope = nested ? tester.element(find.text('HomeRoute')).router : router;
+        final scope = nested
+            ? tester.element(find.text('HomeRoute')).router
+            : router;
 
         Future<void> expectHomeInPlaceHalfway() async {
           await tester.pump();

@@ -22,20 +22,28 @@ import '../back_test_utils.dart';
 void main() {
   late FrameworkHandlesBackRecorder frameworkHandlesBack;
 
-  Future<TabsRouter> pumpApp(WidgetTester tester, {required int homeIndex}) async {
+  Future<TabsRouter> pumpApp(
+    WidgetTester tester, {
+    required int homeIndex,
+  }) async {
     _homeIndex = homeIndex;
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(
           page: _tabsPage,
           path: '/',
-          children: [for (final name in _kTabNames) AutoRoute(page: _page(name), path: name)],
+          children: [
+            for (final name in _kTabNames)
+              AutoRoute(page: _page(name), path: name),
+          ],
         ),
       ],
     );
     addTearDown(router.dispose);
     frameworkHandlesBack = FrameworkHandlesBackRecorder()..listen(tester);
-    await tester.pumpWidget(MaterialApp.router(theme: androidTheme, routerConfig: router.config()));
+    await tester.pumpWidget(
+      MaterialApp.router(theme: androidTheme, routerConfig: router.config()),
+    );
     await tester.pumpAndSettle();
     return router.innerRouterOf<TabsRouter>(_tabsPage.name)!;
   }
@@ -44,40 +52,60 @@ void main() {
     'system back': systemBack,
     'the predictive back gesture': predictiveBack,
   }.entries) {
-    testWidgets('$name on another tab should show the home tab, and keep the app open', (tester) async {
-      final tabs = await pumpApp(tester, homeIndex: 0);
-      expect(frameworkHandlesBack.last, isFalse);
-      tabs.setActiveIndex(2);
-      await tester.pumpAndSettle();
-      expect(frameworkHandlesBack.last, isTrue);
+    testWidgets(
+      '$name on another tab should show the home tab, and keep the app open',
+      (tester) async {
+        final tabs = await pumpApp(tester, homeIndex: 0);
+        expect(frameworkHandlesBack.last, isFalse);
+        tabs.setActiveIndex(2);
+        await tester.pumpAndSettle();
+        expect(frameworkHandlesBack.last, isTrue);
 
-      await back(tester);
+        await back(tester);
 
-      expect(tabs.activeIndex, 0);
-      expect(find.text(_kFirstTab), findsOneWidget);
-      expect(frameworkHandlesBack.last, isFalse, reason: 'after back(tester)');
-    }, skip: kIsWeb);
+        expect(tabs.activeIndex, 0);
+        expect(find.text(_kFirstTab), findsOneWidget);
+        expect(
+          frameworkHandlesBack.last,
+          isFalse,
+          reason: 'after back(tester)',
+        );
+      },
+      skip: kIsWeb,
+    );
   }
 
-  testWidgets('system back on the first tab should show the home tab when homeIndex is another', (tester) async {
-    final tabs = await pumpApp(tester, homeIndex: 1);
-    expect(tabs.activeIndex, 0);
-    expect(frameworkHandlesBack.last, isTrue);
+  testWidgets(
+    'system back on the first tab should show the home tab when homeIndex is another',
+    (tester) async {
+      final tabs = await pumpApp(tester, homeIndex: 1);
+      expect(tabs.activeIndex, 0);
+      expect(frameworkHandlesBack.last, isTrue);
 
-    await systemBack(tester);
+      await systemBack(tester);
 
-    expect(tabs.activeIndex, 1);
-    expect(frameworkHandlesBack.last, isFalse);
-  }, skip: kIsWeb);
+      expect(tabs.activeIndex, 1);
+      expect(frameworkHandlesBack.last, isFalse);
+    },
+    skip: kIsWeb,
+  );
 }
 
 const _kFirstTab = 'NewsRoute';
-const List<String> _kTabNames = [_kFirstTab, 'FeedRoute', 'RankingRoute', 'ProfileRoute'];
+const List<String> _kTabNames = [
+  _kFirstTab,
+  'FeedRoute',
+  'RankingRoute',
+  'ProfileRoute',
+];
 var _homeIndex = 0;
 
 final _tabsPage = PageInfo(
   'HomeRoute',
-  builder: (_) => AutoTabsScaffold(homeIndex: _homeIndex, routes: [for (final name in _kTabNames) _Route(name)]),
+  builder: (_) => AutoTabsScaffold(
+    homeIndex: _homeIndex,
+    routes: [for (final name in _kTabNames) _Route(name)],
+  ),
 );
 
 PageInfo _page(String name) => .new(name, builder: (_) => Text(name));

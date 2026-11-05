@@ -31,34 +31,47 @@ void main() {
     expect(params.getString('page'), '2');
   });
 
-  test('optString and getString keep the default for a missing or empty key', () {
-    const params = Parameters({'tag': <String>[]});
-    expect(params.optString('missing', 'none'), 'none');
-    expect(params.optString('tag', 'none'), 'none');
-    expect(() => params.getString('tag'), throwsFlutterError);
-  });
+  test(
+    'optString and getString keep the default for a missing or empty key',
+    () {
+      const params = Parameters({'tag': <String>[]});
+      expect(params.optString('missing', 'none'), 'none');
+      expect(params.optString('tag', 'none'), 'none');
+      expect(() => params.getString('tag'), throwsFlutterError);
+    },
+  );
 
-  testWidgets('A page reading optString builds from a deep link that repeats the key', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('HomeRoute', builder: (_) => const Text('HomeRoute')),
-        ),
-        AutoRoute(
-          path: '/products',
-          page: PageInfo(
-            'ProductsRoute',
-            builder: (data) => Scaffold(body: Text('Tag ${data.queryParams.optString('tag') ?? 'null'}')),
+  testWidgets(
+    'A page reading optString builds from a deep link that repeats the key',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => const Text('HomeRoute'),
+            ),
           ),
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    // Completes when the page is popped, so the test does not wait for it.
-    unawaited(router.navigatePath('/products?tag=red&tag=blue'));
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(find.text('Tag blue'), findsOneWidget);
-  });
+          AutoRoute(
+            path: '/products',
+            page: PageInfo(
+              'ProductsRoute',
+              builder: (data) => Scaffold(
+                body: Text(
+                  'Tag ${data.queryParams.optString('tag') ?? 'null'}',
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      // Completes when the page is popped, so the test does not wait for it.
+      unawaited(router.navigatePath('/products?tag=red&tag=blue'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Tag blue'), findsOneWidget);
+    },
+  );
 }

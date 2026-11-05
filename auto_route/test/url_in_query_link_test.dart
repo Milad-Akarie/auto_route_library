@@ -24,23 +24,34 @@ void main() {
       ),
       AutoRoute(
         path: '/passwordless',
-        page: PageInfo('PasswordlessRoute', builder: (_) => const Text('Passwordless')),
+        page: PageInfo(
+          'PasswordlessRoute',
+          builder: (_) => const Text('Passwordless'),
+        ),
       ),
     ],
   );
 
-  testWidgets('a link with an unencoded url in its query opens one page with the whole query', (tester) async {
-    final router = buildRouter();
-    await pumpRouterApp(tester, router, initialLink: '/passwordless?$query');
+  testWidgets(
+    'a link with an unencoded url in its query opens one page with the whole query',
+    (tester) async {
+      final router = buildRouter();
+      await pumpRouterApp(tester, router, initialLink: '/passwordless?$query');
 
-    expect(router.stack.map((page) => page.name), ['HomeRoute', 'PasswordlessRoute']);
-    expect(router.topRoute.queryParams.rawMap, {
-      'token': 'abc123',
-      'targetRoute': 'demoapp://dl.demo.app/passwordless',
-    });
-  });
+      expect(router.stack.map((page) => page.name), [
+        'HomeRoute',
+        'PasswordlessRoute',
+      ]);
+      expect(router.topRoute.queryParams.rawMap, {
+        'token': 'abc123',
+        'targetRoute': 'demoapp://dl.demo.app/passwordless',
+      });
+    },
+  );
 
-  testWidgets('the link cut four ways in a row leaves one page', (tester) async {
+  testWidgets('the link cut four ways in a row leaves one page', (
+    tester,
+  ) async {
     final router = buildRouter();
     await pumpRouterApp(tester, router);
     for (final targetRoute in [
@@ -49,12 +60,20 @@ void main() {
       'demoapp://dl.demo.app',
       'demoapp://dl.demo.app/passwordless',
     ]) {
-      await tester.binding.handlePushRoute('/passwordless?token=abc123&targetRoute=$targetRoute');
+      await tester.binding.handlePushRoute(
+        '/passwordless?token=abc123&targetRoute=$targetRoute',
+      );
     }
     await tester.pumpAndSettle();
 
-    expect(router.stack.map((page) => page.name), ['HomeRoute', 'PasswordlessRoute']);
-    expect(router.topRoute.queryParams.getString('targetRoute'), 'demoapp://dl.demo.app/passwordless');
+    expect(router.stack.map((page) => page.name), [
+      'HomeRoute',
+      'PasswordlessRoute',
+    ]);
+    expect(
+      router.topRoute.queryParams.getString('targetRoute'),
+      'demoapp://dl.demo.app/passwordless',
+    );
     expect(find.text('Passwordless'), findsOneWidget);
   });
 }

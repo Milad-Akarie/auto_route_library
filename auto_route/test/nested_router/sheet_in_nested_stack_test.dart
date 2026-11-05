@@ -16,8 +16,10 @@ PageInfo _page(String name) => .new(
           TextButton(
             onPressed: () => showModalBottomSheet<void>(
               context: context,
-              builder: (sheet) =>
-                  TextButton(onPressed: () => sheet.router.maybePop(), child: const Text('Close sheet')),
+              builder: (sheet) => TextButton(
+                onPressed: () => sheet.router.maybePop(),
+                child: const Text('Close sheet'),
+              ),
             ),
             child: const Text('Open sheet'),
           ),
@@ -40,7 +42,10 @@ void main() {
       routes: [
         AutoRoute(
           path: '/',
-          page: PageInfo('HostRoute', builder: (_) => const AutoTabsRouter(routes: [_TabRoute()])),
+          page: PageInfo(
+            'HostRoute',
+            builder: (_) => const AutoTabsRouter(routes: [_TabRoute()]),
+          ),
           children: [
             AutoRoute(
               path: 'tab',
@@ -55,7 +60,9 @@ void main() {
       ],
     );
     await pumpRouterApp(tester, router);
-    final tab = router.innerRouterOf<TabsRouter>('HostRoute')!.innerRouterOf<StackRouter>('TabRoute')!;
+    final tab = router
+        .innerRouterOf<TabsRouter>('HostRoute')!
+        .innerRouterOf<StackRouter>('TabRoute')!;
     unawaited(tab.push(const NamedRoute('Page2Route')));
     await tester.pumpAndSettle();
     expect(find.text('Page2Route'), findsOneWidget);
@@ -68,7 +75,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(find.text('Close sheet'), findsNothing);
-    expect(find.text('Page2Route'), findsOneWidget, reason: 'after tester.tap(find.text(Close sheet))');
+    expect(
+      find.text('Page2Route'),
+      findsOneWidget,
+      reason: 'after tester.tap(find.text(Close sheet))',
+    );
     expect(tab.stack.map((p) => p.name), ['Page1Route', 'Page2Route']);
   });
 }

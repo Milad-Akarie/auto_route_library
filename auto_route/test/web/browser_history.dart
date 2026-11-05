@@ -20,7 +20,11 @@ import 'package:web/web.dart' show WindowEventGetters, window;
 void useRealBrowserHistory() {
   LiveTestWidgetsFlutterBinding.ensureInitialized();
   ui_web.TestEnvironment.setUp(
-    const ui_web.TestEnvironment(forceTestFonts: true, disableFontFallbacks: true, keepSemanticsDisabledOnUpdate: true),
+    const ui_web.TestEnvironment(
+      forceTestFonts: true,
+      disableFontFallbacks: true,
+      keepSemanticsDisabledOnUpdate: true,
+    ),
   );
   ui_web.debugDefaultUrlStrategyOverride = const ui_web.HashUrlStrategy();
   // The test page's url carries the runner's metadata; start the app at '/'.
@@ -74,7 +78,8 @@ Future<void> browserMove(WidgetTester tester, VoidCallback move) async {
 }
 
 /// Presses the browser's back button and settles.
-Future<void> pressBrowserBack(WidgetTester tester) => browserMove(tester, () => window.history.back());
+Future<void> pressBrowserBack(WidgetTester tester) =>
+    browserMove(tester, () => window.history.back());
 
 /// Makes the browser's current entry hold [path], as when the app is opened at
 /// a deep link, and makes [path] the app's initial route.
@@ -88,7 +93,11 @@ void openBrowserAt(WidgetTester tester, String path) {
   dispatcher.defaultRouteNameTestValue = path;
   final serialCount = browserSerialCount < 0 ? 0 : browserSerialCount;
   window.history.replaceState(
-    {'serialCount': serialCount, 'state': null, _kOpenedByBrowser: true}.jsify(),
+    {
+      'serialCount': serialCount,
+      'state': null,
+      _kOpenedByBrowser: true,
+    }.jsify(),
     '',
     '#$path',
   );
@@ -121,4 +130,5 @@ Future<void> pumpAsRunApp(WidgetTester tester, Widget app) async {
 }
 
 /// Presses the browser's forward button and settles.
-Future<void> pressBrowserForward(WidgetTester tester) => browserMove(tester, () => window.history.forward());
+Future<void> pressBrowserForward(WidgetTester tester) =>
+    browserMove(tester, () => window.history.forward());

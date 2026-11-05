@@ -28,8 +28,15 @@ void main() {
     );
   });
 
-  Future<void> openHomeBC(WidgetTester tester, List<Future<Object?>> pushed) async {
-    await pumpRouterApp(tester, router, observers: () => [_NamesObserver(observed)]);
+  Future<void> openHomeBC(
+    WidgetTester tester,
+    List<Future<Object?>> pushed,
+  ) async {
+    await pumpRouterApp(
+      tester,
+      router,
+      observers: () => [_NamesObserver(observed)],
+    );
     pushed.add(router.push(const PageRouteInfo('B')));
     await tester.pumpAndSettle();
     pushed.add(router.push(const PageRouteInfo('C')));
@@ -40,44 +47,64 @@ void main() {
   bool isHome(Route<Object?> route) => route.settings.name == 'Home';
 
   // The pages on screen, bottom to top.
-  List<String> shown() => ['Home', 'B', 'C', 'D'].where((name) => find.text(name).evaluate().isNotEmpty).toList();
+  List<String> shown() => [
+    'Home',
+    'B',
+    'C',
+    'D',
+  ].where((name) => find.text(name).evaluate().isNotEmpty).toList();
 
   // Steps: open Home, B and C on iOS, then call pushAndPopUntil(D) with a
   // predicate that keeps Home, and look at every frame while D slides in.
-  testWidgets('The pages pushAndPopUntil removes never show while the new page slides in', (tester) async {
-    final pushed = <Future<Object?>>[];
-    await openHomeBC(tester, pushed);
+  testWidgets(
+    'The pages pushAndPopUntil removes never show while the new page slides in',
+    (tester) async {
+      final pushed = <Future<Object?>>[];
+      await openHomeBC(tester, pushed);
 
-    final pushedD = router.pushAndPopUntil(const PageRouteInfo('D'), predicate: isHome);
-    final frames = <List<String>>[];
-    for (var i = 0; i < 25; i++) {
-      await tester.pump(const Duration(milliseconds: 40));
-      frames.add(shown());
-    }
-    expect(frames.where((frame) => frame.contains('Home') || frame.contains('B')), isEmpty, reason: 'frames: $frames');
-    expect(frames.lastOrNull, ['D']);
-    expect(router.stack.map((page) => page.name), ['Home', 'D']);
+      final pushedD = router.pushAndPopUntil(
+        const PageRouteInfo('D'),
+        predicate: isHome,
+      );
+      final frames = <List<String>>[];
+      for (var i = 0; i < 25; i++) {
+        await tester.pump(const Duration(milliseconds: 40));
+        frames.add(shown());
+      }
+      expect(
+        frames.where((frame) => frame.contains('Home') || frame.contains('B')),
+        isEmpty,
+        reason: 'frames: $frames',
+      );
+      expect(frames.lastOrNull, ['D']);
+      expect(router.stack.map((page) => page.name), ['Home', 'D']);
 
-    // The removed pages' push futures complete, and so does the new one's.
-    var completed = 0;
-    for (final future in pushed) {
-      unawaited(future.then((_) => completed++));
-    }
-    Object? resultOfD = 'unset';
-    unawaited(pushedD.then((result) => resultOfD = result));
-    unawaited(router.maybePop('done'));
-    await tester.pumpAndSettle();
-    expect(completed, 2);
-    expect(resultOfD, 'done');
-    expectCurrentPage(router, 'Home');
-  }, variant: TargetPlatformVariant.only(.iOS));
+      // The removed pages' push futures complete, and so does the new one's.
+      var completed = 0;
+      for (final future in pushed) {
+        unawaited(future.then((_) => completed++));
+      }
+      Object? resultOfD = 'unset';
+      unawaited(pushedD.then((result) => resultOfD = result));
+      unawaited(router.maybePop('done'));
+      await tester.pumpAndSettle();
+      expect(completed, 2);
+      expect(resultOfD, 'done');
+      expectCurrentPage(router, 'Home');
+    },
+    variant: TargetPlatformVariant.only(.iOS),
+  );
 
   // Steps: open Home, B and C, then call pushAndPopUntil(D) keeping Home.
   // Observers hear the removals, as with Navigator.pushAndRemoveUntil.
-  testWidgets('Observers hear the pages pushAndPopUntil removes as removed', (tester) async {
+  testWidgets('Observers hear the pages pushAndPopUntil removes as removed', (
+    tester,
+  ) async {
     await openHomeBC(tester, []);
 
-    unawaited(router.pushAndPopUntil(const PageRouteInfo('D'), predicate: isHome));
+    unawaited(
+      router.pushAndPopUntil(const PageRouteInfo('D'), predicate: isHome),
+    );
     await tester.pumpAndSettle();
     expect(observed, containsAll(['push D', 'remove B', 'remove C']));
     expect(observed.where((event) => event.startsWith('pop')), isEmpty);
@@ -85,21 +112,29 @@ void main() {
 
   // Steps: open Home, B and C, call pushAndPopUntil(D) keeping Home, then
   // router.back(). The removed pages leave the history, as popped ones do.
-  testWidgets('router.back() after pushAndPopUntil skips the pages it removed', (tester) async {
-    await openHomeBC(tester, []);
+  testWidgets(
+    'router.back() after pushAndPopUntil skips the pages it removed',
+    (tester) async {
+      await openHomeBC(tester, []);
 
-    unawaited(router.pushAndPopUntil(const PageRouteInfo('D'), predicate: isHome));
-    await tester.pumpAndSettle();
-    router.back();
-    await tester.pumpAndSettle();
-    expectCurrentPage(router, 'Home');
-    expect(router.stack.map((page) => page.name), ['Home']);
-    // on web, back() moves the browser's own history; test/web/push_and_pop_until_web_test.dart covers it
-  }, skip: kIsWeb);
+      unawaited(
+        router.pushAndPopUntil(const PageRouteInfo('D'), predicate: isHome),
+      );
+      await tester.pumpAndSettle();
+      router.back();
+      await tester.pumpAndSettle();
+      expectCurrentPage(router, 'Home');
+      expect(router.stack.map((page) => page.name), ['Home']);
+      // on web, back() moves the browser's own history; test/web/push_and_pop_until_web_test.dart covers it
+    },
+    skip: kIsWeb,
+  );
 
   // Steps: open Home, show a dialog on it, and from the dialog call
   // pushAndPopUntil(D) keeping Home. The dialog goes, Home stays under D.
-  testWidgets('pushAndPopUntil removes a dialog above the page it keeps', (tester) async {
+  testWidgets('pushAndPopUntil removes a dialog above the page it keeps', (
+    tester,
+  ) async {
     await openHomeBC(tester, []);
     router.popUntilRoot();
     await tester.pumpAndSettle();
@@ -111,7 +146,9 @@ void main() {
     Object? dialogResult = 'unset';
     unawaited(dialog.then((result) => dialogResult = result));
 
-    unawaited(router.pushAndPopUntil(const PageRouteInfo('D'), predicate: isHome));
+    unawaited(
+      router.pushAndPopUntil(const PageRouteInfo('D'), predicate: isHome),
+    );
     await tester.pumpAndSettle();
     expect(find.text('Dialog'), findsNothing);
     expect(dialogResult, isNull);
@@ -120,7 +157,11 @@ void main() {
     unawaited(router.maybePop());
     await tester.pumpAndSettle();
     expectCurrentPage(router, 'Home');
-    expect(find.text('Dialog'), findsNothing, reason: 'after router.maybePop())');
+    expect(
+      find.text('Dialog'),
+      findsNothing,
+      reason: 'after router.maybePop())',
+    );
   });
 }
 

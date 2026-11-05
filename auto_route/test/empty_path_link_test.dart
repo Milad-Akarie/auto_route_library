@@ -16,7 +16,9 @@ import 'universal_link_test.dart' show sendPlatformLink;
 // no error. An app that wants to stay where it is answers such a link with
 // DeepLink.none from its deepLinkBuilder.
 void main() {
-  testWidgets('A link with no path opens the first page without an error', (tester) async {
+  testWidgets('A link with no path opens the first page without an error', (
+    tester,
+  ) async {
     final router = SimpleRouter();
     await pumpRouterConfigApp(tester, router.config());
     unawaited(router.push(const SecondRoute()));
@@ -27,11 +29,16 @@ void main() {
     expectCurrentPage(router, FirstRoute.name);
   });
 
-  testWidgets('A deepLinkBuilder can keep the page for a link with no path', (tester) async {
+  testWidgets('A deepLinkBuilder can keep the page for a link with no path', (
+    tester,
+  ) async {
     final router = SimpleRouter();
     await pumpRouterConfigApp(
       tester,
-      router.config(deepLinkBuilder: (link) => !link.initial && link.uri.path.isEmpty ? DeepLink.none : link),
+      router.config(
+        deepLinkBuilder: (link) =>
+            !link.initial && link.uri.path.isEmpty ? DeepLink.none : link,
+      ),
     );
     unawaited(router.push(const SecondRoute()));
     await tester.pumpAndSettle();
@@ -39,6 +46,9 @@ void main() {
     await sendPlatformLink(tester, 'myapp://com.example.app');
     expect(tester.takeException(), isNull);
     expectCurrentPage(router, SecondRoute.name);
-    expect(router.stack.map((p) => p.name), [FirstRoute.name, SecondRoute.name]);
+    expect(router.stack.map((p) => p.name), [
+      FirstRoute.name,
+      SecondRoute.name,
+    ]);
   });
 }

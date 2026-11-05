@@ -26,36 +26,51 @@ void main() {
   // a child of a shell that only wraps its children. The details page pops
   // itself with a value. The await must complete with that value.
   for (final (how, push) in [
-    ('push(DetailsRoute())', (StackRouter root) => root.push<String>(const _DetailsRoute())),
-    ("pushPath('/shell/details')", (StackRouter root) => root.pushPath<String>('/shell/details')),
+    (
+      'push(DetailsRoute())',
+      (StackRouter root) => root.push<String>(const _DetailsRoute()),
+    ),
+    (
+      "pushPath('/shell/details')",
+      (StackRouter root) => root.pushPath<String>('/shell/details'),
+    ),
   ]) {
-    testWidgets('A shell child pushed from outside the shell with $how returns its pop value', (tester) async {
-      await pumpRouterConfigApp(tester, router.config());
-      String? result;
-      var completed = false;
-      unawaited(
-        push(router).then((value) {
-          result = value;
-          completed = true;
-        }),
-      );
-      await tester.pumpAndSettle();
-      expect(find.text('Details'), findsOneWidget);
-      expect(router.stack.map((page) => page.name), ['HomeRoute', 'ShellRoute']);
+    testWidgets(
+      'A shell child pushed from outside the shell with $how returns its pop value',
+      (tester) async {
+        await pumpRouterConfigApp(tester, router.config());
+        String? result;
+        var completed = false;
+        unawaited(
+          push(router).then((value) {
+            result = value;
+            completed = true;
+          }),
+        );
+        await tester.pumpAndSettle();
+        expect(find.text('Details'), findsOneWidget);
+        expect(router.stack.map((page) => page.name), [
+          'HomeRoute',
+          'ShellRoute',
+        ]);
 
-      await tester.tap(find.text('Go back'));
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      expect(find.text('Home'), findsOneWidget);
-      expect(completed, isTrue);
-      expect(result, 'from details');
-    });
+        await tester.tap(find.text('Go back'));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.text('Home'), findsOneWidget);
+        expect(completed, isTrue);
+        expect(result, 'from details');
+      },
+    );
   }
 }
 
 abstract final class _HomeRoute {
   static const String name = 'HomeRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text('Home')),
+  );
 }
 
 abstract final class _ShellRoute {
@@ -79,7 +94,10 @@ class _DetailsRoute extends PageRouteInfo<void> {
       builder: (context) => Column(
         children: [
           const Text('Details'),
-          ElevatedButton(onPressed: () => context.maybePop('from details'), child: const Text('Go back')),
+          ElevatedButton(
+            onPressed: () => context.maybePop('from details'),
+            child: const Text('Go back'),
+          ),
         ],
       ),
     ),

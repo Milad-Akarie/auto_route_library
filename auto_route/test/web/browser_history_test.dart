@@ -21,7 +21,9 @@ void main() {
     await rewindBrowserHistory();
   });
 
-  testWidgets('Navigating on web writes one browser entry per page', (tester) async {
+  testWidgets('Navigating on web writes one browser entry per page', (
+    tester,
+  ) async {
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
     final start = browserSerialCount;
@@ -39,22 +41,25 @@ void main() {
     expect(router.canNavigateBack, isTrue);
   });
 
-  testWidgets('back() and the browser back button on web both move the app back', (tester) async {
-    await pumpRouterConfigApp(tester, router.config());
-    await settleBrowser(tester);
-    final start = browserSerialCount;
-    unawaited(router.navigate(const SecondRoute()));
-    await settleBrowser(tester);
-    unawaited(router.navigate(const ThirdRoute()));
-    await settleBrowser(tester);
+  testWidgets(
+    'back() and the browser back button on web both move the app back',
+    (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
+      await settleBrowser(tester);
+      final start = browserSerialCount;
+      unawaited(router.navigate(const SecondRoute()));
+      await settleBrowser(tester);
+      unawaited(router.navigate(const ThirdRoute()));
+      await settleBrowser(tester);
 
-    await browserMove(tester, router.back);
-    expectCurrentPage(router, SecondRoute.name);
-    expect(browserSerialCount, start + 1);
+      await browserMove(tester, router.back);
+      expectCurrentPage(router, SecondRoute.name);
+      expect(browserSerialCount, start + 1);
 
-    await pressBrowserBack(tester);
-    expectCurrentPage(router, FirstRoute.name);
-    expect(browserPath, '/');
-    expect(browserSerialCount, start);
-  });
+      await pressBrowserBack(tester);
+      expectCurrentPage(router, FirstRoute.name);
+      expect(browserPath, '/');
+      expect(browserSerialCount, start);
+    },
+  );
 }

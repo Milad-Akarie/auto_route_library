@@ -42,39 +42,57 @@ void main() {
   });
 
   for (final (how, push) in [
-    ('push(BannerRoute())', (StackRouter root) => root.push(const _Route('BannerRoute'))),
-    ("pushPath('/wallet/banner')", (StackRouter root) => root.pushPath('/wallet/banner')),
+    (
+      'push(BannerRoute())',
+      (StackRouter root) => root.push(const _Route('BannerRoute')),
+    ),
+    (
+      "pushPath('/wallet/banner')",
+      (StackRouter root) => root.pushPath('/wallet/banner'),
+    ),
   ]) {
-    testWidgets("Pushing the other tab's page with $how twice opens it each time", (tester) async {
-      await pumpRouterConfigApp(tester, router.config());
-      expect(find.text('DevRoute'), findsOneWidget);
-
-      for (var i = 0; i < 2; i++) {
-        unawaited(push(router));
-        await tester.pumpAndSettle();
-        expect(tester.takeException(), isNull);
-        expect(find.text('BannerRoute'), findsOneWidget);
-        // A new tabs page opens on top, on the wallet tab.
-        expect(router.stack.map((page) => page.name), ['HomeRoute', 'HomeRoute']);
-        expect(router.urlState.url, '/wallet/banner');
-
-        await router.maybePopTop();
-        await tester.pumpAndSettle();
-        expect(tester.takeException(), isNull, reason: 'after router.maybePopTop()');
-        expect(find.text('BannerRoute'), findsNothing);
+    testWidgets(
+      "Pushing the other tab's page with $how twice opens it each time",
+      (tester) async {
+        await pumpRouterConfigApp(tester, router.config());
         expect(find.text('DevRoute'), findsOneWidget);
-        expect(router.stack.map((page) => page.name), ['HomeRoute']);
-      }
-    });
+
+        for (var i = 0; i < 2; i++) {
+          unawaited(push(router));
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          expect(find.text('BannerRoute'), findsOneWidget);
+          // A new tabs page opens on top, on the wallet tab.
+          expect(router.stack.map((page) => page.name), [
+            'HomeRoute',
+            'HomeRoute',
+          ]);
+          expect(router.urlState.url, '/wallet/banner');
+
+          await router.maybePopTop();
+          await tester.pumpAndSettle();
+          expect(
+            tester.takeException(),
+            isNull,
+            reason: 'after router.maybePopTop()',
+          );
+          expect(find.text('BannerRoute'), findsNothing);
+          expect(find.text('DevRoute'), findsOneWidget);
+          expect(router.stack.map((page) => page.name), ['HomeRoute']);
+        }
+      },
+    );
   }
 }
 
 final _homePage = PageInfo(
   'HomeRoute',
-  builder: (_) => const AutoTabsRouter(routes: [_Route('DevTab'), _Route('WalletTab')]),
+  builder: (_) =>
+      const AutoTabsRouter(routes: [_Route('DevTab'), _Route('WalletTab')]),
 );
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
   const new(super.name);

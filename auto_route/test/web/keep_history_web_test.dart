@@ -32,46 +32,60 @@ void main() {
       // FirstRoute has keepHistory: false. Push SecondRoute from it.
       // SecondRoute should take FirstRoute's browser entry, so the browser's back
       // button can't return to FirstRoute.
-      testWidgets('Pushing from a page without history on web replaces its browser entry', (tester) async {
-        await _pumpApp(tester, router, withConfig: withConfig);
-        await settleBrowser(tester);
-        final start = browserSerialCount;
+      testWidgets(
+        'Pushing from a page without history on web replaces its browser entry',
+        (tester) async {
+          await _pumpApp(tester, router, withConfig: withConfig);
+          await settleBrowser(tester);
+          final start = browserSerialCount;
 
-        unawaited(router.push(const SecondRoute()));
-        await settleBrowser(tester);
-        expect(router.stack.map((p) => p.name), [SecondRoute.name]);
-        expect(browserPath, '/second');
-        expect(browserSerialCount, start);
+          unawaited(router.push(const SecondRoute()));
+          await settleBrowser(tester);
+          expect(router.stack.map((p) => p.name), [SecondRoute.name]);
+          expect(browserPath, '/second');
+          expect(browserSerialCount, start);
 
-        unawaited(router.push(const ThirdRoute()));
-        await settleBrowser(tester);
-        expect(browserSerialCount, start + 1);
+          unawaited(router.push(const ThirdRoute()));
+          await settleBrowser(tester);
+          expect(browserSerialCount, start + 1);
 
-        await pressBrowserBack(tester);
-        expectCurrentPage(router, SecondRoute.name);
-        expect(browserSerialCount, start, reason: 'after pressBrowserBack(tester)');
-      });
+          await pressBrowserBack(tester);
+          expectCurrentPage(router, SecondRoute.name);
+          expect(
+            browserSerialCount,
+            start,
+            reason: 'after pressBrowserBack(tester)',
+          );
+        },
+      );
 
       // https://github.com/Milad-Akarie/auto_route_library/issues/2068
       // FirstRoute, the initial page, has keepHistory: false and calls replaceAll
       // with SecondRoute, as a splash screen does.
       // SecondRoute should take FirstRoute's browser entry.
-      testWidgets('replaceAll from a page without history on web replaces its browser entry', (tester) async {
-        await _pumpApp(tester, router, withConfig: withConfig);
-        await settleBrowser(tester);
-        final start = browserSerialCount;
+      testWidgets(
+        'replaceAll from a page without history on web replaces its browser entry',
+        (tester) async {
+          await _pumpApp(tester, router, withConfig: withConfig);
+          await settleBrowser(tester);
+          final start = browserSerialCount;
 
-        unawaited(router.replaceAll([const SecondRoute()]));
-        await settleBrowser(tester);
-        expectCurrentPage(router, SecondRoute.name);
-        expect(browserPath, '/second');
-        expect(browserSerialCount, start);
-      });
+          unawaited(router.replaceAll([const SecondRoute()]));
+          await settleBrowser(tester);
+          expectCurrentPage(router, SecondRoute.name);
+          expect(browserPath, '/second');
+          expect(browserSerialCount, start);
+        },
+      );
     });
   }
 }
 
-Future<void> _pumpApp(WidgetTester tester, RootStackRouter router, {required bool withConfig}) {
+Future<void> _pumpApp(
+  WidgetTester tester,
+  RootStackRouter router, {
+  required bool withConfig,
+}) {
   if (withConfig) return pumpRouterConfigApp(tester, router.config());
   return pumpRouterApp(tester, router);
 }

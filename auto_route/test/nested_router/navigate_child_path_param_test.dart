@@ -20,7 +20,9 @@ void main() {
             AutoRoute(
               page: _AccountRoute.page,
               path: ':accountId',
-              children: [AutoRoute(page: _ContactRoute.page, path: ':contactId')],
+              children: [
+                AutoRoute(page: _ContactRoute.page, path: ':contactId'),
+              ],
             ),
           ],
         ),
@@ -41,7 +43,9 @@ void main() {
     expect(find.text('Account 123'), findsOneWidget);
   }
 
-  testWidgets('navigatePath from an account to one of its contacts opens it', (tester) async {
+  testWidgets('navigatePath from an account to one of its contacts opens it', (
+    tester,
+  ) async {
     await openAccount(tester);
     unawaited(router.navigatePath('/accounts/123/999'));
     await tester.pumpAndSettle();
@@ -50,32 +54,40 @@ void main() {
     expect(router.urlState.url, '/accounts/123/999');
   });
 
-  testWidgets('navigate to the contact route alone keeps the account it is opened from', (tester) async {
-    await openAccount(tester);
-    unawaited(router.navigate(_ContactRoute(contactId: '999')));
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(find.text('Contact 999 of 123'), findsOneWidget);
-    expect(router.urlState.url, '/accounts/123/999');
-  });
+  testWidgets(
+    'navigate to the contact route alone keeps the account it is opened from',
+    (tester) async {
+      await openAccount(tester);
+      unawaited(router.navigate(_ContactRoute(contactId: '999')));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Contact 999 of 123'), findsOneWidget);
+      expect(router.urlState.url, '/accounts/123/999');
+    },
+  );
 
-  testWidgets('navigate to the account route with the contact as its child opens both', (tester) async {
-    await openAccount(tester);
-    unawaited(
-      router.navigate(
-        _AccountRoute(
-          accountId: '123',
-          children: [_ContactRoute(contactId: '999')],
+  testWidgets(
+    'navigate to the account route with the contact as its child opens both',
+    (tester) async {
+      await openAccount(tester);
+      unawaited(
+        router.navigate(
+          _AccountRoute(
+            accountId: '123',
+            children: [_ContactRoute(contactId: '999')],
+          ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(find.text('Contact 999 of 123'), findsOneWidget);
-    expect(router.urlState.url, '/accounts/123/999');
-  });
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Contact 999 of 123'), findsOneWidget);
+      expect(router.urlState.url, '/accounts/123/999');
+    },
+  );
 
-  testWidgets('pushing the contact from the account page opens it', (tester) async {
+  testWidgets('pushing the contact from the account page opens it', (
+    tester,
+  ) async {
     await openAccount(tester);
     unawaited(router.push(_ContactRoute(contactId: '999')));
     await tester.pumpAndSettle();
@@ -90,12 +102,19 @@ PageInfo _shell(String name) => .new(name, builder: (_) => const AutoRouter());
 
 abstract final class _HomeRoute {
   static const String name = 'HomeRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Text('Home'));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Text('Home'),
+  );
 }
 
 class _AccountRoute extends PageRouteInfo<void> {
   new({required String accountId, required List<PageRouteInfo> children})
-    : super(pageName, rawPathParams: {'accountId': accountId}, initialChildren: children);
+    : super(
+        pageName,
+        rawPathParams: {'accountId': accountId},
+        initialChildren: children,
+      );
 
   static const String pageName = 'AccountRoute';
   static final PageInfo page = PageInfo(
@@ -110,7 +129,8 @@ class _AccountRoute extends PageRouteInfo<void> {
 }
 
 class _ContactRoute extends PageRouteInfo<void> {
-  new({required String contactId}) : super(pageName, rawPathParams: {'contactId': contactId});
+  new({required String contactId})
+    : super(pageName, rawPathParams: {'contactId': contactId});
 
   static const String pageName = 'ContactRoute';
   static final PageInfo page = PageInfo(

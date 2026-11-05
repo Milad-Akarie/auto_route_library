@@ -16,40 +16,57 @@ void main() {
     ('cupertino', const RouteType.cupertino(), TargetPlatform.iOS),
     ('material', const RouteType.material(), TargetPlatform.android),
     ('adaptive on iOS', const RouteType.adaptive(), TargetPlatform.iOS),
-    ('custom', RouteType.custom(transitionsBuilder: TransitionsBuilders.slideLeft), TargetPlatform.android),
+    (
+      'custom',
+      RouteType.custom(transitionsBuilder: TransitionsBuilders.slideLeft),
+      TargetPlatform.android,
+    ),
   ]) {
-    testWidgets('A $label page stays in place under a CustomRoute that slides from the top', (tester) async {
-      final router = RootStackRouter.build(
-        defaultRouteType: type,
-        routes: [
-          AutoRoute(page: _page('Home'), path: '/'),
-          CustomRoute(page: _page('Menu'), path: '/menu', transitionsBuilder: TransitionsBuilders.slideTop),
-        ],
-      );
-      addTearDown(router.dispose);
-      await tester.pumpWidget(
-        MaterialApp.router(
-          theme: ThemeData(platform: platform),
-          routerConfig: router.config(),
-        ),
-      );
-      await tester.pumpAndSettle();
-      final restingX = tester.getTopLeft(find.text('Home')).dx;
-
-      Future<void> expectHomeInPlaceHalfway(VoidCallback action) async {
-        action();
-        await tester.pump();
-        await tester.pump();
-        await tester.pump(const Duration(milliseconds: 150));
-        expect(find.text('Menu'), findsOneWidget);
-        expect(tester.getTopLeft(find.text('Menu')).dy, lessThan(0), reason: 'the Menu page should be sliding');
-        expect(tester.getTopLeft(find.text('Home')).dx, restingX);
+    testWidgets(
+      'A $label page stays in place under a CustomRoute that slides from the top',
+      (tester) async {
+        final router = RootStackRouter.build(
+          defaultRouteType: type,
+          routes: [
+            AutoRoute(page: _page('Home'), path: '/'),
+            CustomRoute(
+              page: _page('Menu'),
+              path: '/menu',
+              transitionsBuilder: TransitionsBuilders.slideTop,
+            ),
+          ],
+        );
+        addTearDown(router.dispose);
+        await tester.pumpWidget(
+          MaterialApp.router(
+            theme: ThemeData(platform: platform),
+            routerConfig: router.config(),
+          ),
+        );
         await tester.pumpAndSettle();
-      }
+        final restingX = tester.getTopLeft(find.text('Home')).dx;
 
-      await expectHomeInPlaceHalfway(() => router.push(const PageRouteInfo('Menu')));
-      await expectHomeInPlaceHalfway(() => unawaited(router.maybePop()));
-    });
+        Future<void> expectHomeInPlaceHalfway(VoidCallback action) async {
+          action();
+          await tester.pump();
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 150));
+          expect(find.text('Menu'), findsOneWidget);
+          expect(
+            tester.getTopLeft(find.text('Menu')).dy,
+            lessThan(0),
+            reason: 'the Menu page should be sliding',
+          );
+          expect(tester.getTopLeft(find.text('Home')).dx, restingX);
+          await tester.pumpAndSettle();
+        }
+
+        await expectHomeInPlaceHalfway(
+          () => router.push(const PageRouteInfo('Menu')),
+        );
+        await expectHomeInPlaceHalfway(() => unawaited(router.maybePop()));
+      },
+    );
   }
 }
 

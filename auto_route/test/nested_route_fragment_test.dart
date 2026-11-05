@@ -28,18 +28,31 @@ void main() {
         children: [
           AutoRoute(
             path: '',
-            page: PageInfo('BookListRoute', builder: (_) => const Text('BookListRoute')),
+            page: PageInfo(
+              'BookListRoute',
+              builder: (_) => const Text('BookListRoute'),
+            ),
           ),
         ],
       ),
     ],
   );
 
-  testWidgets('A pushed route with children keeps its fragment in the url', (tester) async {
+  testWidgets('A pushed route with children keeps its fragment in the url', (
+    tester,
+  ) async {
     final router = buildRouter();
     await pumpRouterApp(tester, router);
     // Completes when the page is popped, so the test does not wait for it.
-    unawaited(router.push(const NamedRoute('BooksRoute', children: [NamedRoute('BookListRoute')], fragment: 'top')));
+    unawaited(
+      router.push(
+        const NamedRoute(
+          'BooksRoute',
+          children: [NamedRoute('BookListRoute')],
+          fragment: 'top',
+        ),
+      ),
+    );
     await tester.pumpAndSettle();
     expect(find.text('BookListRoute'), findsOneWidget);
     expect(router.urlState.url, '/books#top');

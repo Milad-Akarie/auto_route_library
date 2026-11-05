@@ -17,16 +17,25 @@ void main() {
   // Should: the page gets 'a search term', and the url encodes it once.
   RootStackRouter buildRouter() => .build(
     routes: [
-      NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => const NamedPage('HomeRoute')),
+      NamedRouteDef(
+        name: 'HomeRoute',
+        path: '/',
+        builder: (_, _) => const NamedPage('HomeRoute'),
+      ),
       NamedRouteDef.shell(
         name: 'SearchRoute',
         path: '/search',
         children: [
-          NamedRouteDef(name: 'ListRoute', path: '', builder: (_, _) => const NamedPage('ListRoute')),
+          NamedRouteDef(
+            name: 'ListRoute',
+            path: '',
+            builder: (_, _) => const NamedPage('ListRoute'),
+          ),
           NamedRouteDef(
             name: 'ResultsRoute',
             path: 'results/:term',
-            builder: (_, data) => NamedPage('term ${data.params.getString('term')}'),
+            builder: (_, data) =>
+                NamedPage('term ${data.params.getString('term')}'),
           ),
         ],
       ),
@@ -38,11 +47,16 @@ void main() {
             name: 'MainSearchRoute',
             path: 'search',
             children: [
-              NamedRouteDef(name: 'MainListRoute', path: '', builder: (_, _) => const NamedPage('MainListRoute')),
+              NamedRouteDef(
+                name: 'MainListRoute',
+                path: '',
+                builder: (_, _) => const NamedPage('MainListRoute'),
+              ),
               NamedRouteDef(
                 name: 'MainResultsRoute',
                 path: 'results/:term',
-                builder: (_, data) => NamedPage('term ${data.params.getString('term')}'),
+                builder: (_, data) =>
+                    NamedPage('term ${data.params.getString('term')}'),
               ),
             ],
           ),
@@ -51,7 +65,10 @@ void main() {
     ],
   );
 
-  for (final path in ['/search/results/a search term', '/main/search/results/a search term']) {
+  for (final path in [
+    '/search/results/a search term',
+    '/main/search/results/a search term',
+  ]) {
     testWidgets('navigatePath to $path encodes the space once', (tester) async {
       final router = buildRouter();
       await pumpRouterApp(tester, router);
@@ -64,14 +81,22 @@ void main() {
     });
   }
 
-  testWidgets('A relative navigatePath with a space inside the nested router encodes it once', (tester) async {
-    final router = buildRouter();
-    await pumpRouterApp(tester, router, initialLink: '/main/search');
+  testWidgets(
+    'A relative navigatePath with a space inside the nested router encodes it once',
+    (tester) async {
+      final router = buildRouter();
+      await pumpRouterApp(tester, router, initialLink: '/main/search');
 
-    unawaited(tester.element(find.text('MainListRoute')).router.navigatePath('results/a thing'));
-    await tester.pumpAndSettle();
+      unawaited(
+        tester
+            .element(find.text('MainListRoute'))
+            .router
+            .navigatePath('results/a thing'),
+      );
+      await tester.pumpAndSettle();
 
-    expect(find.text('term a thing'), findsOneWidget);
-    expect(router.urlState.uri.toString(), '/main/search/results/a%20thing');
-  });
+      expect(find.text('term a thing'), findsOneWidget);
+      expect(router.urlState.uri.toString(), '/main/search/results/a%20thing');
+    },
+  );
 }

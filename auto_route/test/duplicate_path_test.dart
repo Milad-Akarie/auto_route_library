@@ -12,7 +12,8 @@ Object _routeCollectionFor(List<AutoRoute> routes) {
 }
 
 /// A FlutterError, which is what the router throws for a route table it can't use, whose text matches [text].
-Matcher _errorText(Object text) => isA<FlutterError>().having((e) => e.toString(), 'message', text);
+Matcher _errorText(Object text) =>
+    isA<FlutterError>().having((e) => e.toString(), 'message', text);
 
 void main() {
   // flutter/flutter#190741 asked go_router_builder to report two routes with
@@ -43,23 +44,38 @@ void main() {
           AutoRoute(page: _page('MealRoute'), path: '/meal/:id'),
           AutoRoute(page: _page('MealDetailsRoute'), path: '/meal/:mealId'),
         ]),
-        throwsA(_errorText(contains('MealRoute, /meal/:id, and MealDetailsRoute, /meal/:mealId, have the same path'))),
+        throwsA(
+          _errorText(
+            contains(
+              'MealRoute, /meal/:id, and MealDetailsRoute, /meal/:mealId, have the same path',
+            ),
+          ),
+        ),
       );
     });
 
-    test('fail across levels, where a nested path adds up to the same full path', () {
-      expect(
-        () => _routeCollectionFor([
-          AutoRoute(
-            page: _page('ShopRoute'),
-            path: '/shop',
-            children: [AutoRoute(page: _page('CartRoute'), path: 'cart')],
+    test(
+      'fail across levels, where a nested path adds up to the same full path',
+      () {
+        expect(
+          () => _routeCollectionFor([
+            AutoRoute(
+              page: _page('ShopRoute'),
+              path: '/shop',
+              children: [AutoRoute(page: _page('CartRoute'), path: 'cart')],
+            ),
+            AutoRoute(page: _page('OtherCartRoute'), path: '/shop/cart'),
+          ]),
+          throwsA(
+            _errorText(
+              contains(
+                'CartRoute and OtherCartRoute have the same path, /shop/cart',
+              ),
+            ),
           ),
-          AutoRoute(page: _page('OtherCartRoute'), path: '/shop/cart'),
-        ]),
-        throwsA(_errorText(contains('CartRoute and OtherCartRoute have the same path, /shop/cart'))),
-      );
-    });
+        );
+      },
+    );
 
     test('fail for two children of a shell with no path of its own', () {
       expect(
@@ -73,7 +89,11 @@ void main() {
             ],
           ),
         ]),
-        throwsA(_errorText(contains('FeedRoute and OtherFeedRoute have the same path, /feed'))),
+        throwsA(
+          _errorText(
+            contains('FeedRoute and OtherFeedRoute have the same path, /feed'),
+          ),
+        ),
       );
     });
 
@@ -100,27 +120,40 @@ void main() {
 
     // A redirect first sends the url elsewhere while the route's children
     // stay reachable; a redirect after the route would never run.
-    test('are fine for a redirect before a route with its path, not after it', () {
-      final child = AutoRoute(page: _page('SchoolsRoute'), path: 'schools');
-      expect(
-        () => _routeCollectionFor([
-          RedirectRoute(path: '/explore', redirectTo: '/explore/schools'),
-          AutoRoute(page: _page('ExploreRoute'), path: '/explore', children: [child]),
-        ]),
-        returnsNormally,
-      );
-      expect(
-        () => _routeCollectionFor([
-          AutoRoute(page: _page('ExploreRoute'), path: '/explore', children: [child]),
-          RedirectRoute(path: '/explore', redirectTo: '/explore/schools'),
-        ]),
-        throwsA(
-          _errorText(
-            contains('ExploreRoute and the redirect from /explore to /explore/schools have the same path, /explore'),
+    test(
+      'are fine for a redirect before a route with its path, not after it',
+      () {
+        final child = AutoRoute(page: _page('SchoolsRoute'), path: 'schools');
+        expect(
+          () => _routeCollectionFor([
+            RedirectRoute(path: '/explore', redirectTo: '/explore/schools'),
+            AutoRoute(
+              page: _page('ExploreRoute'),
+              path: '/explore',
+              children: [child],
+            ),
+          ]),
+          returnsNormally,
+        );
+        expect(
+          () => _routeCollectionFor([
+            AutoRoute(
+              page: _page('ExploreRoute'),
+              path: '/explore',
+              children: [child],
+            ),
+            RedirectRoute(path: '/explore', redirectTo: '/explore/schools'),
+          ]),
+          throwsA(
+            _errorText(
+              contains(
+                'ExploreRoute and the redirect from /explore to /explore/schools have the same path, /explore',
+              ),
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
 
     // MaterialApp.router asks for the config first, so the app fails before
     // its first frame.

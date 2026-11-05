@@ -27,26 +27,33 @@ void main() {
   // built again from scratch.
   // Happens: the first tab shows again while the url stays '/second'.
   // Should: the second tab stays active.
-  testWidgets('Rebuilding the layout above AutoTabsRouter.tabBar keeps the active tab', (tester) async {
-    addTearDown(() => _layoutNotifier.value = false);
-    final router = buildRouter();
-    await pumpRouterConfigApp(tester, router.config());
-    expect(find.text(_FirstTabRoute.name), findsOneWidget);
+  testWidgets(
+    'Rebuilding the layout above AutoTabsRouter.tabBar keeps the active tab',
+    (tester) async {
+      addTearDown(() => _layoutNotifier.value = false);
+      final router = buildRouter();
+      await pumpRouterConfigApp(tester, router.config());
+      expect(find.text(_FirstTabRoute.name), findsOneWidget);
 
-    await tester.tap(find.text('Go to second tab'));
-    await tester.pumpAndSettle();
-    expect(find.text(_SecondTabRoute.name), findsOneWidget);
-    expect(router.urlState.path, '/second');
+      await tester.tap(find.text('Go to second tab'));
+      await tester.pumpAndSettle();
+      expect(find.text(_SecondTabRoute.name), findsOneWidget);
+      expect(router.urlState.path, '/second');
 
-    _layoutNotifier.value = !_layoutNotifier.value;
-    await tester.pumpAndSettle();
-    expect(
-      find.text(_SecondTabRoute.name),
-      findsOneWidget,
-      reason: 'after _layoutNotifier.value = !_layoutNotifier.value',
-    );
-    expect(router.urlState.path, '/second', reason: 'after _layoutNotifier.value = !_layoutNotifier.value');
-  });
+      _layoutNotifier.value = !_layoutNotifier.value;
+      await tester.pumpAndSettle();
+      expect(
+        find.text(_SecondTabRoute.name),
+        findsOneWidget,
+        reason: 'after _layoutNotifier.value = !_layoutNotifier.value',
+      );
+      expect(
+        router.urlState.path,
+        '/second',
+        reason: 'after _layoutNotifier.value = !_layoutNotifier.value',
+      );
+    },
+  );
 }
 
 // Flips the layout around the tabs: false keeps them alone, true puts a side
@@ -87,7 +94,10 @@ class _FirstTabRoute extends PageRouteInfo<void> {
         body: Column(
           children: [
             const Text(name),
-            TextButton(onPressed: () => context.tabsRouter.setActiveIndex(1), child: const Text('Go to second tab')),
+            TextButton(
+              onPressed: () => context.tabsRouter.setActiveIndex(1),
+              child: const Text('Go to second tab'),
+            ),
           ],
         ),
       ),
@@ -99,5 +109,8 @@ class _SecondTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_SecondTabRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text(name)),
+  );
 }

@@ -12,7 +12,9 @@ void main() {
   // the string 'rm', and threw a type error (String is not
   // MfUserCartTypes?). It should read the enum by its name. The router and
   // its page are in cart_router.dart, with the router generated next to it.
-  testWidgets('A deep link reads an enum query parameter by its name', (tester) async {
+  testWidgets('A deep link reads an enum query parameter by its name', (
+    tester,
+  ) async {
     final router = CartRouter();
     await pumpRouterApp(tester, router, initialLink: '/cart?type=rm');
     expect(tester.takeException(), isNull);
@@ -29,7 +31,9 @@ void main() {
 
   // Pushing the route puts the enum's name in the url, the same form the
   // deep link uses, not `MfUserCartTypes.rm`.
-  testWidgets('Pushing the route writes the enum by its name in the url', (tester) async {
+  testWidgets('Pushing the route writes the enum by its name in the url', (
+    tester,
+  ) async {
     final router = CartRouter();
     await pumpRouterApp(tester, router);
     unawaited(router.push(MfUserCartRoute(userCartType: .mf)));

@@ -34,22 +34,33 @@ void main() {
     await rewindBrowserHistory();
   });
 
-  testWidgets('PopScope blocks the browser back button under the path url strategy', (tester) async {
-    await pumpRouterConfigApp(tester, router.config());
-    await settleBrowser(tester);
-    unawaited(router.push(const _FormRoute()));
-    await settleBrowser(tester);
-    expect(browserPath, '/form');
-    // The address bar shows a path, not a '#' url.
-    expect(window.location.hash, isEmpty);
-    expect(window.location.pathname, endsWith('/form'));
+  testWidgets(
+    'PopScope blocks the browser back button under the path url strategy',
+    (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
+      await settleBrowser(tester);
+      unawaited(router.push(const _FormRoute()));
+      await settleBrowser(tester);
+      expect(browserPath, '/form');
+      // The address bar shows a path, not a '#' url.
+      expect(window.location.hash, isEmpty);
+      expect(window.location.pathname, endsWith('/form'));
 
-    await pressBrowserBackOn(tester, router);
-    expectCurrentPage(router, _FormRoute.name);
-    expect(_attempts, 1);
-    expect(browserPath, '/form', reason: 'after pressBrowserBackOn(tester, router)');
-    expect(window.location.pathname, endsWith('/form'), reason: 'after pressBrowserBackOn(tester, router)');
-  });
+      await pressBrowserBackOn(tester, router);
+      expectCurrentPage(router, _FormRoute.name);
+      expect(_attempts, 1);
+      expect(
+        browserPath,
+        '/form',
+        reason: 'after pressBrowserBackOn(tester, router)',
+      );
+      expect(
+        window.location.pathname,
+        endsWith('/form'),
+        reason: 'after pressBrowserBackOn(tester, router)',
+      );
+    },
+  );
 }
 
 int _attempts = 0;

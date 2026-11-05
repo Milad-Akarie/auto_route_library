@@ -59,12 +59,15 @@ void main() {
   // Steps: push CounterRoute, count to 1, then rebuild the widget above
   // MaterialApp.router.
   // Should: the stack and the page's State are kept.
-  testWidgets('config() called again in a rebuilt build keeps the stack and page state', (tester) async {
-    await pumpInlineConfigApp(tester);
-    rebuildApp(noOp);
-    await tester.pumpAndSettle();
-    expectStackAndStateKept();
-  });
+  testWidgets(
+    'config() called again in a rebuilt build keeps the stack and page state',
+    (tester) async {
+      await pumpInlineConfigApp(tester);
+      rebuildApp(noOp);
+      await tester.pumpAndSettle();
+      expectStackAndStateKept();
+    },
+  );
 
   // flutter/flutter#127206: go_router asked how to handle a router config
   // created inline in MaterialApp.router, which a hot reload builds again.
@@ -72,12 +75,15 @@ void main() {
   // Steps: push CounterRoute, count to 1, then reassemble the app as a hot
   // reload does.
   // Should: the stack and the page's State are kept.
-  testWidgets('config() called inline keeps the stack and page state through a hot reload', (tester) async {
-    await pumpInlineConfigApp(tester);
-    unawaited(tester.binding.reassembleApplication());
-    await tester.pumpAndSettle();
-    expectStackAndStateKept();
-  });
+  testWidgets(
+    'config() called inline keeps the stack and page state through a hot reload',
+    (tester) async {
+      await pumpInlineConfigApp(tester);
+      unawaited(tester.binding.reassembleApplication());
+      await tester.pumpAndSettle();
+      expectStackAndStateKept();
+    },
+  );
 }
 
 class _CounterPage extends StatefulWidget {
@@ -102,7 +108,10 @@ class _CounterPageState extends State<_CounterPage> {
     body: Column(
       children: [
         Text('count $_count'),
-        TextButton(onPressed: () => setState(() => _count++), child: const Text('add')),
+        TextButton(
+          onPressed: () => setState(() => _count++),
+          child: const Text('add'),
+        ),
       ],
     ),
   );

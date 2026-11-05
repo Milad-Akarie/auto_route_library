@@ -16,7 +16,9 @@ void main() {
     // on 10.1.2.
     // Should: the open tab's title, text and button are in the semantics tree
     // and not hidden; the other tabs' are hidden or left out.
-    testWidgets('${kind.name}: a tab opened again is in the semantics tree', (tester) async {
+    testWidgets('${kind.name}: a tab opened again is in the semantics tree', (
+      tester,
+    ) async {
       final semantics = tester.ensureSemantics();
       // A phone's screen: the pages laid out beside the open one only reached
       // the semantics tree, not hidden, on a narrow screen.
@@ -57,13 +59,21 @@ void main() {
 
       void expectReadable(String label) {
         for (final text in ['$label title', '$label text', '$label button']) {
-          expect(nodesLabeled(text).where((node) => !node.flagsCollection.isHidden), hasLength(1), reason: text);
+          expect(
+            nodesLabeled(text).where((node) => !node.flagsCollection.isHidden),
+            hasLength(1),
+            reason: text,
+          );
         }
       }
 
       void expectNotReadable(String label) {
         for (final text in ['$label title', '$label text', '$label button']) {
-          expect(nodesLabeled(text).where((node) => !node.flagsCollection.isHidden), isEmpty, reason: text);
+          expect(
+            nodesLabeled(text).where((node) => !node.flagsCollection.isHidden),
+            isEmpty,
+            reason: text,
+          );
         }
       }
 
@@ -105,19 +115,28 @@ class _FirstTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_FirstTabRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const TitledTabPage('First'));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const TitledTabPage('First'),
+  );
 }
 
 class _SecondTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_SecondTabRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const TitledTabPage('Second'));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const TitledTabPage('Second'),
+  );
 }
 
 class _ThirdTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_ThirdTabRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const TitledTabPage('Third'));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const TitledTabPage('Third'),
+  );
 }

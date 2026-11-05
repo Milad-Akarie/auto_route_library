@@ -17,7 +17,11 @@ void main() {
     addTearDown(pageNotifier.dispose);
     await pumpRouterConfigApp(
       tester,
-      router.config(deepLinkBuilder: (_) => DeepLink.single(DeclarativeRouterHostRoute(pageNotifier: pageNotifier))),
+      router.config(
+        deepLinkBuilder: (_) => DeepLink.single(
+          DeclarativeRouterHostRoute(pageNotifier: pageNotifier),
+        ),
+      ),
     );
 
     final declarativeRouter = router.topMostRouter();
@@ -33,7 +37,15 @@ void main() {
     expect(declarativeRouter.pageCount, 3);
     pageNotifier.value = 1;
     await tester.pumpAndSettle();
-    expect(find.text(SecondNested1Route.name), findsOneWidget, reason: 'after pageNotifier.value = 1');
-    expect(declarativeRouter.pageCount, 1, reason: 'after pageNotifier.value = 1');
+    expect(
+      find.text(SecondNested1Route.name),
+      findsOneWidget,
+      reason: 'after pageNotifier.value = 1',
+    );
+    expect(
+      declarativeRouter.pageCount,
+      1,
+      reason: 'after pageNotifier.value = 1',
+    );
   });
 }

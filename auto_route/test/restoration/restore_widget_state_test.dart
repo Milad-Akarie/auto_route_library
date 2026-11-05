@@ -33,20 +33,31 @@ void main() {
   // Steps: push ListRoute, scroll its list 300 down, then let the platform
   // end and restore the app.
   // Should: ListRoute is back on top of HomeRoute, scrolled 300 down.
-  testWidgets('a list keeps its scroll offset after restoration', (tester) async {
+  testWidgets('a list keeps its scroll offset after restoration', (
+    tester,
+  ) async {
     await tester.pumpWidget(RestorableRouterApp(buildRouter));
     await tester.pumpAndSettle();
     unawaited(RestorableRouterApp.router.push(const NamedRoute('ListRoute')));
     await tester.pumpAndSettle();
     await tester.drag(find.byType(ListView), const Offset(0, -300));
     await tester.pumpAndSettle();
-    final offset = tester.state<ScrollableState>(find.byType(Scrollable)).position.pixels;
+    final offset = tester
+        .state<ScrollableState>(find.byType(Scrollable))
+        .position
+        .pixels;
     expect(offset, greaterThan(0));
 
     await tester.restartAndRestore();
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
-    expect(RestorableRouterApp.router.stack.map((p) => p.name), ['HomeRoute', 'ListRoute']);
-    expect(tester.state<ScrollableState>(find.byType(Scrollable)).position.pixels, offset);
+    expect(RestorableRouterApp.router.stack.map((p) => p.name), [
+      'HomeRoute',
+      'ListRoute',
+    ]);
+    expect(
+      tester.state<ScrollableState>(find.byType(Scrollable)).position.pixels,
+      offset,
+    );
   }, skip: kIsWeb);
 }

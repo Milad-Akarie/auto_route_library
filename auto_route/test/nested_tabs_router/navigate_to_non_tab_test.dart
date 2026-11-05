@@ -23,12 +23,23 @@ void main() {
         name: 'SectionRoute',
         path: '/',
         builder: (_, _) => AutoTabsRouter(
-          routes: const [NamedRoute('PagerPage1Route'), NamedRoute('PagerPage2Route')],
+          routes: const [
+            NamedRoute('PagerPage1Route'),
+            NamedRoute('PagerPage2Route'),
+          ],
           builder: (_, child) => child,
         ),
         children: [
-          NamedRouteDef(name: 'PagerPage1Route', path: 'page1', builder: (_, _) => const NamedPage('PagerPage1Route')),
-          NamedRouteDef(name: 'PagerPage2Route', path: 'page2', builder: (_, _) => const NamedPage('PagerPage2Route')),
+          NamedRouteDef(
+            name: 'PagerPage1Route',
+            path: 'page1',
+            builder: (_, _) => const NamedPage('PagerPage1Route'),
+          ),
+          NamedRouteDef(
+            name: 'PagerPage2Route',
+            path: 'page2',
+            builder: (_, _) => const NamedPage('PagerPage2Route'),
+          ),
           NamedRouteDef(
             name: 'OtherExternalPageRoute',
             path: 'other',
@@ -39,28 +50,41 @@ void main() {
     ],
   );
 
-  testWidgets('navigate to a child route that is not a tab reports a failure', (tester) async {
+  testWidgets('navigate to a child route that is not a tab reports a failure', (
+    tester,
+  ) async {
     final router = buildRouter();
     await pumpRouterApp(tester, router);
     final tabs = tester.element(find.text('PagerPage1Route')).router;
     final failures = <NavigationFailure>[];
 
-    unawaited(tabs.navigate(const NamedRoute('OtherExternalPageRoute'), onFailure: failures.add));
+    unawaited(
+      tabs.navigate(
+        const NamedRoute('OtherExternalPageRoute'),
+        onFailure: failures.add,
+      ),
+    );
     await tester.pumpAndSettle();
 
     expect(failures.singleOrNull, isA<RouteNotFoundFailure>());
     expect(find.text('PagerPage1Route'), findsOneWidget);
   });
 
-  testWidgets('navigate to a child route that is not a tab throws without onFailure', (tester) async {
-    final router = buildRouter();
-    await pumpRouterApp(tester, router);
-    final tabs = tester.element(find.text('PagerPage1Route')).router;
+  testWidgets(
+    'navigate to a child route that is not a tab throws without onFailure',
+    (tester) async {
+      final router = buildRouter();
+      await pumpRouterApp(tester, router);
+      final tabs = tester.element(find.text('PagerPage1Route')).router;
 
-    await expectLater(tabs.navigate(const NamedRoute('OtherExternalPageRoute')), throwsA(isA<FlutterError>()));
-    await tester.pumpAndSettle();
-    expect(find.text('PagerPage1Route'), findsOneWidget);
-  });
+      await expectLater(
+        tabs.navigate(const NamedRoute('OtherExternalPageRoute')),
+        throwsA(isA<FlutterError>()),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('PagerPage1Route'), findsOneWidget);
+    },
+  );
 
   testWidgets('navigate to another tab still switches to it', (tester) async {
     final router = buildRouter();

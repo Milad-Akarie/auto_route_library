@@ -13,7 +13,9 @@ import 'router.dart';
 void main() {
   // The app keeps one router and calls router.config() in every build.
   // Navigate to SecondRoute, then rebuild the app: the stack and url stay.
-  testWidgets('Rebuilding the app with router.config() keeps the stack', (tester) async {
+  testWidgets('Rebuilding the app with router.config() keeps the stack', (
+    tester,
+  ) async {
     final router = SimpleRouter();
     addTearDown(router.dispose);
     final rebuild = ValueNotifier(0);
@@ -31,38 +33,44 @@ void main() {
     rebuild.value++;
     await tester.pumpAndSettle();
     expectCurrentPage(router, SecondRoute.name);
-    expect(router.stack.map((p) => p.name), [FirstRoute.name, SecondRoute.name]);
+    expect(router.stack.map((p) => p.name), [
+      FirstRoute.name,
+      SecondRoute.name,
+    ]);
     expect(router.currentUrl, '/second-route');
   });
 
   // The reporter's app makes a new router in every build, and rebuilds once
   // after its first frame. Open it at /second-route, as a refresh does: the
   // second router opens /second-route too, from the platform's initial route.
-  testWidgets('A new router built after the first frame opens the refreshed url', (tester) async {
-    final dispatcher = tester.binding.platformDispatcher;
-    addTearDown(dispatcher.clearDefaultRouteNameTestValue);
-    dispatcher.defaultRouteNameTestValue = '/second-route';
-    final routers = <SimpleRouter>[];
-    addTearDown(() {
-      for (final router in routers) {
-        router.dispose();
-      }
-    });
-    await tester.pumpWidget(
-      _RebuildsAfterFirstFrame(
-        builder: () {
-          final router = SimpleRouter();
-          routers.add(router);
-          return MaterialApp.router(routerConfig: router.config());
-        },
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(routers, hasLength(2));
-    final [..., current] = routers;
-    expectCurrentPage(current, SecondRoute.name);
-    expect(current.currentUrl, '/second-route');
-  });
+  testWidgets(
+    'A new router built after the first frame opens the refreshed url',
+    (tester) async {
+      final dispatcher = tester.binding.platformDispatcher;
+      addTearDown(dispatcher.clearDefaultRouteNameTestValue);
+      dispatcher.defaultRouteNameTestValue = '/second-route';
+      final routers = <SimpleRouter>[];
+      addTearDown(() {
+        for (final router in routers) {
+          router.dispose();
+        }
+      });
+      await tester.pumpWidget(
+        _RebuildsAfterFirstFrame(
+          builder: () {
+            final router = SimpleRouter();
+            routers.add(router);
+            return MaterialApp.router(routerConfig: router.config());
+          },
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(routers, hasLength(2));
+      final [..., current] = routers;
+      expectCurrentPage(current, SecondRoute.name);
+      expect(current.currentUrl, '/second-route');
+    },
+  );
 }
 
 class _RebuildsAfterFirstFrame extends StatefulWidget {
@@ -71,14 +79,17 @@ class _RebuildsAfterFirstFrame extends StatefulWidget {
   final Widget Function() builder;
 
   @override
-  State<_RebuildsAfterFirstFrame> createState() => _RebuildsAfterFirstFrameState();
+  State<_RebuildsAfterFirstFrame> createState() =>
+      _RebuildsAfterFirstFrameState();
 }
 
 class _RebuildsAfterFirstFrameState extends State<_RebuildsAfterFirstFrame> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => (context as Element).markNeedsBuild());
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => (context as Element).markNeedsBuild(),
+    );
   }
 
   @override

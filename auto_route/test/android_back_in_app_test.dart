@@ -36,43 +36,68 @@ void main() {
           path: '/authorized',
           transitionsBuilder: TransitionsBuilders.fadeIn,
           duration: const Duration(milliseconds: 200),
-          children: [_fade(_page('HomeRoute'), 'home', initial: true), _fade(_page('ActivityRoute'), 'activity')],
+          children: [
+            _fade(_page('HomeRoute'), 'home', initial: true),
+            _fade(_page('ActivityRoute'), 'activity'),
+          ],
         ),
       ],
     );
     addTearDown(router.dispose);
   });
 
-  final backs = {'system back': systemBack, 'the predictive back gesture': predictiveBack};
+  final backs = {
+    'system back': systemBack,
+    'the predictive back gesture': predictiveBack,
+  };
 
   for (final MapEntry(key: name, value: back) in backs.entries) {
-    testWidgets('$name should pop the page on top, flat or nested, and keep the app open', (tester) async {
-      final frameworkHandlesBack = FrameworkHandlesBackRecorder()..listen(tester);
-      await tester.pumpWidget(MaterialApp.router(theme: androidTheme, routerConfig: router.config()));
-      await tester.pumpAndSettle();
-      expect(frameworkHandlesBack.last, isFalse);
+    testWidgets(
+      '$name should pop the page on top, flat or nested, and keep the app open',
+      (tester) async {
+        final frameworkHandlesBack = FrameworkHandlesBackRecorder()
+          ..listen(tester);
+        await tester.pumpWidget(
+          MaterialApp.router(
+            theme: androidTheme,
+            routerConfig: router.config(),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(frameworkHandlesBack.last, isFalse);
 
-      unawaited(router.push(const _Route('LoginRoute')));
-      await tester.pumpAndSettle();
-      expect(frameworkHandlesBack.last, isTrue);
-      await back(tester);
-      expectTopPage(router, 'WelcomeRoute');
+        unawaited(router.push(const _Route('LoginRoute')));
+        await tester.pumpAndSettle();
+        expect(frameworkHandlesBack.last, isTrue);
+        await back(tester);
+        expectTopPage(router, 'WelcomeRoute');
 
-      unawaited(router.replaceAll([const _Route('AuthorizedRoute')]));
-      await tester.pumpAndSettle();
-      expectTopPage(router, 'HomeRoute');
-      unawaited(router.innerRouterOf<StackRouter>('AuthorizedRoute')!.push(const _Route('ActivityRoute')));
-      await tester.pumpAndSettle();
-      expect(
-        frameworkHandlesBack.last,
-        isTrue,
-        reason: 'after router.innerRouterOf<StackRouter>(AuthorizedRoute)!.push',
-      );
+        unawaited(router.replaceAll([const _Route('AuthorizedRoute')]));
+        await tester.pumpAndSettle();
+        expectTopPage(router, 'HomeRoute');
+        unawaited(
+          router
+              .innerRouterOf<StackRouter>('AuthorizedRoute')!
+              .push(const _Route('ActivityRoute')),
+        );
+        await tester.pumpAndSettle();
+        expect(
+          frameworkHandlesBack.last,
+          isTrue,
+          reason:
+              'after router.innerRouterOf<StackRouter>(AuthorizedRoute)!.push',
+        );
 
-      await back(tester);
-      expectTopPage(router, 'HomeRoute');
-      expect(frameworkHandlesBack.last, isFalse, reason: 'after back(tester)');
-    }, skip: kIsWeb); // Android only: on web Flutter never tells the platform whether it handles back.
+        await back(tester);
+        expectTopPage(router, 'HomeRoute');
+        expect(
+          frameworkHandlesBack.last,
+          isFalse,
+          reason: 'after back(tester)',
+        );
+      },
+      skip: kIsWeb,
+    ); // Android only: on web Flutter never tells the platform whether it handles back.
   }
 }
 
@@ -84,7 +109,8 @@ CustomRoute _fade(PageInfo page, String path, {bool initial = false}) => .new(
   duration: const Duration(milliseconds: 200),
 );
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
   const new(super.name);

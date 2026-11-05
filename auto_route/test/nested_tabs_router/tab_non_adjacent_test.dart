@@ -14,30 +14,47 @@ import 'router.dart';
 // tab is never on screen on the way.
 void main() {
   for (final tabsType in ['TabBar', 'PageView']) {
-    testWidgets('$tabsType: going to a non-adjacent tab never shows the tab between', (tester) async {
-      final router = NestedTabsRouter();
-      await pumpRouterConfigApp(
-        tester,
-        router.config(deepLinkBuilder: (_) => DeepLink.single(TabsHostRoute(tabsType: tabsType))),
-      );
-      final tabsRouter = router.innerRouterOf<TabsRouter>(TabsHostRoute.name)!;
-      final viewport = tester.getRect(find.byType(Scrollable).first);
+    testWidgets(
+      '$tabsType: going to a non-adjacent tab never shows the tab between',
+      (tester) async {
+        final router = NestedTabsRouter();
+        await pumpRouterConfigApp(
+          tester,
+          router.config(
+            deepLinkBuilder: (_) =>
+                DeepLink.single(TabsHostRoute(tabsType: tabsType)),
+          ),
+        );
+        final tabsRouter = router.innerRouterOf<TabsRouter>(
+          TabsHostRoute.name,
+        )!;
+        final viewport = tester.getRect(find.byType(Scrollable).first);
 
-      bool onScreen(String text) {
-        final finder = find.text(text, skipOffstage: false);
-        return finder.evaluate().isNotEmpty && tester.getRect(finder).overlaps(viewport);
-      }
+        bool onScreen(String text) {
+          final finder = find.text(text, skipOffstage: false);
+          return finder.evaluate().isNotEmpty &&
+              tester.getRect(finder).overlaps(viewport);
+        }
 
-      tabsRouter.setActiveIndex(2);
-      var sawFirst = false;
-      for (var i = 0; i < 20; i++) {
-        await tester.pump(const Duration(milliseconds: 20));
-        sawFirst |= onScreen(Tab1Route.name);
-        expect(onScreen(Tab2Nested1Route.name), isFalse, reason: 'the tab between is on screen at frame $i');
-      }
-      await tester.pumpAndSettle();
-      expect(sawFirst, isTrue, reason: 'the first tab should slide out, not vanish');
-      expectTopPage(router, Tab3Nested1Route.name);
-    });
+        tabsRouter.setActiveIndex(2);
+        var sawFirst = false;
+        for (var i = 0; i < 20; i++) {
+          await tester.pump(const Duration(milliseconds: 20));
+          sawFirst |= onScreen(Tab1Route.name);
+          expect(
+            onScreen(Tab2Nested1Route.name),
+            isFalse,
+            reason: 'the tab between is on screen at frame $i',
+          );
+        }
+        await tester.pumpAndSettle();
+        expect(
+          sawFirst,
+          isTrue,
+          reason: 'the first tab should slide out, not vanish',
+        );
+        expectTopPage(router, Tab3Nested1Route.name);
+      },
+    );
   }
 }

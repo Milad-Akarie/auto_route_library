@@ -53,39 +53,45 @@ void main() {
 
   // Steps: push the user page, then tap its leading button.
   // Should: the home page shows again.
-  testWidgets('AutoLeadingButton on a page holding a nested router goes back to the previous page', (tester) async {
-    await pumpRouterConfigApp(tester, router.config());
-    unawaited(router.push(const _UserRoute()));
-    await tester.pumpAndSettle();
-    expect(find.text(_ProfileRoute.name), findsOneWidget);
+  testWidgets(
+    'AutoLeadingButton on a page holding a nested router goes back to the previous page',
+    (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
+      unawaited(router.push(const _UserRoute()));
+      await tester.pumpAndSettle();
+      expect(find.text(_ProfileRoute.name), findsOneWidget);
 
-    await tapLeadingButton(tester);
-    expect(find.text(_HomeRoute.name), findsOneWidget);
-    expect(router.stack.map((p) => p.name), [_HomeRoute.name]);
-  });
+      await tapLeadingButton(tester);
+      expect(find.text(_HomeRoute.name), findsOneWidget);
+      expect(router.stack.map((p) => p.name), [_HomeRoute.name]);
+    },
+  );
 
   // Steps: push the user page, push the guarded posts route from the
   // profile page, which opens the verify page on the root router. Tap the
   // leading button on the verify page, then on the user page.
   // Happens: the first tap shows the user page; the second does nothing.
   // Should: the first tap shows the user page, the second the home page.
-  testWidgets('AutoLeadingButton goes back to the previous page after a guard redirect was popped', (tester) async {
-    await pumpRouterConfigApp(tester, router.config());
-    unawaited(router.push(const _UserRoute()));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'AutoLeadingButton goes back to the previous page after a guard redirect was popped',
+    (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
+      unawaited(router.push(const _UserRoute()));
+      await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Posts'));
-    await tester.pumpAndSettle();
-    expect(find.text(_VerifyRoute.name), findsOneWidget);
+      await tester.tap(find.text('Posts'));
+      await tester.pumpAndSettle();
+      expect(find.text(_VerifyRoute.name), findsOneWidget);
 
-    await tapLeadingButton(tester);
-    expect(find.text(_ProfileRoute.name), findsOneWidget);
-    expect(find.text(_VerifyRoute.name), findsNothing);
+      await tapLeadingButton(tester);
+      expect(find.text(_ProfileRoute.name), findsOneWidget);
+      expect(find.text(_VerifyRoute.name), findsNothing);
 
-    await tapLeadingButton(tester);
-    expect(find.text(_HomeRoute.name), findsOneWidget);
-    expect(router.stack.map((p) => p.name), [_HomeRoute.name]);
-  });
+      await tapLeadingButton(tester);
+      expect(find.text(_HomeRoute.name), findsOneWidget);
+      expect(router.stack.map((p) => p.name), [_HomeRoute.name]);
+    },
+  );
 }
 
 abstract final class _HomeRoute {
@@ -133,7 +139,10 @@ abstract final class _ProfileRoute {
       builder: (context) => Column(
         children: [
           const Text(name),
-          TextButton(onPressed: () => context.pushRoute(const _PostsRoute()), child: const Text('Posts')),
+          TextButton(
+            onPressed: () => context.pushRoute(const _PostsRoute()),
+            child: const Text('Posts'),
+          ),
         ],
       ),
     ),

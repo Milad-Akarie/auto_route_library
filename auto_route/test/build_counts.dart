@@ -30,5 +30,8 @@ Future<void> pumpAtDeepLink(
   final dispatcher = tester.binding.platformDispatcher;
   addTearDown(dispatcher.clearDefaultRouteNameTestValue);
   dispatcher.defaultRouteNameTestValue = link;
-  return pumpRouterConfigApp(tester, router.config(includePrefixMatches: includePrefixMatches));
+  return pumpRouterConfigApp(
+    tester,
+    router.config(includePrefixMatches: includePrefixMatches),
+  );
 }

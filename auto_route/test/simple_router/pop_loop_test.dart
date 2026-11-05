@@ -32,7 +32,9 @@ void main() {
     }
   }
 
-  testWidgets('a loop of pops until Home ends on Home after three pops', (tester) async {
+  testWidgets('a loop of pops until Home ends on Home after three pops', (
+    tester,
+  ) async {
     await openStack(tester);
 
     var pops = 0;
@@ -58,4 +60,5 @@ void main() {
   });
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));

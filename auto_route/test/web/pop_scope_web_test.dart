@@ -56,7 +56,9 @@ void main() {
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/1588
   // The same with the older WillPopScope, whose onWillPop returns false.
-  testWidgets('WillPopScope on web blocks the browser back button', (tester) async {
+  testWidgets('WillPopScope on web blocks the browser back button', (
+    tester,
+  ) async {
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
     unawaited(router.push(const _LegacyFormRoute()));
@@ -77,33 +79,36 @@ void main() {
   // the entry it had. The same with the three refusals from the app's own
   // back, maybePop.
   for (final fromApp in [false, true]) {
-    testWidgets('Refused exits on web add no browser entries, refused from the app: $fromApp', (tester) async {
-      await pumpRouterConfigApp(tester, router.config());
-      await settleBrowser(tester);
-      final start = browserSerialCount;
-      unawaited(router.push(const _ToggleFormRoute()));
-      await settleBrowser(tester);
+    testWidgets(
+      'Refused exits on web add no browser entries, refused from the app: $fromApp',
+      (tester) async {
+        await pumpRouterConfigApp(tester, router.config());
+        await settleBrowser(tester);
+        final start = browserSerialCount;
+        unawaited(router.push(const _ToggleFormRoute()));
+        await settleBrowser(tester);
 
-      for (var i = 0; i < 3; i++) {
-        if (fromApp) {
-          await router.maybePop();
-          await settleBrowser(tester);
-        } else {
-          await pressBrowserBackOn(tester, router);
+        for (var i = 0; i < 3; i++) {
+          if (fromApp) {
+            await router.maybePop();
+            await settleBrowser(tester);
+          } else {
+            await pressBrowserBackOn(tester, router);
+          }
+          expectCurrentPage(router, _ToggleFormRoute.name);
+          expect(browserSerialCount, start + 1);
         }
-        expectCurrentPage(router, _ToggleFormRoute.name);
-        expect(browserSerialCount, start + 1);
-      }
-      expect(_popAttempts, 3);
+        expect(_popAttempts, 3);
 
-      _canLeave.value = true;
-      await tester.pump();
-      await pressBrowserBack(tester);
-      expectCurrentPage(router, FirstRoute.name);
-      expect(router.stack.map((p) => p.name), [FirstRoute.name]);
-      expect(browserPath, '/');
-      expect(browserSerialCount, start);
-    });
+        _canLeave.value = true;
+        await tester.pump();
+        await pressBrowserBack(tester);
+        expectCurrentPage(router, FirstRoute.name);
+        expect(router.stack.map((p) => p.name), [FirstRoute.name]);
+        expect(browserPath, '/');
+        expect(browserSerialCount, start);
+      },
+    );
   }
 }
 
@@ -112,7 +117,10 @@ var _popAttempts = 0;
 /// Presses the browser's back button and waits until the app has answered it:
 /// by following the browser, which changes the app's url, or by refusing,
 /// which moves the browser forward again.
-Future<void> pressBrowserBackOn(WidgetTester tester, RootStackRouter router) async {
+Future<void> pressBrowserBackOn(
+  WidgetTester tester,
+  RootStackRouter router,
+) async {
   final answered = Completer<void>();
   void onAnswer() {
     if (!answered.isCompleted) answered.complete();
@@ -120,7 +128,10 @@ Future<void> pressBrowserBackOn(WidgetTester tester, RootStackRouter router) asy
 
   // Both listen before the press: the app may follow the browser at once.
   router.navigationHistory.addListener(onAnswer);
-  final stepBackAndForward = window.onPopState.take(2).toList().then((_) => onAnswer());
+  final stepBackAndForward = window.onPopState
+      .take(2)
+      .toList()
+      .then((_) => onAnswer());
   window.history.back();
   await answered.future;
   router.navigationHistory.removeListener(onAnswer);

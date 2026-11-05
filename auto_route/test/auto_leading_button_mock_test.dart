@@ -31,21 +31,27 @@ void main() {
     );
   }
 
-  testWidgets('An AutoLeadingButton builds with a mocked StackRouter that cannot pop', (tester) async {
-    await tester.pumpWidget(buttonWith(_MockStackRouter(canPopValue: false)));
+  testWidgets(
+    'An AutoLeadingButton builds with a mocked StackRouter that cannot pop',
+    (tester) async {
+      await tester.pumpWidget(buttonWith(_MockStackRouter(canPopValue: false)));
 
-    expect(tester.takeException(), isNull);
-    expect(find.byType(BackButton), findsNothing);
-  });
+      expect(tester.takeException(), isNull);
+      expect(find.byType(BackButton), findsNothing);
+    },
+  );
 
-  testWidgets('An AutoLeadingButton shows a back button with a mocked StackRouter that can pop', (tester) async {
-    final router = _MockStackRouter(canPopValue: true);
-    await tester.pumpWidget(buttonWith(router));
-    expect(find.byType(BackButton), findsOneWidget);
+  testWidgets(
+    'An AutoLeadingButton shows a back button with a mocked StackRouter that can pop',
+    (tester) async {
+      final router = _MockStackRouter(canPopValue: true);
+      await tester.pumpWidget(buttonWith(router));
+      expect(find.byType(BackButton), findsOneWidget);
 
-    await tester.tap(find.byType(BackButton));
-    expect(router.maybePopTopCalls, 1);
-  });
+      await tester.tap(find.byType(BackButton));
+      expect(router.maybePopTopCalls, 1);
+    },
+  );
 }
 
 class _MockStackRouter extends Fake implements StackRouter {
@@ -55,11 +61,15 @@ class _MockStackRouter extends Fake implements StackRouter {
   int maybePopTopCalls = 0;
 
   @override
-  final PagelessRoutesObserver pagelessRoutesObserver = PagelessRoutesObserver();
+  final PagelessRoutesObserver pagelessRoutesObserver =
+      PagelessRoutesObserver();
 
   @override
-  bool canPop({bool ignoreChildRoutes = false, bool ignoreParentRoutes = false, bool ignorePagelessRoutes = false}) =>
-      canPopValue;
+  bool canPop({
+    bool ignoreChildRoutes = false,
+    bool ignoreParentRoutes = false,
+    bool ignorePagelessRoutes = false,
+  }) => canPopValue;
 
   @override
   AutoRoutePage<Object?>? get topPage => null;

@@ -14,12 +14,17 @@ import '../router_test_utils.dart';
 // Should: only C animates out, over A; B never shows, and B's push
 // completes as a pop would complete it.
 void main() {
-  testWidgets('popUntil on a nested router never shows the pages in between', (tester) async {
+  testWidgets('popUntil on a nested router never shows the pages in between', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(
           path: '/',
-          page: PageInfo('HostRoute', builder: (_) => const Scaffold(body: AutoRouter())),
+          page: PageInfo(
+            'HostRoute',
+            builder: (_) => const Scaffold(body: AutoRouter()),
+          ),
           children: [
             for (final name in ['A', 'B', 'C'])
               AutoRoute(

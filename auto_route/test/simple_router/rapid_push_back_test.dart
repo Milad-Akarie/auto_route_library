@@ -20,38 +20,42 @@ void main() {
     Duration(milliseconds: 100),
     Duration(milliseconds: 300),
   ]) {
-    testWidgets('Rapid push and system back on Android throw nothing, ${gap.inMilliseconds} ms apart '
-        '(flutter/flutter#189503)', (tester) async {
-      PageInfo page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(page: page('ProductList'), path: '/list', initial: true),
-          AutoRoute(page: page('ProductDetail'), path: '/list/detail'),
-        ],
-      );
-      addTearDown(router.dispose);
-      await tester.pumpWidget(
-        MaterialApp.router(
-          theme: ThemeData(platform: .android),
-          routerConfig: router.config(),
-        ),
-      );
-      await tester.pumpAndSettle();
+    testWidgets(
+      'Rapid push and system back on Android throw nothing, ${gap.inMilliseconds} ms apart '
+      '(flutter/flutter#189503)',
+      (tester) async {
+        PageInfo page(String name) =>
+            .new(name, builder: (_) => Scaffold(body: Text(name)));
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(page: page('ProductList'), path: '/list', initial: true),
+            AutoRoute(page: page('ProductDetail'), path: '/list/detail'),
+          ],
+        );
+        addTearDown(router.dispose);
+        await tester.pumpWidget(
+          MaterialApp.router(
+            theme: ThemeData(platform: .android),
+            routerConfig: router.config(),
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      for (var i = 0; i < 20; i++) {
-        unawaited(router.push(const NamedRoute('ProductDetail')));
-        await tester.pump(gap);
-        await tester.pump(gap);
-        unawaited(tester.binding.handlePopRoute());
-        await tester.pump(gap);
-        await tester.pump(gap);
+        for (var i = 0; i < 20; i++) {
+          unawaited(router.push(const NamedRoute('ProductDetail')));
+          await tester.pump(gap);
+          await tester.pump(gap);
+          unawaited(tester.binding.handlePopRoute());
+          await tester.pump(gap);
+          await tester.pump(gap);
+          expect(tester.takeException(), isNull);
+        }
+        await tester.pumpAndSettle();
+
         expect(tester.takeException(), isNull);
-      }
-      await tester.pumpAndSettle();
-
-      expect(tester.takeException(), isNull);
-      expect(router.stack.map((page) => page.name), ['ProductList']);
-      expect(find.text('ProductDetail'), findsNothing);
-    });
+        expect(router.stack.map((page) => page.name), ['ProductList']);
+        expect(find.text('ProductDetail'), findsNothing);
+      },
+    );
   }
 }

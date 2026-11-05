@@ -42,12 +42,17 @@ void main() {
     );
   });
 
-  List<String> namesOf(StackRouter activeRouter) => activeRouter.stack.map((page) => page.routeData.name).toList();
+  List<String> namesOf(StackRouter activeRouter) =>
+      activeRouter.stack.map((page) => page.routeData.name).toList();
 
   // Opens Home, then the shell with S1 and S2, and returns the shell's
   // nested router.
   Future<StackRouter> openShellWithS1S2(WidgetTester tester) async {
-    await pumpRouterApp(tester, router, observers: () => [_NamesObserver(observed)]);
+    await pumpRouterApp(
+      tester,
+      router,
+      observers: () => [_NamesObserver(observed)],
+    );
     unawaited(router.push(const PageRouteInfo('Shell')));
     await tester.pumpAndSettle();
     final nested = router.innerRouterOf<StackRouter>('Shell')!;
@@ -62,7 +67,11 @@ void main() {
   // Calls pushAndPopUntil(Done) from [nested], keeping the route named
   // [kept], and returns the pages on screen, with their left edge, in each
   // frame while Done slides in.
-  Future<List<String>> pushDoneKeeping(WidgetTester tester, StackRouter nested, String kept) async {
+  Future<List<String>> pushDoneKeeping(
+    WidgetTester tester,
+    StackRouter nested,
+    String kept,
+  ) async {
     unawaited(
       nested.pushAndPopUntil(
         const PageRouteInfo('Done'),
@@ -76,7 +85,10 @@ void main() {
       frames.add(
         ['Home', 'S1', 'S2', 'Done']
             .where((name) => find.text(name).evaluate().isNotEmpty)
-            .map((name) => '$name@${tester.getTopLeft(find.text(name)).dx.round()}')
+            .map(
+              (name) =>
+                  '$name@${tester.getTopLeft(find.text(name)).dx.round()}',
+            )
             .join(', '),
       );
     }
@@ -84,48 +96,66 @@ void main() {
     return frames;
   }
 
-  testWidgets('A predicate that keeps Home removes the nested pages and their shell', (tester) async {
-    final nested = await openShellWithS1S2(tester);
+  testWidgets(
+    'A predicate that keeps Home removes the nested pages and their shell',
+    (tester) async {
+      final nested = await openShellWithS1S2(tester);
 
-    final frames = await pushDoneKeeping(tester, nested, 'Home');
-    expect(tester.takeException(), isNull);
-    // S2, the page on screen, stays under Done until Done covers it.
-    expect(frames.firstOrNull, startsWith('S2'), reason: 'frames: $frames');
-    expect(frames.takeWhile((frame) => !frame.endsWith('Done@0')), everyElement(startsWith('S2')));
-    expect(frames.where((frame) => frame.contains('S1') || frame.contains('Home')), isEmpty);
-    expect(observed, ['push Done', 'remove Shell']);
-    expect(namesOf(router), ['Home', 'Done']);
-    expectTopPage(router, 'Done');
-    expect(router.innerRouterOf<StackRouter>('Shell'), isNull);
+      final frames = await pushDoneKeeping(tester, nested, 'Home');
+      expect(tester.takeException(), isNull);
+      // S2, the page on screen, stays under Done until Done covers it.
+      expect(frames.firstOrNull, startsWith('S2'), reason: 'frames: $frames');
+      expect(
+        frames.takeWhile((frame) => !frame.endsWith('Done@0')),
+        everyElement(startsWith('S2')),
+      );
+      expect(
+        frames.where((frame) => frame.contains('S1') || frame.contains('Home')),
+        isEmpty,
+      );
+      expect(observed, ['push Done', 'remove Shell']);
+      expect(namesOf(router), ['Home', 'Done']);
+      expectTopPage(router, 'Done');
+      expect(router.innerRouterOf<StackRouter>('Shell'), isNull);
 
-    unawaited(router.maybePop());
-    await tester.pumpAndSettle();
-    expectTopPage(router, 'Home');
-    expect(namesOf(router), ['Home']);
-  }, variant: TargetPlatformVariant.only(.iOS));
+      unawaited(router.maybePop());
+      await tester.pumpAndSettle();
+      expectTopPage(router, 'Home');
+      expect(namesOf(router), ['Home']);
+    },
+    variant: TargetPlatformVariant.only(.iOS),
+  );
 
-  testWidgets('A predicate that keeps S1 removes only S2 and pushes Done above the shell', (tester) async {
-    final nested = await openShellWithS1S2(tester);
+  testWidgets(
+    'A predicate that keeps S1 removes only S2 and pushes Done above the shell',
+    (tester) async {
+      final nested = await openShellWithS1S2(tester);
 
-    final frames = await pushDoneKeeping(tester, nested, 'S1');
-    expect(tester.takeException(), isNull);
-    // S2 is removed, not animated out, and S1 is under Done while it slides in.
-    expect(frames.where((frame) => frame.contains('S2')), isEmpty, reason: 'frames: $frames');
-    expect(observed, containsAll(['push Done', 'remove S2']));
-    expect(observed.where((event) => event.startsWith('pop')), isEmpty);
-    expect(namesOf(router), ['Home', 'Shell', 'Done']);
-    expect(namesOf(nested), ['S1']);
-    expectTopPage(router, 'Done');
+      final frames = await pushDoneKeeping(tester, nested, 'S1');
+      expect(tester.takeException(), isNull);
+      // S2 is removed, not animated out, and S1 is under Done while it slides in.
+      expect(
+        frames.where((frame) => frame.contains('S2')),
+        isEmpty,
+        reason: 'frames: $frames',
+      );
+      expect(observed, containsAll(['push Done', 'remove S2']));
+      expect(observed.where((event) => event.startsWith('pop')), isEmpty);
+      expect(namesOf(router), ['Home', 'Shell', 'Done']);
+      expect(namesOf(nested), ['S1']);
+      expectTopPage(router, 'Done');
 
-    unawaited(router.maybePop());
-    await tester.pumpAndSettle();
-    expectTopPage(router, 'S1');
-    expect(find.text('S2'), findsNothing);
+      unawaited(router.maybePop());
+      await tester.pumpAndSettle();
+      expectTopPage(router, 'S1');
+      expect(find.text('S2'), findsNothing);
 
-    unawaited(router.maybePop());
-    await tester.pumpAndSettle();
-    expectTopPage(router, 'Home');
-  }, variant: TargetPlatformVariant.only(.iOS));
+      unawaited(router.maybePop());
+      await tester.pumpAndSettle();
+      expectTopPage(router, 'Home');
+    },
+    variant: TargetPlatformVariant.only(.iOS),
+  );
 }
 
 PageInfo _page(String name) => .new(

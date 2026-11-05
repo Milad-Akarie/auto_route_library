@@ -34,30 +34,36 @@ void main() {
   // with the value read from a provider (here a ValueNotifier). Change the
   // value. Reported: the channel route keeps its first argument. Should: the
   // tab shows the new channel.
-  testWidgets('AutoTabsScaffold shows the new argument of a route when the routes it is given change', (tester) async {
-    await pumpRouterConfigApp(tester, router.config());
-    expect(find.text('Channel news'), findsOneWidget);
+  testWidgets(
+    'AutoTabsScaffold shows the new argument of a route when the routes it is given change',
+    (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
+      expect(find.text('Channel news'), findsOneWidget);
 
-    _channel.value = 'sports';
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(find.text('Channel sports'), findsOneWidget);
-    expect(find.text('Channel news'), findsNothing);
-  });
+      _channel.value = 'sports';
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Channel sports'), findsOneWidget);
+      expect(find.text('Channel news'), findsNothing);
+    },
+  );
 
   // Same issue, as the comments ask: while the channel tab is open, call
   // navigate(ChannelRoute(channel: 'sports')).
   // Should: the page shows 'sports'.
-  testWidgets('navigate() to the open tab route with another argument shows the new argument', (tester) async {
-    await pumpRouterConfigApp(tester, router.config());
-    expect(find.text('Channel news'), findsOneWidget);
+  testWidgets(
+    'navigate() to the open tab route with another argument shows the new argument',
+    (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
+      expect(find.text('Channel news'), findsOneWidget);
 
-    unawaited(router.navigate(_ChannelRoute(channel: 'sports')));
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(find.text('Channel sports'), findsOneWidget);
-    expect(find.text('Channel news'), findsNothing);
-  });
+      unawaited(router.navigate(_ChannelRoute(channel: 'sports')));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Channel sports'), findsOneWidget);
+      expect(find.text('Channel news'), findsNothing);
+    },
+  );
 }
 
 abstract final class _HostRoute {
@@ -95,5 +101,8 @@ class _SelectionRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'SelectionRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Text('Selection'));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Text('Selection'),
+  );
 }

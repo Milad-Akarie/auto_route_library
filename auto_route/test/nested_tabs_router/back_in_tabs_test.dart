@@ -57,7 +57,9 @@ void main() {
 
   Future<TabsRouter> pumpApp(WidgetTester tester, {ThemeData? theme}) async {
     frameworkHandlesBack = FrameworkHandlesBackRecorder()..listen(tester);
-    await tester.pumpWidget(MaterialApp.router(theme: theme, routerConfig: router.config()));
+    await tester.pumpWidget(
+      MaterialApp.router(theme: theme, routerConfig: router.config()),
+    );
     await tester.pumpAndSettle();
     return router.innerRouterOf<TabsRouter>(_homePage.name)!;
   }
@@ -67,7 +69,12 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  Future<void> pushInTab(WidgetTester tester, TabsRouter tabs, int index, String name) async {
+  Future<void> pushInTab(
+    WidgetTester tester,
+    TabsRouter tabs,
+    int index,
+    String name,
+  ) async {
     unawaited(tabs.stackRouterOfIndex(index)!.push(_Route(name)));
     await tester.pumpAndSettle();
   }
@@ -81,74 +88,93 @@ void main() {
     'system back': systemBack,
     'the predictive back gesture': predictiveBack,
   }.entries) {
-    testWidgets('$name in a tab with a pushed page should pop it after a tab switch', (tester) async {
+    testWidgets(
+      '$name in a tab with a pushed page should pop it after a tab switch',
+      (tester) async {
+        final tabs = await pumpApp(tester, theme: androidTheme);
+        await pushInTab(tester, tabs, 0, 'BookDetailsRoute');
+        await showTab(tester, tabs, 1);
+        await showTab(tester, tabs, 0);
+        expect(frameworkHandlesBack.last, isTrue);
+
+        await back(tester);
+
+        expect(stackOf(tabs, 0), ['BookListRoute']);
+        expect(frameworkHandlesBack.last, isFalse);
+      },
+      skip: kIsWeb,
+    );
+  }
+
+  testWidgets(
+    "system back on a tab at its first page should leave the other tab's page",
+    (tester) async {
+      final tabs = await pumpApp(tester);
+      await pushInTab(tester, tabs, 0, 'BookDetailsRoute');
+      await showTab(tester, tabs, 1);
+
+      expect(frameworkHandlesBack.last, isFalse);
+      expect(await tester.binding.handlePopRoute(), isFalse);
+      await tester.pumpAndSettle();
+
+      expect(stackOf(tabs, 0), ['BookListRoute', 'BookDetailsRoute']);
+    },
+    skip: kIsWeb,
+  );
+
+  testWidgets(
+    'the predictive back gesture should pop only the page of the tab on screen',
+    (tester) async {
       final tabs = await pumpApp(tester, theme: androidTheme);
       await pushInTab(tester, tabs, 0, 'BookDetailsRoute');
       await showTab(tester, tabs, 1);
-      await showTab(tester, tabs, 0);
-      expect(frameworkHandlesBack.last, isTrue);
+      await pushInTab(tester, tabs, 1, 'MyBooksRoute');
 
-      await back(tester);
+      await predictiveBack(tester);
+
+      expect(stackOf(tabs, 1), ['ProfileRoute']);
+      expect(stackOf(tabs, 0), ['BookListRoute', 'BookDetailsRoute']);
+    },
+  );
+
+  testWidgets(
+    'the iOS back swipe should pop only the page of the tab on screen',
+    (tester) async {
+      final tabs = await pumpApp(tester, theme: iosTheme);
+      await pushInTab(tester, tabs, 0, 'BookDetailsRoute');
+      await showTab(tester, tabs, 1);
+      await pushInTab(tester, tabs, 1, 'MyBooksRoute');
+
+      await swipeBack(tester);
+
+      expect(stackOf(tabs, 1), ['ProfileRoute']);
+      expect(stackOf(tabs, 0), ['BookListRoute', 'BookDetailsRoute']);
+    },
+  );
+
+  testWidgets(
+    'system back should pop a page pushed in a tab while it was hidden, once it shows',
+    (tester) async {
+      final tabs = await pumpApp(tester);
+      await showTab(tester, tabs, 1);
+      await pushInTab(tester, tabs, 0, 'BookDetailsRoute');
+      await showTab(tester, tabs, 0);
+
+      await systemBack(tester);
 
       expect(stackOf(tabs, 0), ['BookListRoute']);
-      expect(frameworkHandlesBack.last, isFalse);
-    }, skip: kIsWeb);
-  }
-
-  testWidgets("system back on a tab at its first page should leave the other tab's page", (tester) async {
-    final tabs = await pumpApp(tester);
-    await pushInTab(tester, tabs, 0, 'BookDetailsRoute');
-    await showTab(tester, tabs, 1);
-
-    expect(frameworkHandlesBack.last, isFalse);
-    expect(await tester.binding.handlePopRoute(), isFalse);
-    await tester.pumpAndSettle();
-
-    expect(stackOf(tabs, 0), ['BookListRoute', 'BookDetailsRoute']);
-  }, skip: kIsWeb);
-
-  testWidgets('the predictive back gesture should pop only the page of the tab on screen', (tester) async {
-    final tabs = await pumpApp(tester, theme: androidTheme);
-    await pushInTab(tester, tabs, 0, 'BookDetailsRoute');
-    await showTab(tester, tabs, 1);
-    await pushInTab(tester, tabs, 1, 'MyBooksRoute');
-
-    await predictiveBack(tester);
-
-    expect(stackOf(tabs, 1), ['ProfileRoute']);
-    expect(stackOf(tabs, 0), ['BookListRoute', 'BookDetailsRoute']);
-  });
-
-  testWidgets('the iOS back swipe should pop only the page of the tab on screen', (tester) async {
-    final tabs = await pumpApp(tester, theme: iosTheme);
-    await pushInTab(tester, tabs, 0, 'BookDetailsRoute');
-    await showTab(tester, tabs, 1);
-    await pushInTab(tester, tabs, 1, 'MyBooksRoute');
-
-    await swipeBack(tester);
-
-    expect(stackOf(tabs, 1), ['ProfileRoute']);
-    expect(stackOf(tabs, 0), ['BookListRoute', 'BookDetailsRoute']);
-  });
-
-  testWidgets('system back should pop a page pushed in a tab while it was hidden, once it shows', (tester) async {
-    final tabs = await pumpApp(tester);
-    await showTab(tester, tabs, 1);
-    await pushInTab(tester, tabs, 0, 'BookDetailsRoute');
-    await showTab(tester, tabs, 0);
-
-    await systemBack(tester);
-
-    expect(stackOf(tabs, 0), ['BookListRoute']);
-  });
+    },
+  );
 }
 
 final _homePage = PageInfo(
   'HomeRoute',
-  builder: (_) => const AutoTabsRouter(routes: [_Route('BooksTab'), _Route('ProfileTab')]),
+  builder: (_) =>
+      const AutoTabsRouter(routes: [_Route('BooksTab'), _Route('ProfileTab')]),
 );
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
   const new(super.name);

@@ -20,7 +20,10 @@ void main() {
       routes: [
         AutoRoute(
           path: '/',
-          page: PageInfo('HomeRoute', builder: (_) => const Scaffold(body: Text('HomeRoute'))),
+          page: PageInfo(
+            'HomeRoute',
+            builder: (_) => const Scaffold(body: Text('HomeRoute')),
+          ),
         ),
         AutoRoute(
           path: '/templates',
@@ -34,7 +37,9 @@ void main() {
     );
   });
 
-  testWidgets('A dialog reads the page url from its context.router', (tester) async {
+  testWidgets('A dialog reads the page url from its context.router', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     unawaited(router.push(const NamedRoute('TemplatesRoute')));
     await tester.pumpAndSettle();
@@ -45,7 +50,9 @@ void main() {
     expect(find.text('RouteData.of threw'), findsOneWidget);
   });
 
-  testWidgets('A route of a Navigator inside a page finds the page RouteData', (tester) async {
+  testWidgets('A route of a Navigator inside a page finds the page RouteData', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     unawaited(router.push(const NamedRoute('NestedRoute')));
     await tester.pumpAndSettle();
@@ -87,8 +94,9 @@ class _Nested extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
     body: Navigator(
-      onGenerateRoute: (_) =>
-          MaterialPageRoute<void>(builder: (inner) => Text('nested in ${RouteData.of(inner).name}')),
+      onGenerateRoute: (_) => MaterialPageRoute<void>(
+        builder: (inner) => Text('nested in ${RouteData.of(inner).name}'),
+      ),
     ),
   );
 }

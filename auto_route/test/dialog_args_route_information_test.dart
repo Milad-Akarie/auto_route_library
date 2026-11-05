@@ -25,41 +25,66 @@ void main() {
   // dialog still opened.
   // Should: the platform is told a state that encodes as JSON, as the
   // channel does, and the dialog opens with its argument.
-  testWidgets('A dialog route opened with an argument reports a state that encodes', (tester) async {
-    final reported = <Object?>[];
-    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.navigation, (call) async {
-      if (call.method == 'routeInformationUpdated') reported.add(call.arguments);
-      return null;
-    });
-    addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.navigation, null));
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('HomeRoute', builder: (_) => const Text('HomeRoute')),
+  testWidgets(
+    'A dialog route opened with an argument reports a state that encodes',
+    (tester) async {
+      final reported = <Object?>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.navigation,
+        (call) async {
+          if (call.method == 'routeInformationUpdated')
+            reported.add(call.arguments);
+          return null;
+        },
+      );
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.navigation,
+          null,
         ),
-        CustomRoute(
-          path: '/profile',
-          page: PageInfo(
-            'ProfileDialogRoute',
-            builder: (data) =>
-                AlertDialog(content: Text('Profile ${data.args is _Profile ? (data.args! as _Profile).name : 'none'}')),
+      );
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => const Text('HomeRoute'),
+            ),
           ),
-          customRouteBuilder: <T>(context, child, page) =>
-              DialogRoute<T>(context: context, settings: page, builder: (_) => child),
+          CustomRoute(
+            path: '/profile',
+            page: PageInfo(
+              'ProfileDialogRoute',
+              builder: (data) => AlertDialog(
+                content: Text(
+                  'Profile ${data.args is _Profile ? (data.args! as _Profile).name : 'none'}',
+                ),
+              ),
+            ),
+            customRouteBuilder: <T>(context, child, page) => DialogRoute<T>(
+              context: context,
+              settings: page,
+              builder: (_) => child,
+            ),
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
+
+      unawaited(
+        router.push(
+          const NamedRoute('ProfileDialogRoute', args: _Profile('Sam')),
         ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
+      );
+      await tester.pumpAndSettle();
 
-    unawaited(router.push(const NamedRoute('ProfileDialogRoute', args: _Profile('Sam'))));
-    await tester.pumpAndSettle();
-
-    expect(tester.takeException(), isNull);
-    expect(find.text('Profile Sam'), findsOneWidget);
-    expect(reported, isNotEmpty);
-    for (final arguments in reported) {
-      expect(() => jsonEncode(arguments), returnsNormally);
-    }
-  });
+      expect(tester.takeException(), isNull);
+      expect(find.text('Profile Sam'), findsOneWidget);
+      expect(reported, isNotEmpty);
+      for (final arguments in reported) {
+        expect(() => jsonEncode(arguments), returnsNormally);
+      }
+    },
+  );
 }

@@ -26,41 +26,51 @@ void main() {
   for (final MapEntry(key: name, value: leave) in leaves.entries) {
     // On web, back steps through the browser's history instead.
     final skip = kIsWeb && name == 'back';
-    testWidgets('$name right after popping a dialog animates the page out', skip: skip, (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            path: '/',
-            page: PageInfo('HomeRoute', builder: (_) => const Text('HomeRoute')),
-          ),
-          AutoRoute(
-            path: '/editor',
-            page: PageInfo('EditorRoute', builder: (_) => _EditorPage(onLeave: leave)),
-          ),
-        ],
-      );
-      await pumpRouterApp(tester, router);
-      unawaited(router.pushPath('/editor'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Close'));
-      await tester.pumpAndSettle();
-      final editorRoute = ModalRoute.of(tester.element(find.text('Close')))!;
+    testWidgets(
+      '$name right after popping a dialog animates the page out',
+      skip: skip,
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              path: '/',
+              page: PageInfo(
+                'HomeRoute',
+                builder: (_) => const Text('HomeRoute'),
+              ),
+            ),
+            AutoRoute(
+              path: '/editor',
+              page: PageInfo(
+                'EditorRoute',
+                builder: (_) => _EditorPage(onLeave: leave),
+              ),
+            ),
+          ],
+        );
+        await pumpRouterApp(tester, router);
+        unawaited(router.pushPath('/editor'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Close'));
+        await tester.pumpAndSettle();
+        final editorRoute = ModalRoute.of(tester.element(find.text('Close')))!;
 
-      await tester.tap(find.text('Discard'));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
+        await tester.tap(find.text('Discard'));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
 
-      expect(editorRoute.animation!.status, AnimationStatus.reverse);
-      expect(editorRoute.animation!.value, inExclusiveRange(0, 1));
-      expect(find.text('Close'), findsOneWidget);
-      expect(find.text('Discard'), findsOneWidget);
+        expect(editorRoute.animation!.status, AnimationStatus.reverse);
+        expect(editorRoute.animation!.value, inExclusiveRange(0, 1));
+        expect(find.text('Close'), findsOneWidget);
+        expect(find.text('Discard'), findsOneWidget);
 
-      await tester.pumpAndSettle();
-      expect(router.stack.map((page) => page.name), ['HomeRoute']);
-      expect(find.text('Close'), findsNothing);
-      expect(find.text('Discard'), findsNothing);
-      expect(tester.takeException(), isNull);
-    });
+        await tester.pumpAndSettle();
+        expect(router.stack.map((page) => page.name), ['HomeRoute']);
+        expect(find.text('Close'), findsNothing);
+        expect(find.text('Discard'), findsNothing);
+        expect(tester.takeException(), isNull);
+      },
+    );
   }
 }
 

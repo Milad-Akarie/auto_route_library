@@ -12,7 +12,11 @@ class _TestPage extends StatelessWidget {
     return Scaffold(
       body: Column(
         mainAxisSize: .min,
-        children: [Text(context.routeData.name), Text(context.routeData.match), Text(context.router.urlState.url)],
+        children: [
+          Text(context.routeData.name),
+          Text(context.routeData.match),
+          Text(context.router.urlState.url),
+        ],
       ),
     );
   }
@@ -37,7 +41,10 @@ class SecondHostPage extends StatelessWidget {
                   } else if (leadingType.isClose) {
                     return const CloseButton();
                   } else if (leadingType.isDrawer) {
-                    return const IconButton(icon: Icon(Icons.menu), onPressed: noOp);
+                    return const IconButton(
+                      icon: Icon(Icons.menu),
+                      onPressed: noOp,
+                    );
                   } else if (leadingType.isNoLeading) {
                     return const SizedBox.shrink();
                   }
@@ -129,13 +136,19 @@ class Tab3Nested2Page extends _TestPage {
 
 @RoutePage()
 class TabsHostPage extends StatelessWidget {
-  const new({super.key, @queryParam this.tabsType = 'IndexedStack', @queryParam this.useDefaultRoutes = false});
+  const new({
+    super.key,
+    @queryParam this.tabsType = 'IndexedStack',
+    @queryParam this.useDefaultRoutes = false,
+  });
   final String tabsType;
   final bool useDefaultRoutes;
 
   @override
   Widget build(BuildContext context) {
-    final routes = useDefaultRoutes ? null : [const Tab1Route(), const Tab2Route(), const Tab3Route()];
+    final routes = useDefaultRoutes
+        ? null
+        : [const Tab1Route(), const Tab2Route(), const Tab3Route()];
 
     if (tabsType == 'IndexedStack') {
       return AutoTabsRouter(routes: routes);

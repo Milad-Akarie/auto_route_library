@@ -6,7 +6,8 @@ import 'package:material_ui/material_ui.dart';
 
 import '../router_test_utils.dart';
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 // flutter/flutter#178984 and #188014: in go_router 16 a redirect that led to
 // a path with a redirect of its own stopped after the first one.
@@ -39,7 +40,10 @@ void main() {
           page: _page('ARoute'),
           path: '/a',
           guards: [
-            AutoRouteGuard.simple((resolver, _) => unawaited(resolver.redirectUntil(const NamedRoute('BRoute')))),
+            AutoRouteGuard.simple(
+              (resolver, _) =>
+                  unawaited(resolver.redirectUntil(const NamedRoute('BRoute'))),
+            ),
           ],
         ),
         AutoRoute(page: _page('BRoute'), path: '/b'),
@@ -52,17 +56,24 @@ void main() {
   });
 
   // flutter/flutter#182469: a redirect lost the query parameters.
-  testWidgets('A RedirectRoute keeps the query parameters of the link (flutter/flutter#182469)', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        RedirectRoute(path: '/old', redirectTo: '/new'),
-        AutoRoute(page: _page('NewRoute'), path: '/new'),
-      ],
-    );
-    await pumpRouterApp(tester, router, initialLink: '/old?ketchup=true&mustard=yes');
+  testWidgets(
+    'A RedirectRoute keeps the query parameters of the link (flutter/flutter#182469)',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          RedirectRoute(path: '/old', redirectTo: '/new'),
+          AutoRoute(page: _page('NewRoute'), path: '/new'),
+        ],
+      );
+      await pumpRouterApp(
+        tester,
+        router,
+        initialLink: '/old?ketchup=true&mustard=yes',
+      );
 
-    expectCurrentPage(router, 'NewRoute');
-    expect(router.current.queryParams.getBool('ketchup'), isTrue);
-    expect(router.current.queryParams.getString('mustard'), 'yes');
-  });
+      expectCurrentPage(router, 'NewRoute');
+      expect(router.current.queryParams.getBool('ketchup'), isTrue);
+      expect(router.current.queryParams.getString('mustard'), 'yes');
+    },
+  );
 }

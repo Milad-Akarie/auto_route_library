@@ -33,7 +33,9 @@ void main() {
     );
   });
 
-  StackRouter shopRouter() => router.innerRouterOf<TabsRouter>(_tabsScreen.name)!.innerRouterOf(_shopTab.name)!;
+  StackRouter shopRouter() => router
+      .innerRouterOf<TabsRouter>(_tabsScreen.name)!
+      .innerRouterOf(_shopTab.name)!;
 
   Future<void> openDetails(WidgetTester tester) async {
     await pumpRouterApp(tester, router, initialLink: '/shop?search=shoes');
@@ -44,16 +46,19 @@ void main() {
     expect(router.urlState.url, '/shop/details?id=7');
   }
 
-  testWidgets("pop inside a tab restores the query params of the tab's page underneath", (tester) async {
-    await openDetails(tester);
+  testWidgets(
+    "pop inside a tab restores the query params of the tab's page underneath",
+    (tester) async {
+      await openDetails(tester);
 
-    shopRouter().pop();
-    await tester.pumpAndSettle();
+      shopRouter().pop();
+      await tester.pumpAndSettle();
 
-    expect(router.topRoute.name, 'ShopList');
-    expect(router.urlState.url, '/shop?search=shoes');
-    expect(router.topRoute.queryParams.rawMap, {'search': 'shoes'});
-  });
+      expect(router.topRoute.name, 'ShopList');
+      expect(router.urlState.url, '/shop?search=shoes');
+      expect(router.topRoute.queryParams.rawMap, {'search': 'shoes'});
+    },
+  );
 
   testWidgets('system back inside a tab restores them too', (tester) async {
     await openDetails(tester);
@@ -69,7 +74,9 @@ void main() {
 
 final _tabsScreen = PageInfo(
   'TabsScreen',
-  builder: (_) => const AutoTabsRouter(routes: [PageRouteInfo('ShopTab'), PageRouteInfo('Profile')]),
+  builder: (_) => const AutoTabsRouter(
+    routes: [PageRouteInfo('ShopTab'), PageRouteInfo('Profile')],
+  ),
 );
 
 final _shopTab = PageInfo('ShopTab', builder: (_) => const AutoRouter());

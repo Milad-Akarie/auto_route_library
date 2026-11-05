@@ -47,7 +47,11 @@ void main() {
   });
 
   Future<void> pumpApp(WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp.router(routerConfig: router.config(reevaluateListenable: authRepo)));
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routerConfig: router.config(reevaluateListenable: authRepo),
+      ),
+    );
     await tester.pumpAndSettle();
   }
 
@@ -56,20 +60,25 @@ void main() {
   // replaceAll, and the auth state is the router's reevaluateListenable.
   // Tap 'Log In', which logs in and calls replaceAll([HomeRoute()]) right
   // away. Only HomeRoute should be left, not LoginRoute under it.
-  testWidgets('replaceAll right after the reevaluate listenable changes replaces the stack', (tester) async {
-    await pumpApp(tester);
-    expect(router.stack.map((p) => p.name), [_LoginRoute.name]);
+  testWidgets(
+    'replaceAll right after the reevaluate listenable changes replaces the stack',
+    (tester) async {
+      await pumpApp(tester);
+      expect(router.stack.map((p) => p.name), [_LoginRoute.name]);
 
-    await tester.tap(find.text('Log In'));
-    await tester.pumpAndSettle();
-    expect(router.stack.map((p) => p.name), [_HomeRoute.name]);
-    expect(find.text('Home Screen'), findsOneWidget);
-    expect(router.canPop(), isFalse);
-  });
+      await tester.tap(find.text('Log In'));
+      await tester.pumpAndSettle();
+      expect(router.stack.map((p) => p.name), [_HomeRoute.name]);
+      expect(find.text('Home Screen'), findsOneWidget);
+      expect(router.canPop(), isFalse);
+    },
+  );
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/2172
   // Then log out, which reevaluates the guard, and log in again.
-  testWidgets('logging out and in again leaves one page each time', (tester) async {
+  testWidgets('logging out and in again leaves one page each time', (
+    tester,
+  ) async {
     await pumpApp(tester);
     await tester.tap(find.text('Log In'));
     await tester.pumpAndSettle();
@@ -114,7 +123,10 @@ class _HomeRoute extends PageRouteInfo<void> {
       body: Column(
         children: [
           const Text('Home Screen'),
-          FilledButton(onPressed: authRepo.logOut, child: const Text('Log Out')),
+          FilledButton(
+            onPressed: authRepo.logOut,
+            child: const Text('Log Out'),
+          ),
         ],
       ),
     ),

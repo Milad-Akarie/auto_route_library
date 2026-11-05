@@ -14,61 +14,72 @@ import '../router_test_utils.dart';
 // the router's own url, is the page on screen in the new tab: its second
 // page, not its first.
 void main() {
-  testWidgets('After switching tabs, the url is the page on screen in the new tab', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('HomeRoute', builder: (_) => const AutoTabsRouter(routes: [_Route('ATab'), _Route('BTab')])),
-          children: [
-            for (final tab in ['A', 'B'])
-              AutoRoute(
-                path: tab.toLowerCase(),
-                page: EmptyShellRoute('${tab}Tab'),
-                children: [
-                  AutoRoute(path: '', page: _page('${tab}1')),
-                  AutoRoute(path: 'second', page: _page('${tab}2')),
-                ],
+  testWidgets(
+    'After switching tabs, the url is the page on screen in the new tab',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => const AutoTabsRouter(
+                routes: [_Route('ATab'), _Route('BTab')],
               ),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterConfigApp(tester, router.config());
-    final tabs = router.innerRouterOf<TabsRouter>('HomeRoute')!;
+            ),
+            children: [
+              for (final tab in ['A', 'B'])
+                AutoRoute(
+                  path: tab.toLowerCase(),
+                  page: EmptyShellRoute('${tab}Tab'),
+                  children: [
+                    AutoRoute(path: '', page: _page('${tab}1')),
+                    AutoRoute(path: 'second', page: _page('${tab}2')),
+                  ],
+                ),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterConfigApp(tester, router.config());
+      final tabs = router.innerRouterOf<TabsRouter>('HomeRoute')!;
 
-    void expectUrl(String text, String url) {
-      expect(find.text(text), findsOneWidget);
-      expect(router.urlState.url, url);
-      expect(router.currentUrl, url);
-      final provider = tester.widget<Router<Object>>(find.byType(Router<Object>)).routeInformationProvider!;
-      expect(provider.value.uri.toString(), url);
-    }
+      void expectUrl(String text, String url) {
+        expect(find.text(text), findsOneWidget);
+        expect(router.urlState.url, url);
+        expect(router.currentUrl, url);
+        final provider = tester
+            .widget<Router<Object>>(find.byType(Router<Object>))
+            .routeInformationProvider!;
+        expect(provider.value.uri.toString(), url);
+      }
 
-    Future<void> showTab(int index) async {
-      tabs.setActiveIndex(index);
+      Future<void> showTab(int index) async {
+        tabs.setActiveIndex(index);
+        await tester.pumpAndSettle();
+      }
+
+      expectUrl('A1', '/a');
+      unawaited(tabs.stackRouterOfIndex(0)!.push(const _Route('A2')));
       await tester.pumpAndSettle();
-    }
+      expectUrl('A2', '/a/second');
 
-    expectUrl('A1', '/a');
-    unawaited(tabs.stackRouterOfIndex(0)!.push(const _Route('A2')));
-    await tester.pumpAndSettle();
-    expectUrl('A2', '/a/second');
+      await showTab(1);
+      expectUrl('B1', '/b');
+      unawaited(tabs.stackRouterOfIndex(1)!.push(const _Route('B2')));
+      await tester.pumpAndSettle();
+      expectUrl('B2', '/b/second');
 
-    await showTab(1);
-    expectUrl('B1', '/b');
-    unawaited(tabs.stackRouterOfIndex(1)!.push(const _Route('B2')));
-    await tester.pumpAndSettle();
-    expectUrl('B2', '/b/second');
-
-    await showTab(0);
-    expectUrl('A2', '/a/second');
-    await showTab(1);
-    expectUrl('B2', '/b/second');
-  });
+      await showTab(0);
+      expectUrl('A2', '/a/second');
+      await showTab(1);
+      expectUrl('B2', '/b/second');
+    },
+  );
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
   const new(super.name);

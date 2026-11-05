@@ -23,9 +23,21 @@ void main() {
     isAllowed = false;
     router = RootStackRouter.build(
       routes: [
-        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => page('HomeRoute')),
-        NamedRouteDef(name: 'DetailsRoute', path: '/details', builder: (_, _) => page('DetailsRoute')),
-        NamedRouteDef(name: 'LoginRoute', path: '/login', builder: (_, _) => page('LoginRoute')),
+        NamedRouteDef(
+          name: 'HomeRoute',
+          path: '/',
+          builder: (_, _) => page('HomeRoute'),
+        ),
+        NamedRouteDef(
+          name: 'DetailsRoute',
+          path: '/details',
+          builder: (_, _) => page('DetailsRoute'),
+        ),
+        NamedRouteDef(
+          name: 'LoginRoute',
+          path: '/login',
+          builder: (_, _) => page('LoginRoute'),
+        ),
         NamedRouteDef(
           name: 'ProtectedRoute',
           path: '/protected',
@@ -34,7 +46,9 @@ void main() {
               if (isAllowed) {
                 resolver.next();
               } else {
-                unawaited(resolver.redirectUntil(const NamedRoute('LoginRoute')));
+                unawaited(
+                  resolver.redirectUntil(const NamedRoute('LoginRoute')),
+                );
               }
             }),
           ],
@@ -50,39 +64,46 @@ void main() {
     );
   });
 
-  List<String> stackNames() => router.stack.map((page) => page.routeData.name).toList();
+  List<String> stackNames() =>
+      router.stack.map((page) => page.routeData.name).toList();
 
-  testWidgets('A replace rejected by a guard keeps the page it would replace (#2046)', (tester) async {
-    await pumpRouterConfigApp(tester, router.config());
-    unawaited(router.push(const NamedRoute('DetailsRoute')));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'A replace rejected by a guard keeps the page it would replace (#2046)',
+    (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
+      unawaited(router.push(const NamedRoute('DetailsRoute')));
+      await tester.pumpAndSettle();
 
-    unawaited(router.replace(const NamedRoute('ForbiddenRoute')));
-    await tester.pumpAndSettle();
+      unawaited(router.replace(const NamedRoute('ForbiddenRoute')));
+      await tester.pumpAndSettle();
 
-    expect(stackNames(), ['HomeRoute', 'DetailsRoute']);
-    expectTopPage(router, 'DetailsRoute');
-  });
+      expect(stackNames(), ['HomeRoute', 'DetailsRoute']);
+      expectTopPage(router, 'DetailsRoute');
+    },
+  );
 
-  testWidgets('A replace redirected by its guard keeps the page under the redirect until the guard resolves (#2046)', (
+  testWidgets(
+    'A replace redirected by its guard keeps the page under the redirect until the guard resolves (#2046)',
+    (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
+      unawaited(router.push(const NamedRoute('DetailsRoute')));
+      await tester.pumpAndSettle();
+
+      unawaited(router.replace(const NamedRoute('ProtectedRoute')));
+      await tester.pumpAndSettle();
+      expect(stackNames(), ['HomeRoute', 'DetailsRoute', 'LoginRoute']);
+
+      // Leaving the redirect without passing the guard rejects the replace.
+      await router.maybePop();
+      await tester.pumpAndSettle();
+      expect(stackNames(), ['HomeRoute', 'DetailsRoute']);
+      expectTopPage(router, 'DetailsRoute');
+    },
+  );
+
+  testWidgets('A replace accepted by its guard swaps the top page (#2046)', (
     tester,
   ) async {
-    await pumpRouterConfigApp(tester, router.config());
-    unawaited(router.push(const NamedRoute('DetailsRoute')));
-    await tester.pumpAndSettle();
-
-    unawaited(router.replace(const NamedRoute('ProtectedRoute')));
-    await tester.pumpAndSettle();
-    expect(stackNames(), ['HomeRoute', 'DetailsRoute', 'LoginRoute']);
-
-    // Leaving the redirect without passing the guard rejects the replace.
-    await router.maybePop();
-    await tester.pumpAndSettle();
-    expect(stackNames(), ['HomeRoute', 'DetailsRoute']);
-    expectTopPage(router, 'DetailsRoute');
-  });
-
-  testWidgets('A replace accepted by its guard swaps the top page (#2046)', (tester) async {
     isAllowed = true;
     await pumpRouterConfigApp(tester, router.config());
     unawaited(router.push(const NamedRoute('DetailsRoute')));

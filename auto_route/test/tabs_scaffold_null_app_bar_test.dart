@@ -16,7 +16,11 @@ void main() {
           initial: true,
           children: [
             AutoRoute(page: _ListRoute.page, path: 'list'),
-            AutoRoute(page: _DetailRoute.page, path: 'detail', meta: const {'hideAppBar': true}),
+            AutoRoute(
+              page: _DetailRoute.page,
+              path: 'detail',
+              meta: const {'hideAppBar': true},
+            ),
           ],
         ),
       ],
@@ -29,7 +33,9 @@ void main() {
   // first tab, then the second.
   // Should: the first tab has an AppBar, the second has none, and nothing
   // throws.
-  testWidgets('AutoTabsScaffold takes a null app bar from appBarBuilder', (tester) async {
+  testWidgets('AutoTabsScaffold takes a null app bar from appBarBuilder', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     expect(find.byType(AppBar), findsOneWidget);
 
@@ -49,7 +55,9 @@ abstract final class _TabsRoute {
     builder: (_) => AutoTabsScaffold(
       animationDuration: .zero,
       appBarBuilder: (_, tabsRouter) =>
-          tabsRouter.topMatch.meta['hideAppBar'] == true ? null : AppBar(title: const Text('Bar')),
+          tabsRouter.topMatch.meta['hideAppBar'] == true
+          ? null
+          : AppBar(title: const Text('Bar')),
     ),
   );
 }

@@ -47,11 +47,17 @@ void main() {
   });
 
   Future<void> openIdNumberForm(WidgetTester tester, {ThemeData? theme}) async {
-    await tester.pumpWidget(MaterialApp.router(theme: theme, routerConfig: router.config()));
+    await tester.pumpWidget(
+      MaterialApp.router(theme: theme, routerConfig: router.config()),
+    );
     await tester.pumpAndSettle();
     unawaited(router.push(const _OnboardingRoute()));
     await tester.pumpAndSettle();
-    unawaited(router.innerRouterOf<StackRouter>(_OnboardingRoute.name)!.push(const _IdStepRoute()));
+    unawaited(
+      router
+          .innerRouterOf<StackRouter>(_OnboardingRoute.name)!
+          .push(const _IdStepRoute()),
+    );
     await tester.pumpAndSettle();
     await tester.tap(find.text(_kChooseType));
     await tester.pumpAndSettle();
@@ -61,8 +67,14 @@ void main() {
   void expectOnIdStep({required bool showingForm}) {
     expect(router.current.name, _OnboardingRoute.name);
     expect(router.topRoute.name, _IdStepRoute.name);
-    expect(find.text(_kNumberForm), showingForm ? findsOneWidget : findsNothing);
-    expect(find.text(_kChooseType), showingForm ? findsNothing : findsOneWidget);
+    expect(
+      find.text(_kNumberForm),
+      showingForm ? findsOneWidget : findsNothing,
+    );
+    expect(
+      find.text(_kChooseType),
+      showingForm ? findsNothing : findsOneWidget,
+    );
   }
 
   void expectOnWelcomeStep() {
@@ -77,32 +89,38 @@ void main() {
   };
 
   for (final MapEntry(key: name, value: (back, theme)) in backs.entries) {
-    testWidgets('$name on a step with a PopScope should stay on the step, then leave it', (tester) async {
-      await openIdNumberForm(tester, theme: theme);
+    testWidgets(
+      '$name on a step with a PopScope should stay on the step, then leave it',
+      (tester) async {
+        await openIdNumberForm(tester, theme: theme);
 
-      await back(tester);
-      expectOnIdStep(showingForm: false);
-      expect(_popAttempts, 1);
+        await back(tester);
+        expectOnIdStep(showingForm: false);
+        expect(_popAttempts, 1);
 
-      await back(tester);
-      expectOnWelcomeStep();
-      expect(_popAttempts, 1, reason: 'after back(tester)');
-    });
+        await back(tester);
+        expectOnWelcomeStep();
+        expect(_popAttempts, 1, reason: 'after back(tester)');
+      },
+    );
   }
 
   // The iOS edge swipe doesn't start while a PopScope blocks the page, as in
   // a flat route, so PopScope doesn't hear of it.
-  testWidgets('the iOS back swipe on a step with a PopScope should stay on the step', (tester) async {
-    await openIdNumberForm(tester, theme: iosTheme);
+  testWidgets(
+    'the iOS back swipe on a step with a PopScope should stay on the step',
+    (tester) async {
+      await openIdNumberForm(tester, theme: iosTheme);
 
-    await swipeBack(tester);
-    expectOnIdStep(showingForm: true);
+      await swipeBack(tester);
+      expectOnIdStep(showingForm: true);
 
-    await tester.tap(find.text(_kBackToChoice));
-    await tester.pumpAndSettle();
-    await swipeBack(tester);
-    expectOnWelcomeStep();
-  });
+      await tester.tap(find.text(_kBackToChoice));
+      await tester.pumpAndSettle();
+      await swipeBack(tester);
+      expectOnWelcomeStep();
+    },
+  );
 }
 
 const _kChooseType = 'Choose national ID';
@@ -148,7 +166,10 @@ class _IdStepState extends State<_IdStep> {
   @override
   Widget build(BuildContext context) {
     if (!_showingForm) {
-      return TextButton(onPressed: () => setState(() => _showingForm = true), child: const Text(_kChooseType));
+      return TextButton(
+        onPressed: () => setState(() => _showingForm = true),
+        child: const Text(_kChooseType),
+      );
     }
     return PopScope(
       canPop: false,
@@ -160,7 +181,10 @@ class _IdStepState extends State<_IdStep> {
       child: Column(
         children: [
           const Text(_kNumberForm),
-          TextButton(onPressed: () => setState(() => _showingForm = false), child: const Text(_kBackToChoice)),
+          TextButton(
+            onPressed: () => setState(() => _showingForm = false),
+            child: const Text(_kBackToChoice),
+          ),
         ],
       ),
     );

@@ -12,7 +12,9 @@ import '../router_test_utils.dart';
 // shows context.topRoute next to its nested router; navigate to /b/42.
 // Should: the host reads the params and the url of the shown page.
 void main() {
-  testWidgets('A shell page reads the path params of the page shown in it', (tester) async {
+  testWidgets('A shell page reads the path params of the page shown in it', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         NamedRouteDef(
@@ -29,11 +31,17 @@ void main() {
             );
           },
           children: [
-            NamedRouteDef(name: 'ARoute', path: 'a', initial: true, builder: (_, _) => const Text('a')),
+            NamedRouteDef(
+              name: 'ARoute',
+              path: 'a',
+              initial: true,
+              builder: (_, _) => const Text('a'),
+            ),
             NamedRouteDef(
               name: 'BRoute',
               path: 'b/:bParam',
-              builder: (_, data) => Text('b ${data.params.getString('bParam')}'),
+              builder: (_, data) =>
+                  Text('b ${data.params.getString('bParam')}'),
             ),
           ],
         ),

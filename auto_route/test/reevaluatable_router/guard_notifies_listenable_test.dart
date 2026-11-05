@@ -25,45 +25,49 @@ void main() {
   // calls next(); push SecondRoute.
   // Should: no error, the guard runs a bounded number of times and the stack
   // settles on HomeRoute, SecondRoute.
-  testWidgets('A guard that notifies reevaluateListenable while it waits settles (flutter/flutter#112798)', (
-    tester,
-  ) async {
-    final auth = _Auth();
-    addTearDown(auth.dispose);
-    var guardCalls = 0;
-    final router = RootStackRouter.build(
-      guards: [
-        AutoRouteGuard.simple((resolver, _) async {
-          guardCalls++;
-          if (!auth.loggedIn) await auth.tryAutoLogin();
-          resolver.next();
-        }),
-      ],
-      routes: [
-        NamedRouteDef(
-          name: 'HomeRoute',
-          path: '/',
-          builder: (_, _) => const Scaffold(body: Text('HomeRoute')),
-        ),
-        NamedRouteDef(
-          name: 'SecondRoute',
-          path: '/second',
-          builder: (_, _) => const Scaffold(body: Text('SecondRoute')),
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router, reevaluationNotifier: auth);
-    await tester.pump(const Duration(milliseconds: 100));
-    await tester.pumpAndSettle();
-    expectTopPage(router, 'HomeRoute');
+  testWidgets(
+    'A guard that notifies reevaluateListenable while it waits settles (flutter/flutter#112798)',
+    (tester) async {
+      final auth = _Auth();
+      addTearDown(auth.dispose);
+      var guardCalls = 0;
+      final router = RootStackRouter.build(
+        guards: [
+          AutoRouteGuard.simple((resolver, _) async {
+            guardCalls++;
+            if (!auth.loggedIn) await auth.tryAutoLogin();
+            resolver.next();
+          }),
+        ],
+        routes: [
+          NamedRouteDef(
+            name: 'HomeRoute',
+            path: '/',
+            builder: (_, _) => const Scaffold(body: Text('HomeRoute')),
+          ),
+          NamedRouteDef(
+            name: 'SecondRoute',
+            path: '/second',
+            builder: (_, _) => const Scaffold(body: Text('SecondRoute')),
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router, reevaluationNotifier: auth);
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pumpAndSettle();
+      expectTopPage(router, 'HomeRoute');
 
-    unawaited(router.pushPath('/second'));
-    await tester.pumpAndSettle();
+      unawaited(router.pushPath('/second'));
+      await tester.pumpAndSettle();
 
-    expect(tester.takeException(), isNull);
-    expect(router.stack.map((e) => e.routeData.name), ['HomeRoute', 'SecondRoute']);
-    expect(find.text('SecondRoute'), findsOneWidget);
-    // HomeRoute's first check, the re-check of HomeRoute the login fired, and SecondRoute's.
-    expect(guardCalls, lessThanOrEqualTo(3));
-  });
+      expect(tester.takeException(), isNull);
+      expect(router.stack.map((e) => e.routeData.name), [
+        'HomeRoute',
+        'SecondRoute',
+      ]);
+      expect(find.text('SecondRoute'), findsOneWidget);
+      // HomeRoute's first check, the re-check of HomeRoute the login fired, and SecondRoute's.
+      expect(guardCalls, lessThanOrEqualTo(3));
+    },
+  );
 }

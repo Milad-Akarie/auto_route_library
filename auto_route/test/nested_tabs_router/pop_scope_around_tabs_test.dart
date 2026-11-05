@@ -33,11 +33,17 @@ void main() {
     );
   });
 
-  Future<void> openTabsScreen(WidgetTester tester, {required bool canPop, ThemeData? theme}) async {
+  Future<void> openTabsScreen(
+    WidgetTester tester, {
+    required bool canPop,
+    ThemeData? theme,
+  }) async {
     _canPop = canPop;
     tester.binding.handleAppLifecycleStateChanged(.resumed);
     addTearDown(router.dispose);
-    await tester.pumpWidget(MaterialApp.router(theme: theme, routerConfig: router.config()));
+    await tester.pumpWidget(
+      MaterialApp.router(theme: theme, routerConfig: router.config()),
+    );
     await tester.pumpAndSettle();
     unawaited(router.push(PageRouteInfo(_tabsScreen.name)));
     await tester.pumpAndSettle();
@@ -51,59 +57,69 @@ void main() {
   };
 
   for (final MapEntry(key: name, value: (back, theme)) in backs.entries) {
-    testWidgets('$name pops the tabs screen, and its PopScope hears didPop true', (tester) async {
-      await openTabsScreen(tester, canPop: true, theme: theme);
+    testWidgets(
+      '$name pops the tabs screen, and its PopScope hears didPop true',
+      (tester) async {
+        await openTabsScreen(tester, canPop: true, theme: theme);
 
-      await back(tester);
+        await back(tester);
 
-      expectTopPage(router, 'Home');
-      expect(_heard, [true]);
-    });
+        expectTopPage(router, 'Home');
+        expect(_heard, [true]);
+      },
+    );
 
     // The iOS swipe doesn't start while PopScope blocks the page.
     if (back == swipeBack) continue;
 
-    testWidgets('$name with PopScope(canPop: false) keeps the tabs screen, and PopScope hears each back', (
-      tester,
-    ) async {
-      await openTabsScreen(tester, canPop: false, theme: theme);
+    testWidgets(
+      '$name with PopScope(canPop: false) keeps the tabs screen, and PopScope hears each back',
+      (tester) async {
+        await openTabsScreen(tester, canPop: false, theme: theme);
 
-      await back(tester);
-      expect(_heard, [false]);
-      await back(tester);
-      expect(_heard, [false, false]);
+        await back(tester);
+        expect(_heard, [false]);
+        await back(tester);
+        expect(_heard, [false, false]);
 
-      expect(router.topRoute.name, 'TabA');
-      expect(router.stack.lastOrNull?.name, _tabsScreen.name);
-    });
+        expect(router.topRoute.name, 'TabA');
+        expect(router.stack.lastOrNull?.name, _tabsScreen.name);
+      },
+    );
   }
 
-  testWidgets('system back on the second tab asks PopScope, and keeps the second tab', (tester) async {
-    await openTabsScreen(tester, canPop: false);
-    router.innerRouterOf<TabsRouter>(_tabsScreen.name)!.setActiveIndex(1);
-    await tester.pumpAndSettle();
+  testWidgets(
+    'system back on the second tab asks PopScope, and keeps the second tab',
+    (tester) async {
+      await openTabsScreen(tester, canPop: false);
+      router.innerRouterOf<TabsRouter>(_tabsScreen.name)!.setActiveIndex(1);
+      await tester.pumpAndSettle();
 
-    await systemBack(tester);
-    expect(router.topRoute.name, 'TabB');
-    expect(_heard, [false]);
-  });
+      await systemBack(tester);
+      expect(router.topRoute.name, 'TabB');
+      expect(_heard, [false]);
+    },
+  );
 
   // With a homeIndex, back on another tab shows the home tab first, as
   // home_index_back_test.dart pins, so PopScope hears the next back.
-  testWidgets('system back on the second tab with homeIndex 0 shows the first tab, then asks PopScope', (tester) async {
-    _homeIndex = 0;
-    await openTabsScreen(tester, canPop: false);
-    router.innerRouterOf<TabsRouter>(_tabsScreen.name)!.setActiveIndex(1);
-    await tester.pumpAndSettle();
+  testWidgets(
+    'system back on the second tab with homeIndex 0 shows the first tab, then asks PopScope',
+    (tester) async {
+      _homeIndex = 0;
+      await openTabsScreen(tester, canPop: false);
+      router.innerRouterOf<TabsRouter>(_tabsScreen.name)!.setActiveIndex(1);
+      await tester.pumpAndSettle();
 
-    await systemBack(tester);
-    expect(router.topRoute.name, 'TabA');
-    expect(_heard, isEmpty);
+      await systemBack(tester);
+      expect(router.topRoute.name, 'TabA');
+      expect(_heard, isEmpty);
 
-    await systemBack(tester);
-    expect(router.topRoute.name, 'TabA', reason: 'after systemBack(tester)');
-    expect(_heard, [false]);
-  });
+      await systemBack(tester);
+      expect(router.topRoute.name, 'TabA', reason: 'after systemBack(tester)');
+      expect(_heard, [false]);
+    },
+  );
 }
 
 final _heard = <bool>[];
@@ -117,7 +133,10 @@ final _tabsScreen = PageInfo(
     onPopInvokedWithResult: (didPop, _) => _heard.add(didPop),
     child: Scaffold(
       appBar: AppBar(leading: const AutoLeadingButton()),
-      body: AutoTabsRouter(homeIndex: _homeIndex, routes: const [PageRouteInfo('TabA'), PageRouteInfo('TabB')]),
+      body: AutoTabsRouter(
+        homeIndex: _homeIndex,
+        routes: const [PageRouteInfo('TabA'), PageRouteInfo('TabB')],
+      ),
     ),
   ),
 );

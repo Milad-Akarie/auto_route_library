@@ -44,7 +44,10 @@ void main() {
   for (final includePrefixMatches in [false, true]) {
     testWidgets('On web, the browser back button returns to the first tab of a host opened without a tab in its url, '
         'includePrefixMatches: $includePrefixMatches', (tester) async {
-      await pumpRouterConfigApp(tester, router.config(includePrefixMatches: includePrefixMatches));
+      await pumpRouterConfigApp(
+        tester,
+        router.config(includePrefixMatches: includePrefixMatches),
+      );
       await settleBrowser(tester);
       unawaited(router.navigate(const _TabsRoute()));
       await settleBrowser(tester);
@@ -55,12 +58,27 @@ void main() {
       expect(browserPath, '/tabs/tab-2');
 
       await pressBrowserBack(tester);
-      expect(browserPath, '/tabs/tab-1', reason: 'after pressBrowserBack(tester)');
-      expect(find.text('Tab 1'), findsOneWidget, reason: 'after pressBrowserBack(tester)');
-      expect(router.stack.map((p) => p.name), [_HomeRoute.name, _TabsRoute.name]);
+      expect(
+        browserPath,
+        '/tabs/tab-1',
+        reason: 'after pressBrowserBack(tester)',
+      );
+      expect(
+        find.text('Tab 1'),
+        findsOneWidget,
+        reason: 'after pressBrowserBack(tester)',
+      );
+      expect(router.stack.map((p) => p.name), [
+        _HomeRoute.name,
+        _TabsRoute.name,
+      ]);
 
       await browserMove(tester, () => window.history.forward());
-      expect(browserPath, '/tabs/tab-2', reason: 'after browserMove(tester, () => window.history.forward())');
+      expect(
+        browserPath,
+        '/tabs/tab-2',
+        reason: 'after browserMove(tester, () => window.history.forward())',
+      );
       expect(find.text('Tab 2'), findsOneWidget);
 
       await pressBrowserBack(tester);
@@ -73,7 +91,10 @@ void main() {
 
 abstract final class _HomeRoute {
   static const String name = 'HomeRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text('Home')),
+  );
 }
 
 class _TabsRoute extends PageRouteInfo<void> {
@@ -87,7 +108,10 @@ class _TabsRoute extends PageRouteInfo<void> {
         routes: const [_Tab1Route(), _Tab2Route()],
         builder: (context, child) => Column(
           children: [
-            TextButton(onPressed: () => context.tabsRouter.setActiveIndex(1), child: const Text('Show tab 2')),
+            TextButton(
+              onPressed: () => context.tabsRouter.setActiveIndex(1),
+              child: const Text('Show tab 2'),
+            ),
             Expanded(child: child),
           ],
         ),
@@ -100,12 +124,18 @@ class _Tab1Route extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'Tab1Route';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Text('Tab 1'));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Text('Tab 1'),
+  );
 }
 
 class _Tab2Route extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'Tab2Route';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Text('Tab 2'));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Text('Tab 2'),
+  );
 }

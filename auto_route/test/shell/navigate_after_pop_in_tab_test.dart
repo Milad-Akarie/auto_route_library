@@ -22,67 +22,86 @@ void main() {
     ),
     (
       'routes',
-      (RoutingController router) => router.navigate(const _Route('DetailRoute')),
+      (RoutingController router) =>
+          router.navigate(const _Route('DetailRoute')),
       (RoutingController router) => router.navigate(const _Route('ARoute')),
     ),
   ]) {
-    testWidgets('After popping and leaving a tab, navigating by $how to its detail page shows it', (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            path: '/',
-            page: PageInfo(
-              'HomeRoute',
-              builder: (_) => const AutoTabsRouter(routes: [_Route('ARoute'), _Route('BTab')]),
-            ),
-            children: [
-              AutoRoute(path: 'a', page: _page('ARoute')),
-              AutoRoute(
-                path: 'b',
-                page: const EmptyShellRoute('BTab'),
-                children: [
-                  AutoRoute(path: '', page: _page('BRoute')),
-                  AutoRoute(path: 'detail', page: _page('DetailRoute')),
-                ],
+    testWidgets(
+      'After popping and leaving a tab, navigating by $how to its detail page shows it',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              path: '/',
+              page: PageInfo(
+                'HomeRoute',
+                builder: (_) => const AutoTabsRouter(
+                  routes: [_Route('ARoute'), _Route('BTab')],
+                ),
               ),
-            ],
-          ),
-        ],
-      );
-      await pumpRouterApp(tester, router);
-      final tabs = router.innerRouterOf<TabsRouter>('HomeRoute')!..setActiveIndex(1);
-      await tester.pumpAndSettle();
-      expect(find.text('BRoute'), findsOneWidget);
-      unawaited(toDetail(tester.element(find.text('BRoute')).router));
-      await tester.pumpAndSettle();
-      expect(find.text('DetailRoute'), findsOneWidget);
+              children: [
+                AutoRoute(path: 'a', page: _page('ARoute')),
+                AutoRoute(
+                  path: 'b',
+                  page: const EmptyShellRoute('BTab'),
+                  children: [
+                    AutoRoute(path: '', page: _page('BRoute')),
+                    AutoRoute(path: 'detail', page: _page('DetailRoute')),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        );
+        await pumpRouterApp(tester, router);
+        final tabs = router.innerRouterOf<TabsRouter>('HomeRoute')!
+          ..setActiveIndex(1);
+        await tester.pumpAndSettle();
+        expect(find.text('BRoute'), findsOneWidget);
+        unawaited(toDetail(tester.element(find.text('BRoute')).router));
+        await tester.pumpAndSettle();
+        expect(find.text('DetailRoute'), findsOneWidget);
 
-      final detailRouter = tester.element(find.text('DetailRoute')).router..pop();
-      unawaited(toA(detailRouter));
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      expect(find.text('ARoute'), findsOneWidget);
-      expect(tabs.activeIndex, 0);
+        final detailRouter = tester.element(find.text('DetailRoute')).router
+          ..pop();
+        unawaited(toA(detailRouter));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.text('ARoute'), findsOneWidget);
+        expect(tabs.activeIndex, 0);
 
-      tabs.setActiveIndex(1);
-      await tester.pumpAndSettle();
-      expect(find.text('BRoute'), findsOneWidget, reason: 'after tabs.setActiveIndex(1)');
-      expect(tabs.stackRouterOfIndex(1)!.stack.map((page) => page.name), ['BRoute']);
+        tabs.setActiveIndex(1);
+        await tester.pumpAndSettle();
+        expect(
+          find.text('BRoute'),
+          findsOneWidget,
+          reason: 'after tabs.setActiveIndex(1)',
+        );
+        expect(tabs.stackRouterOfIndex(1)!.stack.map((page) => page.name), [
+          'BRoute',
+        ]);
 
-      unawaited(toDetail(tester.element(find.text('BRoute')).router));
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull, reason: 'after toDetail(tester.element(find.text(BRoute)).router))');
-      expect(
-        find.text('DetailRoute'),
-        findsOneWidget,
-        reason: 'after toDetail(tester.element(find.text(BRoute)).router))',
-      );
-      expect(router.urlState.url, '/b/detail');
-    });
+        unawaited(toDetail(tester.element(find.text('BRoute')).router));
+        await tester.pumpAndSettle();
+        expect(
+          tester.takeException(),
+          isNull,
+          reason: 'after toDetail(tester.element(find.text(BRoute)).router))',
+        );
+        expect(
+          find.text('DetailRoute'),
+          findsOneWidget,
+          reason: 'after toDetail(tester.element(find.text(BRoute)).router))',
+        );
+        expect(router.urlState.url, '/b/detail');
+      },
+    );
   }
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
   const new(super.name);

@@ -41,7 +41,10 @@ void main() {
     expect(find.text('HomeRoute'), findsNothing);
     final placeholder = tester.widget<Container>(find.byType(Container).first);
     expect(placeholder.color, background);
-    expect(tester.getSize(find.byType(Container).first), tester.view.physicalSize / tester.view.devicePixelRatio);
+    expect(
+      tester.getSize(find.byType(Container).first),
+      tester.view.physicalSize / tester.view.devicePixelRatio,
+    );
 
     await tester.pump(const Duration(seconds: 5));
     await tester.pumpAndSettle();

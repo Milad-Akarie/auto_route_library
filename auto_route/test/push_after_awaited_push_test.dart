@@ -16,36 +16,43 @@ void main() {
   // delays from 0 to 200 ms.
   // Should: no exception, the stack is home then ThreeRoute.
   for (final delay in [0, 1, 16, 100, 200]) {
-    testWidgets('push right after an awaited push returns, popped after $delay ms', (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(page: FirstRoute.page, path: '/', initial: true),
-          AutoRoute(
-            page: PageInfo(
-              'TwoRoute',
-              builder: (data) => _PopsItselfPage(delay: Duration(milliseconds: delay)),
+    testWidgets(
+      'push right after an awaited push returns, popped after $delay ms',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(page: FirstRoute.page, path: '/', initial: true),
+            AutoRoute(
+              page: PageInfo(
+                'TwoRoute',
+                builder: (data) =>
+                    _PopsItselfPage(delay: Duration(milliseconds: delay)),
+              ),
+              path: '/two',
             ),
-            path: '/two',
-          ),
-          AutoRoute(page: ThirdRoute.page, path: '/three'),
-        ],
-      );
-      await pumpRouterApp(tester, router);
-      Object? error;
-      unawaited(
-        router
-            .push<void>(const NamedRoute('TwoRoute'))
-            .then((_) => router.push(const ThirdRoute()))
-            .catchError((Object e) => error = e),
-      );
-      await tester.pumpAndSettle();
-      await tester.pump(Duration(milliseconds: delay));
-      await tester.pumpAndSettle();
-      expect(error, isNull);
-      expect(tester.takeException(), isNull);
-      expect(router.stack.map((p) => p.name), [FirstRoute.name, ThirdRoute.name]);
-      expectTopPage(router, ThirdRoute.name);
-    });
+            AutoRoute(page: ThirdRoute.page, path: '/three'),
+          ],
+        );
+        await pumpRouterApp(tester, router);
+        Object? error;
+        unawaited(
+          router
+              .push<void>(const NamedRoute('TwoRoute'))
+              .then((_) => router.push(const ThirdRoute()))
+              .catchError((Object e) => error = e),
+        );
+        await tester.pumpAndSettle();
+        await tester.pump(Duration(milliseconds: delay));
+        await tester.pumpAndSettle();
+        expect(error, isNull);
+        expect(tester.takeException(), isNull);
+        expect(router.stack.map((p) => p.name), [
+          FirstRoute.name,
+          ThirdRoute.name,
+        ]);
+        expectTopPage(router, ThirdRoute.name);
+      },
+    );
   }
 }
 

@@ -42,12 +42,17 @@ void main() {
   // again, so a page that loads an ad or data did it on each step.
   for (final (label, open) in [
     ('pushPath', (String path) => router.pushPath(path)),
-    ('navigatePath with prefix matches', (String path) => router.navigatePath(path, includePrefixMatches: true)),
+    (
+      'navigatePath with prefix matches',
+      (String path) => router.navigatePath(path, includePrefixMatches: true),
+    ),
   ]) {
     // Steps: open '/a', then '/a/b', then '/a/b/c'.
     // Should: each page's widget is created and built once; the pages under
     // the one opened are not created or built again.
-    testWidgets('$label to a deeper page creates and builds only that page', (tester) async {
+    testWidgets('$label to a deeper page creates and builds only that page', (
+      tester,
+    ) async {
       await pumpRouterApp(tester, router);
       for (final path in ['/a', '/a/b', '/a/b/c']) {
         unawaited(open(path));
@@ -63,14 +68,17 @@ void main() {
 
   // flutter/flutter#147639, going back up: navigatePath to '/a' from
   // '/a/b/c' pops to A without creating Home again.
-  testWidgets('navigatePath with prefix matches to a page under the top pops to it', (tester) async {
-    await pumpRouterApp(tester, router);
-    unawaited(router.navigatePath('/a/b/c', includePrefixMatches: true));
-    await tester.pumpAndSettle();
-    unawaited(router.navigatePath('/a', includePrefixMatches: true));
-    await tester.pumpAndSettle();
-    expect(router.stack.map((p) => p.name), ['Home', 'A']);
-    expect(find.text('A'), findsOneWidget);
-    expect(created['Home'], 1);
-  });
+  testWidgets(
+    'navigatePath with prefix matches to a page under the top pops to it',
+    (tester) async {
+      await pumpRouterApp(tester, router);
+      unawaited(router.navigatePath('/a/b/c', includePrefixMatches: true));
+      await tester.pumpAndSettle();
+      unawaited(router.navigatePath('/a', includePrefixMatches: true));
+      await tester.pumpAndSettle();
+      expect(router.stack.map((p) => p.name), ['Home', 'A']);
+      expect(find.text('A'), findsOneWidget);
+      expect(created['Home'], 1);
+    },
+  );
 }

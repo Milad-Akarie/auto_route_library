@@ -24,14 +24,24 @@ RootStackRouter _buildRouter({bool usersIsInitial = false}) => .build(
           initial: usersIsInitial,
           builder: (_, _) => const Text('UsersRoute'),
         ),
-        NamedRouteDef(name: 'OtherRoute', path: 'other', builder: (_, _) => const Text('OtherRoute')),
+        NamedRouteDef(
+          name: 'OtherRoute',
+          path: 'other',
+          builder: (_, _) => const Text('OtherRoute'),
+        ),
       ],
     ),
   ],
 );
 
-const NamedRoute _kUsers = NamedRoute('AppRoute', children: [NamedRoute('UsersRoute')]);
-const NamedRoute _kOther = NamedRoute('AppRoute', children: [NamedRoute('OtherRoute')]);
+const NamedRoute _kUsers = NamedRoute(
+  'AppRoute',
+  children: [NamedRoute('UsersRoute')],
+);
+const NamedRoute _kOther = NamedRoute(
+  'AppRoute',
+  children: [NamedRoute('OtherRoute')],
+);
 
 StackRouter _shell(RootStackRouter router) => router.innerRouterOf('AppRoute')!;
 
@@ -44,106 +54,135 @@ void main() {
   // the new children, UsersRoute stayed in the shell under OtherRoute.
   // Should: the shell shows OtherRoute alone, as a new shell would, and the
   // url is '/app/other'.
-  testWidgets('replace() with the same parent route shows only its new children', (tester) async {
-    final router = _buildRouter();
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(_kUsers));
-    await tester.pumpAndSettle();
-    expect(find.text('UsersRoute'), findsOneWidget);
-    expect(router.urlState.path, '/app/users');
+  testWidgets(
+    'replace() with the same parent route shows only its new children',
+    (tester) async {
+      final router = _buildRouter();
+      await pumpRouterApp(tester, router);
+      unawaited(router.push(_kUsers));
+      await tester.pumpAndSettle();
+      expect(find.text('UsersRoute'), findsOneWidget);
+      expect(router.urlState.path, '/app/users');
 
-    unawaited(router.replace(_kOther));
-    await tester.pumpAndSettle();
-    expect(find.text('OtherRoute'), findsOneWidget);
-    expect(find.text('UsersRoute'), findsNothing);
-    expect(router.stack.map((page) => page.name), ['HomeRoute', 'AppRoute']);
-    expect(_shell(router).stack.map((page) => page.name), ['OtherRoute']);
-    expect(router.urlState.path, '/app/other');
+      unawaited(router.replace(_kOther));
+      await tester.pumpAndSettle();
+      expect(find.text('OtherRoute'), findsOneWidget);
+      expect(find.text('UsersRoute'), findsNothing);
+      expect(router.stack.map((page) => page.name), ['HomeRoute', 'AppRoute']);
+      expect(_shell(router).stack.map((page) => page.name), ['OtherRoute']);
+      expect(router.urlState.path, '/app/other');
 
-    // The shell's router still answers for the page that holds it.
-    unawaited(router.navigate(_kUsers));
-    await tester.pumpAndSettle();
-    expect(find.text('UsersRoute'), findsOneWidget, reason: 'after router.navigate(_kUsers))');
-    expect(router.urlState.path, '/app/users', reason: 'after router.navigate(_kUsers))');
-  });
+      // The shell's router still answers for the page that holds it.
+      unawaited(router.navigate(_kUsers));
+      await tester.pumpAndSettle();
+      expect(
+        find.text('UsersRoute'),
+        findsOneWidget,
+        reason: 'after router.navigate(_kUsers))',
+      );
+      expect(
+        router.urlState.path,
+        '/app/users',
+        reason: 'after router.navigate(_kUsers))',
+      );
+    },
+  );
 
   // Given no children, replace() opens the route's initial child, as
   // navigate() with the same route does. With no initial child, the shell
   // keeps the child it shows: there is no other child to open.
-  testWidgets('replace() with the same parent route and no children opens its initial child', (tester) async {
-    final router = _buildRouter(usersIsInitial: true);
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(_kOther));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'replace() with the same parent route and no children opens its initial child',
+    (tester) async {
+      final router = _buildRouter(usersIsInitial: true);
+      await pumpRouterApp(tester, router);
+      unawaited(router.push(_kOther));
+      await tester.pumpAndSettle();
 
-    unawaited(router.replace(const NamedRoute('AppRoute')));
-    await tester.pumpAndSettle();
-    expect(find.text('UsersRoute'), findsOneWidget);
-    expect(find.text('OtherRoute'), findsNothing);
-    expect(router.stack.map((page) => page.name), ['HomeRoute', 'AppRoute']);
-    expect(router.urlState.path, '/app/users');
-  });
+      unawaited(router.replace(const NamedRoute('AppRoute')));
+      await tester.pumpAndSettle();
+      expect(find.text('UsersRoute'), findsOneWidget);
+      expect(find.text('OtherRoute'), findsNothing);
+      expect(router.stack.map((page) => page.name), ['HomeRoute', 'AppRoute']);
+      expect(router.urlState.path, '/app/users');
+    },
+  );
 
-  testWidgets('replace() with the same parent route, no children and no initial child keeps the open child', (
-    tester,
-  ) async {
-    final router = _buildRouter();
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(_kUsers));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'replace() with the same parent route, no children and no initial child keeps the open child',
+    (tester) async {
+      final router = _buildRouter();
+      await pumpRouterApp(tester, router);
+      unawaited(router.push(_kUsers));
+      await tester.pumpAndSettle();
 
-    unawaited(router.replace(const NamedRoute('AppRoute')));
-    await tester.pumpAndSettle();
-    expect(find.text('UsersRoute'), findsOneWidget);
-    expect(router.stack.map((page) => page.name), ['HomeRoute', 'AppRoute']);
-    expect(router.urlState.path, '/app/users');
-  });
+      unawaited(router.replace(const NamedRoute('AppRoute')));
+      await tester.pumpAndSettle();
+      expect(find.text('UsersRoute'), findsOneWidget);
+      expect(router.stack.map((page) => page.name), ['HomeRoute', 'AppRoute']);
+      expect(router.urlState.path, '/app/users');
+    },
+  );
 
   // replacePath finds the shell's own router for the path, so it replaces the
   // child there; it worked before and must keep working.
-  testWidgets('replacePath() to another child of the same parent route opens it', (tester) async {
-    final router = _buildRouter();
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(_kUsers));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'replacePath() to another child of the same parent route opens it',
+    (tester) async {
+      final router = _buildRouter();
+      await pumpRouterApp(tester, router);
+      unawaited(router.push(_kUsers));
+      await tester.pumpAndSettle();
 
-    unawaited(router.replacePath('/app/other'));
-    await tester.pumpAndSettle();
-    expect(find.text('OtherRoute'), findsOneWidget);
-    expect(find.text('UsersRoute'), findsNothing);
-    expect(router.stack.map((page) => page.name), ['HomeRoute', 'AppRoute']);
-    expect(router.urlState.path, '/app/other');
-  });
+      unawaited(router.replacePath('/app/other'));
+      await tester.pumpAndSettle();
+      expect(find.text('OtherRoute'), findsOneWidget);
+      expect(find.text('UsersRoute'), findsNothing);
+      expect(router.stack.map((page) => page.name), ['HomeRoute', 'AppRoute']);
+      expect(router.urlState.path, '/app/other');
+    },
+  );
 
   // pushAndPopUntil removes the parent route's page and puts the route back
   // over it, as replace does; the shell kept showing UsersRoute.
-  testWidgets('pushAndPopUntil() with the same parent route opens its new children', (tester) async {
-    final router = _buildRouter();
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(_kUsers));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'pushAndPopUntil() with the same parent route opens its new children',
+    (tester) async {
+      final router = _buildRouter();
+      await pumpRouterApp(tester, router);
+      unawaited(router.push(_kUsers));
+      await tester.pumpAndSettle();
 
-    unawaited(router.pushAndPopUntil(_kOther, predicate: (route) => route.settings.name == 'HomeRoute'));
-    await tester.pumpAndSettle();
-    expect(find.text('OtherRoute'), findsOneWidget);
-    expect(find.text('UsersRoute'), findsNothing);
-    expect(router.stack.map((page) => page.name), ['HomeRoute', 'AppRoute']);
-    expect(router.urlState.path, '/app/other');
-  });
+      unawaited(
+        router.pushAndPopUntil(
+          _kOther,
+          predicate: (route) => route.settings.name == 'HomeRoute',
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('OtherRoute'), findsOneWidget);
+      expect(find.text('UsersRoute'), findsNothing);
+      expect(router.stack.map((page) => page.name), ['HomeRoute', 'AppRoute']);
+      expect(router.urlState.path, '/app/other');
+    },
+  );
 
-  testWidgets('popAndPush() with the same parent route opens its new children', (tester) async {
-    final router = _buildRouter();
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(_kUsers));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'popAndPush() with the same parent route opens its new children',
+    (tester) async {
+      final router = _buildRouter();
+      await pumpRouterApp(tester, router);
+      unawaited(router.push(_kUsers));
+      await tester.pumpAndSettle();
 
-    unawaited(router.popAndPush(_kOther));
-    await tester.pumpAndSettle();
-    expect(find.text('OtherRoute'), findsOneWidget);
-    expect(find.text('UsersRoute'), findsNothing);
-    expect(router.stack.map((page) => page.name), ['HomeRoute', 'AppRoute']);
-    expect(router.urlState.path, '/app/other');
-  });
+      unawaited(router.popAndPush(_kOther));
+      await tester.pumpAndSettle();
+      expect(find.text('OtherRoute'), findsOneWidget);
+      expect(find.text('UsersRoute'), findsNothing);
+      expect(router.stack.map((page) => page.name), ['HomeRoute', 'AppRoute']);
+      expect(router.urlState.path, '/app/other');
+    },
+  );
 
   testWidgets('replace() inside the shell replaces its child', (tester) async {
     final router = _buildRouter();

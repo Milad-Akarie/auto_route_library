@@ -17,17 +17,29 @@ import '../router_test_utils.dart';
 // after the pop.
 void main() {
   for (final (how, push) in [
-    ("pushPath('/reports/sales/detail')", (StackRouter router) => router.pushPath('/reports/sales/detail')),
-    ('push(SalesDetailRoute())', (StackRouter router) => router.push(const _Route('SalesDetailRoute'))),
+    (
+      "pushPath('/reports/sales/detail')",
+      (StackRouter router) => router.pushPath('/reports/sales/detail'),
+    ),
+    (
+      'push(SalesDetailRoute())',
+      (StackRouter router) => router.push(const _Route('SalesDetailRoute')),
+    ),
   ]) {
-    testWidgets('Pushing in a shell with $how updates the browser url', (tester) async {
+    testWidgets('Pushing in a shell with $how updates the browser url', (
+      tester,
+    ) async {
       final sentUrls = <String>[];
       final messenger = tester.binding.defaultBinaryMessenger
         ..setMockMethodCallHandler(SystemChannels.navigation, (call) async {
-          if (call.method == 'routeInformationUpdated') sentUrls.add((call.arguments as Map)['uri'] as String);
+          if (call.method == 'routeInformationUpdated')
+            sentUrls.add((call.arguments as Map)['uri'] as String);
           return null;
         });
-      addTearDown(() => messenger.setMockMethodCallHandler(SystemChannels.navigation, null));
+      addTearDown(
+        () =>
+            messenger.setMockMethodCallHandler(SystemChannels.navigation, null),
+      );
 
       final router = RootStackRouter.build(
         routes: [
@@ -38,7 +50,10 @@ void main() {
               AutoRoute(path: '', page: _page('HomeRoute')),
               AutoRoute(path: 'reports', page: _page('ReportsRoute')),
               AutoRoute(path: 'reports/sales', page: _page('SalesRoute')),
-              AutoRoute(path: 'reports/sales/detail', page: _page('SalesDetailRoute')),
+              AutoRoute(
+                path: 'reports/sales/detail',
+                page: _page('SalesDetailRoute'),
+              ),
             ],
           ),
         ],
@@ -51,18 +66,30 @@ void main() {
       unawaited(push(salesRouter));
       await tester.pumpAndSettle();
       expect(find.text('SalesDetailRoute'), findsOneWidget);
-      expect(router.innerRouterOf<StackRouter>('TabShellRoute')!.topRoute.name, 'SalesDetailRoute');
+      expect(
+        router.innerRouterOf<StackRouter>('TabShellRoute')!.topRoute.name,
+        'SalesDetailRoute',
+      );
       expect(sentUrls.lastOrNull, '/reports/sales/detail');
 
       salesRouter.pop();
       await tester.pumpAndSettle();
-      expect(find.text('SalesRoute'), findsOneWidget, reason: 'after salesRouter.pop()');
-      expect(sentUrls.lastOrNull, '/reports/sales', reason: 'after salesRouter.pop()');
+      expect(
+        find.text('SalesRoute'),
+        findsOneWidget,
+        reason: 'after salesRouter.pop()',
+      );
+      expect(
+        sentUrls.lastOrNull,
+        '/reports/sales',
+        reason: 'after salesRouter.pop()',
+      );
     });
   }
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
   const new(super.name);

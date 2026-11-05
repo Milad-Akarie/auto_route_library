@@ -22,7 +22,10 @@ void main() {
         ),
         AutoRoute(
           path: '/other',
-          page: PageInfo('OtherRoute', builder: (_) => const Text('OtherRoute')),
+          page: PageInfo(
+            'OtherRoute',
+            builder: (_) => const Text('OtherRoute'),
+          ),
         ),
       ],
     );
@@ -30,13 +33,19 @@ void main() {
 
   Future<void> pushNative(WidgetTester tester) async {
     unawaited(
-      router.pushNativeRoute<void>(MaterialPageRoute<void>(builder: (_) => const Scaffold(body: Text('Native')))),
+      router.pushNativeRoute<void>(
+        MaterialPageRoute<void>(
+          builder: (_) => const Scaffold(body: Text('Native')),
+        ),
+      ),
     );
     await tester.pumpAndSettle();
     expect(find.text('Native'), findsOneWidget);
   }
 
-  testWidgets('navigate to the root page removes a pushed native route', (tester) async {
+  testWidgets('navigate to the root page removes a pushed native route', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     await pushNative(tester);
     unawaited(router.navigate(const PageRouteInfo('RootRoute')));
@@ -54,7 +63,9 @@ void main() {
     expectCurrentPage(router, 'RootRoute');
   });
 
-  testWidgets('navigate to another page removes a pushed native route', (tester) async {
+  testWidgets('navigate to another page removes a pushed native route', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     await pushNative(tester);
     unawaited(router.navigate(const PageRouteInfo('OtherRoute')));

@@ -13,7 +13,9 @@ void main() {
   // semantics painted before it, and Flutter's check also blocked the Texts
   // beside the Navigator, since their parent merges its nodes upward.
   // Should: every Text is in the semantics tree.
-  testWidgets('Widgets before a nested router stay in the semantics tree', (tester) async {
+  testWidgets('Widgets before a nested router stay in the semantics tree', (
+    tester,
+  ) async {
     final semantics = tester.ensureSemantics();
     final router = RootStackRouter.build(
       routes: [
@@ -39,7 +41,10 @@ void main() {
           children: [
             AutoRoute(
               path: '',
-              page: PageInfo('ChildRoute', builder: (_) => const Text('Center')),
+              page: PageInfo(
+                'ChildRoute',
+                builder: (_) => const Text('Center'),
+              ),
             ),
           ],
         ),
@@ -60,9 +65,14 @@ void main() {
   // Semantics(label: 'c2'), shown through auto_route's delegate.
   // Should: c1 and c2 stay separate nodes. auto_route's pages give their
   // content a node of its own (scopesRoute, explicitChildNodes).
-  testWidgets('Labeled widgets on a page stay separate semantics nodes', (tester) async {
+  testWidgets('Labeled widgets on a page stay separate semantics nodes', (
+    tester,
+  ) async {
     final semantics = tester.ensureSemantics();
-    const box = SizedBox.square(dimension: 100, child: ColoredBox(color: Colors.blue));
+    const box = SizedBox.square(
+      dimension: 100,
+      child: ColoredBox(color: Colors.blue),
+    );
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(

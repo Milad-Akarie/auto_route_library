@@ -26,42 +26,58 @@ void main() {
     ],
   );
 
-  testWidgets('The first url opens its page with reevaluateListenable set (#2173)', (tester) async {
-    tester.binding.platformDispatcher.defaultRouteNameTestValue = '/profile';
-    addTearDown(tester.binding.platformDispatcher.clearDefaultRouteNameTestValue);
-    final auth = ValueNotifier(0);
-    addTearDown(auth.dispose);
-    final router = buildRouter();
-    addTearDown(router.dispose);
+  testWidgets(
+    'The first url opens its page with reevaluateListenable set (#2173)',
+    (tester) async {
+      tester.binding.platformDispatcher.defaultRouteNameTestValue = '/profile';
+      addTearDown(
+        tester.binding.platformDispatcher.clearDefaultRouteNameTestValue,
+      );
+      final auth = ValueNotifier(0);
+      addTearDown(auth.dispose);
+      final router = buildRouter();
+      addTearDown(router.dispose);
 
-    await tester.pumpWidget(MaterialApp.router(routerConfig: router.config(reevaluateListenable: auth)));
-    auth.value++;
-    await tester.pumpAndSettle();
-    await tester.pump(const Duration(milliseconds: 50));
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: router.config(reevaluateListenable: auth),
+        ),
+      );
+      auth.value++;
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.pumpAndSettle();
 
-    expect(router.topRoute.name, 'ProfileRoute');
-    expect(router.urlState.url, '/profile');
-    expect(find.text('ProfileRoute'), findsOneWidget);
-  });
+      expect(router.topRoute.name, 'ProfileRoute');
+      expect(router.urlState.url, '/profile');
+      expect(find.text('ProfileRoute'), findsOneWidget);
+    },
+  );
 
-  testWidgets('A url the platform pushes opens its page with reevaluateListenable set (#2173)', (tester) async {
-    final auth = ValueNotifier(0);
-    addTearDown(auth.dispose);
-    final router = buildRouter();
-    addTearDown(router.dispose);
-    await tester.pumpWidget(MaterialApp.router(routerConfig: router.config(reevaluateListenable: auth)));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'A url the platform pushes opens its page with reevaluateListenable set (#2173)',
+    (tester) async {
+      final auth = ValueNotifier(0);
+      addTearDown(auth.dispose);
+      final router = buildRouter();
+      addTearDown(router.dispose);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: router.config(reevaluateListenable: auth),
+        ),
+      );
+      await tester.pumpAndSettle();
 
-    await tester.binding.handlePushRoute('/profile');
-    await tester.pump(const Duration(milliseconds: 50));
-    await tester.pumpAndSettle();
-    auth.value++;
-    await tester.pump(const Duration(milliseconds: 50));
-    await tester.pumpAndSettle();
+      await tester.binding.handlePushRoute('/profile');
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.pumpAndSettle();
+      auth.value++;
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.pumpAndSettle();
 
-    expect(router.topRoute.name, 'ProfileRoute');
-    expect(router.urlState.url, '/profile');
-    expect(find.text('ProfileRoute'), findsOneWidget);
-  });
+      expect(router.topRoute.name, 'ProfileRoute');
+      expect(router.urlState.url, '/profile');
+      expect(find.text('ProfileRoute'), findsOneWidget);
+    },
+  );
 }

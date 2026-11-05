@@ -13,7 +13,9 @@ void main() {
   // Steps: CommentsRoutedRoute 'comments/:objectId' hosts a router whose
   // initial child is CommentsRoute; navigatePath('/comments/5?objectType=spot').
   // Should: CommentsRoute gets objectType 'spot' and the path param 5.
-  testWidgets('The initial child of a route gets the query params of the url', (tester) async {
+  testWidgets('The initial child of a route gets the query params of the url', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         NamedRouteDef(

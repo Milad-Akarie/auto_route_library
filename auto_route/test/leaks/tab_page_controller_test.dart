@@ -30,7 +30,10 @@ RootStackRouter _buildRouter(Widget Function() tabsRouter) => .build(
   ],
 );
 
-const List<PageRouteInfo> _kTabs = [NamedRoute('Tab1Route'), NamedRoute('Tab2Route')];
+const List<PageRouteInfo> _kTabs = [
+  NamedRoute('Tab1Route'),
+  NamedRoute('Tab2Route'),
+];
 
 void main() {
   // Steps: push TabsHostRoute, whose page holds an AutoTabsRouter.tabBar
@@ -38,7 +41,9 @@ void main() {
   // Happened: the PageController the AutoTabView creates stayed
   // undisposed, one more on each visit.
   // Should: popping the host disposes it.
-  testWidgets('Popping an AutoTabView disposes its PageController', (tester) async {
+  testWidgets('Popping an AutoTabView disposes its PageController', (
+    tester,
+  ) async {
     final router = _buildRouter(
       () => AutoTabsRouter.tabBar(
         routes: _kTabs,
@@ -75,20 +80,25 @@ void main() {
   // pop the host.
   // Happened: the PageController the tabs router creates stayed undisposed, one more on each visit.
   // Should: popping the host disposes it.
-  testWidgets('Popping an AutoTabsRouter.pageView disposes its PageController', (tester) async {
-    final router = _buildRouter(() => const AutoTabsRouter.pageView(routes: _kTabs));
-    await pumpRouterApp(tester, router);
-    final pageControllers = DisposalTracker<PageController>();
-    unawaited(router.pushPath('/tabs'));
-    await tester.pumpAndSettle();
-    await tester.fling(find.text('Tab1Route'), const Offset(-400, 0), 1000);
-    await tester.pumpAndSettle();
-    expect(find.text('Tab2Route'), findsOneWidget);
-    expect(pageControllers.created, 1);
+  testWidgets(
+    'Popping an AutoTabsRouter.pageView disposes its PageController',
+    (tester) async {
+      final router = _buildRouter(
+        () => const AutoTabsRouter.pageView(routes: _kTabs),
+      );
+      await pumpRouterApp(tester, router);
+      final pageControllers = DisposalTracker<PageController>();
+      unawaited(router.pushPath('/tabs'));
+      await tester.pumpAndSettle();
+      await tester.fling(find.text('Tab1Route'), const Offset(-400, 0), 1000);
+      await tester.pumpAndSettle();
+      expect(find.text('Tab2Route'), findsOneWidget);
+      expect(pageControllers.created, 1);
 
-    router.pop();
-    await tester.pumpAndSettle();
-    expect(find.text('HomeRoute'), findsOneWidget);
-    expect(pageControllers.undisposed, 0);
-  });
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(find.text('HomeRoute'), findsOneWidget);
+      expect(pageControllers.undisposed, 0);
+    },
+  );
 }

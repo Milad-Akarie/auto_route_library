@@ -37,10 +37,16 @@ void main() {
   // Steps: open LoginRoute, push SignUpRoute in its nested router, type 'Ada'
   // in its field, then let the platform end and restore the app.
   // Should: the sign-up page is back, its field holds 'Ada'.
-  testWidgets('a page in a nested router keeps its restorable state', (tester) async {
+  testWidgets('a page in a nested router keeps its restorable state', (
+    tester,
+  ) async {
     await tester.pumpWidget(RestorableRouterApp(buildRouter));
     await tester.pumpAndSettle();
-    unawaited(RestorableRouterApp.router.push(const NamedRoute('LoginRoute', children: [NamedRoute('SignUpRoute')])));
+    unawaited(
+      RestorableRouterApp.router.push(
+        const NamedRoute('LoginRoute', children: [NamedRoute('SignUpRoute')]),
+      ),
+    );
     await tester.pumpAndSettle();
     await typeAndRestore(tester);
     expect(RestorableRouterApp.router.topMatch.name, 'SignUpRoute');
@@ -55,12 +61,18 @@ void main() {
     unawaited(RestorableRouterApp.router.push(const NamedRoute('SignUpRoute')));
     await tester.pumpAndSettle();
     await typeAndRestore(tester);
-    expect(RestorableRouterApp.router.stack.map((p) => p.name), ['HomeRoute', 'SignUpRoute']);
+    expect(RestorableRouterApp.router.stack.map((p) => p.name), [
+      'HomeRoute',
+      'SignUpRoute',
+    ]);
     expect(find.text('Ada'), findsOneWidget);
   }, skip: kIsWeb);
 }
 
-final _signUpPage = PageInfo('SignUpRoute', builder: (_) => const _SignUpPage());
+final _signUpPage = PageInfo(
+  'SignUpRoute',
+  builder: (_) => const _SignUpPage(),
+);
 
 class _SignUpPage extends StatefulWidget {
   const new();
@@ -76,7 +88,8 @@ class _SignUpPageState extends State<_SignUpPage> with RestorationMixin {
   String get restorationId => 'sign_up';
 
   @override
-  void restoreState(RestorationBucket? oldBucket, bool initialRestore) => registerForRestoration(_name, 'name');
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) =>
+      registerForRestoration(_name, 'name');
 
   @override
   void dispose() {
@@ -85,5 +98,6 @@ class _SignUpPageState extends State<_SignUpPage> with RestorationMixin {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(body: TextField(controller: _name.value));
+  Widget build(BuildContext context) =>
+      Scaffold(body: TextField(controller: _name.value));
 }

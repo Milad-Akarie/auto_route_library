@@ -17,12 +17,23 @@ void main() {
           page: PageInfo('ProductRoute', builder: (_) => const AutoRouter()),
           path: '/product/:id',
           children: [
-            AutoRoute(page: _page('ProductDetailsRoute'), path: '', initial: true),
             AutoRoute(
-              page: PageInfo('ReviewHostRoute', builder: (_) => const AutoRouter()),
+              page: _page('ProductDetailsRoute'),
+              path: '',
+              initial: true,
+            ),
+            AutoRoute(
+              page: PageInfo(
+                'ReviewHostRoute',
+                builder: (_) => const AutoRouter(),
+              ),
               path: 'review/:reviewId',
               children: [
-                AutoRoute(page: _page('ReviewDetailsRoute'), path: '', initial: true),
+                AutoRoute(
+                  page: _page('ReviewDetailsRoute'),
+                  path: '',
+                  initial: true,
+                ),
                 AutoRoute(page: _page('ReplyRoute'), path: 'reply'),
               ],
             ),
@@ -41,12 +52,18 @@ void main() {
   // the product's nested router, then push ReplyRoute from the review's.
   // Should: each page reads id 5, the review pages reviewId 7, and the url
   // is '/product/5/review/7/reply'.
-  testWidgets('A pushed child reads the path params of its parents', (tester) async {
+  testWidgets('A pushed child reads the path params of its parents', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router, initialLink: '/product/5');
     expect(find.text('ProductDetailsRoute id 5 reviewId null'), findsOneWidget);
 
     final product = router.innerRouterOf<StackRouter>('ProductRoute')!;
-    unawaited(product.push(const NamedRoute('ReviewHostRoute', params: {'reviewId': '7'})));
+    unawaited(
+      product.push(
+        const NamedRoute('ReviewHostRoute', params: {'reviewId': '7'}),
+      ),
+    );
     await tester.pumpAndSettle();
     expect(find.text('ReviewDetailsRoute id 5 reviewId 7'), findsOneWidget);
     expect(router.urlState.url, '/product/5/review/7');

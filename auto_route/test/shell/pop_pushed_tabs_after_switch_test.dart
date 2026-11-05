@@ -45,27 +45,35 @@ void main() {
     ),
     ('system back', systemBack),
   ]) {
-    testWidgets('Back with $how after switching tabs on a pushed tabs page leaves it', (tester) async {
-      await pumpRouterApp(tester, router);
-      unawaited(router.push(const _Route('MenuRoute')));
-      await tester.pumpAndSettle();
-      expect(find.text('Tab1Route'), findsOneWidget);
+    testWidgets(
+      'Back with $how after switching tabs on a pushed tabs page leaves it',
+      (tester) async {
+        await pumpRouterApp(tester, router);
+        unawaited(router.push(const _Route('MenuRoute')));
+        await tester.pumpAndSettle();
+        expect(find.text('Tab1Route'), findsOneWidget);
 
-      router.innerRouterOf<TabsRouter>('MenuRoute')!.setActiveIndex(1);
-      await tester.pumpAndSettle();
-      expect(find.text('Tab2Route'), findsOneWidget);
+        router.innerRouterOf<TabsRouter>('MenuRoute')!.setActiveIndex(1);
+        await tester.pumpAndSettle();
+        expect(find.text('Tab2Route'), findsOneWidget);
 
-      await back(tester);
-      expect(tester.takeException(), isNull);
-      expect(router.stack.map((page) => page.name), ['MainRoute']);
-      expect(find.text('MainRoute'), findsOneWidget);
-    });
+        await back(tester);
+        expect(tester.takeException(), isNull);
+        expect(router.stack.map((page) => page.name), ['MainRoute']);
+        expect(find.text('MainRoute'), findsOneWidget);
+      },
+    );
   }
 }
 
-final _menuPage = PageInfo('MenuRoute', builder: (_) => const AutoTabsRouter(routes: [_Route('Tab1'), _Route('Tab2')]));
+final _menuPage = PageInfo(
+  'MenuRoute',
+  builder: (_) =>
+      const AutoTabsRouter(routes: [_Route('Tab1'), _Route('Tab2')]),
+);
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
   const new(super.name);

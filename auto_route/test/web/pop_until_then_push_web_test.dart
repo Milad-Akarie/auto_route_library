@@ -32,20 +32,23 @@ void main() {
   // been called in this build cycle", since the pop and the push each told it
   // how to report the url.
   // Should: no exception, A on top of A, and the address '/'.
-  testWidgets('On web, popUntilRouteWithName then push in one frame throws nothing', (tester) async {
-    await pumpRouterConfigApp(tester, router.config());
-    await settleBrowser(tester);
-    unawaited(router.push(const _Route('BRoute')));
-    await settleBrowser(tester);
-    expect(browserPath, '/b');
+  testWidgets(
+    'On web, popUntilRouteWithName then push in one frame throws nothing',
+    (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
+      await settleBrowser(tester);
+      unawaited(router.push(const _Route('BRoute')));
+      await settleBrowser(tester);
+      expect(browserPath, '/b');
 
-    router.popUntilRouteWithName('ARoute');
-    unawaited(router.push(const _Route('ARoute')));
-    await settleBrowser(tester);
-    expect(tester.takeException(), isNull);
-    expect(router.stack.map((m) => m.name), ['ARoute', 'ARoute']);
-    expect(browserPath, '/');
-  });
+      router.popUntilRouteWithName('ARoute');
+      unawaited(router.push(const _Route('ARoute')));
+      await settleBrowser(tester);
+      expect(tester.takeException(), isNull);
+      expect(router.stack.map((m) => m.name), ['ARoute', 'ARoute']);
+      expect(browserPath, '/');
+    },
+  );
 }
 
 class _Route extends PageRouteInfo<void> {

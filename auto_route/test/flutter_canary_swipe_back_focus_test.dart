@@ -19,56 +19,68 @@ import 'router_test_utils.dart';
 // If this test fails after a Flutter upgrade, the swipe no longer gives
 // focus to a page that does not show: drop this canary.
 void main() {
-  testWidgets('swiping back gives focus to a field two pages down and opens the keyboard', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo(
-            'HomeRoute',
-            builder: (_) => const Scaffold(body: TextField(key: Key('home'))),
+  testWidgets(
+    'swiping back gives focus to a field two pages down and opens the keyboard',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => const Scaffold(body: TextField(key: Key('home'))),
+            ),
           ),
-        ),
-        AutoRoute(
-          path: '/second',
-          page: PageInfo(
-            'SecondRoute',
-            builder: (_) => const Scaffold(body: Center(child: Text('SecondRoute'))),
+          AutoRoute(
+            path: '/second',
+            page: PageInfo(
+              'SecondRoute',
+              builder: (_) =>
+                  const Scaffold(body: Center(child: Text('SecondRoute'))),
+            ),
           ),
-        ),
-        AutoRoute(
-          path: '/next',
-          page: PageInfo(
-            'NextRoute',
-            builder: (_) => const Scaffold(body: Center(child: Text('NextRoute'))),
+          AutoRoute(
+            path: '/next',
+            page: PageInfo(
+              'NextRoute',
+              builder: (_) =>
+                  const Scaffold(body: Center(child: Text('NextRoute'))),
+            ),
           ),
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    await tester.tap(find.byKey(const Key('home')));
-    await tester.pump();
-    unawaited(router.pushPath('/second'));
-    await tester.pumpAndSettle();
-    unawaited(router.pushPath('/next'));
-    await tester.pumpAndSettle();
-    expect(_focusedField(), isNull);
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      await tester.tap(find.byKey(const Key('home')));
+      await tester.pump();
+      unawaited(router.pushPath('/second'));
+      await tester.pumpAndSettle();
+      unawaited(router.pushPath('/next'));
+      await tester.pumpAndSettle();
+      expect(_focusedField(), isNull);
 
-    final gesture = await tester.startGesture(const Offset(5, 300));
-    await gesture.moveBy(const Offset(20, 0));
-    await tester.pump();
-    await gesture.moveBy(const Offset(40, 0));
-    await tester.pump();
-    expect(_focusedField(), const Key('home'));
-    expect(tester.testTextInput.isVisible, isTrue);
+      final gesture = await tester.startGesture(const Offset(5, 300));
+      await gesture.moveBy(const Offset(20, 0));
+      await tester.pump();
+      await gesture.moveBy(const Offset(40, 0));
+      await tester.pump();
+      expect(_focusedField(), const Key('home'));
+      expect(tester.testTextInput.isVisible, isTrue);
 
-    await gesture.moveBy(const Offset(400, 0));
-    await gesture.up();
-    await tester.pumpAndSettle();
-    expect(router.topRoute.name, 'SecondRoute');
-    expect(_focusedField(), const Key('home'), reason: 'after gesture.up()');
-    expect(tester.testTextInput.isVisible, isTrue, reason: 'after gesture.up()');
-  }, variant: TargetPlatformVariant.only(.iOS));
+      await gesture.moveBy(const Offset(400, 0));
+      await gesture.up();
+      await tester.pumpAndSettle();
+      expect(router.topRoute.name, 'SecondRoute');
+      expect(_focusedField(), const Key('home'), reason: 'after gesture.up()');
+      expect(
+        tester.testTextInput.isVisible,
+        isTrue,
+        reason: 'after gesture.up()',
+      );
+    },
+    variant: TargetPlatformVariant.only(.iOS),
+  );
 }
 
-Key? _focusedField() => FocusManager.instance.primaryFocus?.context?.findAncestorWidgetOfExactType<TextField>()?.key;
+Key? _focusedField() => FocusManager.instance.primaryFocus?.context
+    ?.findAncestorWidgetOfExactType<TextField>()
+    ?.key;

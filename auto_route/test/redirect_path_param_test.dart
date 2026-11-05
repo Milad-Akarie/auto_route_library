@@ -42,7 +42,9 @@ void main() {
   // segment end, and 'pa' came first.
   // Open '/old/1/2', which RedirectRoute(path: '/old/:pa/:path', redirectTo: '/cms/:path') sends on.
   // Should: the page reads '2' and the url is '/cms/2', not '/cms/1th'.
-  testWidgets('A redirect expands a param whose name starts another whole', (tester) async {
+  testWidgets('A redirect expands a param whose name starts another whole', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router, initialLink: '/old/1/2');
     expect(find.text('Cms 2'), findsOneWidget);
     expect(router.urlState.uri.toString(), '/cms/2');
@@ -53,6 +55,7 @@ abstract final class _CmsRoute {
   static const String pageName = 'CmsRoute';
   static final PageInfo page = PageInfo(
     pageName,
-    builder: (data) => Text('Cms ${data.inheritedPathParams.getString('path')}'),
+    builder: (data) =>
+        Text('Cms ${data.inheritedPathParams.getString('path')}'),
   );
 }

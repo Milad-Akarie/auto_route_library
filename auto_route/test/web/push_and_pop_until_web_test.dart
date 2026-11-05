@@ -25,27 +25,32 @@ void main() {
   // browser's back button.
   // Like Navigator.pushAndRemoveUntil, the call leaves only the home page in
   // the stack. The back button then must not bring a removed page back.
-  testWidgets('The browser back button after pushAndPopUntil on web does not bring a removed page back', (
-    tester,
-  ) async {
-    await pumpRouterConfigApp(tester, router.config());
-    await settleBrowser(tester);
-    final start = browserSerialCount;
+  testWidgets(
+    'The browser back button after pushAndPopUntil on web does not bring a removed page back',
+    (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
+      await settleBrowser(tester);
+      final start = browserSerialCount;
 
-    unawaited(router.push(const SecondRoute()));
-    await settleBrowser(tester);
-    unawaited(router.push(const ThirdRoute()));
-    await settleBrowser(tester);
+      unawaited(router.push(const SecondRoute()));
+      await settleBrowser(tester);
+      unawaited(router.push(const ThirdRoute()));
+      await settleBrowser(tester);
 
-    unawaited(router.pushAndPopUntil(const FirstRoute(), predicate: (_) => false));
-    await settleBrowser(tester);
-    expect(router.stack.map((p) => p.name), [FirstRoute.name]);
-    expect(browserPath, '/');
+      unawaited(
+        router.pushAndPopUntil(const FirstRoute(), predicate: (_) => false),
+      );
+      await settleBrowser(tester);
+      expect(router.stack.map((p) => p.name), [FirstRoute.name]);
+      expect(browserPath, '/');
 
-    await pressBrowserBack(tester);
-    expectCurrentPage(router, FirstRoute.name);
-    expect(router.stack.map((p) => p.name), [FirstRoute.name], reason: 'after pressBrowserBack(tester)');
-    expect(browserPath, '/', reason: 'after pressBrowserBack(tester)');
-    expect(browserSerialCount, start);
-  });
+      await pressBrowserBack(tester);
+      expectCurrentPage(router, FirstRoute.name);
+      expect(router.stack.map((p) => p.name), [
+        FirstRoute.name,
+      ], reason: 'after pressBrowserBack(tester)');
+      expect(browserPath, '/', reason: 'after pressBrowserBack(tester)');
+      expect(browserSerialCount, start);
+    },
+  );
 }

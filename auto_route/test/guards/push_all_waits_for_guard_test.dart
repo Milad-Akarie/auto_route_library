@@ -23,8 +23,16 @@ void main() {
 
   RootStackRouter buildRouter() => .build(
     routes: [
-      NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => page('HomeRoute')),
-      NamedRouteDef(name: 'ListRoute', path: '/list', builder: (_, _) => page('ListRoute')),
+      NamedRouteDef(
+        name: 'HomeRoute',
+        path: '/',
+        builder: (_, _) => page('HomeRoute'),
+      ),
+      NamedRouteDef(
+        name: 'ListRoute',
+        path: '/list',
+        builder: (_, _) => page('ListRoute'),
+      ),
       NamedRouteDef(
         name: 'CheckoutRoute',
         path: '/checkout',
@@ -42,15 +50,20 @@ void main() {
     ],
   );
 
-  List<String> namesOf(StackRouter router) => router.stack.map((page) => page.routeData.name).toList();
+  List<String> namesOf(StackRouter router) =>
+      router.stack.map((page) => page.routeData.name).toList();
 
-  testWidgets('pushAll completes once an async guard lets the routes through', (tester) async {
+  testWidgets('pushAll completes once an async guard lets the routes through', (
+    tester,
+  ) async {
     decision = Completer<bool>();
     final router = buildRouter();
     await pumpRouterConfigApp(tester, router.config());
     var completed = false;
     unawaited(
-      router.pushAll(const [NamedRoute('ListRoute'), NamedRoute('CheckoutRoute')]).then((_) => completed = true),
+      router
+          .pushAll(const [NamedRoute('ListRoute'), NamedRoute('CheckoutRoute')])
+          .then((_) => completed = true),
     );
     await tester.pumpAndSettle();
     expect(completed, isFalse);
@@ -61,13 +74,17 @@ void main() {
     expect(namesOf(router), ['HomeRoute', 'ListRoute', 'CheckoutRoute']);
   });
 
-  testWidgets('pushAll completes once an async guard rejects the routes', (tester) async {
+  testWidgets('pushAll completes once an async guard rejects the routes', (
+    tester,
+  ) async {
     decision = Completer<bool>();
     final router = buildRouter();
     await pumpRouterConfigApp(tester, router.config());
     var completed = false;
     unawaited(
-      router.pushAll(const [NamedRoute('ListRoute'), NamedRoute('CheckoutRoute')]).then((_) => completed = true),
+      router
+          .pushAll(const [NamedRoute('ListRoute'), NamedRoute('CheckoutRoute')])
+          .then((_) => completed = true),
     );
     await tester.pumpAndSettle();
     expect(completed, isFalse);
@@ -78,14 +95,20 @@ void main() {
     expect(namesOf(router).lastOrNull, isNot('CheckoutRoute'));
   });
 
-  testWidgets('popAndPushAll completes once an async guard has decided', (tester) async {
+  testWidgets('popAndPushAll completes once an async guard has decided', (
+    tester,
+  ) async {
     decision = Completer<bool>();
     final router = buildRouter();
     await pumpRouterConfigApp(tester, router.config());
     unawaited(router.push(const NamedRoute('ListRoute')));
     await tester.pumpAndSettle();
     var completed = false;
-    unawaited(router.popAndPushAll(const [NamedRoute('CheckoutRoute')]).then((_) => completed = true));
+    unawaited(
+      router
+          .popAndPushAll(const [NamedRoute('CheckoutRoute')])
+          .then((_) => completed = true),
+    );
     await tester.pumpAndSettle();
     expect(completed, isFalse);
 

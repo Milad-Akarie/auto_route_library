@@ -63,24 +63,30 @@ void main() {
     expect(find.text('SessionsRoute'), findsOneWidget);
   }
 
-  testWidgets("navigatePath('/') from a page above a nested router shows the default child of '/'", (tester) async {
-    await openSessions(tester);
+  testWidgets(
+    "navigatePath('/') from a page above a nested router shows the default child of '/'",
+    (tester) async {
+      await openSessions(tester);
 
-    unawaited(experienceContext.router.navigatePath('/'));
-    await tester.pumpAndSettle();
+      unawaited(experienceContext.router.navigatePath('/'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('EmptyRoute'), findsOneWidget);
-    expect(find.text('SessionsRoute'), findsNothing);
-    expect(router.currentPath, '/');
-  });
+      expect(find.text('EmptyRoute'), findsOneWidget);
+      expect(find.text('SessionsRoute'), findsNothing);
+      expect(router.currentPath, '/');
+    },
+  );
 
-  testWidgets("replacePath('/') from a page above a nested router shows the default child of '/'", (tester) async {
-    await openSessions(tester);
+  testWidgets(
+    "replacePath('/') from a page above a nested router shows the default child of '/'",
+    (tester) async {
+      await openSessions(tester);
 
-    unawaited(experienceContext.router.replacePath('/'));
-    await tester.pumpAndSettle();
+      unawaited(experienceContext.router.replacePath('/'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('EmptyRoute'), findsOneWidget);
-    expect(find.text('SessionsRoute'), findsNothing);
-  });
+      expect(find.text('EmptyRoute'), findsOneWidget);
+      expect(find.text('SessionsRoute'), findsNothing);
+    },
+  );
 }

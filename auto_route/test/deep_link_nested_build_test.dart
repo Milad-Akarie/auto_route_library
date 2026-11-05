@@ -29,7 +29,9 @@ void main() {
   // on web.
   // Should: the parent and the child build once each; the parent's home page
   // is not matched and does not build.
-  testWidgets('A deep link to a nested child builds its parent once', (tester) async {
+  testWidgets('A deep link to a nested child builds its parent once', (
+    tester,
+  ) async {
     final router = buildRouter();
     await pumpAtDeepLink(tester, router, '/1', includePrefixMatches: false);
     expect(router.topRoute.name, 'ChildRoute');
@@ -43,7 +45,9 @@ void main() {
   // the parent's home page under the child, and Flutter builds that covered
   // page once, offstage, as it does at the root (see
   // deep_link_prefix_build_test.dart).
-  testWidgets('A deep link with prefix matches builds each nested page once', (tester) async {
+  testWidgets('A deep link with prefix matches builds each nested page once', (
+    tester,
+  ) async {
     final router = buildRouter();
     await pumpAtDeepLink(tester, router, '/1', includePrefixMatches: true);
     expect(router.topRoute.name, 'ChildRoute');

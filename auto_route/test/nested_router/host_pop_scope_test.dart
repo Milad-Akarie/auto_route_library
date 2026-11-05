@@ -18,51 +18,57 @@ import '../router_test_utils.dart';
 // second, with the nested router on its first page, is the app's PopScope's
 // to block: it hears one refused pop and the host stays.
 void main() {
-  testWidgets("an app's PopScope on a host page hears only the back presses it blocks", (tester) async {
-    final heard = <bool>[];
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('HomeRoute', builder: (_) => const Text('HomeRoute')),
-        ),
-        AutoRoute(
-          path: '/host',
-          page: PageInfo(
-            'HostRoute',
-            builder: (_) => PopScope<Object?>(
-              canPop: false,
-              onPopInvokedWithResult: (didPop, _) => heard.add(didPop),
-              child: const Scaffold(body: AutoRouter()),
+  testWidgets(
+    "an app's PopScope on a host page hears only the back presses it blocks",
+    (tester) async {
+      final heard = <bool>[];
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => const Text('HomeRoute'),
             ),
           ),
-          children: [
-            AutoRoute(
-              path: '',
-              page: PageInfo('A', builder: (_) => const Text('A')),
+          AutoRoute(
+            path: '/host',
+            page: PageInfo(
+              'HostRoute',
+              builder: (_) => PopScope<Object?>(
+                canPop: false,
+                onPopInvokedWithResult: (didPop, _) => heard.add(didPop),
+                child: const Scaffold(body: AutoRouter()),
+              ),
             ),
-            AutoRoute(
-              path: 'b',
-              page: PageInfo('B', builder: (_) => const Text('B')),
-            ),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    unawaited(router.pushPath('/host'));
-    await tester.pumpAndSettle();
-    final nested = router.innerRouterOf<StackRouter>('HostRoute')!;
-    unawaited(nested.pushPath('b'));
-    await tester.pumpAndSettle();
+            children: [
+              AutoRoute(
+                path: '',
+                page: PageInfo('A', builder: (_) => const Text('A')),
+              ),
+              AutoRoute(
+                path: 'b',
+                page: PageInfo('B', builder: (_) => const Text('B')),
+              ),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      unawaited(router.pushPath('/host'));
+      await tester.pumpAndSettle();
+      final nested = router.innerRouterOf<StackRouter>('HostRoute')!;
+      unawaited(nested.pushPath('b'));
+      await tester.pumpAndSettle();
 
-    await systemBack(tester);
-    expect(nested.stack.map((page) => page.name), ['A']);
-    expect(heard, isEmpty);
+      await systemBack(tester);
+      expect(nested.stack.map((page) => page.name), ['A']);
+      expect(heard, isEmpty);
 
-    await systemBack(tester);
-    expect(heard, [false]);
-    expect(router.stack.map((page) => page.name), ['HomeRoute', 'HostRoute']);
-    expect(find.text('A'), findsOneWidget);
-  });
+      await systemBack(tester);
+      expect(heard, [false]);
+      expect(router.stack.map((page) => page.name), ['HomeRoute', 'HostRoute']);
+      expect(find.text('A'), findsOneWidget);
+    },
+  );
 }

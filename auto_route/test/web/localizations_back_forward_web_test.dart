@@ -23,64 +23,99 @@ void main() {
   // Navigate to LoginRoute, go back and forward; reload on LoginRoute, then
   // go back and forward again.
   // Should: each step shows the page of the url the browser moved to.
-  testWidgets('On web, back and forward work with localizations delegates, before and after a reload', (tester) async {
-    RootStackRouter buildRouter() => .build(
-      routes: [
-        NamedRouteDef(
-          name: 'HomeRoute',
-          path: '/home_page',
-          initial: true,
-          builder: (_, _) => const NamedPage('HomeRoute'),
-        ),
-        NamedRouteDef(name: 'LoginRoute', path: '/login_page', builder: (_, _) => const NamedPage('LoginRoute')),
-        RedirectRoute(path: '*', redirectTo: '/home_page'),
-      ],
-    );
-    Future<RootStackRouter> startApp() async {
-      final router = buildRouter();
-      addTearDown(router.dispose);
-      await tester.pumpWidget(
-        MaterialApp.router(
-          locale: const Locale('en'),
-          localizationsDelegates: const [
-            _AsyncStrings.delegate,
-            DefaultMaterialLocalizations.delegate,
-            DefaultWidgetsLocalizations.delegate,
-          ],
-          routerConfig: router.config(),
-        ),
+  testWidgets(
+    'On web, back and forward work with localizations delegates, before and after a reload',
+    (tester) async {
+      RootStackRouter buildRouter() => .build(
+        routes: [
+          NamedRouteDef(
+            name: 'HomeRoute',
+            path: '/home_page',
+            initial: true,
+            builder: (_, _) => const NamedPage('HomeRoute'),
+          ),
+          NamedRouteDef(
+            name: 'LoginRoute',
+            path: '/login_page',
+            builder: (_, _) => const NamedPage('LoginRoute'),
+          ),
+          RedirectRoute(path: '*', redirectTo: '/home_page'),
+        ],
       );
+      Future<RootStackRouter> startApp() async {
+        final router = buildRouter();
+        addTearDown(router.dispose);
+        await tester.pumpWidget(
+          MaterialApp.router(
+            locale: const Locale('en'),
+            localizationsDelegates: const [
+              _AsyncStrings.delegate,
+              DefaultMaterialLocalizations.delegate,
+              DefaultWidgetsLocalizations.delegate,
+            ],
+            routerConfig: router.config(),
+          ),
+        );
+        await settleBrowser(tester);
+        return router;
+      }
+
+      final router = await startApp();
+      expect(find.text('HomeRoute'), findsOneWidget);
+      unawaited(router.navigate(const NamedRoute('LoginRoute')));
       await settleBrowser(tester);
-      return router;
-    }
+      expect(browserPath, '/login_page');
 
-    final router = await startApp();
-    expect(find.text('HomeRoute'), findsOneWidget);
-    unawaited(router.navigate(const NamedRoute('LoginRoute')));
-    await settleBrowser(tester);
-    expect(browserPath, '/login_page');
+      await pressBrowserBack(tester);
+      expect(
+        find.text('HomeRoute'),
+        findsOneWidget,
+        reason: 'after pressBrowserBack(tester)',
+      );
+      expect(browserPath, '/home_page');
+      await pressBrowserForward(tester);
+      expect(find.text('LoginRoute'), findsOneWidget);
+      expect(
+        browserPath,
+        '/login_page',
+        reason: 'after pressBrowserForward(tester)',
+      );
 
-    await pressBrowserBack(tester);
-    expect(find.text('HomeRoute'), findsOneWidget, reason: 'after pressBrowserBack(tester)');
-    expect(browserPath, '/home_page');
-    await pressBrowserForward(tester);
-    expect(find.text('LoginRoute'), findsOneWidget);
-    expect(browserPath, '/login_page', reason: 'after pressBrowserForward(tester)');
+      // A reload starts a new app at the browser's url, with the history kept.
+      await tester.pumpWidget(const SizedBox());
+      openBrowserAt(tester, '/login_page');
+      await startApp();
+      expect(
+        find.text('LoginRoute'),
+        findsOneWidget,
+        reason: 'after startApp()',
+      );
 
-    // A reload starts a new app at the browser's url, with the history kept.
-    await tester.pumpWidget(const SizedBox());
-    openBrowserAt(tester, '/login_page');
-    await startApp();
-    expect(find.text('LoginRoute'), findsOneWidget, reason: 'after startApp()');
-
-    await pressBrowserBack(tester);
-    expect(find.text('HomeRoute'), findsOneWidget, reason: 'after pressBrowserBack(tester) in the reloaded app');
-    expect(browserPath, '/home_page', reason: 'after pressBrowserBack(tester)');
-    await pressBrowserForward(tester);
-    expect(find.text('LoginRoute'), findsOneWidget, reason: 'after pressBrowserForward(tester)');
-    expect(browserPath, '/login_page', reason: 'after pressBrowserForward(tester) in the reloaded app');
-    expect(tester.takeException(), isNull);
-  });
+      await pressBrowserBack(tester);
+      expect(
+        find.text('HomeRoute'),
+        findsOneWidget,
+        reason: 'after pressBrowserBack(tester) in the reloaded app',
+      );
+      expect(
+        browserPath,
+        '/home_page',
+        reason: 'after pressBrowserBack(tester)',
+      );
+      await pressBrowserForward(tester);
+      expect(
+        find.text('LoginRoute'),
+        findsOneWidget,
+        reason: 'after pressBrowserForward(tester)',
+      );
+      expect(
+        browserPath,
+        '/login_page',
+        reason: 'after pressBrowserForward(tester) in the reloaded app',
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
 }
 
 // Loads after a delay, as generated localizations that read assets do.
@@ -95,7 +130,8 @@ class _AsyncStringsDelegate extends LocalizationsDelegate<_AsyncStrings> {
   bool isSupported(Locale locale) => true;
 
   @override
-  Future<_AsyncStrings> load(Locale locale) => .delayed(const Duration(milliseconds: 50), _AsyncStrings.new);
+  Future<_AsyncStrings> load(Locale locale) =>
+      .delayed(const Duration(milliseconds: 50), _AsyncStrings.new);
 
   @override
   bool shouldReload(_AsyncStringsDelegate old) => false;

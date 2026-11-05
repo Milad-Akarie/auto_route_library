@@ -23,33 +23,39 @@ void main() {
   // the reporter's stream does. The browser should show SecondRoute's url,
   // on SecondRoute's entry.
   for (final later in [false, true]) {
-    testWidgets('Popping as the reevaluate listenable fires updates the url, fired later: $later', (tester) async {
-      final auth = ValueNotifier(0);
-      addTearDown(auth.dispose);
-      final router = SimpleRouter();
-      await pumpRouterConfigApp(tester, router.config(reevaluateListenable: auth));
-      await settleBrowser(tester);
-      final start = browserSerialCount;
-      unawaited(router.push(const SecondRoute()));
-      await settleBrowser(tester);
-      unawaited(router.push(const ThirdRoute()));
-      await settleBrowser(tester);
-      expect(browserPath, '/third-route');
+    testWidgets(
+      'Popping as the reevaluate listenable fires updates the url, fired later: $later',
+      (tester) async {
+        final auth = ValueNotifier(0);
+        addTearDown(auth.dispose);
+        final router = SimpleRouter();
+        await pumpRouterConfigApp(
+          tester,
+          router.config(reevaluateListenable: auth),
+        );
+        await settleBrowser(tester);
+        final start = browserSerialCount;
+        unawaited(router.push(const SecondRoute()));
+        await settleBrowser(tester);
+        unawaited(router.push(const ThirdRoute()));
+        await settleBrowser(tester);
+        expect(browserPath, '/third-route');
 
-      if (later) {
-        scheduleMicrotask(() => auth.value++);
-      } else {
-        auth.value++;
-      }
-      router.pop();
-      await settleBrowser(tester);
-      expectCurrentPage(router, SecondRoute.name);
-      expect(browserPath, '/second-route');
-      expect(browserSerialCount, start + 1);
+        if (later) {
+          scheduleMicrotask(() => auth.value++);
+        } else {
+          auth.value++;
+        }
+        router.pop();
+        await settleBrowser(tester);
+        expectCurrentPage(router, SecondRoute.name);
+        expect(browserPath, '/second-route');
+        expect(browserSerialCount, start + 1);
 
-      await pressBrowserBack(tester);
-      expectCurrentPage(router, FirstRoute.name);
-      expect(browserSerialCount, start);
-    });
+        await pressBrowserBack(tester);
+        expectCurrentPage(router, FirstRoute.name);
+        expect(browserSerialCount, start);
+      },
+    );
   }
 }

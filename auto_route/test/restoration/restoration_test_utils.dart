@@ -18,7 +18,8 @@ class RestorableRouterApp extends StatefulWidget {
 }
 
 class _RestorableRouterAppState extends State<RestorableRouterApp> {
-  late final RootStackRouter router = RestorableRouterApp.router = widget._routerBuilder();
+  late final RootStackRouter router = RestorableRouterApp.router = widget
+      ._routerBuilder();
 
   @override
   void dispose() {
@@ -28,7 +29,10 @@ class _RestorableRouterAppState extends State<RestorableRouterApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(restorationScopeId: 'app', routerConfig: router.config());
+    return MaterialApp.router(
+      restorationScopeId: 'app',
+      routerConfig: router.config(),
+    );
   }
 }
 

@@ -24,40 +24,48 @@ void main() {
     );
   });
 
-  List<String> names() => router.stack.map((page) => page.routeData.name).toList();
+  List<String> names() =>
+      router.stack.map((page) => page.routeData.name).toList();
 
   // Each way the drawer's button can go back to Home.
   final goHomeCalls = <String, void Function(StackRouter router)>{
-    'navigate': (activeRouter) => unawaited(activeRouter.navigate(const PageRouteInfo('Home'))),
-    'replaceAll': (activeRouter) => unawaited(activeRouter.replaceAll(const [PageRouteInfo('Home')])),
+    'navigate': (activeRouter) =>
+        unawaited(activeRouter.navigate(const PageRouteInfo('Home'))),
+    'replaceAll': (activeRouter) =>
+        unawaited(activeRouter.replaceAll(const [PageRouteInfo('Home')])),
     'popUntilRoot': (activeRouter) => activeRouter.popUntilRoot(),
   };
 
   for (final MapEntry(key: name, value: goHome) in goHomeCalls.entries) {
-    testWidgets('$name from an open drawer shows Home, and Screen2 opens and closes again', (tester) async {
-      _goHome = goHome;
-      await pumpRouterApp(tester, router);
-      unawaited(router.push(const PageRouteInfo('Screen2')));
-      await tester.pumpAndSettle();
+    testWidgets(
+      '$name from an open drawer shows Home, and Screen2 opens and closes again',
+      (tester) async {
+        _goHome = goHome;
+        await pumpRouterApp(tester, router);
+        unawaited(router.push(const PageRouteInfo('Screen2')));
+        await tester.pumpAndSettle();
 
-      await tester.tap(find.byTooltip('Menu'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Go home from drawer'));
-      await tester.pumpAndSettle();
+        await tester.tap(find.byTooltip('Menu'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Go home from drawer'));
+        await tester.pumpAndSettle();
 
-      expect(tester.takeException(), isNull);
-      expect(names(), ['Home']);
-      expect(find.byType(Drawer), findsNothing);
-      expectTopPage(router, 'Home');
+        expect(tester.takeException(), isNull);
+        expect(names(), ['Home']);
+        expect(find.byType(Drawer), findsNothing);
+        expectTopPage(router, 'Home');
 
-      unawaited(router.push(const PageRouteInfo('Screen2')));
-      await tester.pumpAndSettle();
-      expectTopPage(router, 'Screen2');
-      await tester.tap(find.text('Go home'));
-      await tester.pumpAndSettle();
-      expect(names(), ['Home'], reason: 'after tester.tap(find.text(Go home))');
-      expectTopPage(router, 'Home');
-    });
+        unawaited(router.push(const PageRouteInfo('Screen2')));
+        await tester.pumpAndSettle();
+        expectTopPage(router, 'Screen2');
+        await tester.tap(find.text('Go home'));
+        await tester.pumpAndSettle();
+        expect(names(), [
+          'Home',
+        ], reason: 'after tester.tap(find.text(Go home))');
+        expectTopPage(router, 'Home');
+      },
+    );
   }
 }
 
@@ -79,15 +87,20 @@ PageInfo _page(String name) => .new(
     ),
     endDrawer: Drawer(
       child: Builder(
-        builder: (context) =>
-            TextButton(onPressed: () => _goHome(context.router), child: const Text('Go home from drawer')),
+        builder: (context) => TextButton(
+          onPressed: () => _goHome(context.router),
+          child: const Text('Go home from drawer'),
+        ),
       ),
     ),
     body: Builder(
       builder: (context) => Column(
         children: [
           Text(name),
-          TextButton(onPressed: () => _goHome(context.router), child: const Text('Go home')),
+          TextButton(
+            onPressed: () => _goHome(context.router),
+            child: const Text('Go home'),
+          ),
         ],
       ),
     ),

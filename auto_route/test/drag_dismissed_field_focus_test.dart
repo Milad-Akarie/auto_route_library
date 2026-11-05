@@ -27,10 +27,14 @@ void main() {
                 builder: (context) => Scaffold(
                   body: ListView(
                     keyboardDismissBehavior: .onDrag,
-                    children: [for (var i = 0; i < 5; i++) TextField(key: Key('field $i'))],
+                    children: [
+                      for (var i = 0; i < 5; i++)
+                        TextField(key: Key('field $i')),
+                    ],
                   ),
                   floatingActionButton: FloatingActionButton(
-                    onPressed: () => context.router.push(const NamedRoute('SecondRoute')),
+                    onPressed: () =>
+                        context.router.push(const NamedRoute('SecondRoute')),
                     child: const Text('next'),
                   ),
                 ),
@@ -57,7 +61,10 @@ void main() {
       await tester.tap(find.byKey(const Key('field 0')));
       await tester.pump();
       expect(tester.testTextInput.isVisible, isTrue);
-      await tester.drag(find.byKey(const Key('field 3')), const Offset(0, -200));
+      await tester.drag(
+        find.byKey(const Key('field 3')),
+        const Offset(0, -200),
+      );
       await tester.pumpAndSettle();
       expect(_focusedField(), isNull);
       expect(tester.testTextInput.isVisible, isFalse);
@@ -67,12 +74,22 @@ void main() {
       await tester.tap(find.text('back'));
       await tester.pumpAndSettle();
       expect(router.topRoute.name, 'HomeRoute');
-      expect(_focusedField(), isNull, reason: 'after tester.tap(find.text(back))');
-      expect(tester.testTextInput.isVisible, isFalse, reason: 'after tester.tap(find.text(back))');
+      expect(
+        _focusedField(),
+        isNull,
+        reason: 'after tester.tap(find.text(back))',
+      );
+      expect(
+        tester.testTextInput.isVisible,
+        isFalse,
+        reason: 'after tester.tap(find.text(back))',
+      );
     },
     // A list too short to scroll closes the keyboard only where it bounces.
     variant: TargetPlatformVariant.only(.iOS),
   );
 }
 
-Key? _focusedField() => FocusManager.instance.primaryFocus?.context?.findAncestorWidgetOfExactType<TextField>()?.key;
+Key? _focusedField() => FocusManager.instance.primaryFocus?.context
+    ?.findAncestorWidgetOfExactType<TextField>()
+    ?.key;

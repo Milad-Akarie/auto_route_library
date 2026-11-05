@@ -28,7 +28,8 @@ void main() {
             'ShellRoute',
             builder: (_) => ValueListenableBuilder(
               valueListenable: showNested,
-              builder: (_, show, _) => show ? const AutoRouter() : const Text('Hidden'),
+              builder: (_, show, _) =>
+                  show ? const AutoRouter() : const Text('Hidden'),
             ),
           ),
           children: [
@@ -43,12 +44,18 @@ void main() {
   Future<void> pushShell(WidgetTester tester) async {
     unawaited(router.push(const _Route('ShellRoute')));
     await tester.pumpAndSettle();
-    unawaited(router.innerRouterOf<StackRouter>('ShellRoute')!.push(const _Route('SecondRoute')));
+    unawaited(
+      router
+          .innerRouterOf<StackRouter>('ShellRoute')!
+          .push(const _Route('SecondRoute')),
+    );
     await tester.pumpAndSettle();
     expect(find.text('SecondRoute'), findsOneWidget);
   }
 
-  testWidgets('Back in the frame a shell is pushed does not throw', (tester) async {
+  testWidgets('Back in the frame a shell is pushed does not throw', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     unawaited(router.pushPath('/shell/second'));
     await tester.binding.handlePopRoute();
@@ -56,32 +63,40 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Back in the frame the stack is replaced away from a shell does not throw', (tester) async {
-    await pumpRouterApp(tester, router);
-    await pushShell(tester);
-    unawaited(router.replaceAll([const _Route('HomeRoute')]));
-    await tester.binding.handlePopRoute();
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(find.text('HomeRoute'), findsOneWidget);
-  });
+  testWidgets(
+    'Back in the frame the stack is replaced away from a shell does not throw',
+    (tester) async {
+      await pumpRouterApp(tester, router);
+      await pushShell(tester);
+      unawaited(router.replaceAll([const _Route('HomeRoute')]));
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('HomeRoute'), findsOneWidget);
+    },
+  );
 
-  testWidgets('Back while a shell page hides its nested router does not throw', (tester) async {
-    await pumpRouterApp(tester, router);
-    await pushShell(tester);
-    showNested.value = false;
-    await tester.pump();
-    expect(find.text('Hidden'), findsOneWidget);
-    await tester.binding.handlePopRoute();
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    // With no nested router built, the shell page is the page on top, and
-    // back pops it.
-    expect(router.stack.map((page) => page.name), ['HomeRoute']);
-    expect(find.text('HomeRoute'), findsOneWidget);
-  });
+  testWidgets(
+    'Back while a shell page hides its nested router does not throw',
+    (tester) async {
+      await pumpRouterApp(tester, router);
+      await pushShell(tester);
+      showNested.value = false;
+      await tester.pump();
+      expect(find.text('Hidden'), findsOneWidget);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      // With no nested router built, the shell page is the page on top, and
+      // back pops it.
+      expect(router.stack.map((page) => page.name), ['HomeRoute']);
+      expect(find.text('HomeRoute'), findsOneWidget);
+    },
+  );
 
-  testWidgets('Back after the app pauses and resumes pops the nested page', (tester) async {
+  testWidgets('Back after the app pauses and resumes pops the nested page', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     await pushShell(tester);
     tester.binding.handleAppLifecycleStateChanged(.inactive);
@@ -98,7 +113,8 @@ void main() {
   });
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
   const new(super.name);

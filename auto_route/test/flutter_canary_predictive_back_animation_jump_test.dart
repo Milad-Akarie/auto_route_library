@@ -31,7 +31,9 @@ void main() {
         ),
       ),
     );
-    final route = MaterialPageRoute<void>(builder: (_) => const Scaffold(body: Text('second')));
+    final route = MaterialPageRoute<void>(
+      builder: (_) => const Scaffold(body: Text('second')),
+    );
     Navigator.of(context).push(route);
     await tester.pumpAndSettle();
     expect(route.animation!.value, 1.0);
@@ -39,7 +41,9 @@ void main() {
     Future<void> send(String method, [Map<String, Object?>? arguments]) async {
       await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
         SystemChannels.backGesture.name,
-        const StandardMethodCodec().encodeMethodCall(MethodCall(method, arguments)),
+        const StandardMethodCodec().encodeMethodCall(
+          MethodCall(method, arguments),
+        ),
         ignoreArgument,
       );
       await tester.pump();
@@ -55,7 +59,11 @@ void main() {
     final dragged = route.animation!.value;
     await send('commitBackGesture');
     expect(dragged, closeTo(0.5, 0.1));
-    expect(route.animation!.value, 1.0, reason: 'after send(commitBackGesture)');
+    expect(
+      route.animation!.value,
+      1.0,
+      reason: 'after send(commitBackGesture)',
+    );
     await tester.pumpAndSettle();
     expect(route.animation!.value, 0.0);
   });

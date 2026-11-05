@@ -13,33 +13,52 @@ import '../router_test_utils.dart';
 // nested router.
 // Should: the observer hears the pushes of the nested navigator too.
 void main() {
-  testWidgets('The observer given to config() hears pushes in a nested router', (tester) async {
-    final pushes = <String>[];
-    final router = RootStackRouter.build(
-      routes: [
-        NamedRouteDef(
-          name: 'ShellRoute',
-          path: '/',
-          initial: true,
-          builder: (_, _) => const AutoRouter(),
-          children: [
-            NamedRouteDef(name: 'ARoute', path: 'a', initial: true, builder: (_, _) => const Text('a')),
-            NamedRouteDef(name: 'BRoute', path: 'b', builder: (_, _) => const Text('b')),
-            NamedRouteDef(name: 'DetailsRoute', path: 'details', builder: (_, _) => const Text('details')),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterConfigApp(tester, router.config(navigatorObservers: () => [_Recorder(pushes)]));
-    expect(pushes, contains('ARoute'));
+  testWidgets(
+    'The observer given to config() hears pushes in a nested router',
+    (tester) async {
+      final pushes = <String>[];
+      final router = RootStackRouter.build(
+        routes: [
+          NamedRouteDef(
+            name: 'ShellRoute',
+            path: '/',
+            initial: true,
+            builder: (_, _) => const AutoRouter(),
+            children: [
+              NamedRouteDef(
+                name: 'ARoute',
+                path: 'a',
+                initial: true,
+                builder: (_, _) => const Text('a'),
+              ),
+              NamedRouteDef(
+                name: 'BRoute',
+                path: 'b',
+                builder: (_, _) => const Text('b'),
+              ),
+              NamedRouteDef(
+                name: 'DetailsRoute',
+                path: 'details',
+                builder: (_, _) => const Text('details'),
+              ),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterConfigApp(
+        tester,
+        router.config(navigatorObservers: () => [_Recorder(pushes)]),
+      );
+      expect(pushes, contains('ARoute'));
 
-    unawaited(router.navigate(const NamedRoute('BRoute')));
-    await tester.pumpAndSettle();
-    unawaited(router.push(const NamedRoute('DetailsRoute')));
-    await tester.pumpAndSettle();
+      unawaited(router.navigate(const NamedRoute('BRoute')));
+      await tester.pumpAndSettle();
+      unawaited(router.push(const NamedRoute('DetailsRoute')));
+      await tester.pumpAndSettle();
 
-    expect(pushes, containsAllInOrder(['ARoute', 'BRoute', 'DetailsRoute']));
-  });
+      expect(pushes, containsAllInOrder(['ARoute', 'BRoute', 'DetailsRoute']));
+    },
+  );
 }
 
 class _Recorder extends AutoRouterObserver {
@@ -48,5 +67,6 @@ class _Recorder extends AutoRouterObserver {
   final List<String> pushes;
 
   @override
-  void didPush(Route<Object?> route, Route<Object?>? previousRoute) => pushes.add(route.settings.name ?? 'null');
+  void didPush(Route<Object?> route, Route<Object?>? previousRoute) =>
+      pushes.add(route.settings.name ?? 'null');
 }

@@ -18,7 +18,10 @@ void main(List<String> args) {
   if (split < 0) {
     _printRuns(_read(args));
   } else {
-    _printComparison(_read(args.sublist(0, split)), _read(args.sublist(split + 1)));
+    _printComparison(
+      _read(args.sublist(0, split)),
+      _read(args.sublist(split + 1)),
+    );
   }
 }
 
@@ -55,7 +58,9 @@ class _Stats {
   static double _median(List<double> values) {
     final sorted = [...values]..sort();
     final middle = sorted.length ~/ 2;
-    final centre = sorted.skip(sorted.length.isOdd ? middle : middle - 1).take(sorted.length.isOdd ? 1 : 2);
+    final centre = sorted
+        .skip(sorted.length.isOdd ? middle : middle - 1)
+        .take(sorted.length.isOdd ? 1 : 2);
     return centre.fold<double>(0, (sum, value) => sum + value) / centre.length;
   }
 }
@@ -73,7 +78,10 @@ void _printRuns(Map<String, List<double>> runs) {
   }
 }
 
-void _printComparison(Map<String, List<double>> before, Map<String, List<double>> after) {
+void _printComparison(
+  Map<String, List<double>> before,
+  Map<String, List<double>> after,
+) {
   stdout
     ..writeln('| case | before | after | change | spread |')
     ..writeln('|---|---:|---:|---:|---:|');
@@ -82,7 +90,9 @@ void _printComparison(Map<String, List<double>> before, Map<String, List<double>
     if (afterValues == null) continue;
     final old = _Stats(value);
     final now = _Stats(afterValues);
-    final change = old.median == 0 ? 0.0 : (now.median - old.median) / old.median;
+    final change = old.median == 0
+        ? 0.0
+        : (now.median - old.median) / old.median;
     final spread = old.spread > now.spread ? old.spread : now.spread;
     stdout.writeln(
       '| $key | ${_number(old.median)} | ${_number(now.median)} | ${change >= 0 ? '+' : ''}${_percent(change)} '
@@ -91,6 +101,7 @@ void _printComparison(Map<String, List<double>> before, Map<String, List<double>
   }
 }
 
-String _number(double value) => value >= 100 ? value.toStringAsFixed(0) : value.toStringAsFixed(2);
+String _number(double value) =>
+    value >= 100 ? value.toStringAsFixed(0) : value.toStringAsFixed(2);
 
 String _percent(double value) => '${(value * 100).toStringAsFixed(1)}%';

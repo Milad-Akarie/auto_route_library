@@ -40,20 +40,28 @@ void main() {
     expectCurrentPage(router, 'HomeRoute');
   });
 
-  testWidgets('maybePop on the only page, handled by its PopScope, answers true', (tester) async {
-    await pumpRouterApp(tester, router);
-    expect(await router.maybePop(), isTrue);
-    expect(attempts, [false]);
-    expect(tester.takeException(), isNull);
-    expectCurrentPage(router, 'HomeRoute');
-  });
+  testWidgets(
+    'maybePop on the only page, handled by its PopScope, answers true',
+    (tester) async {
+      await pumpRouterApp(tester, router);
+      expect(await router.maybePop(), isTrue);
+      expect(attempts, [false]);
+      expect(tester.takeException(), isNull);
+      expectCurrentPage(router, 'HomeRoute');
+    },
+  );
 
-  testWidgets('pop on the only page without a PopScope throws nothing', (tester) async {
+  testWidgets('pop on the only page without a PopScope throws nothing', (
+    tester,
+  ) async {
     final plain = RootStackRouter.build(
       routes: [
         AutoRoute(
           path: '/',
-          page: PageInfo('PlainRoute', builder: (_) => const Text('PlainRoute')),
+          page: PageInfo(
+            'PlainRoute',
+            builder: (_) => const Text('PlainRoute'),
+          ),
         ),
       ],
     );

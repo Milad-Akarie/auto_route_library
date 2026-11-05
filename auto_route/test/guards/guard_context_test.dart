@@ -14,7 +14,9 @@ import '../router_test_utils.dart';
 // resolver.context. The guard should get a context and the value; it used to
 // fail with "Unexpected null value" when it asked the navigator key.
 void main() {
-  testWidgets('A guard reads an inherited value from its resolver context', (tester) async {
+  testWidgets('A guard reads an inherited value from its resolver context', (
+    tester,
+  ) async {
     String? token;
     final router = RootStackRouter.build(
       routes: [
@@ -24,7 +26,9 @@ void main() {
           path: '/second',
           guards: [
             AutoRouteGuard.simple((resolver, guardedRouter) {
-              token = resolver.context.getInheritedWidgetOfExactType<_Token>()?.value;
+              token = resolver.context
+                  .getInheritedWidgetOfExactType<_Token>()
+                  ?.value;
               resolver.next();
             }),
           ],

@@ -26,24 +26,36 @@ void main() {
   // again, not a null bookId. test/web/optional_args_on_back_web_test.dart
   // covers the browser's back button on web.
   for (final (how, goBack, skip) in [
-    ('back()', () => router.back(), kIsWeb), // on web, back() moves the browser's own history
+    (
+      'back()',
+      () => router.back(),
+      kIsWeb,
+    ), // on web, back() moves the browser's own history
     ('maybePop()', () => router.maybePop(), false),
   ]) {
-    testWidgets('Going back with $how keeps the optional argument of the page underneath', (tester) async {
-      await pumpRouterConfigApp(tester, router.config());
-      unawaited(router.push(_BookRoute(bookId: 'some-id')));
-      await tester.pumpAndSettle();
-      expect(find.text('Book some-id'), findsOneWidget);
-      unawaited(router.push(_ChapterRoute(bookId: 'some-id-2')));
-      await tester.pumpAndSettle();
-      expect(find.text('Chapter some-id-2'), findsOneWidget);
+    testWidgets(
+      'Going back with $how keeps the optional argument of the page underneath',
+      (tester) async {
+        await pumpRouterConfigApp(tester, router.config());
+        unawaited(router.push(_BookRoute(bookId: 'some-id')));
+        await tester.pumpAndSettle();
+        expect(find.text('Book some-id'), findsOneWidget);
+        unawaited(router.push(_ChapterRoute(bookId: 'some-id-2')));
+        await tester.pumpAndSettle();
+        expect(find.text('Chapter some-id-2'), findsOneWidget);
 
-      goBack();
-      await tester.pumpAndSettle();
-      expect(router.current.name, _BookRoute.name);
-      expect(find.text('Book some-id'), findsOneWidget, reason: 'after goBack()');
-      expect(router.urlState.url, '/book');
-    }, skip: skip);
+        goBack();
+        await tester.pumpAndSettle();
+        expect(router.current.name, _BookRoute.name);
+        expect(
+          find.text('Book some-id'),
+          findsOneWidget,
+          reason: 'after goBack()',
+        );
+        expect(router.urlState.url, '/book');
+      },
+      skip: skip,
+    );
   }
 }
 
@@ -59,8 +71,11 @@ class _BookRoute extends PageRouteInfo<_BookArgs> {
   static const String name = 'BookRoute';
   static final PageInfo page = PageInfo(
     name,
-    builder: (data) =>
-        Scaffold(body: Text('Book ${data.argsAs<_BookArgs>(orElse: () => const _BookArgs()).bookId ?? 'null'}')),
+    builder: (data) => Scaffold(
+      body: Text(
+        'Book ${data.argsAs<_BookArgs>(orElse: () => const _BookArgs()).bookId ?? 'null'}',
+      ),
+    ),
   );
 }
 
@@ -70,7 +85,10 @@ class _ChapterRoute extends PageRouteInfo<_BookArgs> {
   static const String name = 'ChapterRoute';
   static final PageInfo page = PageInfo(
     name,
-    builder: (data) =>
-        Scaffold(body: Text('Chapter ${data.argsAs<_BookArgs>(orElse: () => const _BookArgs()).bookId ?? 'null'}')),
+    builder: (data) => Scaffold(
+      body: Text(
+        'Chapter ${data.argsAs<_BookArgs>(orElse: () => const _BookArgs()).bookId ?? 'null'}',
+      ),
+    ),
   );
 }

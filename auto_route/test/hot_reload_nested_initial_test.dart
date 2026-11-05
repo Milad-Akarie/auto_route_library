@@ -15,58 +15,67 @@ void main() {
   // ComponentTemplateRoute; the router is created outside build. Open
   // '/tools/component', then hot reload.
   // Should: ComponentTemplateRoute stays, at the same url.
-  testWidgets('A hot reload keeps a nested page next to an initial sibling router', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        NamedRouteDef(name: 'TempRoute', path: '/', initial: true, builder: (_, _) => const NamedPage('TempRoute')),
-        NamedRouteDef.shell(
-          name: 'ToolsTab',
-          path: '/tools',
-          children: [
-            NamedRouteDef.shell(
-              name: 'DebugTab',
-              path: 'debug',
-              initial: true,
-              children: [
-                NamedRouteDef(
-                  name: 'DebugRoute',
-                  path: 'debug',
-                  initial: true,
-                  builder: (_, _) => const NamedPage('DebugRoute'),
-                ),
-                NamedRouteDef(
-                  name: 'LogHistoryRoute',
-                  path: 'log',
-                  builder: (_, _) => const NamedPage('LogHistoryRoute'),
-                ),
-              ],
-            ),
-            NamedRouteDef.shell(
-              name: 'ComponentRouter',
-              path: 'component',
-              children: [
-                NamedRouteDef(
-                  name: 'ComponentTemplateRoute',
-                  initial: true,
-                  builder: (_, _) => const NamedPage('ComponentTemplateRoute'),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterConfigApp(tester, router.config());
-    unawaited(router.navigatePath('/tools/component'));
-    await tester.pumpAndSettle();
-    expect(find.text('ComponentTemplateRoute'), findsOneWidget);
+  testWidgets(
+    'A hot reload keeps a nested page next to an initial sibling router',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          NamedRouteDef(
+            name: 'TempRoute',
+            path: '/',
+            initial: true,
+            builder: (_, _) => const NamedPage('TempRoute'),
+          ),
+          NamedRouteDef.shell(
+            name: 'ToolsTab',
+            path: '/tools',
+            children: [
+              NamedRouteDef.shell(
+                name: 'DebugTab',
+                path: 'debug',
+                initial: true,
+                children: [
+                  NamedRouteDef(
+                    name: 'DebugRoute',
+                    path: 'debug',
+                    initial: true,
+                    builder: (_, _) => const NamedPage('DebugRoute'),
+                  ),
+                  NamedRouteDef(
+                    name: 'LogHistoryRoute',
+                    path: 'log',
+                    builder: (_, _) => const NamedPage('LogHistoryRoute'),
+                  ),
+                ],
+              ),
+              NamedRouteDef.shell(
+                name: 'ComponentRouter',
+                path: 'component',
+                children: [
+                  NamedRouteDef(
+                    name: 'ComponentTemplateRoute',
+                    initial: true,
+                    builder: (_, _) =>
+                        const NamedPage('ComponentTemplateRoute'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterConfigApp(tester, router.config());
+      unawaited(router.navigatePath('/tools/component'));
+      await tester.pumpAndSettle();
+      expect(find.text('ComponentTemplateRoute'), findsOneWidget);
 
-    unawaited(tester.binding.reassembleApplication());
-    await tester.pump();
-    await tester.pumpAndSettle();
+      unawaited(tester.binding.reassembleApplication());
+      await tester.pump();
+      await tester.pumpAndSettle();
 
-    expect(find.text('ComponentTemplateRoute'), findsOneWidget);
-    expect(find.text('DebugRoute'), findsNothing);
-    expect(router.urlState.url, '/tools/component');
-  });
+      expect(find.text('ComponentTemplateRoute'), findsOneWidget);
+      expect(find.text('DebugRoute'), findsNothing);
+      expect(router.urlState.url, '/tools/component');
+    },
+  );
 }

@@ -23,7 +23,12 @@ void main() {
   Widget page(String name) => Scaffold(body: Center(child: Text(name)));
 
   final routes = [
-    NamedRouteDef(name: 'HomeRoute', path: '/', meta: const {'skipAuth': false}, builder: (_, _) => page('HomeRoute')),
+    NamedRouteDef(
+      name: 'HomeRoute',
+      path: '/',
+      meta: const {'skipAuth': false},
+      builder: (_, _) => page('HomeRoute'),
+    ),
     NamedRouteDef(
       name: 'LoginRoute',
       path: '/login',
@@ -36,7 +41,10 @@ void main() {
   // the test still ends where the loop used to run forever.
   bool loopedTooLong() => ++guardCalls > 20;
 
-  Future<FlutterErrorDetails?> pumpAndTakeError(WidgetTester tester, RootStackRouter router) async {
+  Future<FlutterErrorDetails?> pumpAndTakeError(
+    WidgetTester tester,
+    RootStackRouter router,
+  ) async {
     FlutterErrorDetails? reported;
     final onError = FlutterError.onError;
     FlutterError.onError = (details) => reported ??= details;
@@ -53,49 +61,67 @@ void main() {
   // to, so each redirect opened another redirect without end.
   // The loop must stop with an error that says what happened and how to fix it.
   for (final isAsync in [false, true]) {
-    testWidgets('A global guard redirecting to a route it guards reports the loop, async: $isAsync (#2213)', (
-      tester,
-    ) async {
+    testWidgets(
+      'A global guard redirecting to a route it guards reports the loop, async: $isAsync (#2213)',
+      (tester) async {
+        final router = _AppRouter(
+          routes: routes,
+          guards: [
+            AutoRouteGuard.simple((resolver, _) async {
+              if (loopedTooLong()) return;
+              if (isAsync) await Future<void>.delayed(.zero);
+              unawaited(
+                resolver.redirectUntil(
+                  NamedRoute('LoginRoute', args: resolver.next),
+                ),
+              );
+            }),
+          ],
+        );
+
+        final error = await pumpAndTakeError(tester, router);
+
+        expect(
+          error?.exception.toString(),
+          contains('A guard redirected LoginRoute to itself.'),
+        );
+        expect(
+          error?.exception.toString(),
+          contains('resolver.routeName is LoginRoute'),
+        );
+        expect(guardCalls, 2);
+      },
+    );
+  }
+
+  // The README's way: a global guard lets the route it redirects to through.
+  testWidgets(
+    'A global guard that lets its redirect route through shows that route (#2213)',
+    (tester) async {
       final router = _AppRouter(
         routes: routes,
         guards: [
-          AutoRouteGuard.simple((resolver, _) async {
+          AutoRouteGuard.simple((resolver, _) {
             if (loopedTooLong()) return;
-            if (isAsync) await Future<void>.delayed(.zero);
-            unawaited(resolver.redirectUntil(NamedRoute('LoginRoute', args: resolver.next)));
+            if (resolver.routeName == 'LoginRoute') {
+              resolver.next();
+            } else {
+              unawaited(
+                resolver.redirectUntil(
+                  NamedRoute('LoginRoute', args: resolver.next),
+                ),
+              );
+            }
           }),
         ],
       );
 
       final error = await pumpAndTakeError(tester, router);
 
-      expect(error?.exception.toString(), contains('A guard redirected LoginRoute to itself.'));
-      expect(error?.exception.toString(), contains('resolver.routeName is LoginRoute'));
-      expect(guardCalls, 2);
-    });
-  }
-
-  // The README's way: a global guard lets the route it redirects to through.
-  testWidgets('A global guard that lets its redirect route through shows that route (#2213)', (tester) async {
-    final router = _AppRouter(
-      routes: routes,
-      guards: [
-        AutoRouteGuard.simple((resolver, _) {
-          if (loopedTooLong()) return;
-          if (resolver.routeName == 'LoginRoute') {
-            resolver.next();
-          } else {
-            unawaited(resolver.redirectUntil(NamedRoute('LoginRoute', args: resolver.next)));
-          }
-        }),
-      ],
-    );
-
-    final error = await pumpAndTakeError(tester, router);
-
-    expect(error, isNull);
-    expectTopPage(router, 'LoginRoute');
-  });
+      expect(error, isNull);
+      expectTopPage(router, 'LoginRoute');
+    },
+  );
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/1818
   // The reporter's global guard read router.current.meta['skipAuth'], which
@@ -103,26 +129,34 @@ void main() {
   // resolver.route.meta, the route being opened. So it redirected SignInRoute to
   // itself, which ended in a stack overflow through the old
   // NavigationResolver.redirect(). With redirectUntil() it ends in the same error.
-  testWidgets('A global guard reading router.current instead of resolver.route reports the loop (#1818)', (
-    tester,
-  ) async {
-    final router = _AppRouter(
-      routes: routes,
-      guards: [
-        AutoRouteGuard.simple((resolver, guardedRouter) {
-          if (loopedTooLong()) return;
-          final skipAuth = guardedRouter.current.meta['skipAuth'] as bool?;
-          if (skipAuth == true) {
-            resolver.next();
-          } else {
-            unawaited(resolver.redirectUntil(NamedRoute('LoginRoute', args: resolver.next)));
-          }
-        }),
-      ],
-    );
+  testWidgets(
+    'A global guard reading router.current instead of resolver.route reports the loop (#1818)',
+    (tester) async {
+      final router = _AppRouter(
+        routes: routes,
+        guards: [
+          AutoRouteGuard.simple((resolver, guardedRouter) {
+            if (loopedTooLong()) return;
+            final skipAuth = guardedRouter.current.meta['skipAuth'] as bool?;
+            if (skipAuth == true) {
+              resolver.next();
+            } else {
+              unawaited(
+                resolver.redirectUntil(
+                  NamedRoute('LoginRoute', args: resolver.next),
+                ),
+              );
+            }
+          }),
+        ],
+      );
 
-    final error = await pumpAndTakeError(tester, router);
+      final error = await pumpAndTakeError(tester, router);
 
-    expect(error?.exception.toString(), contains('A guard redirected LoginRoute to itself.'));
-  });
+      expect(
+        error?.exception.toString(),
+        contains('A guard redirected LoginRoute to itself.'),
+      );
+    },
+  );
 }

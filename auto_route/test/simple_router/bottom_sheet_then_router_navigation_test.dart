@@ -23,11 +23,15 @@ void main() {
                   mainAxisSize: .min,
                   children: [
                     TextButton(
-                      onPressed: () => unawaited(sheet.router.push(const NamedRoute('Page2Route'))),
+                      onPressed: () => unawaited(
+                        sheet.router.push(const NamedRoute('Page2Route')),
+                      ),
                       child: const Text('push'),
                     ),
                     TextButton(
-                      onPressed: () => unawaited(sheet.router.navigate(const NamedRoute('Page2Route'))),
+                      onPressed: () => unawaited(
+                        sheet.router.navigate(const NamedRoute('Page2Route')),
+                      ),
                       child: const Text('navigate'),
                     ),
                   ],
@@ -53,21 +57,24 @@ void main() {
   // Page2 (or navigates to it). Page2 shows, nothing throws, and popping it
   // lands on Home.
   for (final label in ['push', 'navigate']) {
-    testWidgets('A bottom sheet button can $label to a page with the router (flutter/flutter#100933)', (tester) async {
-      await pumpRouterApp(tester, router);
-      await tester.tap(find.text('Options'));
-      await tester.pumpAndSettle();
+    testWidgets(
+      'A bottom sheet button can $label to a page with the router (flutter/flutter#100933)',
+      (tester) async {
+        await pumpRouterApp(tester, router);
+        await tester.tap(find.text('Options'));
+        await tester.pumpAndSettle();
 
-      await tester.tap(find.text(label));
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      expect(router.current.name, 'Page2Route');
-      expect(find.text('Page2Route'), findsOneWidget);
+        await tester.tap(find.text(label));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(router.current.name, 'Page2Route');
+        expect(find.text('Page2Route'), findsOneWidget);
 
-      router.pop();
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull, reason: 'after router.pop()');
-      expect(router.current.name, 'HomeRoute');
-    });
+        router.pop();
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull, reason: 'after router.pop()');
+        expect(router.current.name, 'HomeRoute');
+      },
+    );
   }
 }

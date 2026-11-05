@@ -44,13 +44,23 @@ void main() {
     addTearDown(router.dispose);
   });
 
-  Future<void> openCountedPage(WidgetTester tester, {required bool nested, ThemeData? theme}) async {
-    await tester.pumpWidget(MaterialApp.router(theme: theme, routerConfig: router.config()));
+  Future<void> openCountedPage(
+    WidgetTester tester, {
+    required bool nested,
+    ThemeData? theme,
+  }) async {
+    await tester.pumpWidget(
+      MaterialApp.router(theme: theme, routerConfig: router.config()),
+    );
     await tester.pumpAndSettle();
     if (nested) {
       unawaited(router.push(const _HostRoute()));
       await tester.pumpAndSettle();
-      unawaited(router.innerRouterOf<StackRouter>(_HostRoute.name)!.push(const _CountedRoute()));
+      unawaited(
+        router
+            .innerRouterOf<StackRouter>(_HostRoute.name)!
+            .push(const _CountedRoute()),
+      );
     } else {
       unawaited(router.push(const _CountedRoute()));
     }
@@ -79,30 +89,37 @@ void main() {
 
   // The reporter's own reproduction: routes with no paths, the home page
   // initial, and a 'Next page' button that pushes the second page.
-  testWidgets("the report's 'Go back' button should call onPopInvokedWithResult once", (tester) async {
-    final reportRouter = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: _ReportHomeRoute.page, initial: true),
-        AutoRoute(page: _CountedRoute.page),
-      ],
-    );
-    addTearDown(reportRouter.dispose);
-    await tester.pumpWidget(MaterialApp.router(routerConfig: reportRouter.config()));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Next page'));
-    await tester.pumpAndSettle();
-    expect(find.text(_CountedRoute.name), findsOneWidget);
+  testWidgets(
+    "the report's 'Go back' button should call onPopInvokedWithResult once",
+    (tester) async {
+      final reportRouter = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: _ReportHomeRoute.page, initial: true),
+          AutoRoute(page: _CountedRoute.page),
+        ],
+      );
+      addTearDown(reportRouter.dispose);
+      await tester.pumpWidget(
+        MaterialApp.router(routerConfig: reportRouter.config()),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Next page'));
+      await tester.pumpAndSettle();
+      expect(find.text(_CountedRoute.name), findsOneWidget);
 
-    await tapMaybePop(tester);
+      await tapMaybePop(tester);
 
-    expect(find.text('Page One'), findsOneWidget);
-    expect(_heard, [true]);
-  });
+      expect(find.text('Page One'), findsOneWidget);
+      expect(_heard, [true]);
+    },
+  );
 
   for (final nested in [false, true]) {
     final where = nested ? 'in a nested router' : 'in a flat route';
     for (final MapEntry(key: name, value: (back, theme)) in backs.entries) {
-      testWidgets('$name $where should call onPopInvokedWithResult once', (tester) async {
+      testWidgets('$name $where should call onPopInvokedWithResult once', (
+        tester,
+      ) async {
         await openCountedPage(tester, nested: nested, theme: theme);
 
         await back(tester);
@@ -114,17 +131,20 @@ void main() {
       // The iOS swipe doesn't start while PopScope blocks the page.
       if (back == swipeBack) continue;
 
-      testWidgets('$name $where with PopScope(canPop: false) should call it once per back', (tester) async {
-        _canPop = false;
-        await openCountedPage(tester, nested: nested, theme: theme);
+      testWidgets(
+        '$name $where with PopScope(canPop: false) should call it once per back',
+        (tester) async {
+          _canPop = false;
+          await openCountedPage(tester, nested: nested, theme: theme);
 
-        await back(tester);
-        expect(_heard, [false]);
-        await back(tester);
-        expect(_heard, [false, false]);
+          await back(tester);
+          expect(_heard, [false]);
+          await back(tester);
+          expect(_heard, [false, false]);
 
-        expect(router.topRoute.name, _CountedRoute.name);
-      });
+          expect(router.topRoute.name, _CountedRoute.name);
+        },
+      );
     }
   }
 }
@@ -142,7 +162,10 @@ abstract final class _ReportHomeRoute {
         builder: (context) => Column(
           children: [
             const Text('Page One'),
-            TextButton(onPressed: () => context.router.push(const _CountedRoute()), child: const Text('Next page')),
+            TextButton(
+              onPressed: () => context.router.push(const _CountedRoute()),
+              child: const Text('Next page'),
+            ),
           ],
         ),
       ),
@@ -154,7 +177,10 @@ class _HostRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'HostRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const AutoRouter(),
+  );
 }
 
 class _CountedRoute extends PageRouteInfo<void> {
@@ -172,7 +198,10 @@ class _CountedRoute extends PageRouteInfo<void> {
           builder: (context) => Column(
             children: [
               const Text(name),
-              TextButton(onPressed: () => Navigator.maybePop(context), child: const Text(_kMaybePopLabel)),
+              TextButton(
+                onPressed: () => Navigator.maybePop(context),
+                child: const Text(_kMaybePopLabel),
+              ),
             ],
           ),
         ),

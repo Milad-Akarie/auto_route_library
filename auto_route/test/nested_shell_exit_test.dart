@@ -16,43 +16,64 @@ import 'router_test_utils.dart';
 // Should: while 'second' is on top, Flutter tells Android it handles
 // back; on 'first', it tells Android it doesn't, so Android closes the app.
 void main() {
-  testWidgets('Back on the first page of a shell inside a shell lets Android close the app', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/outer',
-          initial: true,
-          page: PageInfo('OuterRoute', builder: (_) => const AutoRouter()),
-          children: [
-            AutoRoute(
-              path: 'inner',
-              initial: true,
-              page: PageInfo('InnerRoute', builder: (_) => const AutoRouter()),
-              children: [
-                AutoRoute(path: 'first', initial: true, page: _page('FirstRoute')),
-                AutoRoute(path: 'second', page: _page('SecondRoute')),
-              ],
-            ),
-          ],
-        ),
-      ],
-    );
-    addTearDown(router.dispose);
-    final frameworkHandlesBack = FrameworkHandlesBackRecorder()..listen(tester);
-    await tester.pumpWidget(MaterialApp.router(theme: androidTheme, routerConfig: router.config()));
-    await tester.pumpAndSettle();
-    expectTopPage(router, 'FirstRoute');
-    expect(frameworkHandlesBack.last, isFalse);
+  testWidgets(
+    'Back on the first page of a shell inside a shell lets Android close the app',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/outer',
+            initial: true,
+            page: PageInfo('OuterRoute', builder: (_) => const AutoRouter()),
+            children: [
+              AutoRoute(
+                path: 'inner',
+                initial: true,
+                page: PageInfo(
+                  'InnerRoute',
+                  builder: (_) => const AutoRouter(),
+                ),
+                children: [
+                  AutoRoute(
+                    path: 'first',
+                    initial: true,
+                    page: _page('FirstRoute'),
+                  ),
+                  AutoRoute(path: 'second', page: _page('SecondRoute')),
+                ],
+              ),
+            ],
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+      final frameworkHandlesBack = FrameworkHandlesBackRecorder()
+        ..listen(tester);
+      await tester.pumpWidget(
+        MaterialApp.router(theme: androidTheme, routerConfig: router.config()),
+      );
+      await tester.pumpAndSettle();
+      expectTopPage(router, 'FirstRoute');
+      expect(frameworkHandlesBack.last, isFalse);
 
-    final inner = router.innerRouterOf<StackRouter>('OuterRoute')!.innerRouterOf<StackRouter>('InnerRoute')!;
-    unawaited(inner.push(const NamedRoute('SecondRoute')));
-    await tester.pumpAndSettle();
-    expect(frameworkHandlesBack.last, isTrue);
+      final inner = router
+          .innerRouterOf<StackRouter>('OuterRoute')!
+          .innerRouterOf<StackRouter>('InnerRoute')!;
+      unawaited(inner.push(const NamedRoute('SecondRoute')));
+      await tester.pumpAndSettle();
+      expect(frameworkHandlesBack.last, isTrue);
 
-    await systemBack(tester);
-    expectTopPage(router, 'FirstRoute');
-    expect(frameworkHandlesBack.last, isFalse, reason: 'after systemBack(tester)');
-  }, skip: kIsWeb); // Android only: on web Flutter never tells the platform whether it handles back.
+      await systemBack(tester);
+      expectTopPage(router, 'FirstRoute');
+      expect(
+        frameworkHandlesBack.last,
+        isFalse,
+        reason: 'after systemBack(tester)',
+      );
+    },
+    skip: kIsWeb,
+  ); // Android only: on web Flutter never tells the platform whether it handles back.
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));

@@ -20,7 +20,10 @@ void main() {
       routes: [
         AutoRoute(
           path: '/',
-          page: PageInfo('HomeRoute', builder: (_) => const Scaffold(body: Text('HomeRoute'))),
+          page: PageInfo(
+            'HomeRoute',
+            builder: (_) => const Scaffold(body: Text('HomeRoute')),
+          ),
         ),
         AutoRoute(
           path: '/sub',
@@ -39,7 +42,9 @@ void main() {
     expect(find.text('Sheet content'), findsOneWidget);
   }
 
-  testWidgets('The AppBar back button closes the sheet, then leaves the page', (tester) async {
+  testWidgets('The AppBar back button closes the sheet, then leaves the page', (
+    tester,
+  ) async {
     await openSheet(tester);
     await tester.tap(find.byType(BackButton));
     await tester.pumpAndSettle();
@@ -52,7 +57,9 @@ void main() {
     expectCurrentPage(router, 'HomeRoute');
   });
 
-  testWidgets('System back closes the sheet, then leaves the page', (tester) async {
+  testWidgets('System back closes the sheet, then leaves the page', (
+    tester,
+  ) async {
     await openSheet(tester);
     await systemBack(tester);
     expect(find.text('Sheet content'), findsNothing);
@@ -75,8 +82,9 @@ class _Sub extends StatelessWidget {
         children: [
           const Text('SubRoute'),
           TextButton(
-            onPressed: () =>
-                Scaffold.of(inner).showBottomSheet((_) => const SizedBox(height: 100, child: Text('Sheet content'))),
+            onPressed: () => Scaffold.of(inner).showBottomSheet(
+              (_) => const SizedBox(height: 100, child: Text('Sheet content')),
+            ),
             child: const Text('Sheet'),
           ),
         ],

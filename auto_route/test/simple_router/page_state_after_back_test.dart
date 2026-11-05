@@ -22,13 +22,18 @@ void main() {
         ),
         AutoRoute(
           path: '/two',
-          page: PageInfo('TwoRoute', builder: (_) => const Scaffold(body: Text('TwoRoute'))),
+          page: PageInfo(
+            'TwoRoute',
+            builder: (_) => const Scaffold(body: Text('TwoRoute')),
+          ),
         ),
       ],
     );
   });
 
-  testWidgets('Page 1 keeps its state after going back from page 2', (tester) async {
+  testWidgets('Page 1 keeps its state after going back from page 2', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     await tester.tap(find.text('count 0'));
     await tester.pump();
@@ -39,7 +44,9 @@ void main() {
     expect(find.text('count 1'), findsOneWidget);
   });
 
-  testWidgets('A page pushed three times goes back one page at a time', (tester) async {
+  testWidgets('A page pushed three times goes back one page at a time', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     for (var i = 0; i < 3; i++) {
       unawaited(router.push(const NamedRoute('TwoRoute')));
@@ -66,6 +73,9 @@ class _CounterState extends State<_Counter> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    body: TextButton(onPressed: () => setState(() => count++), child: Text('count $count')),
+    body: TextButton(
+      onPressed: () => setState(() => count++),
+      child: Text('count $count'),
+    ),
   );
 }

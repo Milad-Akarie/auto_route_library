@@ -28,25 +28,36 @@ void main() {
   // browser's entry for the page it showed, since both belong to the same page,
   // and wrote its own url over it as a new entry.
   // Should: back shows '/second-route' without the query, then FirstRoute.
-  testWidgets('The browser back button leaves a page whose query params changed', (tester) async {
-    await pumpRouterConfigApp(tester, router.config());
-    await settleBrowser(tester);
+  testWidgets(
+    'The browser back button leaves a page whose query params changed',
+    (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
+      await settleBrowser(tester);
 
-    unawaited(router.push(const SecondRoute()));
-    await settleBrowser(tester);
-    expect(browserPath, '/second-route');
+      unawaited(router.push(const SecondRoute()));
+      await settleBrowser(tester);
+      expect(browserPath, '/second-route');
 
-    unawaited(router.navigate(const NamedRoute('SecondRoute', queryParams: {'p': 'true'})));
-    await settleBrowser(tester);
-    expect(browserPath, '/second-route?p=true');
+      unawaited(
+        router.navigate(
+          const NamedRoute('SecondRoute', queryParams: {'p': 'true'}),
+        ),
+      );
+      await settleBrowser(tester);
+      expect(browserPath, '/second-route?p=true');
 
-    await pressBrowserBack(tester);
-    expectCurrentPage(router, SecondRoute.name);
-    expect(router.currentUrl, '/second-route');
-    expect(browserPath, '/second-route', reason: 'after pressBrowserBack(tester)');
+      await pressBrowserBack(tester);
+      expectCurrentPage(router, SecondRoute.name);
+      expect(router.currentUrl, '/second-route');
+      expect(
+        browserPath,
+        '/second-route',
+        reason: 'after pressBrowserBack(tester)',
+      );
 
-    await pressBrowserBack(tester);
-    expectCurrentPage(router, FirstRoute.name);
-    expect(browserPath, '/');
-  });
+      await pressBrowserBack(tester);
+      expectCurrentPage(router, FirstRoute.name);
+      expect(browserPath, '/');
+    },
+  );
 }

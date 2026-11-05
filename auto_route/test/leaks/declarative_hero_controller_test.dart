@@ -13,7 +13,9 @@ void main() {
   // Happened: the HeroController the declarative router creates stayed
   // undisposed, one more on each visit.
   // Should: popping the host disposes it.
-  testWidgets('Popping a declarative router disposes its HeroController', (tester) async {
+  testWidgets('Popping a declarative router disposes its HeroController', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(
@@ -24,12 +26,17 @@ void main() {
           path: '/host',
           page: PageInfo(
             'HostRoute',
-            builder: (_) => AutoRouter.declarative(routes: (_) => [const NamedRoute('ChildRoute')]),
+            builder: (_) => AutoRouter.declarative(
+              routes: (_) => [const NamedRoute('ChildRoute')],
+            ),
           ),
           children: [
             AutoRoute(
               path: '',
-              page: PageInfo('ChildRoute', builder: (_) => const Text('ChildRoute')),
+              page: PageInfo(
+                'ChildRoute',
+                builder: (_) => const Text('ChildRoute'),
+              ),
             ),
           ],
         ),

@@ -23,7 +23,8 @@ void main() {
     );
   });
 
-  List<String> names() => router.stack.map((page) => page.routeData.name).toList();
+  List<String> names() =>
+      router.stack.map((page) => page.routeData.name).toList();
 
   testWidgets('pop right after replace pops the new page', (tester) async {
     await pumpRouterApp(tester, router);
@@ -31,7 +32,11 @@ void main() {
     await tester.pumpAndSettle();
 
     String? result;
-    unawaited(router.replace<String>(const PageRouteInfo('C')).then((value) => result = value));
+    unawaited(
+      router
+          .replace<String>(const PageRouteInfo('C'))
+          .then((value) => result = value),
+    );
     router.pop('closed');
     await tester.pumpAndSettle();
 
@@ -42,4 +47,5 @@ void main() {
   });
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));

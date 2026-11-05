@@ -22,20 +22,30 @@ void main() {
       NamedRouteDef(
         name: 'BottomNavigationRoute',
         path: '/',
-        builder: (_, _) => const AutoTabsScaffold(routes: [NamedRoute('HomeTabRoute'), NamedRoute('SecondTabRoute')]),
+        builder: (_, _) => const AutoTabsScaffold(
+          routes: [NamedRoute('HomeTabRoute'), NamedRoute('SecondTabRoute')],
+        ),
         children: [
           NamedRouteDef.shell(
             name: 'HomeTabRoute',
             path: 'home',
             children: [
-              NamedRouteDef(name: 'HomeRoute', initial: true, builder: (_, _) => const NamedPage('HomeRoute')),
+              NamedRouteDef(
+                name: 'HomeRoute',
+                initial: true,
+                builder: (_, _) => const NamedPage('HomeRoute'),
+              ),
             ],
           ),
           NamedRouteDef.shell(
             name: 'SecondTabRoute',
             path: 'second',
             children: [
-              NamedRouteDef(name: 'SecondRoute', initial: true, builder: (_, _) => const NamedPage('SecondRoute')),
+              NamedRouteDef(
+                name: 'SecondRoute',
+                initial: true,
+                builder: (_, _) => const NamedPage('SecondRoute'),
+              ),
             ],
           ),
         ],
@@ -43,32 +53,38 @@ void main() {
     ],
   );
 
-  testWidgets('pushPath of an unknown relative path reports a failure instead of pushing the first page', (
+  testWidgets(
+    'pushPath of an unknown relative path reports a failure instead of pushing the first page',
+    (tester) async {
+      final router = buildRouter();
+      await pumpRouterApp(tester, router);
+      final home = tester.element(find.text('HomeRoute')).router;
+      final failures = <NavigationFailure>[];
+
+      unawaited(router.pushPath('nowhere', onFailure: failures.add));
+      await tester.pumpAndSettle();
+      unawaited(home.pushPath('nowhere', onFailure: failures.add));
+      await tester.pumpAndSettle();
+
+      expect(failures, hasLength(2));
+      expect(failures, everyElement(isA<RouteNotFoundFailure>()));
+      expect(home.stack.map((p) => p.name), ['HomeRoute']);
+      expect(router.stack.map((p) => p.name), ['BottomNavigationRoute']);
+    },
+  );
+
+  testWidgets('pushPath of an unknown relative path throws without onFailure', (
     tester,
   ) async {
-    final router = buildRouter();
-    await pumpRouterApp(tester, router);
-    final home = tester.element(find.text('HomeRoute')).router;
-    final failures = <NavigationFailure>[];
-
-    unawaited(router.pushPath('nowhere', onFailure: failures.add));
-    await tester.pumpAndSettle();
-    unawaited(home.pushPath('nowhere', onFailure: failures.add));
-    await tester.pumpAndSettle();
-
-    expect(failures, hasLength(2));
-    expect(failures, everyElement(isA<RouteNotFoundFailure>()));
-    expect(home.stack.map((p) => p.name), ['HomeRoute']);
-    expect(router.stack.map((p) => p.name), ['BottomNavigationRoute']);
-  });
-
-  testWidgets('pushPath of an unknown relative path throws without onFailure', (tester) async {
     final router = buildRouter();
     await pumpRouterApp(tester, router);
 
     expect(() => router.pushPath('nowhere'), throwsA(isA<FlutterError>()));
     await tester.pumpAndSettle();
-    expect(tester.element(find.text('HomeRoute')).router.stack.map((p) => p.name), ['HomeRoute']);
+    expect(
+      tester.element(find.text('HomeRoute')).router.stack.map((p) => p.name),
+      ['HomeRoute'],
+    );
   });
 
   testWidgets('a known relative path still opens its tab', (tester) async {

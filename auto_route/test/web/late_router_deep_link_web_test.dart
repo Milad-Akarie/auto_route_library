@@ -25,24 +25,28 @@ void main() {
   // link; with the router's empty route reported first, it held
   // ['/second', '/', '/second'] and the first back showed the home page.
   final apps = <String, Widget Function(RootStackRouter router)>{
-    'router.config()': (router) => MaterialApp.router(routerConfig: router.config()),
-    'routerDelegate and routeInformationParser': (router) =>
-        MaterialApp.router(routeInformationParser: router.defaultRouteParser(), routerDelegate: router.delegate()),
+    'router.config()': (router) =>
+        MaterialApp.router(routerConfig: router.config()),
+    'routerDelegate and routeInformationParser': (router) => MaterialApp.router(
+      routeInformationParser: router.defaultRouteParser(),
+      routerDelegate: router.delegate(),
+    ),
   };
   for (final MapEntry(key: name, value: buildApp) in apps.entries) {
-    testWidgets('On web, a deep link to a router built after the first frame adds no history entry, with $name', (
-      tester,
-    ) async {
-      openBrowserAt(tester, '/second');
-      final router = buildRouter();
-      addTearDown(router.dispose);
-      await pumpAsRunApp(tester, _Splash(builder: () => buildApp(router)));
-      expect(find.text('SecondRoute'), findsOneWidget);
-      expect(router.urlState.url, '/second');
-      expect(browserPath, '/second');
-      expect(browserSerialCount, 0);
-      expect(appWroteBrowserEntry, isTrue);
-    });
+    testWidgets(
+      'On web, a deep link to a router built after the first frame adds no history entry, with $name',
+      (tester) async {
+        openBrowserAt(tester, '/second');
+        final router = buildRouter();
+        addTearDown(router.dispose);
+        await pumpAsRunApp(tester, _Splash(builder: () => buildApp(router)));
+        expect(find.text('SecondRoute'), findsOneWidget);
+        expect(router.urlState.url, '/second');
+        expect(browserPath, '/second');
+        expect(browserSerialCount, 0);
+        expect(appWroteBrowserEntry, isTrue);
+      },
+    );
   }
 }
 
@@ -62,9 +66,12 @@ class _SplashState extends State<_Splash> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() => _ready = true));
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => setState(() => _ready = true),
+    );
   }
 
   @override
-  Widget build(BuildContext context) => _ready ? widget.builder() : const SizedBox();
+  Widget build(BuildContext context) =>
+      _ready ? widget.builder() : const SizedBox();
 }

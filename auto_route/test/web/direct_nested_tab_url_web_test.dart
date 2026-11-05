@@ -20,15 +20,32 @@ void main() {
           page: _shell('MerchantsRoute'),
           guards: const [_AllowGuard()],
           children: [
-            AutoRoute(path: '', page: _page('MerchantsListRoute'), guards: const [_AllowGuard()], initial: true),
+            AutoRoute(
+              path: '',
+              page: _page('MerchantsListRoute'),
+              guards: const [_AllowGuard()],
+              initial: true,
+            ),
             AutoRoute(
               path: ':id',
               page: _MerchantRoute.page,
               guards: const [_AllowGuard()],
               children: [
-                AutoRoute(path: 'dashboard', page: _page('DashboardRoute'), guards: const [_AllowGuard()]),
-                AutoRoute(path: 'purchases', page: _page('PurchasesRoute'), guards: const [_AllowGuard()]),
-                AutoRoute(path: 'profile', page: _page('ProfileRoute'), guards: const [_AllowGuard()]),
+                AutoRoute(
+                  path: 'dashboard',
+                  page: _page('DashboardRoute'),
+                  guards: const [_AllowGuard()],
+                ),
+                AutoRoute(
+                  path: 'purchases',
+                  page: _page('PurchasesRoute'),
+                  guards: const [_AllowGuard()],
+                ),
+                AutoRoute(
+                  path: 'profile',
+                  page: _page('ProfileRoute'),
+                  guards: const [_AllowGuard()],
+                ),
               ],
             ),
           ],
@@ -43,18 +60,23 @@ void main() {
   // profile, all behind guards.
   // Reported: the purchases page was built without its parent, which hands it
   // the id. Should: the merchant page is built first, around the purchases tab.
-  testWidgets('On web, a typed url of a tab of a nested page builds the page around it', (tester) async {
-    openBrowserAt(tester, '/merchants/m1/purchases');
-    await pumpRouterConfigApp(tester, router.config());
-    await settleBrowser(tester);
-    expect(tester.takeException(), isNull);
-    expect(find.text('Merchant m1'), findsOneWidget);
-    expect(find.text('PurchasesRoute'), findsOneWidget);
-    expect(browserPath, '/merchants/m1/purchases');
-  });
+  testWidgets(
+    'On web, a typed url of a tab of a nested page builds the page around it',
+    (tester) async {
+      openBrowserAt(tester, '/merchants/m1/purchases');
+      await pumpRouterConfigApp(tester, router.config());
+      await settleBrowser(tester);
+      expect(tester.takeException(), isNull);
+      expect(find.text('Merchant m1'), findsOneWidget);
+      expect(find.text('PurchasesRoute'), findsOneWidget);
+      expect(browserPath, '/merchants/m1/purchases');
+    },
+  );
 
   // Same setup with the url the report says worked: the first tab opens.
-  testWidgets('On web, a typed url of the nested page opens its first tab', (tester) async {
+  testWidgets('On web, a typed url of the nested page opens its first tab', (
+    tester,
+  ) async {
     openBrowserAt(tester, '/merchants/m1');
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
@@ -68,7 +90,8 @@ class _AllowGuard extends AutoRouteGuard {
   const new();
 
   @override
-  void onNavigation(NavigationResolver resolver, StackRouter router) => resolver.next();
+  void onNavigation(NavigationResolver resolver, StackRouter router) =>
+      resolver.next();
 }
 
 PageInfo _page(String name) => .new(name, builder: (_) => Text(name));

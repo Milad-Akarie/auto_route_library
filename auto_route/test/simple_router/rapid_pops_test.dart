@@ -41,8 +41,18 @@ void main() {
     unawaited(router.push(const PageRouteInfo('ShoppingCartRoute')));
     await tester.pumpAndSettle();
 
-    unawaited(router.pushAndPopUntil(const PageRouteInfo('SignInRoute'), predicate: (_) => false));
-    unawaited(router.pushAndPopUntil(const PageRouteInfo('VerifyRoute'), predicate: (_) => false));
+    unawaited(
+      router.pushAndPopUntil(
+        const PageRouteInfo('SignInRoute'),
+        predicate: (_) => false,
+      ),
+    );
+    unawaited(
+      router.pushAndPopUntil(
+        const PageRouteInfo('VerifyRoute'),
+        predicate: (_) => false,
+      ),
+    );
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(stackNames(), ['VerifyRoute']);
@@ -50,17 +60,34 @@ void main() {
 
   // The user taps through two screens quickly, each tap calling pushAndPopUntil
   // while the previous page is still animating.
-  testWidgets('pushAndPopUntil while the previous one animates', (tester) async {
+  testWidgets('pushAndPopUntil while the previous one animates', (
+    tester,
+  ) async {
     await pumpRouterConfigApp(tester, router.config());
     unawaited(router.push(const PageRouteInfo('ShoppingCartRoute')));
     await tester.pumpAndSettle();
 
-    unawaited(router.pushAndPopUntil(const PageRouteInfo('SignInRoute'), predicate: (_) => false));
+    unawaited(
+      router.pushAndPopUntil(
+        const PageRouteInfo('SignInRoute'),
+        predicate: (_) => false,
+      ),
+    );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
-    unawaited(router.pushAndPopUntil(const PageRouteInfo('VerifyRoute'), predicate: (_) => false));
+    unawaited(
+      router.pushAndPopUntil(
+        const PageRouteInfo('VerifyRoute'),
+        predicate: (_) => false,
+      ),
+    );
     await tester.pump(const Duration(milliseconds: 50));
-    unawaited(router.pushAndPopUntil(const PageRouteInfo('MainRoute'), predicate: (_) => false));
+    unawaited(
+      router.pushAndPopUntil(
+        const PageRouteInfo('MainRoute'),
+        predicate: (_) => false,
+      ),
+    );
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(stackNames(), ['MainRoute']);
@@ -68,9 +95,15 @@ void main() {
 
   // From the payment page, popUntilRouteWithName(MainRoute) then push
   // MyDeliveriesRoute; a pop to MainRoute runs again before the push settles.
-  testWidgets('popUntilRouteWithName, push, then popUntilRouteWithName again', (tester) async {
+  testWidgets('popUntilRouteWithName, push, then popUntilRouteWithName again', (
+    tester,
+  ) async {
     await pumpRouterConfigApp(tester, router.config());
-    for (final name in ['ShoppingCartRoute', 'OrderSummaryRoute', 'PaymentTerminationRoute']) {
+    for (final name in [
+      'ShoppingCartRoute',
+      'OrderSummaryRoute',
+      'PaymentTerminationRoute',
+    ]) {
       unawaited(router.push(PageRouteInfo(name)));
       await tester.pumpAndSettle();
     }
@@ -103,13 +136,20 @@ void main() {
   // The linked demo app: a pushed page makes a 150ms request in initState,
   // then calls popAndPushAll([FirstRoute(), SecondRoute()]) while it is still
   // animating in.
-  testWidgets('popAndPushAll while the page it pops animates in', (tester) async {
+  testWidgets('popAndPushAll while the page it pops animates in', (
+    tester,
+  ) async {
     await pumpRouterConfigApp(tester, router.config());
     unawaited(router.push(const PageRouteInfo('CustomStackFlow')));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 150));
 
-    unawaited(router.popAndPushAll(const [PageRouteInfo('FirstRoute'), PageRouteInfo('SecondRoute')]));
+    unawaited(
+      router.popAndPushAll(const [
+        PageRouteInfo('FirstRoute'),
+        PageRouteInfo('SecondRoute'),
+      ]),
+    );
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(stackNames(), ['MainRoute', 'FirstRoute', 'SecondRoute']);

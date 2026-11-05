@@ -15,8 +15,14 @@ void main() {
   // fades out, go to Home with [label].
   // Should: the Hero flies back and shows on Home.
   for (final (label, goHome) in [
-    ('navigate', (StackRouter router) => router.navigate(const NamedRoute('Home'))),
-    ('replaceAll', (StackRouter router) => router.replaceAll([const NamedRoute('Home')])),
+    (
+      'navigate',
+      (StackRouter router) => router.navigate(const NamedRoute('Home')),
+    ),
+    (
+      'replaceAll',
+      (StackRouter router) => router.replaceAll([const NamedRoute('Home')]),
+    ),
     (
       'pop',
       (StackRouter router) {
@@ -24,53 +30,56 @@ void main() {
       },
     ),
   ]) {
-    testWidgets('A Hero shows again after $label right after a dialog closes (flutter/flutter#158136)', (tester) async {
-      Widget hero() => const Hero(
-        tag: 'logo',
-        child: SizedBox.square(dimension: 50, child: Text('Logo')),
-      );
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            page: PageInfo(
-              'Home',
-              builder: (_) => Scaffold(
-                body: Align(alignment: .topLeft, child: hero()),
+    testWidgets(
+      'A Hero shows again after $label right after a dialog closes (flutter/flutter#158136)',
+      (tester) async {
+        Widget hero() => const Hero(
+          tag: 'logo',
+          child: SizedBox.square(dimension: 50, child: Text('Logo')),
+        );
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              page: PageInfo(
+                'Home',
+                builder: (_) => Scaffold(
+                  body: Align(alignment: .topLeft, child: hero()),
+                ),
               ),
+              path: '/',
             ),
-            path: '/',
-          ),
-          AutoRoute(
-            page: PageInfo(
-              'Detail',
-              builder: (_) => Scaffold(
-                body: Align(alignment: .bottomRight, child: hero()),
+            AutoRoute(
+              page: PageInfo(
+                'Detail',
+                builder: (_) => Scaffold(
+                  body: Align(alignment: .bottomRight, child: hero()),
+                ),
               ),
+              path: '/detail',
             ),
-            path: '/detail',
-          ),
-        ],
-      );
-      await pumpRouterApp(tester, router);
-      unawaited(router.push(const NamedRoute('Detail')));
-      await tester.pumpAndSettle();
+          ],
+        );
+        await pumpRouterApp(tester, router);
+        unawaited(router.push(const NamedRoute('Detail')));
+        await tester.pumpAndSettle();
 
-      final dialogContext = tester.element(find.text('Logo'));
-      unawaited(
-        showDialog<void>(
-          context: dialogContext,
-          builder: (_) => const AlertDialog(content: Text('Dialog')),
-        ).then((_) => goHome(router)),
-      );
-      await tester.pumpAndSettle();
-      Navigator.of(dialogContext).pop();
-      await tester.pumpAndSettle();
+        final dialogContext = tester.element(find.text('Logo'));
+        unawaited(
+          showDialog<void>(
+            context: dialogContext,
+            builder: (_) => const AlertDialog(content: Text('Dialog')),
+          ).then((_) => goHome(router)),
+        );
+        await tester.pumpAndSettle();
+        Navigator.of(dialogContext).pop();
+        await tester.pumpAndSettle();
 
-      expect(router.stack.map((page) => page.name), ['Home']);
-      // A Hero still in flight, or left as a placeholder, keeps its child
-      // offstage or drops it.
-      expect(find.text('Logo'), findsOneWidget);
-      expect(tester.getTopLeft(find.text('Logo')), Offset.zero);
-    });
+        expect(router.stack.map((page) => page.name), ['Home']);
+        // A Hero still in flight, or left as a placeholder, keeps its child
+        // offstage or drops it.
+        expect(find.text('Logo'), findsOneWidget);
+        expect(tester.getTopLeft(find.text('Logo')), Offset.zero);
+      },
+    );
   }
 }

@@ -38,7 +38,10 @@ void main() {
           MaterialApp.router(
             theme: ThemeData(
               pageTransitionsTheme: PageTransitionsTheme(
-                builders: {for (final platform in TargetPlatform.values) platform: builder},
+                builders: {
+                  for (final platform in TargetPlatform.values)
+                    platform: builder,
+                },
               ),
             ),
             routerConfig: router.config(),
@@ -78,7 +81,10 @@ void main() {
           flutter.MaterialApp.router(
             theme: flutter.ThemeData(
               pageTransitionsTheme: flutter.PageTransitionsTheme(
-                builders: {for (final platform in TargetPlatform.values) platform: builder},
+                builders: {
+                  for (final platform in TargetPlatform.values)
+                    platform: builder,
+                },
               ),
             ),
             routerConfig: router.config(),
@@ -99,7 +105,9 @@ void main() {
         // 300 ms
         expect(find.text('Details'), findsOneWidget);
         expect(builder.calls, greaterThan(0));
-        final route = flutter.ModalRoute.of(tester.element(find.text('Details')))!;
+        final route = flutter.ModalRoute.of(
+          tester.element(find.text('Details')),
+        )!;
         expect(route.transitionDuration, const Duration(milliseconds: 200));
         expect(route.animation!.isCompleted, isFalse);
         await tester.pump(const Duration(milliseconds: 150));
@@ -110,92 +118,115 @@ void main() {
     );
   }
 
-  testWidgets('A page uses the nearer Theme when both Material libraries have one', (tester) async {
-    final builder = _RecordingTransitionsBuilder();
-    final flutterBuilder = _FlutterRecordingTransitionsBuilder();
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: _HomeRoute.page, path: '/'),
-        AutoRoute(page: _DetailsRoute.page, path: '/details'),
-      ],
-    );
-    addTearDown(router.dispose);
-    await tester.pumpWidget(
-      flutter.Theme(
-        data: flutter.ThemeData(
-          pageTransitionsTheme: flutter.PageTransitionsTheme(
-            builders: {for (final platform in TargetPlatform.values) platform: flutterBuilder},
+  testWidgets(
+    'A page uses the nearer Theme when both Material libraries have one',
+    (tester) async {
+      final builder = _RecordingTransitionsBuilder();
+      final flutterBuilder = _FlutterRecordingTransitionsBuilder();
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: _HomeRoute.page, path: '/'),
+          AutoRoute(page: _DetailsRoute.page, path: '/details'),
+        ],
+      );
+      addTearDown(router.dispose);
+      await tester.pumpWidget(
+        flutter.Theme(
+          data: flutter.ThemeData(
+            pageTransitionsTheme: flutter.PageTransitionsTheme(
+              builders: {
+                for (final platform in TargetPlatform.values)
+                  platform: flutterBuilder,
+              },
+            ),
+          ),
+          child: MaterialApp.router(
+            theme: ThemeData(
+              pageTransitionsTheme: PageTransitionsTheme(
+                builders: {
+                  for (final platform in TargetPlatform.values)
+                    platform: builder,
+                },
+              ),
+            ),
+            routerConfig: router.config(),
           ),
         ),
-        child: MaterialApp.router(
-          theme: ThemeData(
-            pageTransitionsTheme: PageTransitionsTheme(
-              builders: {for (final platform in TargetPlatform.values) platform: builder},
+      );
+      await tester.pumpAndSettle();
+      builder.calls = 0;
+      flutterBuilder.calls = 0;
+
+      unawaited(router.push(const _DetailsRoute()));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Details'), findsOneWidget);
+      expect(builder.calls, greaterThan(0));
+      expect(flutterBuilder.calls, 0);
+    },
+  );
+
+  // A page of package:material_ui pushed over a page takes nothing from it:
+  // both routes share the delegated transition of material_ui's theme.
+  testWidgets(
+    'A page keeps its own transition under a MaterialPageRoute of material_ui',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [AutoRoute(page: _HomeRoute.page, path: '/')],
+      );
+      addTearDown(router.dispose);
+      await tester.pumpWidget(
+        MaterialApp.router(routerConfig: router.config()),
+      );
+      await tester.pumpAndSettle();
+
+      router.navigatorKey.currentState!.push(
+        MaterialPageRoute<void>(
+          builder: (_) => const Scaffold(body: Text('Pageless')),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Pageless'), findsOneWidget);
+      final homeRoute = ModalRoute.of(
+        tester.element(find.text('Home', skipOffstage: false)),
+      )!;
+      expect(homeRoute.receivedTransition, isNull);
+    },
+  );
+
+  testWidgets(
+    'A widget pushed with pushWidget uses the pageTransitionsTheme of a MaterialApp from Flutter',
+    (tester) async {
+      final builder = _FlutterRecordingTransitionsBuilder();
+      final router = RootStackRouter.build(
+        routes: [AutoRoute(page: _HomeRoute.flutterPage, path: '/')],
+      );
+      addTearDown(router.dispose);
+      await tester.pumpWidget(
+        flutter.MaterialApp.router(
+          theme: flutter.ThemeData(
+            pageTransitionsTheme: flutter.PageTransitionsTheme(
+              builders: {
+                for (final platform in TargetPlatform.values) platform: builder,
+              },
             ),
           ),
           routerConfig: router.config(),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    builder.calls = 0;
-    flutterBuilder.calls = 0;
+      );
+      await tester.pumpAndSettle();
+      builder.calls = 0;
 
-    unawaited(router.push(const _DetailsRoute()));
-    await tester.pumpAndSettle();
+      unawaited(
+        router.pushWidget(const flutter.Scaffold(body: Text('Pushed widget'))),
+      );
+      await tester.pumpAndSettle();
 
-    expect(find.text('Details'), findsOneWidget);
-    expect(builder.calls, greaterThan(0));
-    expect(flutterBuilder.calls, 0);
-  });
-
-  // A page of package:material_ui pushed over a page takes nothing from it:
-  // both routes share the delegated transition of material_ui's theme.
-  testWidgets('A page keeps its own transition under a MaterialPageRoute of material_ui', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [AutoRoute(page: _HomeRoute.page, path: '/')],
-    );
-    addTearDown(router.dispose);
-    await tester.pumpWidget(MaterialApp.router(routerConfig: router.config()));
-    await tester.pumpAndSettle();
-
-    router.navigatorKey.currentState!.push(
-      MaterialPageRoute<void>(builder: (_) => const Scaffold(body: Text('Pageless'))),
-    );
-    await tester.pumpAndSettle();
-
-    expect(find.text('Pageless'), findsOneWidget);
-    final homeRoute = ModalRoute.of(tester.element(find.text('Home', skipOffstage: false)))!;
-    expect(homeRoute.receivedTransition, isNull);
-  });
-
-  testWidgets('A widget pushed with pushWidget uses the pageTransitionsTheme of a MaterialApp from Flutter', (
-    tester,
-  ) async {
-    final builder = _FlutterRecordingTransitionsBuilder();
-    final router = RootStackRouter.build(
-      routes: [AutoRoute(page: _HomeRoute.flutterPage, path: '/')],
-    );
-    addTearDown(router.dispose);
-    await tester.pumpWidget(
-      flutter.MaterialApp.router(
-        theme: flutter.ThemeData(
-          pageTransitionsTheme: flutter.PageTransitionsTheme(
-            builders: {for (final platform in TargetPlatform.values) platform: builder},
-          ),
-        ),
-        routerConfig: router.config(),
-      ),
-    );
-    await tester.pumpAndSettle();
-    builder.calls = 0;
-
-    unawaited(router.pushWidget(const flutter.Scaffold(body: Text('Pushed widget'))));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Pushed widget'), findsOneWidget);
-    expect(builder.calls, greaterThan(0));
-  });
+      expect(find.text('Pushed widget'), findsOneWidget);
+      expect(builder.calls, greaterThan(0));
+    },
+  );
 }
 
 class _RecordingTransitionsBuilder extends PageTransitionsBuilder {
@@ -216,19 +247,32 @@ class _RecordingTransitionsBuilder extends PageTransitionsBuilder {
 
 abstract final class _HomeRoute {
   static const String name = 'HomeRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
-  static final PageInfo flutterPage = PageInfo(name, builder: (_) => const flutter.Scaffold(body: Text('Home')));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text('Home')),
+  );
+  static final PageInfo flutterPage = PageInfo(
+    name,
+    builder: (_) => const flutter.Scaffold(body: Text('Home')),
+  );
 }
 
 class _DetailsRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'DetailsRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Details')));
-  static final PageInfo flutterPage = PageInfo(name, builder: (_) => const flutter.Scaffold(body: Text('Details')));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text('Details')),
+  );
+  static final PageInfo flutterPage = PageInfo(
+    name,
+    builder: (_) => const flutter.Scaffold(body: Text('Details')),
+  );
 }
 
-class _FlutterRecordingTransitionsBuilder extends flutter.PageTransitionsBuilder {
+class _FlutterRecordingTransitionsBuilder
+    extends flutter.PageTransitionsBuilder {
   int calls = 0;
 
   @override

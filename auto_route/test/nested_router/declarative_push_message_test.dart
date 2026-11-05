@@ -19,7 +19,9 @@ void main() {
           path: '/',
           page: PageInfo(
             'HostRoute',
-            builder: (_) => AutoRouter.declarative(routes: (_) => [const PageRouteInfo('ARoute')]),
+            builder: (_) => AutoRouter.declarative(
+              routes: (_) => [const PageRouteInfo('ARoute')],
+            ),
           ),
           children: [
             AutoRoute(
@@ -47,14 +49,26 @@ void main() {
     ),
   );
 
-  testWidgets('pushing a route of a declarative router names the router and the fix', (tester) async {
-    await pumpRouterApp(tester, router);
-    await expectLater(router.push(const PageRouteInfo('BRoute')), throwsA(namesRouterAndFix()));
-  });
+  testWidgets(
+    'pushing a route of a declarative router names the router and the fix',
+    (tester) async {
+      await pumpRouterApp(tester, router);
+      await expectLater(
+        router.push(const PageRouteInfo('BRoute')),
+        throwsA(namesRouterAndFix()),
+      );
+    },
+  );
 
-  testWidgets('pushing several routes of a declarative router names the router and the fix', (tester) async {
-    await pumpRouterApp(tester, router);
-    final inner = router.innerRouterOf<StackRouter>('HostRoute')!;
-    await expectLater(inner.pushAll([const PageRouteInfo('BRoute')]), throwsA(namesRouterAndFix()));
-  });
+  testWidgets(
+    'pushing several routes of a declarative router names the router and the fix',
+    (tester) async {
+      await pumpRouterApp(tester, router);
+      final inner = router.innerRouterOf<StackRouter>('HostRoute')!;
+      await expectLater(
+        inner.pushAll([const PageRouteInfo('BRoute')]),
+        throwsA(namesRouterAndFix()),
+      );
+    },
+  );
 }

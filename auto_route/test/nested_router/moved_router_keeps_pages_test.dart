@@ -65,13 +65,25 @@ void main() {
       expect(router.currentPath, '/mail/2');
 
       await setWidth(tester, 400);
-      expect(find.text('Showing message 2'), findsOneWidget, reason: 'after setWidth(tester, 400)');
+      expect(
+        find.text('Showing message 2'),
+        findsOneWidget,
+        reason: 'after setWidth(tester, 400)',
+      );
       expect(find.text('Message 1'), findsNothing);
-      expect(router.currentPath, '/mail/2', reason: 'after setWidth(tester, 400)');
+      expect(
+        router.currentPath,
+        '/mail/2',
+        reason: 'after setWidth(tester, 400)',
+      );
 
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
-      expect(find.text('Message 1'), findsOneWidget, reason: 'after tester.binding.handlePopRoute()');
+      expect(
+        find.text('Message 1'),
+        findsOneWidget,
+        reason: 'after tester.binding.handlePopRoute()',
+      );
       expect(router.currentPath, '/mail');
 
       await tester.tap(find.text('Message 1'));
@@ -84,7 +96,9 @@ void main() {
 
     // Steps: on a wide window, open a draft, whose route has a guard; make
     // the window narrow.
-    testWidgets('keeps a guarded page without checking its guard again', (tester) async {
+    testWidgets('keeps a guarded page without checking its guard again', (
+      tester,
+    ) async {
       addTearDown(tester.view.reset);
       await setWidth(tester, 900);
       await pumpRouterConfigApp(tester, router.config());
@@ -95,7 +109,11 @@ void main() {
       expect(guardChecks, 1);
 
       await setWidth(tester, 400);
-      expect(find.text('Showing draft 3'), findsOneWidget, reason: 'after setWidth(tester, 400)');
+      expect(
+        find.text('Showing draft 3'),
+        findsOneWidget,
+        reason: 'after setWidth(tester, 400)',
+      );
       expect(find.text('Message 1'), findsNothing);
       expect(router.currentPath, '/mail/drafts/3');
       expect(guardChecks, 1, reason: 'after setWidth(tester, 400)');
@@ -133,8 +151,16 @@ void main() {
       expect(router.currentPath, '/home/profile');
 
       await setWidth(tester, 400);
-      expect(find.text('Profile tab'), findsOneWidget, reason: 'after setWidth(tester, 400)');
-      expect(router.currentPath, '/home/profile', reason: 'after setWidth(tester, 400)');
+      expect(
+        find.text('Profile tab'),
+        findsOneWidget,
+        reason: 'after setWidth(tester, 400)',
+      );
+      expect(
+        router.currentPath,
+        '/home/profile',
+        reason: 'after setWidth(tester, 400)',
+      );
     });
   });
 }
@@ -145,14 +171,17 @@ final _mailPage = PageInfo('MailRoute', builder: (_) => const _MailPage());
 final _inboxPage = PageInfo('InboxRoute', builder: (_) => const _InboxPage());
 final _messagePage = PageInfo(
   'MessageRoute',
-  builder: (data) => Scaffold(body: Text('Showing message ${data.params.getString('id')}')),
+  builder: (data) =>
+      Scaffold(body: Text('Showing message ${data.params.getString('id')}')),
 );
 final _draftPage = PageInfo(
   'DraftRoute',
-  builder: (data) => Scaffold(body: Text('Showing draft ${data.params.getString('id')}')),
+  builder: (data) =>
+      Scaffold(body: Text('Showing draft ${data.params.getString('id')}')),
 );
 final _homePage = PageInfo('HomeRoute', builder: (_) => const _HomePage());
-PageInfo _tabPage(String name) => .new('${name}Route', builder: (_) => Text('$name tab'));
+PageInfo _tabPage(String name) =>
+    .new('${name}Route', builder: (_) => Text('$name tab'));
 
 class _MailPage extends StatelessWidget {
   const new();
@@ -174,7 +203,11 @@ class _InboxPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: _isWide(context) ? const Text('Pick a message') : const _MessageList());
+    return Scaffold(
+      body: _isWide(context)
+          ? const Text('Pick a message')
+          : const _MessageList(),
+    );
   }
 }
 
@@ -186,7 +219,10 @@ class _MessageList extends StatelessWidget {
     return Column(
       children: [
         for (final id in ['1', '2'])
-          TextButton(onPressed: () => context.router.navigatePath('/mail/$id'), child: Text('Message $id')),
+          TextButton(
+            onPressed: () => context.router.navigatePath('/mail/$id'),
+            child: Text('Message $id'),
+          ),
       ],
     );
   }
@@ -200,7 +236,10 @@ class _HomePage extends StatelessWidget {
     final tabs = AutoTabsRouter(
       builder: (context, child) => Column(
         children: [
-          TextButton(onPressed: () => context.tabsRouter.setActiveIndex(1), child: const Text('Open profile')),
+          TextButton(
+            onPressed: () => context.tabsRouter.setActiveIndex(1),
+            child: const Text('Open profile'),
+          ),
           Expanded(child: child),
         ],
       ),

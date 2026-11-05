@@ -23,44 +23,59 @@ import 'router_test_utils.dart';
 // If this test fails after a Flutter upgrade, Flutter no longer measures a
 // Hero that was never laid out: drop this canary.
 void main() {
-  testWidgets('a predictive back over a page never laid out asserts on the SnackBar hero', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('HomeRoute', builder: (_) => const Scaffold(body: Text('HomeRoute'))),
-        ),
-        AutoRoute(
-          path: '/details',
-          page: PageInfo(
-            'DetailsRoute',
-            builder: (_) => Scaffold(
-              body: Builder(
-                builder: (context) => ElevatedButton(
-                  onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Hello'))),
-                  child: const Text('show'),
+  testWidgets(
+    'a predictive back over a page never laid out asserts on the SnackBar hero',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => const Scaffold(body: Text('HomeRoute')),
+            ),
+          ),
+          AutoRoute(
+            path: '/details',
+            page: PageInfo(
+              'DetailsRoute',
+              builder: (_) => Scaffold(
+                body: Builder(
+                  builder: (context) => ElevatedButton(
+                    onPressed: () => ScaffoldMessenger.of(context)
+                        .showSnackBar(const SnackBar(content: Text('Hello'))),
+                    child: const Text('show'),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router, initialLink: '/details');
-    expect(router.stack.map((page) => page.name), ['HomeRoute', 'DetailsRoute']);
-    await tester.tap(find.text('show'));
-    await tester.pumpAndSettle();
+        ],
+      );
+      await pumpRouterApp(tester, router, initialLink: '/details');
+      expect(router.stack.map((page) => page.name), [
+        'HomeRoute',
+        'DetailsRoute',
+      ]);
+      await tester.tap(find.text('show'));
+      await tester.pumpAndSettle();
 
-    await _sendBackGesture(tester, 'startBackGesture');
-    await tester.pump();
-    expect(
-      tester.takeException(),
-      isA<AssertionError>().having((error) => '$error', 'text', contains('box.hasSize && box.size.isFinite')),
-    );
-    await _sendBackGesture(tester, 'cancelBackGesture');
-    await tester.pumpAndSettle();
-    expect(router.topRoute.name, 'DetailsRoute');
-  }, variant: TargetPlatformVariant.only(.android));
+      await _sendBackGesture(tester, 'startBackGesture');
+      await tester.pump();
+      expect(
+        tester.takeException(),
+        isA<AssertionError>().having(
+          (error) => '$error',
+          'text',
+          contains('box.hasSize && box.size.isFinite'),
+        ),
+      );
+      await _sendBackGesture(tester, 'cancelBackGesture');
+      await tester.pumpAndSettle();
+      expect(router.topRoute.name, 'DetailsRoute');
+    },
+    variant: TargetPlatformVariant.only(.android),
+  );
 }
 
 Future<void> _sendBackGesture(WidgetTester tester, String method) {

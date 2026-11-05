@@ -35,11 +35,18 @@ class _TrackedPageState extends State<_TrackedPage> {
   Widget build(BuildContext context) => Text(widget.label);
 }
 
-PageInfo _trackedPage(String name) => .new(name, builder: (_) => _TrackedPage(name));
+PageInfo _trackedPage(String name) =>
+    .new(name, builder: (_) => _TrackedPage(name));
 
-final _homePage = PageInfo('HomeRoute', builder: (_) => const Text('HomeRoute'));
+final _homePage = PageInfo(
+  'HomeRoute',
+  builder: (_) => const Text('HomeRoute'),
+);
 final PageInfo _detailPage = _trackedPage('DetailRoute');
-final _stackHostPage = PageInfo('StackHostRoute', builder: (_) => const AutoRouter());
+final _stackHostPage = PageInfo(
+  'StackHostRoute',
+  builder: (_) => const AutoRouter(),
+);
 final PageInfo _tab1Page = _trackedPage('Tab1Route');
 final PageInfo _tab2Page = _trackedPage('Tab2Route');
 
@@ -49,13 +56,17 @@ PageInfo _tabsHostPage(String tabsType) => .new(
     const routes = [NamedRoute('Tab1Route'), NamedRoute('Tab2Route')];
     return switch (tabsType) {
       'PageView' => const AutoTabsRouter.pageView(routes: routes),
-      'TabBar' => AutoTabsRouter.tabBar(routes: routes, builder: (_, child, _) => child),
+      'TabBar' => AutoTabsRouter.tabBar(
+        routes: routes,
+        builder: (_, child, _) => child,
+      ),
       _ => const AutoTabsRouter(routes: routes),
     };
   },
 );
 
-TabsRouter _tabsHost(RootStackRouter router) => router.innerRouterOf('TabsHostRoute')!;
+TabsRouter _tabsHost(RootStackRouter router) =>
+    router.innerRouterOf('TabsHostRoute')!;
 
 RootStackRouter _buildRouter({String tabsType = 'IndexedStack'}) => .build(
   routes: [
@@ -83,9 +94,16 @@ RootStackRouter _buildRouter({String tabsType = 'IndexedStack'}) => .build(
 /// One round can fall short on a busy machine: a collection that began before
 /// the pop still counts as one of its cycles. Gives up quietly after the last
 /// round, so the test's own expects report what is still held.
-Future<void> _settleAndCollect(WidgetTester tester, List<WeakReference<Object>> references) async {
+Future<void> _settleAndCollect(
+  WidgetTester tester,
+  List<WeakReference<Object>> references,
+) async {
   await tester.pumpAndSettle();
-  for (var round = 0; round < 10 && references.any((reference) => reference.target != null); round++) {
+  for (
+    var round = 0;
+    round < 10 && references.any((reference) => reference.target != null);
+    round++
+  ) {
     await tester.runAsync(() => forceGC(fullGcCycles: 2));
   }
 }
@@ -117,7 +135,9 @@ void main() {
 
   // Steps: push and pop DetailRoute 50 times, then force a garbage collection.
   // Should: no state of a popped page stays in memory.
-  testWidgets('Pushing and popping a page many times keeps no popped page', (tester) async {
+  testWidgets('Pushing and popping a page many times keeps no popped page', (
+    tester,
+  ) async {
     final router = _buildRouter();
     await pumpRouterApp(tester, router);
     final states = <WeakReference<State>>[];
@@ -134,7 +154,9 @@ void main() {
 
   // Steps: open StackHostRoute, whose page holds an AutoRouter, then pop it.
   // Should: nothing holds the nested router, its RouteData or its page's state.
-  testWidgets('A popped nested router releases its controller and pages', (tester) async {
+  testWidgets('A popped nested router releases its controller and pages', (
+    tester,
+  ) async {
     final router = _buildRouter();
     await pumpRouterApp(tester, router);
     unawaited(router.pushPath('/stack'));
@@ -144,7 +166,11 @@ void main() {
     final childData = WeakReference(nested.target!.current);
 
     router.pop();
-    await _settleAndCollect(tester, [nested, childData, _pageState('StackChildRoute')]);
+    await _settleAndCollect(tester, [
+      nested,
+      childData,
+      _pageState('StackChildRoute'),
+    ]);
     expect(router.childControllers, isEmpty);
     expect(nested.target, isNull);
     expect(childData.target, isNull);
@@ -154,26 +180,34 @@ void main() {
   for (final tabsType in ['IndexedStack', 'PageView', 'TabBar']) {
     // Steps: open TabsHostRoute, switch tabs 20 times, then pop the host.
     // Should: nothing holds the tabs router or the state of either tab.
-    testWidgets('A popped $tabsType tabs router releases its controller and tabs', (tester) async {
-      final router = _buildRouter(tabsType: tabsType);
-      await pumpRouterApp(tester, router);
-      unawaited(router.pushPath('/tabs'));
-      await tester.pumpAndSettle();
-      final tabsRouter = WeakReference(_tabsHost(router));
-      for (var i = 0; i < 20; i++) {
-        tabsRouter.target!.setActiveIndex(i.isEven ? 1 : 0);
+    testWidgets(
+      'A popped $tabsType tabs router releases its controller and tabs',
+      (tester) async {
+        final router = _buildRouter(tabsType: tabsType);
+        await pumpRouterApp(tester, router);
+        unawaited(router.pushPath('/tabs'));
         await tester.pumpAndSettle();
-      }
-      expect(find.text('Tab1Route'), findsOneWidget);
-      expect(_pageStates.keys, containsAll(['Tab1Route', 'Tab2Route']));
+        final tabsRouter = WeakReference(_tabsHost(router));
+        for (var i = 0; i < 20; i++) {
+          tabsRouter.target!.setActiveIndex(i.isEven ? 1 : 0);
+          await tester.pumpAndSettle();
+        }
+        expect(find.text('Tab1Route'), findsOneWidget);
+        expect(_pageStates.keys, containsAll(['Tab1Route', 'Tab2Route']));
 
-      router.pop();
-      await _settleAndCollect(tester, [tabsRouter, _pageState('Tab1Route'), _pageState('Tab2Route')]);
-      expect(router.childControllers, isEmpty);
-      expect(tabsRouter.target, isNull);
-      expect(_pageState('Tab1Route').target, isNull);
-      expect(_pageState('Tab2Route').target, isNull);
-    }, skip: kIsWeb);
+        router.pop();
+        await _settleAndCollect(tester, [
+          tabsRouter,
+          _pageState('Tab1Route'),
+          _pageState('Tab2Route'),
+        ]);
+        expect(router.childControllers, isEmpty);
+        expect(tabsRouter.target, isNull);
+        expect(_pageState('Tab1Route').target, isNull);
+        expect(_pageState('Tab2Route').target, isNull);
+      },
+      skip: kIsWeb,
+    );
   }
 
   // https://github.com/flutter/flutter/issues/151808: with
@@ -184,7 +218,9 @@ void main() {
   // DetailRoute with removeWhere, then pop StackHostRoute. Force a garbage
   // collection.
   // Should: no state of a removed DetailRoute stays in memory.
-  testWidgets('A page removed from under the top page releases its state', (tester) async {
+  testWidgets('A page removed from under the top page releases its state', (
+    tester,
+  ) async {
     final router = _buildRouter();
     await pumpRouterApp(tester, router);
     final states = <WeakReference<State>>[];
@@ -198,7 +234,10 @@ void main() {
       await tester.pumpAndSettle();
       router.removeWhere((route) => route.name == 'DetailRoute');
       await tester.pumpAndSettle();
-      expect(router.stack.map((page) => page.name), ['HomeRoute', 'StackHostRoute']);
+      expect(router.stack.map((page) => page.name), [
+        'HomeRoute',
+        'StackHostRoute',
+      ]);
       router.pop();
       await tester.pumpAndSettle();
     }

@@ -36,13 +36,19 @@ void main() {
             'EditorRoute',
             builder: (_) => PopScope(
               canPop: editorCanPop,
-              child: AutoRouteLeaveListener(onLeave: leaves.add, child: const Text('EditorRoute')),
+              child: AutoRouteLeaveListener(
+                onLeave: leaves.add,
+                child: const Text('EditorRoute'),
+              ),
             ),
           ),
         ),
         AutoRoute(
           path: '/preview',
-          page: PageInfo('PreviewRoute', builder: (_) => const Text('PreviewRoute')),
+          page: PageInfo(
+            'PreviewRoute',
+            builder: (_) => const Text('PreviewRoute'),
+          ),
         ),
       ],
     );
@@ -84,24 +90,31 @@ void main() {
     expectTopPage(router, 'EditorRoute');
   });
 
-  testWidgets('a push over the page reports covered, and a second push nothing more', (tester) async {
-    await openEditor(tester);
-    unawaited(router.push(preview));
-    await tester.pumpAndSettle();
-    expect(leaves, [RouteLeaveKind.covered]);
+  testWidgets(
+    'a push over the page reports covered, and a second push nothing more',
+    (tester) async {
+      await openEditor(tester);
+      unawaited(router.push(preview));
+      await tester.pumpAndSettle();
+      expect(leaves, [RouteLeaveKind.covered]);
 
-    unawaited(router.push(const PageRouteInfo('HomeRoute')));
-    await tester.pumpAndSettle();
-    expect(leaves, [RouteLeaveKind.covered], reason: 'after router.push(const PageRouteInfo(HomeRoute)))');
+      unawaited(router.push(const PageRouteInfo('HomeRoute')));
+      await tester.pumpAndSettle();
+      expect(leaves, [
+        RouteLeaveKind.covered,
+      ], reason: 'after router.push(const PageRouteInfo(HomeRoute)))');
 
-    // Back to the editor, then covered again: a second leave.
-    router.popUntilRouteWithName('EditorRoute');
-    await tester.pumpAndSettle();
-    expect(leaves, [RouteLeaveKind.covered], reason: 'after router.popUntilRouteWithName(EditorRoute)');
-    unawaited(router.push(preview));
-    await tester.pumpAndSettle();
-    expect(leaves, [RouteLeaveKind.covered, RouteLeaveKind.covered]);
-  });
+      // Back to the editor, then covered again: a second leave.
+      router.popUntilRouteWithName('EditorRoute');
+      await tester.pumpAndSettle();
+      expect(leaves, [
+        RouteLeaveKind.covered,
+      ], reason: 'after router.popUntilRouteWithName(EditorRoute)');
+      unawaited(router.push(preview));
+      await tester.pumpAndSettle();
+      expect(leaves, [RouteLeaveKind.covered, RouteLeaveKind.covered]);
+    },
+  );
 
   testWidgets('a pop of the page over it reports nothing', (tester) async {
     await openEditor(tester);
@@ -152,12 +165,18 @@ void main() {
   });
 
   // A root route that isn't in the stack opens over the top page, as a push.
-  testWidgets('navigate to a route not in the stack reports covered', (tester) async {
+  testWidgets('navigate to a route not in the stack reports covered', (
+    tester,
+  ) async {
     await openEditor(tester);
     unawaited(router.navigatePath('/preview'));
     await tester.pumpAndSettle();
     expect(leaves, [RouteLeaveKind.covered]);
-    expect(router.stack.map((page) => page.name), ['HomeRoute', 'EditorRoute', 'PreviewRoute']);
+    expect(router.stack.map((page) => page.name), [
+      'HomeRoute',
+      'EditorRoute',
+      'PreviewRoute',
+    ]);
   });
 
   testWidgets('a deep link to the page below reports removed', (tester) async {
@@ -193,18 +212,23 @@ void main() {
     expect(leaves, [RouteLeaveKind.covered, RouteLeaveKind.popped]);
   });
 
-  testWidgets('navigating to the page on top updates it in place and reports nothing', (tester) async {
-    await openEditor(tester);
-    unawaited(router.navigatePath('/editor'));
-    await tester.pumpAndSettle();
-    router.notifyAll();
-    await tester.pumpAndSettle();
-    expect(leaves, isEmpty);
-  });
+  testWidgets(
+    'navigating to the page on top updates it in place and reports nothing',
+    (tester) async {
+      await openEditor(tester);
+      unawaited(router.navigatePath('/editor'));
+      await tester.pumpAndSettle();
+      router.notifyAll();
+      await tester.pumpAndSettle();
+      expect(leaves, isEmpty);
+    },
+  );
 
   // The editor's guard lets it in while signedIn is true; signing out and
   // reevaluating closes it.
-  testWidgets('a guard that closes the page on reevaluation reports removed', (tester) async {
+  testWidgets('a guard that closes the page on reevaluation reports removed', (
+    tester,
+  ) async {
     final signedIn = ValueNotifier(true);
     addTearDown(signedIn.dispose);
     final guarded = RootStackRouter.build(
@@ -215,10 +239,18 @@ void main() {
         ),
         AutoRoute(
           path: '/editor',
-          guards: [AutoRouteGuard.simple((resolver, _) => signedIn.value ? resolver.next() : resolver.reject())],
+          guards: [
+            AutoRouteGuard.simple(
+              (resolver, _) =>
+                  signedIn.value ? resolver.next() : resolver.reject(),
+            ),
+          ],
           page: PageInfo(
             'EditorRoute',
-            builder: (_) => AutoRouteLeaveListener(onLeave: leaves.add, child: const Text('EditorRoute')),
+            builder: (_) => AutoRouteLeaveListener(
+              onLeave: leaves.add,
+              child: const Text('EditorRoute'),
+            ),
           ),
         ),
       ],
@@ -256,13 +288,19 @@ void main() {
           children: [
             AutoRoute(
               path: '',
-              page: PageInfo('HomeRoute', builder: (_) => const Text('HomeRoute')),
+              page: PageInfo(
+                'HomeRoute',
+                builder: (_) => const Text('HomeRoute'),
+              ),
             ),
             AutoRoute(
               path: 'editor',
               page: PageInfo(
                 'EditorRoute',
-                builder: (_) => AutoRouteLeaveListener(onLeave: leaves.add, child: const Text('EditorRoute')),
+                builder: (_) => AutoRouteLeaveListener(
+                  onLeave: leaves.add,
+                  child: const Text('EditorRoute'),
+                ),
               ),
             ),
           ],

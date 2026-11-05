@@ -15,29 +15,49 @@ import 'router_test_utils.dart';
 // back by the iOS swipe, or by system back. The push should complete with
 // 'picked', as Navigator.push does.
 void main() {
-  final backs = {'the iOS back swipe': (swipeBack, iosTheme), 'system back': (systemBack, androidTheme)};
+  final backs = {
+    'the iOS back swipe': (swipeBack, iosTheme),
+    'system back': (systemBack, androidTheme),
+  };
 
   for (final MapEntry(key: name, value: (back, theme)) in backs.entries) {
-    testWidgets("$name completes the push with the route's currentResult", (tester) async {
+    testWidgets("$name completes the push with the route's currentResult", (
+      tester,
+    ) async {
       final router = RootStackRouter.build(
         routes: [
           AutoRoute(
-            page: PageInfo('Home', builder: (_) => const Scaffold(body: Text('Home'))),
+            page: PageInfo(
+              'Home',
+              builder: (_) => const Scaffold(body: Text('Home')),
+            ),
             initial: true,
           ),
           CustomRoute(
-            page: PageInfo('Details', builder: (_) => const Scaffold(body: Text('Details'))),
-            customRouteBuilder: <T>(context, child, page) =>
-                _ResultRoute<T>(settings: page, result: 'picked' as T, builder: (_) => child),
+            page: PageInfo(
+              'Details',
+              builder: (_) => const Scaffold(body: Text('Details')),
+            ),
+            customRouteBuilder: <T>(context, child, page) => _ResultRoute<T>(
+              settings: page,
+              result: 'picked' as T,
+              builder: (_) => child,
+            ),
           ),
         ],
       );
       tester.binding.handleAppLifecycleStateChanged(.resumed);
       addTearDown(router.dispose);
-      await tester.pumpWidget(MaterialApp.router(theme: theme, routerConfig: router.config()));
+      await tester.pumpWidget(
+        MaterialApp.router(theme: theme, routerConfig: router.config()),
+      );
       await tester.pumpAndSettle();
       Object? result = 'unset';
-      unawaited(router.push<String>(const PageRouteInfo('Details')).then((value) => result = value));
+      unawaited(
+        router
+            .push<String>(const PageRouteInfo('Details'))
+            .then((value) => result = value),
+      );
       await tester.pumpAndSettle();
 
       await back(tester);

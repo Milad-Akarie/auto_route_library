@@ -14,10 +14,19 @@ import '../router_test_utils.dart';
 // walks it down again.
 void main() {
   for (final (how, push) in [
-    ('routes', (StackRouter router, String name) => router.push(_Route('${name}Route'))),
-    ('paths', (StackRouter router, String name) => router.pushPath('/${name.toLowerCase()}')),
+    (
+      'routes',
+      (StackRouter router, String name) => router.push(_Route('${name}Route')),
+    ),
+    (
+      'paths',
+      (StackRouter router, String name) =>
+          router.pushPath('/${name.toLowerCase()}'),
+    ),
   ]) {
-    testWidgets('Pushing shell children A, B, A by $how stacks them all', (tester) async {
+    testWidgets('Pushing shell children A, B, A by $how stacks them all', (
+      tester,
+    ) async {
       final router = RootStackRouter.build(
         routes: [
           AutoRoute(path: '/', page: _page('RootRoute')),
@@ -36,7 +45,12 @@ void main() {
         expect(tester.takeException(), isNull);
         expect(find.text('${name}Route'), findsOneWidget);
       }
-      expect(router.stack.map((page) => page.name), ['RootRoute', 'AShellRoute', 'BShellRoute', 'AShellRoute']);
+      expect(router.stack.map((page) => page.name), [
+        'RootRoute',
+        'AShellRoute',
+        'BShellRoute',
+        'AShellRoute',
+      ]);
 
       for (final name in ['BRoute', 'ARoute', 'RootRoute']) {
         await router.maybePopTop();
@@ -48,7 +62,8 @@ void main() {
   }
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
   const new(super.name);

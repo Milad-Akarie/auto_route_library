@@ -18,24 +18,41 @@ void main() {
           AutoRoute(page: SecondRoute.page, path: '', initial: true),
           if (withWildcard)
             AutoRoute(
-              page: PageInfo('ShellNotFoundRoute', builder: (_) => const Text('Shell not found')),
+              page: PageInfo(
+                'ShellNotFoundRoute',
+                builder: (_) => const Text('Shell not found'),
+              ),
               path: '*',
             ),
         ],
       ),
       if (withWildcard)
         AutoRoute(
-          page: PageInfo('NotFoundRoute', builder: (_) => const Text('Not found')),
+          page: PageInfo(
+            'NotFoundRoute',
+            builder: (_) => const Text('Not found'),
+          ),
           path: '*',
         ),
     ],
   );
 
-  final ways = <String, Future<void> Function(StackRouter router, String path, OnNavigationFailure? onFailure)>{
-    'navigatePath': (router, path, onFailure) => router.navigatePath(path, onFailure: onFailure),
-    'pushPath': (router, path, onFailure) => router.pushPath(path, onFailure: onFailure),
-    'replacePath': (router, path, onFailure) => router.replacePath(path, onFailure: onFailure),
-  };
+  final ways =
+      <
+        String,
+        Future<void> Function(
+          StackRouter router,
+          String path,
+          OnNavigationFailure? onFailure,
+        )
+      >{
+        'navigatePath': (router, path, onFailure) =>
+            router.navigatePath(path, onFailure: onFailure),
+        'pushPath': (router, path, onFailure) =>
+            router.pushPath(path, onFailure: onFailure),
+        'replacePath': (router, path, onFailure) =>
+            router.replacePath(path, onFailure: onFailure),
+      };
 
   // flutter/flutter#117449: in go_router, goNamed() to a route that didn't
   // exist skipped the errorBuilder that go() showed. In auto_route every way
@@ -55,17 +72,28 @@ void main() {
     // and without.
     // Should: onFailure gets RouteNotFoundFailure('/nope'); without it, the
     // call throws an error naming the path. The page stays.
-    testWidgets('$name to an unknown path without "*" reports it', (tester) async {
+    testWidgets('$name to an unknown path without "*" reports it', (
+      tester,
+    ) async {
       final router = buildRouter(withWildcard: false);
       await pumpRouterApp(tester, router);
       final failures = <NavigationFailure>[];
       unawaited(open(router, '/nope', failures.add));
       await tester.pumpAndSettle();
-      expect(failures.singleOrNull, isA<RouteNotFoundFailure>().having((f) => f.path, 'path', '/nope'));
+      expect(
+        failures.singleOrNull,
+        isA<RouteNotFoundFailure>().having((f) => f.path, 'path', '/nope'),
+      );
 
       await expectLater(
         () => open(router, '/nope', null),
-        throwsA(isA<FlutterError>().having((e) => e.message, 'message', startsWith('Can not navigate to /nope'))),
+        throwsA(
+          isA<FlutterError>().having(
+            (e) => e.message,
+            'message',
+            startsWith('Can not navigate to /nope'),
+          ),
+        ),
       );
       expectCurrentPage(router, FirstRoute.name);
     });
@@ -73,13 +101,16 @@ void main() {
     // Steps: from inside a nested router, open the relative path 'nope'
     // with [name].
     // Should: the nested router's '*' page shows.
-    testWidgets('$name to an unknown relative path in a nested router shows its "*" page', (tester) async {
-      final router = buildRouter(withWildcard: true);
-      await pumpRouterApp(tester, router, initialLink: '/shell');
-      final nested = router.innerRouterOf<StackRouter>('ShellRoute')!;
-      unawaited(open(nested, 'nope', null));
-      await tester.pumpAndSettle();
-      expect(find.text('Shell not found'), findsOneWidget);
-    });
+    testWidgets(
+      '$name to an unknown relative path in a nested router shows its "*" page',
+      (tester) async {
+        final router = buildRouter(withWildcard: true);
+        await pumpRouterApp(tester, router, initialLink: '/shell');
+        final nested = router.innerRouterOf<StackRouter>('ShellRoute')!;
+        unawaited(open(nested, 'nope', null));
+        await tester.pumpAndSettle();
+        expect(find.text('Shell not found'), findsOneWidget);
+      },
+    );
   }
 }

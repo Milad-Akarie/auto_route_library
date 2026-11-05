@@ -12,32 +12,42 @@ import 'router_test_utils.dart';
 // reads slug 0.
 void main() {
   for (final guarded in [false, true]) {
-    testWidgets('A redirect with a path param to a nested child keeps one url, guarded: $guarded', (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          RedirectRoute(path: '/', redirectTo: '/tabs'),
-          RedirectRoute(path: '/two/:slug', redirectTo: '/tabs/two/:slug'),
-          AutoRoute(
-            path: '/tabs',
-            page: PageInfo('TabsRoute', builder: (_) => const AutoRouter()),
-            guards: [if (guarded) AutoRouteGuard.simple((resolver, _) => resolver.next())],
-            children: [
-              AutoRoute(
-                path: 'one',
-                page: PageInfo('OneRoute', builder: (_) => const Text('One')),
-                initial: true,
-              ),
-              AutoRoute(
-                path: 'two/:slug',
-                page: PageInfo('TwoRoute', builder: (data) => Text('Two ${data.params.getString('slug')}')),
-              ),
-            ],
-          ),
-        ],
-      );
-      await pumpRouterApp(tester, router, initialLink: '/two/0');
-      expect(find.text('Two 0'), findsOneWidget);
-      expect(router.urlState.url, '/tabs/two/0');
-    });
+    testWidgets(
+      'A redirect with a path param to a nested child keeps one url, guarded: $guarded',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            RedirectRoute(path: '/', redirectTo: '/tabs'),
+            RedirectRoute(path: '/two/:slug', redirectTo: '/tabs/two/:slug'),
+            AutoRoute(
+              path: '/tabs',
+              page: PageInfo('TabsRoute', builder: (_) => const AutoRouter()),
+              guards: [
+                if (guarded)
+                  AutoRouteGuard.simple((resolver, _) => resolver.next()),
+              ],
+              children: [
+                AutoRoute(
+                  path: 'one',
+                  page: PageInfo('OneRoute', builder: (_) => const Text('One')),
+                  initial: true,
+                ),
+                AutoRoute(
+                  path: 'two/:slug',
+                  page: PageInfo(
+                    'TwoRoute',
+                    builder: (data) =>
+                        Text('Two ${data.params.getString('slug')}'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+        await pumpRouterApp(tester, router, initialLink: '/two/0');
+        expect(find.text('Two 0'), findsOneWidget);
+        expect(router.urlState.url, '/tabs/two/0');
+      },
+    );
   }
 }

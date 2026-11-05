@@ -32,9 +32,15 @@ void main() {
     );
   });
 
-  final links = {'/book/1': 'BookRoute', '/account/settings': 'SettingsRoute', '/account': 'OverviewRoute'};
+  final links = {
+    '/book/1': 'BookRoute',
+    '/account/settings': 'SettingsRoute',
+    '/account': 'OverviewRoute',
+  };
   for (final MapEntry(key: link, value: page) in links.entries) {
-    testWidgets('a cold start link to $link shows $page and stays', (tester) async {
+    testWidgets('a cold start link to $link shows $page and stays', (
+      tester,
+    ) async {
       await pumpRouterApp(tester, router, initialLink: link);
       expect(find.text(page), findsOneWidget);
       await tester.pump(const Duration(seconds: 5));

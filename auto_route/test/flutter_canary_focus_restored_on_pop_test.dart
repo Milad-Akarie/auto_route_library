@@ -20,39 +20,51 @@ import 'router_test_utils.dart';
 // If this test fails after a Flutter upgrade, Flutter no longer opens the
 // keyboard when it gives focus back on a pop: drop this canary.
 void main() {
-  testWidgets('popping back to a page whose field had focus opens the keyboard again', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo(
-            'HomeRoute',
-            builder: (_) => const Scaffold(body: TextField(key: Key('home'))),
+  testWidgets(
+    'popping back to a page whose field had focus opens the keyboard again',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => const Scaffold(body: TextField(key: Key('home'))),
+            ),
           ),
-        ),
-        AutoRoute(
-          path: '/second',
-          page: PageInfo('SecondRoute', builder: (_) => const Scaffold(body: Text('SecondRoute'))),
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    await tester.tap(find.byKey(const Key('home')));
-    await tester.pump();
-    expect(tester.testTextInput.isVisible, isTrue);
-    tester.testTextInput.hide();
-    expect(_focusedField(), const Key('home'));
+          AutoRoute(
+            path: '/second',
+            page: PageInfo(
+              'SecondRoute',
+              builder: (_) => const Scaffold(body: Text('SecondRoute')),
+            ),
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      await tester.tap(find.byKey(const Key('home')));
+      await tester.pump();
+      expect(tester.testTextInput.isVisible, isTrue);
+      tester.testTextInput.hide();
+      expect(_focusedField(), const Key('home'));
 
-    unawaited(router.push(const NamedRoute('SecondRoute')));
-    await tester.pumpAndSettle();
-    expect(_focusedField(), isNull);
-    expect(tester.testTextInput.isVisible, isFalse);
+      unawaited(router.push(const NamedRoute('SecondRoute')));
+      await tester.pumpAndSettle();
+      expect(_focusedField(), isNull);
+      expect(tester.testTextInput.isVisible, isFalse);
 
-    router.pop();
-    await tester.pumpAndSettle();
-    expect(_focusedField(), const Key('home'), reason: 'after router.pop()');
-    expect(tester.testTextInput.isVisible, isTrue, reason: 'after router.pop()');
-  });
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(_focusedField(), const Key('home'), reason: 'after router.pop()');
+      expect(
+        tester.testTextInput.isVisible,
+        isTrue,
+        reason: 'after router.pop()',
+      );
+    },
+  );
 }
 
-Key? _focusedField() => FocusManager.instance.primaryFocus?.context?.findAncestorWidgetOfExactType<TextField>()?.key;
+Key? _focusedField() => FocusManager.instance.primaryFocus?.context
+    ?.findAncestorWidgetOfExactType<TextField>()
+    ?.key;

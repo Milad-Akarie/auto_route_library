@@ -10,7 +10,11 @@ void main() {
 }
 
 void _runIndexTests(_TabsKind kind) {
-  Future<RootStackRouter> pumpTabs(WidgetTester tester, List<PageRouteInfo> routes, {String initialLink = '/'}) async {
+  Future<RootStackRouter> pumpTabs(
+    WidgetTester tester,
+    List<PageRouteInfo> routes, {
+    String initialLink = '/',
+  }) async {
     _tabsKind = kind;
     _routesNotifier.value = routes;
     final router = RootStackRouter.build(
@@ -26,7 +30,12 @@ void _runIndexTests(_TabsKind kind) {
       ],
     );
     // An AutoRouterObserver hears about tab changes; it reads the tab routes by index.
-    await pumpRouterApp(tester, router, initialLink: initialLink, observers: () => [AutoRouterObserver()]);
+    await pumpRouterApp(
+      tester,
+      router,
+      initialLink: initialLink,
+      observers: () => [AutoRouterObserver()],
+    );
     return router;
   }
 
@@ -36,44 +45,66 @@ void _runIndexTests(_TabsKind kind) {
   // Happens: RangeError in _didChangeTabRoute, which reads the old active
   // index 1 in the new one-tab routes.
   // Should: the first tab shows.
-  testWidgets('${kind.name}: removing the active last tab shows the first tab', (tester) async {
-    final router = await pumpTabs(tester, const [_FirstTabRoute(), _SecondTabRoute()]);
-    router.innerRouterOf<TabsRouter>(_TabsHostRoute.name)!.setActiveIndex(1);
-    await tester.pumpAndSettle();
-    expect(find.text(_SecondTabRoute.name), findsOneWidget);
+  testWidgets(
+    '${kind.name}: removing the active last tab shows the first tab',
+    (tester) async {
+      final router = await pumpTabs(tester, const [
+        _FirstTabRoute(),
+        _SecondTabRoute(),
+      ]);
+      router.innerRouterOf<TabsRouter>(_TabsHostRoute.name)!.setActiveIndex(1);
+      await tester.pumpAndSettle();
+      expect(find.text(_SecondTabRoute.name), findsOneWidget);
 
-    _routesNotifier.value = const [_FirstTabRoute()];
-    await tester.pumpAndSettle();
-    expect(find.text(_FirstTabRoute.name), findsOneWidget);
-    expect(router.innerRouterOf<TabsRouter>(_TabsHostRoute.name)!.activeIndex, 0);
-  });
+      _routesNotifier.value = const [_FirstTabRoute()];
+      await tester.pumpAndSettle();
+      expect(find.text(_FirstTabRoute.name), findsOneWidget);
+      expect(
+        router.innerRouterOf<TabsRouter>(_TabsHostRoute.name)!.activeIndex,
+        0,
+      );
+    },
+  );
 
   // Same as above, but the app opens on the second tab, so the first tab
   // has never been shown when it becomes the active tab.
-  testWidgets('${kind.name}: removing the active tab shows a tab never opened before', (tester) async {
-    await pumpTabs(tester, const [_FirstTabRoute(), _SecondTabRoute()], initialLink: '/second');
-    expect(find.text(_SecondTabRoute.name), findsOneWidget);
+  testWidgets(
+    '${kind.name}: removing the active tab shows a tab never opened before',
+    (tester) async {
+      await pumpTabs(tester, const [
+        _FirstTabRoute(),
+        _SecondTabRoute(),
+      ], initialLink: '/second');
+      expect(find.text(_SecondTabRoute.name), findsOneWidget);
 
-    _routesNotifier.value = const [_FirstTabRoute()];
-    await tester.pumpAndSettle();
-    expect(find.text(_FirstTabRoute.name), findsOneWidget);
-  });
+      _routesNotifier.value = const [_FirstTabRoute()];
+      await tester.pumpAndSettle();
+      expect(find.text(_FirstTabRoute.name), findsOneWidget);
+    },
+  );
 
   // The same RangeError when the routes grow: with [first] active, a rebuild
   // with [second, first] moves the active tab to index 1, past the old routes.
-  testWidgets('${kind.name}: adding a tab before the active tab keeps it shown', (tester) async {
-    final router = await pumpTabs(tester, const [_FirstTabRoute()]);
-    expect(find.text(_FirstTabRoute.name), findsOneWidget);
+  testWidgets(
+    '${kind.name}: adding a tab before the active tab keeps it shown',
+    (tester) async {
+      final router = await pumpTabs(tester, const [_FirstTabRoute()]);
+      expect(find.text(_FirstTabRoute.name), findsOneWidget);
 
-    _routesNotifier.value = const [_SecondTabRoute(), _FirstTabRoute()];
-    await tester.pumpAndSettle();
-    expect(
-      find.text(_FirstTabRoute.name),
-      findsOneWidget,
-      reason: 'after _routesNotifier.value = const [_SecondTabRoute(), _First',
-    );
-    expect(router.innerRouterOf<TabsRouter>(_TabsHostRoute.name)!.activeIndex, 1);
-  });
+      _routesNotifier.value = const [_SecondTabRoute(), _FirstTabRoute()];
+      await tester.pumpAndSettle();
+      expect(
+        find.text(_FirstTabRoute.name),
+        findsOneWidget,
+        reason:
+            'after _routesNotifier.value = const [_SecondTabRoute(), _First',
+      );
+      expect(
+        router.innerRouterOf<TabsRouter>(_TabsHostRoute.name)!.activeIndex,
+        1,
+      );
+    },
+  );
 }
 
 enum _TabsKind { indexedStack, pageView, tabBar, builder }
@@ -94,7 +125,8 @@ abstract final class _TabsHostRoute {
         .tabBar => AutoTabsRouter.tabBar(routes: routes),
         .builder => AutoTabsRouter.builder(
           routes: routes,
-          builder: (context, children, tabsRouter) => IndexedStack(index: tabsRouter.activeIndex, children: children),
+          builder: (context, children, tabsRouter) =>
+              IndexedStack(index: tabsRouter.activeIndex, children: children),
         ),
       },
     ),
@@ -105,12 +137,18 @@ class _FirstTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_FirstTabRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text(name)),
+  );
 }
 
 class _SecondTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_SecondTabRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text(name)),
+  );
 }

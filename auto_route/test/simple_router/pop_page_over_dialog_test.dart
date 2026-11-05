@@ -36,7 +36,11 @@ void main() {
 
     openLoadingDialog(tester);
     await tester.pumpAndSettle();
-    unawaited(router.push<bool>(const PageRouteInfo('Cancel')).then((value) => result = value));
+    unawaited(
+      router
+          .push<bool>(const PageRouteInfo('Cancel'))
+          .then((value) => result = value),
+    );
     await tester.pumpAndSettle();
     router.pop(true);
     await tester.pumpAndSettle();
@@ -56,7 +60,11 @@ void main() {
     Object? result;
 
     openLoadingDialog(tester);
-    unawaited(router.push<bool>(const PageRouteInfo('Cancel')).then((value) => result = value));
+    unawaited(
+      router
+          .push<bool>(const PageRouteInfo('Cancel'))
+          .then((value) => result = value),
+    );
     router.pop(true);
     tester.state<NavigatorState>(find.byType(Navigator).first).pop();
     await tester.pumpAndSettle();
@@ -69,4 +77,5 @@ void main() {
   });
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));

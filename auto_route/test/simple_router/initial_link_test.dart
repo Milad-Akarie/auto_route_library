@@ -34,7 +34,9 @@ void main() {
     return pumpRouterConfigApp(tester, router.config());
   }
 
-  testWidgets('A link with a host and no path opens the root page', (tester) async {
+  testWidgets('A link with a host and no path opens the root page', (
+    tester,
+  ) async {
     await startAt(tester, 'https://www.domain.com');
     expect(tester.takeException(), isNull);
     expectCurrentPage(router, 'RootRoute');

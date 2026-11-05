@@ -26,147 +26,185 @@ void main() {
 
   for (final kind in _Tabs.values) {
     group('${kind.name}:', () {
-      testWidgets('setActiveIndex to a tab whose guard rejects keeps the current tab', (tester) async {
-        final router = _buildRouter(kind);
-        await pumpRouterApp(tester, router);
-        final tabs = _tabsOf(router)..setActiveIndex(1);
-        await tester.pumpAndSettle();
-
-        expect(_guardCalls, 1);
-        _expectTab(tabs, 0);
-        expect(router.urlState.url, '/a');
-      });
-
-      testWidgets('setActiveIndex to a tab whose guard lets it in shows it', (tester) async {
-        _allow = true;
-        final router = _buildRouter(kind);
-        await pumpRouterApp(tester, router);
-        final tabs = _tabsOf(router)..setActiveIndex(1);
-        await tester.pumpAndSettle();
-
-        expect(_guardCalls, 1);
-        _expectTab(tabs, 1);
-        expect(router.urlState.url, '/b');
-      });
-
-      testWidgets('navigating to a tab whose guard rejects keeps the current tab', (tester) async {
-        final router = _buildRouter(kind);
-        await pumpRouterApp(tester, router);
-        final tabs = _tabsOf(router);
-
-        unawaited(router.navigate(const NamedRoute('HomeRoute', children: [NamedRoute('TabB')])));
-        await tester.pumpAndSettle();
-
-        expect(_guardCalls, 1);
-        _expectTab(tabs, 0);
-        expect(router.urlState.url, '/a');
-      });
-
-      testWidgets('opening the url of a tab whose guard rejects shows the first tab', (tester) async {
-        final router = _buildRouter(kind);
-        await pumpRouterApp(tester, router, initialLink: '/b');
-        final tabs = _tabsOf(router);
-
-        expect(_guardCalls, 1);
-        _expectTab(tabs, 0);
-        expect(router.urlState.url, '/a');
-      });
-
-      testWidgets('opening the url of a tab whose guard lets it in shows it', (tester) async {
-        _allow = true;
-        final router = _buildRouter(kind);
-        await pumpRouterApp(tester, router, initialLink: '/b');
-        final tabs = _tabsOf(router);
-
-        expect(_guardCalls, 1);
-        _expectTab(tabs, 1);
-        expect(router.urlState.url, '/b');
-      });
-
-      testWidgets('a guard that decides later keeps the current tab until it lets the tab in', (tester) async {
-        final decision = _decision = Completer<bool>();
-        final router = _buildRouter(kind);
-        await pumpRouterApp(tester, router);
-        final tabs = _tabsOf(router)..setActiveIndex(1);
-        await tester.pumpAndSettle();
-        _expectTab(tabs, 0);
-
-        decision.complete(true);
-        await tester.pumpAndSettle();
-
-        expect(_guardCalls, 1);
-        _expectTab(tabs, 1);
-        expect(router.urlState.url, '/b');
-      });
-
-      testWidgets('a guard that redirects to a login page shows the tab after the login', (tester) async {
-        final router = _buildRouter(kind, guard: _loginGuard);
-        await pumpRouterApp(tester, router);
-        final tabs = _tabsOf(router)..setActiveIndex(1);
-        await tester.pumpAndSettle();
-        expectTopPage(router, 'LoginRoute');
-
-        _allow = true;
-        await tester.tap(find.text('LoginRoute'));
-        await tester.pumpAndSettle();
-
-        expect(router.stack.map((page) => page.routeData.name), ['HomeRoute']);
-        _expectTab(tabs, 1);
-        expect(router.urlState.url, '/b');
-      });
-
-      testWidgets('back to a home tab whose guard rejects is not taken by the tabs', (tester) async {
-        _allow = true;
-        final router = _buildRouter(kind, guardedTab: 0, homeIndex: 0);
-        await pumpRouterApp(tester, router);
-        final tabs = _tabsOf(router)..setActiveIndex(1);
-        await tester.pumpAndSettle();
-        _expectTab(tabs, 1);
-
-        _allow = false;
-        expect(await tabs.maybePop(), isFalse);
-        await tester.pumpAndSettle();
-
-        expect(_guardCalls, 1);
-        _expectTab(tabs, 1);
-        expect(router.urlState.url, '/b');
-      });
-
-      testWidgets("another tab chosen while back waits for the home tab's guard keeps the tabs", (tester) async {
-        _allow = true;
-        final router = _buildRouter(kind, guardedTab: 0, homeIndex: 0);
-        await pumpRouterApp(tester, router);
-        final tabs = _tabsOf(router)..setActiveIndex(1);
-        await tester.pumpAndSettle();
-
-        final decision = _decision = Completer<bool>();
-        final back = tabs.maybePop();
-        tabs.setActiveIndex(2);
-        await tester.pumpAndSettle();
-        decision.complete(false);
-        await tester.pumpAndSettle();
-
-        expect(await back, isTrue);
-        expect(router.stack.map((page) => page.routeData.name), ['HomeRoute']);
-        _expectTab(tabs, 2);
-        expect(router.urlState.url, '/c');
-      });
-
-      if (kind != .indexedStack) {
-        testWidgets('swiping to a tab whose guard rejects returns to the current tab', (tester) async {
+      testWidgets(
+        'setActiveIndex to a tab whose guard rejects keeps the current tab',
+        (tester) async {
           final router = _buildRouter(kind);
           await pumpRouterApp(tester, router);
-          final tabs = _tabsOf(router);
-
-          await tester.fling(find.text('TabA'), const Offset(-400, 0), 1000);
+          final tabs = _tabsOf(router)..setActiveIndex(1);
           await tester.pumpAndSettle();
 
           expect(_guardCalls, 1);
           _expectTab(tabs, 0);
           expect(router.urlState.url, '/a');
-        });
+        },
+      );
 
-        testWidgets('swiping to a tab whose guard lets it in shows it', (tester) async {
+      testWidgets('setActiveIndex to a tab whose guard lets it in shows it', (
+        tester,
+      ) async {
+        _allow = true;
+        final router = _buildRouter(kind);
+        await pumpRouterApp(tester, router);
+        final tabs = _tabsOf(router)..setActiveIndex(1);
+        await tester.pumpAndSettle();
+
+        expect(_guardCalls, 1);
+        _expectTab(tabs, 1);
+        expect(router.urlState.url, '/b');
+      });
+
+      testWidgets(
+        'navigating to a tab whose guard rejects keeps the current tab',
+        (tester) async {
+          final router = _buildRouter(kind);
+          await pumpRouterApp(tester, router);
+          final tabs = _tabsOf(router);
+
+          unawaited(
+            router.navigate(
+              const NamedRoute('HomeRoute', children: [NamedRoute('TabB')]),
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          expect(_guardCalls, 1);
+          _expectTab(tabs, 0);
+          expect(router.urlState.url, '/a');
+        },
+      );
+
+      testWidgets(
+        'opening the url of a tab whose guard rejects shows the first tab',
+        (tester) async {
+          final router = _buildRouter(kind);
+          await pumpRouterApp(tester, router, initialLink: '/b');
+          final tabs = _tabsOf(router);
+
+          expect(_guardCalls, 1);
+          _expectTab(tabs, 0);
+          expect(router.urlState.url, '/a');
+        },
+      );
+
+      testWidgets('opening the url of a tab whose guard lets it in shows it', (
+        tester,
+      ) async {
+        _allow = true;
+        final router = _buildRouter(kind);
+        await pumpRouterApp(tester, router, initialLink: '/b');
+        final tabs = _tabsOf(router);
+
+        expect(_guardCalls, 1);
+        _expectTab(tabs, 1);
+        expect(router.urlState.url, '/b');
+      });
+
+      testWidgets(
+        'a guard that decides later keeps the current tab until it lets the tab in',
+        (tester) async {
+          final decision = _decision = Completer<bool>();
+          final router = _buildRouter(kind);
+          await pumpRouterApp(tester, router);
+          final tabs = _tabsOf(router)..setActiveIndex(1);
+          await tester.pumpAndSettle();
+          _expectTab(tabs, 0);
+
+          decision.complete(true);
+          await tester.pumpAndSettle();
+
+          expect(_guardCalls, 1);
+          _expectTab(tabs, 1);
+          expect(router.urlState.url, '/b');
+        },
+      );
+
+      testWidgets(
+        'a guard that redirects to a login page shows the tab after the login',
+        (tester) async {
+          final router = _buildRouter(kind, guard: _loginGuard);
+          await pumpRouterApp(tester, router);
+          final tabs = _tabsOf(router)..setActiveIndex(1);
+          await tester.pumpAndSettle();
+          expectTopPage(router, 'LoginRoute');
+
+          _allow = true;
+          await tester.tap(find.text('LoginRoute'));
+          await tester.pumpAndSettle();
+
+          expect(router.stack.map((page) => page.routeData.name), [
+            'HomeRoute',
+          ]);
+          _expectTab(tabs, 1);
+          expect(router.urlState.url, '/b');
+        },
+      );
+
+      testWidgets(
+        'back to a home tab whose guard rejects is not taken by the tabs',
+        (tester) async {
+          _allow = true;
+          final router = _buildRouter(kind, guardedTab: 0, homeIndex: 0);
+          await pumpRouterApp(tester, router);
+          final tabs = _tabsOf(router)..setActiveIndex(1);
+          await tester.pumpAndSettle();
+          _expectTab(tabs, 1);
+
+          _allow = false;
+          expect(await tabs.maybePop(), isFalse);
+          await tester.pumpAndSettle();
+
+          expect(_guardCalls, 1);
+          _expectTab(tabs, 1);
+          expect(router.urlState.url, '/b');
+        },
+      );
+
+      testWidgets(
+        "another tab chosen while back waits for the home tab's guard keeps the tabs",
+        (tester) async {
+          _allow = true;
+          final router = _buildRouter(kind, guardedTab: 0, homeIndex: 0);
+          await pumpRouterApp(tester, router);
+          final tabs = _tabsOf(router)..setActiveIndex(1);
+          await tester.pumpAndSettle();
+
+          final decision = _decision = Completer<bool>();
+          final back = tabs.maybePop();
+          tabs.setActiveIndex(2);
+          await tester.pumpAndSettle();
+          decision.complete(false);
+          await tester.pumpAndSettle();
+
+          expect(await back, isTrue);
+          expect(router.stack.map((page) => page.routeData.name), [
+            'HomeRoute',
+          ]);
+          _expectTab(tabs, 2);
+          expect(router.urlState.url, '/c');
+        },
+      );
+
+      if (kind != .indexedStack) {
+        testWidgets(
+          'swiping to a tab whose guard rejects returns to the current tab',
+          (tester) async {
+            final router = _buildRouter(kind);
+            await pumpRouterApp(tester, router);
+            final tabs = _tabsOf(router);
+
+            await tester.fling(find.text('TabA'), const Offset(-400, 0), 1000);
+            await tester.pumpAndSettle();
+
+            expect(_guardCalls, 1);
+            _expectTab(tabs, 0);
+            expect(router.urlState.url, '/a');
+          },
+        );
+
+        testWidgets('swiping to a tab whose guard lets it in shows it', (
+          tester,
+        ) async {
           _allow = true;
           final router = _buildRouter(kind);
           await pumpRouterApp(tester, router);
@@ -221,7 +259,12 @@ final _loginGuard = AutoRouteGuard.simple((resolver, _) {
   }
 });
 
-RootStackRouter _buildRouter(_Tabs kind, {AutoRouteGuard? guard, int guardedTab = 1, int homeIndex = -1}) {
+RootStackRouter _buildRouter(
+  _Tabs kind, {
+  AutoRouteGuard? guard,
+  int guardedTab = 1,
+  int homeIndex = -1,
+}) {
   final routes = [for (final name in _kTabNames) NamedRoute(name)];
   final host = switch (kind) {
     .indexedStack => AutoTabsRouter(routes: routes, homeIndex: homeIndex),
@@ -247,7 +290,10 @@ RootStackRouter _buildRouter(_Tabs kind, {AutoRouteGuard? guard, int guardedTab 
           'LoginRoute',
           builder: (data) => Scaffold(
             body: Center(
-              child: TextButton(onPressed: () => data.router.root.reevaluateGuards(), child: const Text('LoginRoute')),
+              child: TextButton(
+                onPressed: () => data.router.root.reevaluateGuards(),
+                child: const Text('LoginRoute'),
+              ),
             ),
           ),
         ),
@@ -257,12 +303,17 @@ RootStackRouter _buildRouter(_Tabs kind, {AutoRouteGuard? guard, int guardedTab 
   );
 }
 
-TabsRouter _tabsOf(RootStackRouter router) => router.innerRouterOf('HomeRoute')!;
+TabsRouter _tabsOf(RootStackRouter router) =>
+    router.innerRouterOf('HomeRoute')!;
 
 // The tab at [index] is the active one, and the only one on screen.
 void _expectTab(TabsRouter tabs, int index) {
   expect(tabs.activeIndex, index);
   for (final (i, name) in _kTabNames.indexed) {
-    expect(find.text(name), i == index ? findsOneWidget : findsNothing, reason: name);
+    expect(
+      find.text(name),
+      i == index ? findsOneWidget : findsNothing,
+      reason: name,
+    );
   }
 }

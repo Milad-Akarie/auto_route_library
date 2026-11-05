@@ -16,34 +16,57 @@ void main() {
   // onPopInvoked('again').
   // Should: no error, ThirdRoute's push future completes once with
   // 'swipe', and only ThirdRoute closes.
-  testWidgets('Two pops of the same page in one frame complete its push future once (flutter/flutter#187326)', (
-    tester,
-  ) async {
-    Widget page(String name) => Scaffold(body: Text(name));
-    final router = RootStackRouter.build(
-      routes: [
-        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => page('HomeRoute')),
-        NamedRouteDef(name: 'FirstRoute', path: '/first', builder: (_, _) => page('FirstRoute')),
-        NamedRouteDef(name: 'SecondRoute', path: '/second', builder: (_, _) => page('SecondRoute')),
-        NamedRouteDef(name: 'ThirdRoute', path: '/third', builder: (_, _) => page('ThirdRoute')),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(const NamedRoute('FirstRoute')));
-    unawaited(router.push(const NamedRoute('SecondRoute')));
-    final results = <String?>[];
-    unawaited(router.push<String>(const NamedRoute('ThirdRoute')).then(results.add));
-    await tester.pumpAndSettle();
-    final third = router.topPage!.routeData;
+  testWidgets(
+    'Two pops of the same page in one frame complete its push future once (flutter/flutter#187326)',
+    (tester) async {
+      Widget page(String name) => Scaffold(body: Text(name));
+      final router = RootStackRouter.build(
+        routes: [
+          NamedRouteDef(
+            name: 'HomeRoute',
+            path: '/',
+            builder: (_, _) => page('HomeRoute'),
+          ),
+          NamedRouteDef(
+            name: 'FirstRoute',
+            path: '/first',
+            builder: (_, _) => page('FirstRoute'),
+          ),
+          NamedRouteDef(
+            name: 'SecondRoute',
+            path: '/second',
+            builder: (_, _) => page('SecondRoute'),
+          ),
+          NamedRouteDef(
+            name: 'ThirdRoute',
+            path: '/third',
+            builder: (_, _) => page('ThirdRoute'),
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      unawaited(router.push(const NamedRoute('FirstRoute')));
+      unawaited(router.push(const NamedRoute('SecondRoute')));
+      final results = <String?>[];
+      unawaited(
+        router.push<String>(const NamedRoute('ThirdRoute')).then(results.add),
+      );
+      await tester.pumpAndSettle();
+      final third = router.topPage!.routeData;
 
-    Navigator.of(tester.element(find.text('ThirdRoute'))).pop('swipe');
-    third.onPopInvoked('again');
-    await tester.pumpAndSettle();
-    third.onPopInvoked('later');
-    await tester.pumpAndSettle();
+      Navigator.of(tester.element(find.text('ThirdRoute'))).pop('swipe');
+      third.onPopInvoked('again');
+      await tester.pumpAndSettle();
+      third.onPopInvoked('later');
+      await tester.pumpAndSettle();
 
-    expect(tester.takeException(), isNull);
-    expect(results, ['swipe']);
-    expect(router.stack.map((e) => e.routeData.name), ['HomeRoute', 'FirstRoute', 'SecondRoute']);
-  });
+      expect(tester.takeException(), isNull);
+      expect(results, ['swipe']);
+      expect(router.stack.map((e) => e.routeData.name), [
+        'HomeRoute',
+        'FirstRoute',
+        'SecondRoute',
+      ]);
+    },
+  );
 }

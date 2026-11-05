@@ -26,7 +26,10 @@ void main() {
   // redirecting, so the test still ends where the loop used to run forever.
   bool loopedTooLong() => ++guardCalls > 100;
 
-  Future<List<FlutterErrorDetails>> collectErrors(WidgetTester tester, Future<void> Function() body) async {
+  Future<List<FlutterErrorDetails>> collectErrors(
+    WidgetTester tester,
+    Future<void> Function() body,
+  ) async {
     final reported = <FlutterErrorDetails>[];
     final onError = FlutterError.onError;
     FlutterError.onError = reported.add;
@@ -49,13 +52,28 @@ void main() {
     (tester) async {
       final router = _AppRouter(
         routes: [
-          NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => page('HomeRoute')),
-          NamedRouteDef(name: 'LoginRoute', path: '/login', builder: (_, _) => page('LoginRoute')),
+          NamedRouteDef(
+            name: 'HomeRoute',
+            path: '/',
+            builder: (_, _) => page('HomeRoute'),
+          ),
+          NamedRouteDef(
+            name: 'LoginRoute',
+            path: '/login',
+            builder: (_, _) => page('LoginRoute'),
+          ),
         ],
-        guards: [AutoRouteGuard.redirect((_) => loopedTooLong() ? null : const NamedRoute('LoginRoute'))],
+        guards: [
+          AutoRouteGuard.redirect(
+            (_) => loopedTooLong() ? null : const NamedRoute('LoginRoute'),
+          ),
+        ],
       );
 
-      final errors = await collectErrors(tester, () => pumpRouterConfigApp(tester, router.config()));
+      final errors = await collectErrors(
+        tester,
+        () => pumpRouterConfigApp(tester, router.config()),
+      );
 
       expect(errors, hasLength(1));
       expect(errors.singleOrNull?.exception.toString(), contains('LoginRoute'));
@@ -68,34 +86,52 @@ void main() {
   // HomeRoute, push ARoute, whose guard calls redirectUntil(BRoute), whose
   // guard calls redirectUntil(ARoute).
   // The loop must stop with an error that names the routes.
-  testWidgets('Two guards whose redirectUntil sends to each other report the loop (flutter/flutter#118061)', (
-    tester,
-  ) async {
-    final aGuard = AutoRouteGuard.simple((resolver, _) {
-      if (loopedTooLong()) return resolver.next();
-      unawaited(resolver.redirectUntil(const NamedRoute('BRoute')));
-    });
-    final bGuard = AutoRouteGuard.simple((resolver, _) {
-      if (loopedTooLong()) return resolver.next();
-      unawaited(resolver.redirectUntil(const NamedRoute('ARoute')));
-    });
-    final router = _AppRouter(
-      routes: [
-        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => page('HomeRoute')),
-        NamedRouteDef(name: 'ARoute', path: '/a', guards: [aGuard], builder: (_, _) => page('ARoute')),
-        NamedRouteDef(name: 'BRoute', path: '/b', guards: [bGuard], builder: (_, _) => page('BRoute')),
-      ],
-    );
-    await pumpRouterConfigApp(tester, router.config());
+  testWidgets(
+    'Two guards whose redirectUntil sends to each other report the loop (flutter/flutter#118061)',
+    (tester) async {
+      final aGuard = AutoRouteGuard.simple((resolver, _) {
+        if (loopedTooLong()) return resolver.next();
+        unawaited(resolver.redirectUntil(const NamedRoute('BRoute')));
+      });
+      final bGuard = AutoRouteGuard.simple((resolver, _) {
+        if (loopedTooLong()) return resolver.next();
+        unawaited(resolver.redirectUntil(const NamedRoute('ARoute')));
+      });
+      final router = _AppRouter(
+        routes: [
+          NamedRouteDef(
+            name: 'HomeRoute',
+            path: '/',
+            builder: (_, _) => page('HomeRoute'),
+          ),
+          NamedRouteDef(
+            name: 'ARoute',
+            path: '/a',
+            guards: [aGuard],
+            builder: (_, _) => page('ARoute'),
+          ),
+          NamedRouteDef(
+            name: 'BRoute',
+            path: '/b',
+            guards: [bGuard],
+            builder: (_, _) => page('BRoute'),
+          ),
+        ],
+      );
+      await pumpRouterConfigApp(tester, router.config());
 
-    final errors = await collectErrors(tester, () async {
-      unawaited(router.push(const NamedRoute('ARoute')));
-    });
+      final errors = await collectErrors(tester, () async {
+        unawaited(router.push(const NamedRoute('ARoute')));
+      });
 
-    expect(errors, hasLength(1));
-    expect(errors.singleOrNull?.exception.toString(), allOf(contains('ARoute'), contains('BRoute')));
-    expect(guardCalls, lessThan(100));
-  });
+      expect(errors, hasLength(1));
+      expect(
+        errors.singleOrNull?.exception.toString(),
+        allOf(contains('ARoute'), contains('BRoute')),
+      );
+      expect(guardCalls, lessThan(100));
+    },
+  );
 
   // https://github.com/flutter/flutter/issues/118061
   // The same loop through AutoRouteGuard.redirectPath(). Steps: start the app
@@ -105,44 +141,74 @@ void main() {
     (tester) async {
       final router = _AppRouter(
         routes: [
-          NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => page('HomeRoute')),
-          NamedRouteDef(name: 'LoginRoute', path: '/login', builder: (_, _) => page('LoginRoute')),
+          NamedRouteDef(
+            name: 'HomeRoute',
+            path: '/',
+            builder: (_, _) => page('HomeRoute'),
+          ),
+          NamedRouteDef(
+            name: 'LoginRoute',
+            path: '/login',
+            builder: (_, _) => page('LoginRoute'),
+          ),
         ],
-        guards: [AutoRouteGuard.redirectPath((_) => loopedTooLong() ? null : '/login')],
+        guards: [
+          AutoRouteGuard.redirectPath((_) => loopedTooLong() ? null : '/login'),
+        ],
       );
 
-      final errors = await collectErrors(tester, () => pumpRouterConfigApp(tester, router.config()));
+      final errors = await collectErrors(
+        tester,
+        () => pumpRouterConfigApp(tester, router.config()),
+      );
 
       expect(errors, hasLength(1));
-      expect(errors.singleOrNull?.exception.toString(), contains('A guard redirected LoginRoute to itself.'));
+      expect(
+        errors.singleOrNull?.exception.toString(),
+        contains('A guard redirected LoginRoute to itself.'),
+      );
       expect(guardCalls, 2);
     },
   );
 
   // A guard that sends a route to the same route with a child is no loop:
   // the second time the guard sees the child and lets it through.
-  testWidgets('A guard redirecting a route to its own default child is not a loop (flutter/flutter#118061)', (
-    tester,
-  ) async {
-    final router = _AppRouter(
-      routes: [
-        NamedRouteDef(
-          name: 'HomeRoute',
-          path: '/',
-          builder: (_, _) => const AutoRouter(),
-          guards: [
-            AutoRouteGuard.redirectPath((resolver) => resolver.route.hasChildren || loopedTooLong() ? null : '/feed'),
-          ],
-          children: [NamedRouteDef(name: 'FeedRoute', path: 'feed', builder: (_, _) => page('FeedRoute'))],
-        ),
-      ],
-    );
+  testWidgets(
+    'A guard redirecting a route to its own default child is not a loop (flutter/flutter#118061)',
+    (tester) async {
+      final router = _AppRouter(
+        routes: [
+          NamedRouteDef(
+            name: 'HomeRoute',
+            path: '/',
+            builder: (_, _) => const AutoRouter(),
+            guards: [
+              AutoRouteGuard.redirectPath(
+                (resolver) => resolver.route.hasChildren || loopedTooLong()
+                    ? null
+                    : '/feed',
+              ),
+            ],
+            children: [
+              NamedRouteDef(
+                name: 'FeedRoute',
+                path: 'feed',
+                builder: (_, _) => page('FeedRoute'),
+              ),
+            ],
+          ),
+        ],
+      );
 
-    final errors = await collectErrors(tester, () => pumpRouterConfigApp(tester, router.config()));
+      final errors = await collectErrors(
+        tester,
+        () => pumpRouterConfigApp(tester, router.config()),
+      );
 
-    expect(errors, isEmpty);
-    expectTopPage(router, 'FeedRoute');
-  });
+      expect(errors, isEmpty);
+      expectTopPage(router, 'FeedRoute');
+    },
+  );
 
   // A re-check starts over: LoginRoute, opened by a redirect from HomeRoute,
   // sends the user back to HomeRoute once they are logged in.
@@ -153,21 +219,33 @@ void main() {
       addTearDown(auth.dispose);
       final router = _AppRouter(
         routes: [
-          NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => page('HomeRoute')),
-          NamedRouteDef(name: 'LoginRoute', path: '/login', builder: (_, _) => page('LoginRoute')),
+          NamedRouteDef(
+            name: 'HomeRoute',
+            path: '/',
+            builder: (_, _) => page('HomeRoute'),
+          ),
+          NamedRouteDef(
+            name: 'LoginRoute',
+            path: '/login',
+            builder: (_, _) => page('LoginRoute'),
+          ),
         ],
         guards: [
           AutoRouteGuard.redirect((resolver) {
             if (loopedTooLong()) return null;
             final onLogin = resolver.routeName == 'LoginRoute';
-            if (auth.value) return onLogin ? const NamedRoute('HomeRoute') : null;
+            if (auth.value)
+              return onLogin ? const NamedRoute('HomeRoute') : null;
             return onLogin ? null : const NamedRoute('LoginRoute');
           }),
         ],
       );
 
       final errors = await collectErrors(tester, () async {
-        await pumpRouterConfigApp(tester, router.config(reevaluateListenable: auth));
+        await pumpRouterConfigApp(
+          tester,
+          router.config(reevaluateListenable: auth),
+        );
         expectTopPage(router, 'LoginRoute');
         auth.value = true;
       });

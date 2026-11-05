@@ -11,25 +11,37 @@ import '../router_test_utils.dart';
 // Should: nothing is left to pop, so the router lets the platform handle back
 // (maybePop is false) and the page stays, as for any first page.
 void main() {
-  testWidgets('Back on the first page of a shell route is left to the platform', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        NamedRouteDef(
-          name: 'ShellRoute',
-          path: '/',
-          initial: true,
-          builder: (_, _) => const AutoRouter(),
-          children: [
-            NamedRouteDef(name: 'MainRoute', path: 'main', initial: true, builder: (_, _) => const Text('main')),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterConfigApp(tester, router.config());
-    expect(find.text('main'), findsOneWidget);
-    expect(await router.maybePop(), isFalse);
-    await tester.pumpAndSettle();
-    expect(find.text('main'), findsOneWidget, reason: 'after pumpRouterConfigApp(tester, router.config())');
-    expect(tester.takeException(), isNull);
-  });
+  testWidgets(
+    'Back on the first page of a shell route is left to the platform',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          NamedRouteDef(
+            name: 'ShellRoute',
+            path: '/',
+            initial: true,
+            builder: (_, _) => const AutoRouter(),
+            children: [
+              NamedRouteDef(
+                name: 'MainRoute',
+                path: 'main',
+                initial: true,
+                builder: (_, _) => const Text('main'),
+              ),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterConfigApp(tester, router.config());
+      expect(find.text('main'), findsOneWidget);
+      expect(await router.maybePop(), isFalse);
+      await tester.pumpAndSettle();
+      expect(
+        find.text('main'),
+        findsOneWidget,
+        reason: 'after pumpRouterConfigApp(tester, router.config())',
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
 }

@@ -25,15 +25,25 @@ void main() {
     expect(textFinder, findsOneWidget);
     expect(wrapperFinder, findsOneWidget);
 
-    expect(find.text('Wrapped'), findsOneWidget, reason: 'after final wrapperFinder = find.text(Wrapped)');
+    expect(
+      find.text('Wrapped'),
+      findsOneWidget,
+      reason: 'after final wrapperFinder = find.text(Wrapped)',
+    );
     expect(find.text('Page Content'), findsOneWidget);
 
     // Verify structure: Column -> [Text('Wrapped'), Expanded -> _WrapperPage -> Scaffold -> Text('Page Content')]
     final columnFinder = find.byType(Column);
     expect(columnFinder, findsOneWidget);
 
-    expect(find.descendant(of: columnFinder, matching: find.text('Wrapped')), findsOneWidget);
-    expect(find.descendant(of: columnFinder, matching: find.text('Page Content')), findsOneWidget);
+    expect(
+      find.descendant(of: columnFinder, matching: find.text('Wrapped')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: columnFinder, matching: find.text('Page Content')),
+      findsOneWidget,
+    );
   });
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/1713
@@ -44,39 +54,49 @@ void main() {
   // Should: BRoute is pushed in the nested router; the provided state stays.
   // Pushing the absolute path '/parent/b' from the root instead pushes a
   // second ParentRoute with its own wrapper, as the issue's comments explain.
-  testWidgets('Pushing a sibling route from a child widget keeps the wrapper of the host route', (tester) async {
-    _ProvidedState.created = 0;
-    final localRouter = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/parent',
-          initial: true,
-          page: _ParentRoute.page,
-          children: [
-            AutoRoute(path: 'a', initial: true, page: _aPage),
-            AutoRoute(
-              path: 'b',
-              page: PageInfo('BRoute', builder: (_) => const Text('BRoute')),
-            ),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, localRouter);
-    expect(find.text('Push B'), findsOneWidget);
-    expect(_ProvidedState.created, 1);
+  testWidgets(
+    'Pushing a sibling route from a child widget keeps the wrapper of the host route',
+    (tester) async {
+      _ProvidedState.created = 0;
+      final localRouter = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/parent',
+            initial: true,
+            page: _ParentRoute.page,
+            children: [
+              AutoRoute(path: 'a', initial: true, page: _aPage),
+              AutoRoute(
+                path: 'b',
+                page: PageInfo('BRoute', builder: (_) => const Text('BRoute')),
+              ),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, localRouter);
+      expect(find.text('Push B'), findsOneWidget);
+      expect(_ProvidedState.created, 1);
 
-    await tester.tap(find.text('Push B'));
-    await tester.pumpAndSettle();
-    expect(localRouter.topRoute.name, 'BRoute');
-    expect(localRouter.stack.map((page) => page.name), [_ParentRoute.name]);
-    expect(_ProvidedState.created, 1, reason: 'after tester.tap(find.text(Push B))');
-  });
+      await tester.tap(find.text('Push B'));
+      await tester.pumpAndSettle();
+      expect(localRouter.topRoute.name, 'BRoute');
+      expect(localRouter.stack.map((page) => page.name), [_ParentRoute.name]);
+      expect(
+        _ProvidedState.created,
+        1,
+        reason: 'after tester.tap(find.text(Push B))',
+      );
+    },
+  );
 }
 
 abstract final class _ParentRoute {
   static const String name = 'ParentRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const _ParentPage());
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const _ParentPage(),
+  );
 }
 
 class _ParentPage extends AutoRouter implements AutoRouteWrapper {
@@ -109,14 +129,20 @@ class _ProvidedState extends State<_Provided> {
   Widget build(BuildContext context) => widget.child;
 }
 
-final PageInfo _aPage = PageInfo('ARoute', builder: (_) => const Scaffold(body: _AChild()));
+final PageInfo _aPage = PageInfo(
+  'ARoute',
+  builder: (_) => const Scaffold(body: _AChild()),
+);
 
 class _AChild extends StatelessWidget {
   const new();
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(onPressed: () => context.router.push(const NamedRoute('BRoute')), child: const Text('Push B'));
+    return TextButton(
+      onPressed: () => context.router.push(const NamedRoute('BRoute')),
+      child: const Text('Push B'),
+    );
   }
 }
 
@@ -124,12 +150,17 @@ class _AChild extends StatelessWidget {
 
 class _WrapperRouter extends RootStackRouter {
   @override
-  List<AutoRoute> get routes => [AutoRoute(page: _WrapperRoute.page, initial: true)];
+  List<AutoRoute> get routes => [
+    AutoRoute(page: _WrapperRoute.page, initial: true),
+  ];
 }
 
 abstract final class _WrapperRoute {
   static const String name = 'WrapperRoute';
-  static final PageInfo page = PageInfo(name, builder: (data) => const WrappedRoute(child: _WrapperPage()));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (data) => const WrappedRoute(child: _WrapperPage()),
+  );
 }
 
 class _WrapperPage extends StatelessWidget implements AutoRouteWrapper {

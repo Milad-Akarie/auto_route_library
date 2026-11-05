@@ -18,7 +18,10 @@ void main() {
       routes: [
         AutoRoute(page: _page('HomeRoute'), path: '/'),
         AutoRoute(
-          page: PageInfo('TestRoute', builder: (data) => Text('Test ${data.params.getString('id')}')),
+          page: PageInfo(
+            'TestRoute',
+            builder: (data) => Text('Test ${data.params.getString('id')}'),
+          ),
           path: '/test/:id',
         ),
       ],
@@ -31,7 +34,9 @@ void main() {
   // stayed where it was. Run this file with `--wasm` too.
   // Steps: open the app, type '/test/42' into the address bar.
   // Should: the page for '/test/:id' shows with id 42.
-  testWidgets('On web, a path typed into the address bar opens its page', (tester) async {
+  testWidgets('On web, a path typed into the address bar opens its page', (
+    tester,
+  ) async {
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
 
@@ -43,8 +48,12 @@ void main() {
 
   // Steps: open the app on '/test/7', as entering that url in a new tab does.
   // Should: the page for '/test/:id' shows with id 7.
-  testWidgets('On web, the app opens on the path in the address bar', (tester) async {
-    router.routeInfoProvider(initialRouteInformation: RouteInformation(uri: Uri.parse('/test/7')));
+  testWidgets('On web, the app opens on the path in the address bar', (
+    tester,
+  ) async {
+    router.routeInfoProvider(
+      initialRouteInformation: RouteInformation(uri: Uri.parse('/test/7')),
+    );
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
 
@@ -54,4 +63,5 @@ void main() {
   });
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));

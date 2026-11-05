@@ -24,48 +24,61 @@ void main() {
     );
   });
 
-  testWidgets('a back swipe let go past the middle slides the page out from there', (tester) async {
-    tester.binding.handleAppLifecycleStateChanged(.resumed);
-    addTearDown(router.dispose);
-    await tester.pumpWidget(MaterialApp.router(theme: iosTheme, routerConfig: router.config()));
-    await tester.pumpAndSettle();
-    unawaited(router.push(const PageRouteInfo('Details')));
-    await tester.pumpAndSettle();
-    final animation = router.topRoute.animation! as Animation<double>;
-    final width = tester.getSize(find.byType(Navigator).first).width;
+  testWidgets(
+    'a back swipe let go past the middle slides the page out from there',
+    (tester) async {
+      tester.binding.handleAppLifecycleStateChanged(.resumed);
+      addTearDown(router.dispose);
+      await tester.pumpWidget(
+        MaterialApp.router(theme: iosTheme, routerConfig: router.config()),
+      );
+      await tester.pumpAndSettle();
+      unawaited(router.push(const PageRouteInfo('Details')));
+      await tester.pumpAndSettle();
+      final animation = router.topRoute.animation! as Animation<double>;
+      final width = tester.getSize(find.byType(Navigator).first).width;
 
-    final gesture = await tester.startGesture(const Offset(2, 300));
-    await gesture.moveBy(const Offset(20, 0));
-    await tester.pump();
-    await gesture.moveBy(Offset(width * 0.6 - 22, 0));
-    await tester.pump();
-    // Stop before letting go, so the release has no speed.
-    await tester.pump(const Duration(milliseconds: 500));
-    final atRelease = animation.value;
-    expect(atRelease, closeTo(0.4, 0.05));
-    await gesture.up();
+      final gesture = await tester.startGesture(const Offset(2, 300));
+      await gesture.moveBy(const Offset(20, 0));
+      await tester.pump();
+      await gesture.moveBy(Offset(width * 0.6 - 22, 0));
+      await tester.pump();
+      // Stop before letting go, so the release has no speed.
+      await tester.pump(const Duration(milliseconds: 500));
+      final atRelease = animation.value;
+      expect(atRelease, closeTo(0.4, 0.05));
+      await gesture.up();
 
-    // Each frame, the page moves on toward the left edge: no jump back in,
-    // and no jump straight out.
-    final values = [atRelease];
-    for (var frame = 0; frame < 60 && animation.value > 0; frame++) {
-      await tester.pump(const Duration(milliseconds: 16));
-      values.add(animation.value);
-    }
-    final [first, ...rest] = values;
-    var previous = first;
-    for (final (index, value) in rest.indexed) {
-      expect(value, lessThanOrEqualTo(previous), reason: 'frame ${index + 1} of $values');
-      expect(previous - value, lessThan(0.2), reason: 'frame ${index + 1} of $values');
-      previous = value;
-    }
-    expect(values.lastOrNull, 0);
+      // Each frame, the page moves on toward the left edge: no jump back in,
+      // and no jump straight out.
+      final values = [atRelease];
+      for (var frame = 0; frame < 60 && animation.value > 0; frame++) {
+        await tester.pump(const Duration(milliseconds: 16));
+        values.add(animation.value);
+      }
+      final [first, ...rest] = values;
+      var previous = first;
+      for (final (index, value) in rest.indexed) {
+        expect(
+          value,
+          lessThanOrEqualTo(previous),
+          reason: 'frame ${index + 1} of $values',
+        );
+        expect(
+          previous - value,
+          lessThan(0.2),
+          reason: 'frame ${index + 1} of $values',
+        );
+        previous = value;
+      }
+      expect(values.lastOrNull, 0);
 
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(router.stack.map((page) => page.routeData.name), ['Home']);
-    expectTopPage(router, 'Home');
-  });
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(router.stack.map((page) => page.routeData.name), ['Home']);
+      expectTopPage(router, 'Home');
+    },
+  );
 }
 
 PageInfo _page(String name) => .new(

@@ -18,7 +18,8 @@ class _Observer extends AutoRouterObserver {
       events.add('didRemove ${route.settings.name ?? 'null'}');
 
   @override
-  void didReplace({Route<Object?>? newRoute, Route<Object?>? oldRoute}) => events.add('didReplace');
+  void didReplace({Route<Object?>? newRoute, Route<Object?>? oldRoute}) =>
+      events.add('didReplace');
 }
 
 class _EditPage extends StatefulWidget {
@@ -58,40 +59,48 @@ void main() {
   // times while EditRoute is on top.
   // Should: no pop callback, no didPop, didRemove or didReplace, and
   // EditRoute's state is kept.
-  testWidgets('A reevaluation calls no pop callback for the page on top (flutter/flutter#189578)', (tester) async {
-    final user = ValueNotifier(0);
-    addTearDown(user.dispose);
-    final observer = _Observer();
-    var popCallbacks = 0;
-    _EditPageState.inits = 0;
-    final router = RootStackRouter.build(
-      guards: [AutoRouteGuard.simple((resolver, _) => resolver.next())],
-      routes: [
-        NamedRouteDef(
-          name: 'HomeRoute',
-          path: '/',
-          builder: (_, _) => const Scaffold(body: Text('HomeRoute')),
-        ),
-        NamedRouteDef(
-          name: 'EditRoute',
-          path: '/edit',
-          builder: (_, _) => _EditPage(onPop: () => popCallbacks++),
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router, reevaluationNotifier: user, observers: () => [observer]);
-    unawaited(router.pushPath('/edit'));
-    await tester.pumpAndSettle();
-    observer.events.clear();
-
-    for (var i = 0; i < 3; i++) {
-      user.value++;
+  testWidgets(
+    'A reevaluation calls no pop callback for the page on top (flutter/flutter#189578)',
+    (tester) async {
+      final user = ValueNotifier(0);
+      addTearDown(user.dispose);
+      final observer = _Observer();
+      var popCallbacks = 0;
+      _EditPageState.inits = 0;
+      final router = RootStackRouter.build(
+        guards: [AutoRouteGuard.simple((resolver, _) => resolver.next())],
+        routes: [
+          NamedRouteDef(
+            name: 'HomeRoute',
+            path: '/',
+            builder: (_, _) => const Scaffold(body: Text('HomeRoute')),
+          ),
+          NamedRouteDef(
+            name: 'EditRoute',
+            path: '/edit',
+            builder: (_, _) => _EditPage(onPop: () => popCallbacks++),
+          ),
+        ],
+      );
+      await pumpRouterApp(
+        tester,
+        router,
+        reevaluationNotifier: user,
+        observers: () => [observer],
+      );
+      unawaited(router.pushPath('/edit'));
       await tester.pumpAndSettle();
-    }
+      observer.events.clear();
 
-    expect(popCallbacks, 0);
-    expect(observer.events, isEmpty);
-    expect(_EditPageState.inits, 1);
-    expectTopPage(router, 'EditRoute');
-  });
+      for (var i = 0; i < 3; i++) {
+        user.value++;
+        await tester.pumpAndSettle();
+      }
+
+      expect(popCallbacks, 0);
+      expect(observer.events, isEmpty);
+      expect(_EditPageState.inits, 1);
+      expectTopPage(router, 'EditRoute');
+    },
+  );
 }

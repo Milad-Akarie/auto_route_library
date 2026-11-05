@@ -21,7 +21,9 @@ class _ReloadedRouter extends MainRouter {
 }
 
 void main() {
-  testWidgets('A route added before a hot reload opens by its path', (tester) async {
+  testWidgets('A route added before a hot reload opens by its path', (
+    tester,
+  ) async {
     final router = _ReloadedRouter();
     await pumpRouterConfigApp(tester, router.config());
     expectCurrentPage(router, FirstRoute.name);
@@ -35,7 +37,9 @@ void main() {
     expectCurrentPage(router, SecondRoute.name);
   });
 
-  testWidgets('A route added before a hot reload opens by its route', (tester) async {
+  testWidgets('A route added before a hot reload opens by its route', (
+    tester,
+  ) async {
     final router = _ReloadedRouter();
     await pumpRouterConfigApp(tester, router.config());
 
@@ -48,7 +52,9 @@ void main() {
     expectCurrentPage(router, SecondRoute.name);
   });
 
-  testWidgets('A link to a route added before a hot reload opens it', (tester) async {
+  testWidgets('A link to a route added before a hot reload opens it', (
+    tester,
+  ) async {
     final router = _ReloadedRouter();
     await pumpRouterConfigApp(tester, router.config());
 
@@ -60,29 +66,38 @@ void main() {
     expectCurrentPage(router, SecondRoute.name);
   });
 
-  testWidgets('A child route added before a hot reload opens in its nested router', (tester) async {
-    final router = _ReloadedRouter();
-    AutoRoute host(List<AutoRoute> children) => .new(path: '/second', page: SecondHostRoute.page, children: children);
-    final nested1 = AutoRoute(path: '', page: SecondNested1Route.page);
-    router.list.add(host([nested1]));
-    await pumpRouterConfigApp(tester, router.config());
-    unawaited(router.navigatePath('/second'));
-    await tester.pumpAndSettle();
-    expectTopPage(router, SecondNested1Route.name);
+  testWidgets(
+    'A child route added before a hot reload opens in its nested router',
+    (tester) async {
+      final router = _ReloadedRouter();
+      AutoRoute host(List<AutoRoute> children) =>
+          .new(path: '/second', page: SecondHostRoute.page, children: children);
+      final nested1 = AutoRoute(path: '', page: SecondNested1Route.page);
+      router.list.add(host([nested1]));
+      await pumpRouterConfigApp(tester, router.config());
+      unawaited(router.navigatePath('/second'));
+      await tester.pumpAndSettle();
+      expectTopPage(router, SecondNested1Route.name);
 
-    router.list.replaceRange(router.list.length - 1, router.list.length, [
-      host([nested1, AutoRoute(path: 'nested2', page: SecondNested2Route.page)]),
-    ]);
-    unawaited(tester.binding.reassembleApplication());
-    await tester.pumpAndSettle();
+      router.list.replaceRange(router.list.length - 1, router.list.length, [
+        host([
+          nested1,
+          AutoRoute(path: 'nested2', page: SecondNested2Route.page),
+        ]),
+      ]);
+      unawaited(tester.binding.reassembleApplication());
+      await tester.pumpAndSettle();
 
-    final hostRouter = router.innerRouterOf<StackRouter>(SecondHostRoute.name)!;
-    unawaited(hostRouter.push(const SecondNested2Route()));
-    await tester.pumpAndSettle();
-    expectTopPage(router, SecondNested2Route.name);
+      final hostRouter = router.innerRouterOf<StackRouter>(
+        SecondHostRoute.name,
+      )!;
+      unawaited(hostRouter.push(const SecondNested2Route()));
+      await tester.pumpAndSettle();
+      expectTopPage(router, SecondNested2Route.name);
 
-    unawaited(router.navigatePath('/second/nested2'));
-    await tester.pumpAndSettle();
-    expectTopPage(router, SecondNested2Route.name);
-  });
+      unawaited(router.navigatePath('/second/nested2'));
+      await tester.pumpAndSettle();
+      expectTopPage(router, SecondNested2Route.name);
+    },
+  );
 }

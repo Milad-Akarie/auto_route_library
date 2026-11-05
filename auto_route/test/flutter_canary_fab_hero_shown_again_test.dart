@@ -22,44 +22,52 @@ import 'router_test_utils.dart';
 // If this test fails after a Flutter upgrade, Flutter no longer asserts here:
 // drop this canary.
 void main() {
-  testWidgets('popping a page while its FloatingActionButton comes back asserts on two heroes', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo(
-            'HomeRoute',
-            builder: (_) => const Scaffold(
-              body: Text('HomeRoute'),
-              floatingActionButton: FloatingActionButton(onPressed: noOp, child: Text('home button')),
+  testWidgets(
+    'popping a page while its FloatingActionButton comes back asserts on two heroes',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => const Scaffold(
+                body: Text('HomeRoute'),
+                floatingActionButton: FloatingActionButton(
+                  onPressed: noOp,
+                  child: Text('home button'),
+                ),
+              ),
             ),
           ),
-        ),
-        AutoRoute(
-          path: '/second',
-          page: PageInfo('SecondRoute', builder: (_) => const _SecondPage()),
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(const NamedRoute('SecondRoute')));
-    await tester.pumpAndSettle();
+          AutoRoute(
+            path: '/second',
+            page: PageInfo('SecondRoute', builder: (_) => const _SecondPage()),
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      unawaited(router.push(const NamedRoute('SecondRoute')));
+      await tester.pumpAndSettle();
 
-    await tester.tap(find.text('save'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
-    await tester.pump();
-    await tester.pumpAndSettle();
-    expect(router.topRoute.name, 'HomeRoute');
-    expect(
-      tester.takeException(),
-      isA<FlutterError>().having(
-        (error) => error.message,
-        'message',
-        startsWith('There are multiple heroes that share the same tag within a subtree.'),
-      ),
-    );
-  });
+      await tester.tap(find.text('save'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump();
+      await tester.pumpAndSettle();
+      expect(router.topRoute.name, 'HomeRoute');
+      expect(
+        tester.takeException(),
+        isA<FlutterError>().having(
+          (error) => error.message,
+          'message',
+          startsWith(
+            'There are multiple heroes that share the same tag within a subtree.',
+          ),
+        ),
+      );
+    },
+  );
 }
 
 class _SecondPage extends StatefulWidget {
@@ -85,8 +93,16 @@ class _SecondPageState extends State<_SecondPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: OutlinedButton(onPressed: () => unawaited(_save()), child: const Text('save')),
-      floatingActionButton: _saving ? null : const FloatingActionButton(onPressed: noOp, child: Text('second button')),
+      body: OutlinedButton(
+        onPressed: () => unawaited(_save()),
+        child: const Text('save'),
+      ),
+      floatingActionButton: _saving
+          ? null
+          : const FloatingActionButton(
+              onPressed: noOp,
+              child: Text('second button'),
+            ),
     );
   }
 }

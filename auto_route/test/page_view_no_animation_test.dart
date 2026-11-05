@@ -11,12 +11,18 @@ import 'router_test_utils.dart';
 // animatePageTransition: true (the control) it is still sliding after that frame.
 void main() {
   for (final animate in [false, true]) {
-    testWidgets('Switching a tab with animatePageTransition: $animate', (tester) async {
+    testWidgets('Switching a tab with animatePageTransition: $animate', (
+      tester,
+    ) async {
       final router = RootStackRouter.build(
         routes: [
           AutoRoute(
             path: '/',
-            page: PageInfo('HostRoute', builder: (_) => AutoTabsRouter.pageView(animatePageTransition: animate)),
+            page: PageInfo(
+              'HostRoute',
+              builder: (_) =>
+                  AutoTabsRouter.pageView(animatePageTransition: animate),
+            ),
             children: [
               for (final name in ['A', 'B', 'C'])
                 AutoRoute(
@@ -29,7 +35,9 @@ void main() {
         ],
       );
       await pumpRouterApp(tester, router);
-      final controller = tester.widget<AutoPageView>(find.byType(AutoPageView)).controller;
+      final controller = tester
+          .widget<AutoPageView>(find.byType(AutoPageView))
+          .controller;
       expect(controller.page, 0);
 
       router.innerRouterOf<TabsRouter>('HostRoute')!.setActiveIndex(1);
@@ -51,34 +59,42 @@ void main() {
   // Steps: AutoTabsRouter.pageView(duration: Duration.zero), then
   // tabsRouter.setActiveIndex(1), then 2 (a jump over a page), then 1.
   // Should: no error, and the page view is on that page after one frame.
-  testWidgets('Switching a tab with duration: Duration.zero jumps to the page', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('HostRoute', builder: (_) => const AutoTabsRouter.pageView(duration: .zero)),
-          children: [
-            for (final name in ['A', 'B', 'C'])
-              AutoRoute(
-                path: name.toLowerCase(),
-                page: PageInfo('${name}Route', builder: (_) => Text(name)),
-                initial: name == 'A',
-              ),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    final controller = tester.widget<AutoPageView>(find.byType(AutoPageView)).controller;
-    final tabsRouter = router.innerRouterOf<TabsRouter>('HostRoute')!;
+  testWidgets(
+    'Switching a tab with duration: Duration.zero jumps to the page',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HostRoute',
+              builder: (_) => const AutoTabsRouter.pageView(duration: .zero),
+            ),
+            children: [
+              for (final name in ['A', 'B', 'C'])
+                AutoRoute(
+                  path: name.toLowerCase(),
+                  page: PageInfo('${name}Route', builder: (_) => Text(name)),
+                  initial: name == 'A',
+                ),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      final controller = tester
+          .widget<AutoPageView>(find.byType(AutoPageView))
+          .controller;
+      final tabsRouter = router.innerRouterOf<TabsRouter>('HostRoute')!;
 
-    for (final index in [1, 2, 1]) {
-      tabsRouter.setActiveIndex(index);
-      await tester.pump();
-      expect(tester.takeException(), isNull);
-      expect(controller.page, index);
-    }
-    await tester.pumpAndSettle();
-    expect(controller.page, 1);
-  });
+      for (final index in [1, 2, 1]) {
+        tabsRouter.setActiveIndex(index);
+        await tester.pump();
+        expect(tester.takeException(), isNull);
+        expect(controller.page, index);
+      }
+      await tester.pumpAndSettle();
+      expect(controller.page, 1);
+    },
+  );
 }

@@ -12,7 +12,9 @@ import '../router_test_utils.dart';
 // The listener should hear true once B is added, and false right after pop()
 // returns, before any frame.
 void main() {
-  testWidgets('a router listener reads canPop up to date after push and pop', (tester) async {
+  testWidgets('a router listener reads canPop up to date after push and pop', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(page: _page('A'), initial: true),
@@ -39,4 +41,5 @@ void main() {
   });
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));

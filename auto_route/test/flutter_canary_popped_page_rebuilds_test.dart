@@ -17,48 +17,63 @@ import 'package:material_ui/material_ui.dart';
 // If this test fails after a Flutter upgrade, Flutter no longer rebuilds a
 // popped page: drop this canary.
 void main() {
-  testWidgets('a page popped from Navigator.pages builds once more after didPop', (tester) async {
-    final events = <String>[];
-    final observer = RouteObserver<ModalRoute<void>>();
-    final pages = <Page<void>>[
-      const MaterialPage(key: ValueKey('home'), child: Text('home')),
-      MaterialPage(key: const ValueKey('aware'), child: _AwarePage(observer, events)),
-    ];
-    await tester.pumpWidget(
-      MaterialApp(
-        home: StatefulBuilder(
-          builder: (context, setState) => Navigator(
-            observers: [observer],
-            pages: List.of(pages),
-            onDidRemovePage: (page) => setState(() => pages.remove(page)),
+  testWidgets(
+    'a page popped from Navigator.pages builds once more after didPop',
+    (tester) async {
+      final events = <String>[];
+      final observer = RouteObserver<ModalRoute<void>>();
+      final pages = <Page<void>>[
+        const MaterialPage(key: ValueKey('home'), child: Text('home')),
+        MaterialPage(
+          key: const ValueKey('aware'),
+          child: _AwarePage(observer, events),
+        ),
+      ];
+      await tester.pumpWidget(
+        MaterialApp(
+          home: StatefulBuilder(
+            builder: (context, setState) => Navigator(
+              observers: [observer],
+              pages: List.of(pages),
+              onDidRemovePage: (page) => setState(() => pages.remove(page)),
+            ),
           ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(events, ['didChangeDependencies', 'didPush', 'build']);
+      );
+      await tester.pumpAndSettle();
+      expect(events, ['didChangeDependencies', 'didPush', 'build']);
 
-    events.clear();
-    tester.state<NavigatorState>(find.byType(Navigator).last).pop();
-    await tester.pumpAndSettle();
-    expect(events, ['didPop', 'didChangeDependencies', 'build', 'dispose']);
-  });
+      events.clear();
+      tester.state<NavigatorState>(find.byType(Navigator).last).pop();
+      await tester.pumpAndSettle();
+      expect(events, ['didPop', 'didChangeDependencies', 'build', 'dispose']);
+    },
+  );
 
-  testWidgets('control: a page popped with Navigator.pop and no pages list does not build again', (tester) async {
-    final events = <String>[];
-    final observer = RouteObserver<ModalRoute<void>>();
-    final navigatorKey = GlobalKey<NavigatorState>();
-    await tester.pumpWidget(
-      MaterialApp(navigatorKey: navigatorKey, navigatorObservers: [observer], home: const Text('home')),
-    );
-    navigatorKey.currentState!.push(MaterialPageRoute<void>(builder: (_) => _AwarePage(observer, events)));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'control: a page popped with Navigator.pop and no pages list does not build again',
+    (tester) async {
+      final events = <String>[];
+      final observer = RouteObserver<ModalRoute<void>>();
+      final navigatorKey = GlobalKey<NavigatorState>();
+      await tester.pumpWidget(
+        MaterialApp(
+          navigatorKey: navigatorKey,
+          navigatorObservers: [observer],
+          home: const Text('home'),
+        ),
+      );
+      navigatorKey.currentState!.push(
+        MaterialPageRoute<void>(builder: (_) => _AwarePage(observer, events)),
+      );
+      await tester.pumpAndSettle();
 
-    events.clear();
-    navigatorKey.currentState!.pop();
-    await tester.pumpAndSettle();
-    expect(events, ['didPop', 'dispose']);
-  });
+      events.clear();
+      navigatorKey.currentState!.pop();
+      await tester.pumpAndSettle();
+      expect(events, ['didPop', 'dispose']);
+    },
+  );
 }
 
 class _AwarePage extends StatefulWidget {
@@ -76,7 +91,10 @@ class _AwarePageState extends State<_AwarePage> with RouteAware {
   void didChangeDependencies() {
     super.didChangeDependencies();
     widget.events.add('didChangeDependencies');
-    widget.observer.subscribe(this, ModalRoute.of(context)! as ModalRoute<void>);
+    widget.observer.subscribe(
+      this,
+      ModalRoute.of(context)! as ModalRoute<void>,
+    );
   }
 
   @override

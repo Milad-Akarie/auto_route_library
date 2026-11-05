@@ -24,9 +24,13 @@ void main() {
     );
   });
 
-  List<String> names() => router.stack.map((page) => page.routeData.name).toList();
+  List<String> names() =>
+      router.stack.map((page) => page.routeData.name).toList();
 
-  Future<void> openSheet(WidgetTester tester, void Function(StackRouter router) fromSheet) async {
+  Future<void> openSheet(
+    WidgetTester tester,
+    void Function(StackRouter router) fromSheet,
+  ) async {
     _fromSheet = fromSheet;
     await pumpRouterApp(tester, router);
     await tester.tap(find.text('Show bottom sheet'));
@@ -34,39 +38,51 @@ void main() {
     expect(find.text('Push to page B'), findsOneWidget);
   }
 
-  testWidgets('replace from the sheet replaces the page under it, and the sheet closes', (tester) async {
-    await openSheet(tester, (activeRouter) => activeRouter.replace(const PageRouteInfo('B')));
+  testWidgets(
+    'replace from the sheet replaces the page under it, and the sheet closes',
+    (tester) async {
+      await openSheet(
+        tester,
+        (activeRouter) => activeRouter.replace(const PageRouteInfo('B')),
+      );
 
-    await tester.tap(find.text('Push to page B'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Push to page B'));
+      await tester.pumpAndSettle();
 
-    expect(tester.takeException(), isNull);
-    expect(find.byType(BottomSheet), findsNothing);
-    expect(names(), ['B']);
-    expectTopPage(router, 'B');
-    expect(router.canPop(), isFalse);
-    expect(await router.maybePop(), isFalse);
-    await tester.pumpAndSettle();
-    expectTopPage(router, 'B');
-  });
+      expect(tester.takeException(), isNull);
+      expect(find.byType(BottomSheet), findsNothing);
+      expect(names(), ['B']);
+      expectTopPage(router, 'B');
+      expect(router.canPop(), isFalse);
+      expect(await router.maybePop(), isFalse);
+      await tester.pumpAndSettle();
+      expectTopPage(router, 'B');
+    },
+  );
 
-  testWidgets('popAndPush from the sheet closes it and shows B over Home, and pop returns to Home', (tester) async {
-    await openSheet(tester, (activeRouter) => activeRouter.popAndPush(const PageRouteInfo('B')));
+  testWidgets(
+    'popAndPush from the sheet closes it and shows B over Home, and pop returns to Home',
+    (tester) async {
+      await openSheet(
+        tester,
+        (activeRouter) => activeRouter.popAndPush(const PageRouteInfo('B')),
+      );
 
-    await tester.tap(find.text('Push to page B'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Push to page B'));
+      await tester.pumpAndSettle();
 
-    expect(tester.takeException(), isNull);
-    expect(find.byType(BottomSheet), findsNothing);
-    expect(names(), [_HomeRoute.name, 'B']);
-    expectTopPage(router, 'B');
+      expect(tester.takeException(), isNull);
+      expect(find.byType(BottomSheet), findsNothing);
+      expect(names(), [_HomeRoute.name, 'B']);
+      expectTopPage(router, 'B');
 
-    router.pop();
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull, reason: 'after router.pop()');
-    expect(names(), [_HomeRoute.name]);
-    expectTopPage(router, _HomeRoute.name);
-  });
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull, reason: 'after router.pop()');
+      expect(names(), [_HomeRoute.name]);
+      expectTopPage(router, _HomeRoute.name);
+    },
+  );
 }
 
 void Function(StackRouter router) _fromSheet = ignoreArgument;
@@ -83,8 +99,10 @@ abstract final class _HomeRoute {
             TextButton(
               onPressed: () => showModalBottomSheet<void>(
                 context: context,
-                builder: (sheetContext) =>
-                    TextButton(onPressed: () => _fromSheet(sheetContext.router), child: const Text('Push to page B')),
+                builder: (sheetContext) => TextButton(
+                  onPressed: () => _fromSheet(sheetContext.router),
+                  child: const Text('Push to page B'),
+                ),
               ),
               child: const Text('Show bottom sheet'),
             ),
@@ -95,4 +113,5 @@ abstract final class _HomeRoute {
   );
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));

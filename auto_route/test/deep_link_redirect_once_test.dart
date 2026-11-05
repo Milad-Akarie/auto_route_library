@@ -21,7 +21,8 @@ void main() {
     builds.clear();
   });
 
-  PageInfo page(String name) => .new(name, builder: (_) => _CountedPage(name, opened, builds));
+  PageInfo page(String name) =>
+      .new(name, builder: (_) => _CountedPage(name, opened, builds));
 
   RootStackRouter buildRouter() => .build(
     routes: [
@@ -31,18 +32,32 @@ void main() {
     ],
   );
 
-  testWidgets('A link to a redirect opens the target page once', (tester) async {
+  testWidgets('A link to a redirect opens the target page once', (
+    tester,
+  ) async {
     final router = buildRouter();
-    await pumpAtDeepLink(tester, router, '/details', includePrefixMatches: false);
+    await pumpAtDeepLink(
+      tester,
+      router,
+      '/details',
+      includePrefixMatches: false,
+    );
     expect(router.stack.map((page) => page.name), ['DetailsRoute']);
     expect(opened, {'DetailsRoute': 1});
     expect(builds, {'DetailsRoute': 1});
     expect(router.currentUrl, '/my_details');
   });
 
-  testWidgets('A later link to a redirect keeps the target page open', (tester) async {
+  testWidgets('A later link to a redirect keeps the target page open', (
+    tester,
+  ) async {
     final router = buildRouter();
-    await pumpAtDeepLink(tester, router, '/details', includePrefixMatches: false);
+    await pumpAtDeepLink(
+      tester,
+      router,
+      '/details',
+      includePrefixMatches: false,
+    );
 
     await sendPlatformLink(tester, '/details');
     expect(router.stack.map((page) => page.name), ['DetailsRoute']);

@@ -17,7 +17,8 @@ class _AwarePage extends StatefulWidget {
   State<_AwarePage> createState() => _AwarePageState();
 }
 
-class _AwarePageState extends State<_AwarePage> with AutoRouteAwareStateMixin<_AwarePage> {
+class _AwarePageState extends State<_AwarePage>
+    with AutoRouteAwareStateMixin<_AwarePage> {
   late final String _name = context.routeData.name;
 
   @override
@@ -36,19 +37,23 @@ class _AwarePageState extends State<_AwarePage> with AutoRouteAwareStateMixin<_A
   void didPopNext() => _events.add('$_name.didPopNext');
 
   @override
-  void didInitTabRoute(TabPageRoute? previousRoute) => _events.add('$_name.didInitTabRoute');
+  void didInitTabRoute(TabPageRoute? previousRoute) =>
+      _events.add('$_name.didInitTabRoute');
 
   @override
-  void didChangeTabRoute(TabPageRoute previousRoute) => _events.add('$_name.didChangeTabRoute');
+  void didChangeTabRoute(TabPageRoute previousRoute) =>
+      _events.add('$_name.didChangeTabRoute');
 }
 
 class _Route extends PageRouteInfo<void> {
   const new(super.name);
 }
 
-PageInfo _awarePage(String name) => .new(name, builder: (_) => const _AwarePage());
+PageInfo _awarePage(String name) =>
+    .new(name, builder: (_) => const _AwarePage());
 
-PageInfo _awareStackHost(String name) => .new(name, builder: (_) => const _AwarePage(child: AutoRouter()));
+PageInfo _awareStackHost(String name) =>
+    .new(name, builder: (_) => const _AwarePage(child: AutoRouter()));
 
 void main() {
   // https://github.com/Milad-Akarie/auto_route_library/issues/1028
@@ -61,58 +66,72 @@ void main() {
   // Should: the covered page hears didPushNext and didPopNext, and a tab's
   // page hears the tab events of its own tab (as the observer sends them to the
   // subscribers of the tab's route).
-  testWidgets('Pages in tabs hear covers inside their tab, and a tab page hears its tab events', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          initial: true,
-          page: PageInfo(
-            'TabsHost',
-            builder: (_) => const _AwarePage(child: AutoTabsRouter(routes: [_Route('TabA'), _Route('TabB')])),
+  testWidgets(
+    'Pages in tabs hear covers inside their tab, and a tab page hears its tab events',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            initial: true,
+            page: PageInfo(
+              'TabsHost',
+              builder: (_) => const _AwarePage(
+                child: AutoTabsRouter(routes: [_Route('TabA'), _Route('TabB')]),
+              ),
+            ),
+            children: [
+              AutoRoute(
+                path: 'a',
+                page: _awareStackHost('TabA'),
+                children: [
+                  AutoRoute(path: '', page: _awarePage('A1')),
+                  AutoRoute(path: 'two', page: _awarePage('A2')),
+                ],
+              ),
+              AutoRoute(
+                path: 'b',
+                page: _awareStackHost('TabB'),
+                children: [AutoRoute(path: '', page: _awarePage('B1'))],
+              ),
+            ],
           ),
-          children: [
-            AutoRoute(
-              path: 'a',
-              page: _awareStackHost('TabA'),
-              children: [
-                AutoRoute(path: '', page: _awarePage('A1')),
-                AutoRoute(path: 'two', page: _awarePage('A2')),
-              ],
-            ),
-            AutoRoute(
-              path: 'b',
-              page: _awareStackHost('TabB'),
-              children: [AutoRoute(path: '', page: _awarePage('B1'))],
-            ),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterConfigApp(tester, router.config(navigatorObservers: () => [AutoRouteObserver()]));
-    expect(find.text('A1'), findsOneWidget);
+        ],
+      );
+      await pumpRouterConfigApp(
+        tester,
+        router.config(navigatorObservers: () => [AutoRouteObserver()]),
+      );
+      expect(find.text('A1'), findsOneWidget);
 
-    _events.clear();
-    unawaited(
-      router.innerRouterOf<TabsRouter>('TabsHost')!.innerRouterOf<StackRouter>('TabA')!.push(const _Route('A2')),
-    );
-    await tester.pumpAndSettle();
-    expect(_events, ['A1.didPushNext', 'A2.didPush']);
+      _events.clear();
+      unawaited(
+        router
+            .innerRouterOf<TabsRouter>('TabsHost')!
+            .innerRouterOf<StackRouter>('TabA')!
+            .push(const _Route('A2')),
+      );
+      await tester.pumpAndSettle();
+      expect(_events, ['A1.didPushNext', 'A2.didPush']);
 
-    _events.clear();
-    router.innerRouterOf<TabsRouter>('TabsHost')!.innerRouterOf<StackRouter>('TabA')!.pop();
-    await tester.pumpAndSettle();
-    expect(_events, ['A2.didPop', 'A1.didPopNext']);
+      _events.clear();
+      router
+          .innerRouterOf<TabsRouter>('TabsHost')!
+          .innerRouterOf<StackRouter>('TabA')!
+          .pop();
+      await tester.pumpAndSettle();
+      expect(_events, ['A2.didPop', 'A1.didPopNext']);
 
-    _events.clear();
-    router.innerRouterOf<TabsRouter>('TabsHost')!.setActiveIndex(1);
-    await tester.pumpAndSettle();
-    expect(find.text('B1'), findsOneWidget);
-    expect(_events, contains('TabB.didInitTabRoute'));
+      _events.clear();
+      router.innerRouterOf<TabsRouter>('TabsHost')!.setActiveIndex(1);
+      await tester.pumpAndSettle();
+      expect(find.text('B1'), findsOneWidget);
+      expect(_events, contains('TabB.didInitTabRoute'));
 
-    _events.clear();
-    router.innerRouterOf<TabsRouter>('TabsHost')!.setActiveIndex(0);
-    await tester.pumpAndSettle();
-    expect(_events, contains('TabA.didChangeTabRoute'));
-  });
+      _events.clear();
+      router.innerRouterOf<TabsRouter>('TabsHost')!.setActiveIndex(0);
+      await tester.pumpAndSettle();
+      expect(_events, contains('TabA.didChangeTabRoute'));
+    },
+  );
 }

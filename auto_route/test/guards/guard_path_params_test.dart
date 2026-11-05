@@ -15,36 +15,47 @@ void main() {
   // Should: the guard sees username myUser, then otherUser. The deep link
   // includes its prefix match '/', so HomeRoute is checked first, with no
   // username of its own.
-  testWidgets('A global guard sees the path params of the route it checks (flutter/flutter#123973)', (tester) async {
-    final seen = <String>[];
-    final router = RootStackRouter.build(
-      guards: [
-        AutoRouteGuard.simple((resolver, _) {
-          seen.add('${resolver.routeName} ${resolver.route.params.optString('username') ?? 'null'}');
-          resolver.next();
-        }),
-      ],
-      routes: [
-        NamedRouteDef(
-          name: 'HomeRoute',
-          path: '/',
-          builder: (_, _) => const Scaffold(body: Text('HomeRoute')),
-        ),
-        NamedRouteDef(
-          name: 'ProfileRoute',
-          path: '/p/:username',
-          builder: (_, data) => Scaffold(body: Text('ProfileRoute ${data.params.getString('username')}')),
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router, initialLink: '/p/myUser');
-    expect(seen, ['HomeRoute null', 'ProfileRoute myUser']);
-    expect(find.text('ProfileRoute myUser'), findsOneWidget);
+  testWidgets(
+    'A global guard sees the path params of the route it checks (flutter/flutter#123973)',
+    (tester) async {
+      final seen = <String>[];
+      final router = RootStackRouter.build(
+        guards: [
+          AutoRouteGuard.simple((resolver, _) {
+            seen.add(
+              '${resolver.routeName} ${resolver.route.params.optString('username') ?? 'null'}',
+            );
+            resolver.next();
+          }),
+        ],
+        routes: [
+          NamedRouteDef(
+            name: 'HomeRoute',
+            path: '/',
+            builder: (_, _) => const Scaffold(body: Text('HomeRoute')),
+          ),
+          NamedRouteDef(
+            name: 'ProfileRoute',
+            path: '/p/:username',
+            builder: (_, data) => Scaffold(
+              body: Text('ProfileRoute ${data.params.getString('username')}'),
+            ),
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router, initialLink: '/p/myUser');
+      expect(seen, ['HomeRoute null', 'ProfileRoute myUser']);
+      expect(find.text('ProfileRoute myUser'), findsOneWidget);
 
-    unawaited(router.pushPath('/p/otherUser'));
-    await tester.pumpAndSettle();
+      unawaited(router.pushPath('/p/otherUser'));
+      await tester.pumpAndSettle();
 
-    expect(seen, ['HomeRoute null', 'ProfileRoute myUser', 'ProfileRoute otherUser']);
-    expect(find.text('ProfileRoute otherUser'), findsOneWidget);
-  });
+      expect(seen, [
+        'HomeRoute null',
+        'ProfileRoute myUser',
+        'ProfileRoute otherUser',
+      ]);
+      expect(find.text('ProfileRoute otherUser'), findsOneWidget);
+    },
+  );
 }

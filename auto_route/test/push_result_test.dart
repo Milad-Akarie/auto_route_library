@@ -23,7 +23,9 @@ void main() {
     );
   });
 
-  testWidgets('the future of push completes with null after pop()', (tester) async {
+  testWidgets('the future of push completes with null after pop()', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     final results = <Object?>[];
     unawaited(router.push<String>(const _ChildRoute()).then(results.add));
@@ -35,7 +37,9 @@ void main() {
     expect(results, [null]);
   });
 
-  testWidgets('the future of push completes with null after pop(null)', (tester) async {
+  testWidgets('the future of push completes with null after pop(null)', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     final results = <Object?>[];
     unawaited(router.push<String>(const _ChildRoute()).then(results.add));
@@ -49,7 +53,9 @@ void main() {
     expect(results, [null]);
   });
 
-  testWidgets('the future of push completes with the result of pop(value)', (tester) async {
+  testWidgets('the future of push completes with the result of pop(value)', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     final results = <Object?>[];
     unawaited(router.push<String>(const _ChildRoute()).then(results.add));
@@ -64,12 +70,18 @@ void main() {
 
 abstract final class _HomeRoute {
   static const String name = 'HomeRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text('Home')),
+  );
 }
 
 class _ChildRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'ChildRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Child')));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text('Child')),
+  );
 }

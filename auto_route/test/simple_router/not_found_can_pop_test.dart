@@ -31,7 +31,10 @@ void main() {
                 routerCanPop = context.router.canPop();
                 navigatorCanPop = Navigator.canPop(context);
                 return Scaffold(
-                  body: TextButton(onPressed: () => context.router.maybePop(), child: const Text('NotFoundRoute')),
+                  body: TextButton(
+                    onPressed: () => context.router.maybePop(),
+                    child: const Text('NotFoundRoute'),
+                  ),
                 );
               },
             ),
@@ -48,6 +51,10 @@ void main() {
 
     await tester.tap(find.text('NotFoundRoute'));
     await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull, reason: 'after tester.tap(find.text(NotFoundRoute))');
+    expect(
+      tester.takeException(),
+      isNull,
+      reason: 'after tester.tap(find.text(NotFoundRoute))',
+    );
   });
 }

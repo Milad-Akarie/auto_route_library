@@ -18,7 +18,11 @@ void main() {
 
   RootStackRouter buildRouter({required bool maintainParentState}) => .build(
     routes: [
-      AutoRoute(path: '/', page: countedPage('ParentRoute', builds), maintainState: maintainParentState),
+      AutoRoute(
+        path: '/',
+        page: countedPage('ParentRoute', builds),
+        maintainState: maintainParentState,
+      ),
       AutoRoute(path: '/:id', page: countedPage('ChildRoute', builds)),
     ],
   );
@@ -26,33 +30,48 @@ void main() {
   // Steps: open the app at '/1', then go back.
   // Should: the parent builds once, offstage, while the child shows, and back
   // shows it without building it again.
-  testWidgets('A deep link builds the covered parent once, and back reuses it', (tester) async {
-    final router = buildRouter(maintainParentState: true);
-    await pumpAtDeepLink(tester, router, '/1', includePrefixMatches: true);
-    expect(router.stack.map((page) => page.name), ['ParentRoute', 'ChildRoute']);
-    expectTopPage(router, 'ChildRoute');
-    expect(builds, {'ParentRoute': 1, 'ChildRoute': 1});
+  testWidgets(
+    'A deep link builds the covered parent once, and back reuses it',
+    (tester) async {
+      final router = buildRouter(maintainParentState: true);
+      await pumpAtDeepLink(tester, router, '/1', includePrefixMatches: true);
+      expect(router.stack.map((page) => page.name), [
+        'ParentRoute',
+        'ChildRoute',
+      ]);
+      expectTopPage(router, 'ChildRoute');
+      expect(builds, {'ParentRoute': 1, 'ChildRoute': 1});
 
-    router.pop();
-    await tester.pumpAndSettle();
-    expectTopPage(router, 'ParentRoute');
-    expect(builds, {'ParentRoute': 1, 'ChildRoute': 1}, reason: 'after router.pop()');
-  });
+      router.pop();
+      await tester.pumpAndSettle();
+      expectTopPage(router, 'ParentRoute');
+      expect(builds, {
+        'ParentRoute': 1,
+        'ChildRoute': 1,
+      }, reason: 'after router.pop()');
+    },
+  );
 
   // Steps: with maintainState: false on the parent, open the app at
   // '/1', then go back.
   // Should: the parent is in the stack but does not build until back shows
   // it, then builds once.
-  testWidgets('A deep link does not build a parent with maintainState false until back shows it', (tester) async {
-    final router = buildRouter(maintainParentState: false);
-    await pumpAtDeepLink(tester, router, '/1', includePrefixMatches: true);
-    expect(router.stack.map((page) => page.name), ['ParentRoute', 'ChildRoute']);
-    expectTopPage(router, 'ChildRoute');
-    expect(builds, {'ChildRoute': 1});
+  testWidgets(
+    'A deep link does not build a parent with maintainState false until back shows it',
+    (tester) async {
+      final router = buildRouter(maintainParentState: false);
+      await pumpAtDeepLink(tester, router, '/1', includePrefixMatches: true);
+      expect(router.stack.map((page) => page.name), [
+        'ParentRoute',
+        'ChildRoute',
+      ]);
+      expectTopPage(router, 'ChildRoute');
+      expect(builds, {'ChildRoute': 1});
 
-    router.pop();
-    await tester.pumpAndSettle();
-    expectTopPage(router, 'ParentRoute');
-    expect(builds, {'ChildRoute': 1, 'ParentRoute': 1});
-  });
+      router.pop();
+      await tester.pumpAndSettle();
+      expectTopPage(router, 'ParentRoute');
+      expect(builds, {'ChildRoute': 1, 'ParentRoute': 1});
+    },
+  );
 }

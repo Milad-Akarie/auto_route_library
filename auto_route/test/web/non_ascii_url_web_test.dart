@@ -29,7 +29,9 @@ void main() {
   // Push a page whose path is '/café', then press the browser's back button.
   // The url should follow each page; it stayed at '/', since comparing urls
   // threw on the 'é'.
-  testWidgets('On web, a url with a letter outside ASCII follows the pages', (tester) async {
+  testWidgets('On web, a url with a letter outside ASCII follows the pages', (
+    tester,
+  ) async {
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
     unawaited(router.push(const _CafeRoute()));
@@ -48,5 +50,8 @@ class _CafeRoute extends PageRouteInfo<void> {
   const new() : super(pageName);
 
   static const String pageName = 'CafeRoute';
-  static final PageInfo page = PageInfo(pageName, builder: (_) => const Text('Café'));
+  static final PageInfo page = PageInfo(
+    pageName,
+    builder: (_) => const Text('Café'),
+  );
 }

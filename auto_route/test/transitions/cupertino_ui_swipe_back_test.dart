@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoPageTransitionsBuilder;
+import 'package:cupertino_ui/cupertino_ui.dart'
+    show CupertinoPageTransitionsBuilder;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -22,40 +23,43 @@ void main() {
     ('RouteType.material()', const RouteType.material()),
     ('RouteType.cupertino()', const RouteType.cupertino()),
   ]) {
-    testWidgets('The iOS edge swipe pops a page of $label under the cupertino_ui transition (flutter/flutter#191133)', (
-      tester,
-    ) async {
-      PageInfo page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
-      final router = RootStackRouter.build(
-        defaultRouteType: type,
-        routes: [
-          AutoRoute(page: page('Home'), path: '/'),
-          AutoRoute(page: page('Detail'), path: '/detail'),
-        ],
-      );
-      addTearDown(router.dispose);
-      await tester.pumpWidget(
-        MaterialApp.router(
-          theme: ThemeData(
-            platform: .iOS,
-            pageTransitionsTheme: PageTransitionsTheme(
-              builders: {
-                for (final platform in TargetPlatform.values) platform: const CupertinoPageTransitionsBuilder(),
-              },
+    testWidgets(
+      'The iOS edge swipe pops a page of $label under the cupertino_ui transition (flutter/flutter#191133)',
+      (tester) async {
+        PageInfo page(String name) =>
+            .new(name, builder: (_) => Scaffold(body: Text(name)));
+        final router = RootStackRouter.build(
+          defaultRouteType: type,
+          routes: [
+            AutoRoute(page: page('Home'), path: '/'),
+            AutoRoute(page: page('Detail'), path: '/detail'),
+          ],
+        );
+        addTearDown(router.dispose);
+        await tester.pumpWidget(
+          MaterialApp.router(
+            theme: ThemeData(
+              platform: .iOS,
+              pageTransitionsTheme: PageTransitionsTheme(
+                builders: {
+                  for (final platform in TargetPlatform.values)
+                    platform: const CupertinoPageTransitionsBuilder(),
+                },
+              ),
             ),
+            routerConfig: router.config(),
           ),
-          routerConfig: router.config(),
-        ),
-      );
-      await tester.pumpAndSettle();
-      unawaited(router.push(const NamedRoute('Detail')));
-      await tester.pumpAndSettle();
-      expectTopPage(router, 'Detail');
+        );
+        await tester.pumpAndSettle();
+        unawaited(router.push(const NamedRoute('Detail')));
+        await tester.pumpAndSettle();
+        expectTopPage(router, 'Detail');
 
-      await swipeBack(tester);
+        await swipeBack(tester);
 
-      expectTopPage(router, 'Home');
-      expect(router.stack.map((page) => page.name), ['Home']);
-    });
+        expectTopPage(router, 'Home');
+        expect(router.stack.map((page) => page.name), ['Home']);
+      },
+    );
   }
 }

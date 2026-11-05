@@ -26,11 +26,17 @@ void main() {
         path: '/shop',
         children: [
           AutoRoute(
-            page: PageInfo('ProductsRoute', builder: (_) => const Text('Products')),
+            page: PageInfo(
+              'ProductsRoute',
+              builder: (_) => const Text('Products'),
+            ),
             path: '',
           ),
           AutoRoute(
-            page: PageInfo('ProductRoute', builder: (_) => const Text('Product')),
+            page: PageInfo(
+              'ProductRoute',
+              builder: (_) => const Text('Product'),
+            ),
             path: ':id',
           ),
         ],
@@ -38,7 +44,9 @@ void main() {
       AutoRoute(
         page: PageInfo(
           'TabsRoute',
-          builder: (_) => const AutoTabsRouter(routes: [PageRouteInfo('FeedRoute'), PageRouteInfo('ProfileRoute')]),
+          builder: (_) => const AutoTabsRouter(
+            routes: [PageRouteInfo('FeedRoute'), PageRouteInfo('ProfileRoute')],
+          ),
         ),
         path: '/tabs',
         children: [
@@ -47,7 +55,10 @@ void main() {
             path: 'feed',
           ),
           AutoRoute(
-            page: PageInfo('ProfileRoute', builder: (_) => const Text('Profile')),
+            page: PageInfo(
+              'ProfileRoute',
+              builder: (_) => const Text('Profile'),
+            ),
             path: 'profile',
           ),
         ],
@@ -70,7 +81,9 @@ void main() {
     expect(buildRouter().routeCollection.toTreeString(), tree);
   });
 
-  testWidgets('an unknown path reports the path and the route tree', (tester) async {
+  testWidgets('an unknown path reports the path and the route tree', (
+    tester,
+  ) async {
     final router = buildRouter();
     await pumpRouterApp(tester, router);
     final failures = <NavigationFailure>[];
@@ -78,28 +91,45 @@ void main() {
     await tester.pumpAndSettle();
     final [failure as RouteNotFoundFailure] = failures;
     expect(failure.path, '/shop/1/reviews');
-    expect(failure.toString(), allOf(contains('/shop/1/reviews'), contains(tree)));
+    expect(
+      failure.toString(),
+      allOf(contains('/shop/1/reviews'), contains(tree)),
+    );
 
     await expectLater(
       () => router.pushPath('/shop/1/reviews'),
       throwsA(
-        isA<FlutterError>().having((e) => e.toString(), 'message', allOf(contains('/shop/1/reviews'), contains(tree))),
+        isA<FlutterError>().having(
+          (e) => e.toString(),
+          'message',
+          allOf(contains('/shop/1/reviews'), contains(tree)),
+        ),
       ),
     );
   });
 
-  testWidgets('an unknown route reports its name and the route tree', (tester) async {
+  testWidgets('an unknown route reports its name and the route tree', (
+    tester,
+  ) async {
     final router = buildRouter();
     await pumpRouterApp(tester, router);
     final failures = <NavigationFailure>[];
-    unawaited(router.push(const PageRouteInfo('CartRoute'), onFailure: failures.add));
+    unawaited(
+      router.push(const PageRouteInfo('CartRoute'), onFailure: failures.add),
+    );
     await tester.pumpAndSettle();
     final [failure as RouteNotFoundFailure] = failures;
     expect(failure.toString(), allOf(contains('CartRoute'), contains(tree)));
 
     await expectLater(
       () => router.push(const PageRouteInfo('CartRoute')),
-      throwsA(isA<FlutterError>().having((e) => e.toString(), 'message', allOf(contains('CartRoute'), contains(tree)))),
+      throwsA(
+        isA<FlutterError>().having(
+          (e) => e.toString(),
+          'message',
+          allOf(contains('CartRoute'), contains(tree)),
+        ),
+      ),
     );
   });
 }

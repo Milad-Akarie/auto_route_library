@@ -25,45 +25,53 @@ void main() {
 
   for (final MapEntry(key: name, value: pop) in pops.entries) {
     for (final pastMiddle in [false, true]) {
-      testWidgets('$name during a held back swipe let go ${pastMiddle ? 'past' : 'short of'} the middle '
-          'pops one page', (tester) async {
-        final router = RootStackRouter.build(
-          routes: [
-            for (final page in ['P1', 'P2', 'P3'])
-              AutoRoute(
-                path: page == 'P1' ? '/' : '/${page.toLowerCase()}',
-                page: PageInfo(page, builder: (_) => Scaffold(body: Text(page))),
-              ),
-          ],
-        );
-        addTearDown(router.dispose);
-        await tester.pumpWidget(MaterialApp.router(theme: iosTheme, routerConfig: router.config()));
-        await tester.pumpAndSettle();
-        unawaited(router.pushPath('/p2'));
-        await tester.pumpAndSettle();
-        unawaited(router.pushPath('/p3'));
-        await tester.pumpAndSettle();
+      testWidgets(
+        '$name during a held back swipe let go ${pastMiddle ? 'past' : 'short of'} the middle '
+        'pops one page',
+        (tester) async {
+          final router = RootStackRouter.build(
+            routes: [
+              for (final page in ['P1', 'P2', 'P3'])
+                AutoRoute(
+                  path: page == 'P1' ? '/' : '/${page.toLowerCase()}',
+                  page: PageInfo(
+                    page,
+                    builder: (_) => Scaffold(body: Text(page)),
+                  ),
+                ),
+            ],
+          );
+          addTearDown(router.dispose);
+          await tester.pumpWidget(
+            MaterialApp.router(theme: iosTheme, routerConfig: router.config()),
+          );
+          await tester.pumpAndSettle();
+          unawaited(router.pushPath('/p2'));
+          await tester.pumpAndSettle();
+          unawaited(router.pushPath('/p3'));
+          await tester.pumpAndSettle();
 
-        final swipe = await tester.startGesture(const Offset(2, 300));
-        await swipe.moveBy(const Offset(100, 0));
-        await tester.pump();
-        pop(tester, router);
-        await tester.pump();
-        await tester.pump(const Duration(milliseconds: 500));
-        await swipe.moveBy(Offset(pastMiddle ? 400 : 50, 0));
-        await tester.pump();
-        await swipe.up();
-        await tester.pumpAndSettle();
+          final swipe = await tester.startGesture(const Offset(2, 300));
+          await swipe.moveBy(const Offset(100, 0));
+          await tester.pump();
+          pop(tester, router);
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 500));
+          await swipe.moveBy(Offset(pastMiddle ? 400 : 50, 0));
+          await tester.pump();
+          await swipe.up();
+          await tester.pumpAndSettle();
 
-        expect(tester.takeException(), isNull);
-        expect(router.stack.map((page) => page.name), ['P1', 'P2']);
-        expect(find.text('P2'), findsOneWidget);
+          expect(tester.takeException(), isNull);
+          expect(router.stack.map((page) => page.name), ['P1', 'P2']);
+          expect(find.text('P2'), findsOneWidget);
 
-        await swipeBack(tester);
-        expect(tester.takeException(), isNull);
-        expect(router.stack.map((page) => page.name), ['P1']);
-        expect(find.text('P1'), findsOneWidget);
-      });
+          await swipeBack(tester);
+          expect(tester.takeException(), isNull);
+          expect(router.stack.map((page) => page.name), ['P1']);
+          expect(find.text('P1'), findsOneWidget);
+        },
+      );
     }
   }
 }

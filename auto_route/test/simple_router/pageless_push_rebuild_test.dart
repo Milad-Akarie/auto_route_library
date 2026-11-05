@@ -21,7 +21,9 @@ class _HomePageState extends State<_HomePage> {
       body: TextButton(
         onPressed: () => Navigator.push(
           context,
-          MaterialPageRoute<void>(builder: (_) => const Scaffold(body: Text('Not registered'))),
+          MaterialPageRoute<void>(
+            builder: (_) => const Scaffold(body: Text('Not registered')),
+          ),
         ),
         child: const Text('Open'),
       ),
@@ -35,26 +37,33 @@ void main() {
   // Navigator.push(context, MaterialPageRoute(...)), then go back.
   // Reported: the current page builds again as soon as the push starts.
   // Should: the page underneath isn't built again.
-  testWidgets('Navigator.push of a page outside the router does not rebuild the page underneath', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('HomeRoute', builder: (_) => const _HomePage()),
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    _HomePageState.builds = 0;
+  testWidgets(
+    'Navigator.push of a page outside the router does not rebuild the page underneath',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo('HomeRoute', builder: (_) => const _HomePage()),
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      _HomePageState.builds = 0;
 
-    await tester.tap(find.text('Open'));
-    await tester.pumpAndSettle();
-    expect(find.text('Not registered'), findsOneWidget);
-    expect(_HomePageState.builds, 0);
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+      expect(find.text('Not registered'), findsOneWidget);
+      expect(_HomePageState.builds, 0);
 
-    await tester.binding.handlePopRoute();
-    await tester.pumpAndSettle();
-    expect(find.text('Open'), findsOneWidget);
-    expect(_HomePageState.builds, 0, reason: 'after tester.binding.handlePopRoute()');
-  });
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.text('Open'), findsOneWidget);
+      expect(
+        _HomePageState.builds,
+        0,
+        reason: 'after tester.binding.handlePopRoute()',
+      );
+    },
+  );
 }

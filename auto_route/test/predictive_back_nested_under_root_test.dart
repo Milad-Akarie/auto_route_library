@@ -25,7 +25,9 @@ void main() {
   late RootStackRouter router;
   setUp(() {
     router = RootStackRouter.build(
-      defaultRouteType: const RouteType.material(enablePredictiveBackGesture: true),
+      defaultRouteType: const RouteType.material(
+        enablePredictiveBackGesture: true,
+      ),
       routes: [
         AutoRoute(
           page: PageInfo('HostRoute', builder: (_) => const AutoRouter()),
@@ -40,27 +42,38 @@ void main() {
     );
   });
 
-  testWidgets('the predictive back gesture pops the root page above a nested stack', (tester) async {
-    await pumpRouterConfigApp(tester, router.config());
-    unawaited(router.innerRouterOf<StackRouter>('HostRoute')!.push(const _Route('SecondRoute')));
-    await tester.pumpAndSettle();
-    unawaited(router.push(const _Route('TopRoute')));
-    await tester.pumpAndSettle();
-    final host = router.innerRouterOf<StackRouter>('HostRoute')!;
-    expect(host.stack.map((page) => page.routeData.name), ['FirstRoute', 'SecondRoute']);
+  testWidgets(
+    'the predictive back gesture pops the root page above a nested stack',
+    (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
+      unawaited(
+        router
+            .innerRouterOf<StackRouter>('HostRoute')!
+            .push(const _Route('SecondRoute')),
+      );
+      await tester.pumpAndSettle();
+      unawaited(router.push(const _Route('TopRoute')));
+      await tester.pumpAndSettle();
+      final host = router.innerRouterOf<StackRouter>('HostRoute')!;
+      expect(host.stack.map((page) => page.routeData.name), [
+        'FirstRoute',
+        'SecondRoute',
+      ]);
 
-    await predictiveBack(tester);
+      await predictiveBack(tester);
 
-    expect(router.stack.map((page) => page.routeData.name), ['HostRoute']);
-    expect(host.stack.map((page) => page.routeData.name), [
-      'FirstRoute',
-      'SecondRoute',
-    ], reason: 'after predictiveBack(tester)');
-    expect(find.text('SecondRoute'), findsOneWidget);
-  });
+      expect(router.stack.map((page) => page.routeData.name), ['HostRoute']);
+      expect(host.stack.map((page) => page.routeData.name), [
+        'FirstRoute',
+        'SecondRoute',
+      ], reason: 'after predictiveBack(tester)');
+      expect(find.text('SecondRoute'), findsOneWidget);
+    },
+  );
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
   const new(super.name);

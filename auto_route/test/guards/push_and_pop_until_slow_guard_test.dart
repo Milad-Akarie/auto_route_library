@@ -44,47 +44,66 @@ void main() {
 
   bool isHome(Route<Object?> route) => route.settings.name == 'Home';
 
-  List<String> names() => router.stack.map((page) => page.routeData.name).toList();
+  List<String> names() =>
+      router.stack.map((page) => page.routeData.name).toList();
 
   // The pages on screen, bottom to top.
-  List<String> shown() => ['Home', 'A', 'B', 'C'].where((name) => find.text(name).evaluate().isNotEmpty).toList();
+  List<String> shown() => [
+    'Home',
+    'A',
+    'B',
+    'C',
+  ].where((name) => find.text(name).evaluate().isNotEmpty).toList();
 
   // Opens Home, A and B, then calls pushAndPopUntil(C), keeps its future in
   // [pushedC] and waits while C's guard decides.
   late Future<Object?> pushedC;
   Future<void> pushCWhileGuardDecides(WidgetTester tester) async {
     decision = Completer<bool>();
-    await pumpRouterApp(tester, router, observers: () => [_NamesObserver(observed)]);
+    await pumpRouterApp(
+      tester,
+      router,
+      observers: () => [_NamesObserver(observed)],
+    );
     unawaited(router.push(const PageRouteInfo('A')));
     await tester.pumpAndSettle();
     unawaited(router.push(const PageRouteInfo('B')));
     await tester.pumpAndSettle();
     observed.clear();
 
-    pushedC = router.pushAndPopUntil(const PageRouteInfo('C'), predicate: isHome);
+    pushedC = router.pushAndPopUntil(
+      const PageRouteInfo('C'),
+      predicate: isHome,
+    );
     await tester.pumpAndSettle();
   }
 
-  testWidgets('While the guard decides, pushAndPopUntil removes and shows nothing', (tester) async {
-    await pushCWhileGuardDecides(tester);
+  testWidgets(
+    'While the guard decides, pushAndPopUntil removes and shows nothing',
+    (tester) async {
+      await pushCWhileGuardDecides(tester);
 
-    expect(names(), ['Home', 'A', 'B']);
-    expect(shown(), ['B']);
-    expect(observed, isEmpty);
-  });
+      expect(names(), ['Home', 'A', 'B']);
+      expect(shown(), ['B']);
+      expect(observed, isEmpty);
+    },
+  );
 
-  testWidgets('A guard that rejects leaves the stack as it was and completes the push with null', (tester) async {
-    await pushCWhileGuardDecides(tester);
-    Object? resultOfC = 'unset';
-    unawaited(pushedC.then((result) => resultOfC = result));
+  testWidgets(
+    'A guard that rejects leaves the stack as it was and completes the push with null',
+    (tester) async {
+      await pushCWhileGuardDecides(tester);
+      Object? resultOfC = 'unset';
+      unawaited(pushedC.then((result) => resultOfC = result));
 
-    decision.complete(false);
-    await tester.pumpAndSettle();
-    expect(resultOfC, isNull);
-    expect(names(), ['Home', 'A', 'B']);
-    expectCurrentPage(router, 'B');
-    expect(observed, isEmpty);
-  });
+      decision.complete(false);
+      await tester.pumpAndSettle();
+      expect(resultOfC, isNull);
+      expect(names(), ['Home', 'A', 'B']);
+      expectCurrentPage(router, 'B');
+      expect(observed, isEmpty);
+    },
+  );
 
   testWidgets('A guard that accepts leaves Home and C', (tester) async {
     await pushCWhileGuardDecides(tester);
@@ -102,20 +121,23 @@ void main() {
 
   // The predicate runs once the guard accepts, on the stack as it is then,
   // so a page popped while the guard decided is not asked about.
-  testWidgets('A page popped while the guard decides is gone, and the rest go once it accepts', (tester) async {
-    await pushCWhileGuardDecides(tester);
-    unawaited(router.maybePop());
-    await tester.pumpAndSettle();
-    expect(names(), ['Home', 'A']);
-    observed.clear();
+  testWidgets(
+    'A page popped while the guard decides is gone, and the rest go once it accepts',
+    (tester) async {
+      await pushCWhileGuardDecides(tester);
+      unawaited(router.maybePop());
+      await tester.pumpAndSettle();
+      expect(names(), ['Home', 'A']);
+      observed.clear();
 
-    decision.complete(true);
-    await tester.pumpAndSettle();
-    expect(names(), ['Home', 'C']);
-    expectCurrentPage(router, 'C');
-    expect(observed, containsAll(['push C', 'remove A']));
-    expect(observed.where((event) => event.endsWith(' B')), isEmpty);
-  });
+      decision.complete(true);
+      await tester.pumpAndSettle();
+      expect(names(), ['Home', 'C']);
+      expectCurrentPage(router, 'C');
+      expect(observed, containsAll(['push C', 'remove A']));
+      expect(observed.where((event) => event.endsWith(' B')), isEmpty);
+    },
+  );
 }
 
 PageInfo _page(String name) => .new(

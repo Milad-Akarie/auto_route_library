@@ -24,20 +24,52 @@ void main() {
   test('url benchmark', () {
     final benchmarks = <BenchmarkBase>[
       for (final count in [10, 100, 1000]) ...[
-        _Benchmark('match.flat.$count.first', _flatMatcher(count), (matcher) => matcher.match('/page0')),
-        _Benchmark('match.flat.$count.last', _flatMatcher(count), (matcher) => matcher.match('/page${count - 1}')),
+        _Benchmark(
+          'match.flat.$count.first',
+          _flatMatcher(count),
+          (matcher) => matcher.match('/page0'),
+        ),
+        _Benchmark(
+          'match.flat.$count.last',
+          _flatMatcher(count),
+          (matcher) => matcher.match('/page${count - 1}'),
+        ),
       ],
       _Benchmark(
         'match.flat.1000.miss',
         _flatMatcher(1000),
         (matcher) => matcher.match('/missing') == null ? 'no match' : null,
       ),
-      _Benchmark('match.deep.5', _deepMatcher, (matcher) => matcher.match(_deepUrl)),
-      _Benchmark('match.query.12', _flatMatcher(10), (matcher) => matcher.match('/page9?$_kQuery')),
-      _Benchmark('match.byRoute.deep.5', _deepMatcher, (matcher) => matcher.matchByRoute(_deepRoute)),
-      _Benchmark('match.buildPathTo.deep.5', _deepMatcher, (matcher) => matcher.buildPathTo(_deepestRoute)),
-      _Benchmark('urlState.deep.5', _deepMatcher, (_) => UrlState.fromSegments(_deepMatches).url),
-      _Benchmark('urlState.query.12', _deepMatcher, (_) => UrlState.fromSegments(_queryMatches).url),
+      _Benchmark(
+        'match.deep.5',
+        _deepMatcher,
+        (matcher) => matcher.match(_deepUrl),
+      ),
+      _Benchmark(
+        'match.query.12',
+        _flatMatcher(10),
+        (matcher) => matcher.match('/page9?$_kQuery'),
+      ),
+      _Benchmark(
+        'match.byRoute.deep.5',
+        _deepMatcher,
+        (matcher) => matcher.matchByRoute(_deepRoute),
+      ),
+      _Benchmark(
+        'match.buildPathTo.deep.5',
+        _deepMatcher,
+        (matcher) => matcher.buildPathTo(_deepestRoute),
+      ),
+      _Benchmark(
+        'urlState.deep.5',
+        _deepMatcher,
+        (_) => UrlState.fromSegments(_deepMatches).url,
+      ),
+      _Benchmark(
+        'urlState.query.12',
+        _deepMatcher,
+        (_) => UrlState.fromSegments(_queryMatches).url,
+      ),
     ];
     for (final benchmark in benchmarks) {
       final microseconds = benchmark.measure();
@@ -67,7 +99,12 @@ class _Benchmark extends BenchmarkBase {
 /// A router with [count] routes side by side: '/page0', '/page1' and so on.
 RouteMatcher _flatMatcher(int count) => .new(
   RouteCollection.fromList([
-    for (var i = 0; i < count; i++) NamedRouteDef(name: 'Page$i', path: '/page$i', builder: (_, _) => const SizedBox()),
+    for (var i = 0; i < count; i++)
+      NamedRouteDef(
+        name: 'Page$i',
+        path: '/page$i',
+        builder: (_, _) => const SizedBox(),
+      ),
   ], root: true),
 );
 
@@ -76,7 +113,9 @@ const _kSiblings = 10;
 
 /// Routes [_kDepth] levels deep. Each level has [_kSiblings] routes, the last
 /// of which takes an id and holds the next level: '/level0-9/:id0/level1-9/:id1'.
-final _deepMatcher = RouteMatcher(RouteCollection.fromList(_level(0), root: true));
+final _deepMatcher = RouteMatcher(
+  RouteCollection.fromList(_level(0), root: true),
+);
 
 List<AutoRoute> _level(int depth) => [
   for (var i = 0; i < _kSiblings; i++)
@@ -84,20 +123,25 @@ List<AutoRoute> _level(int depth) => [
       name: 'Level$depth-$i',
       path: '${depth == 0 ? '/' : ''}level$depth-$i/:id$depth',
       builder: (_, _) => const SizedBox(),
-      children: depth < _kDepth - 1 && i == _kSiblings - 1 ? _level(depth + 1) : null,
+      children: depth < _kDepth - 1 && i == _kSiblings - 1
+          ? _level(depth + 1)
+          : null,
     ),
 ];
 
-final _deepUrl = '/${[for (var depth = 0; depth < _kDepth; depth++) 'level$depth-${_kSiblings - 1}/$depth'].join('/')}';
+final _deepUrl =
+    '/${[for (var depth = 0; depth < _kDepth; depth++) 'level$depth-${_kSiblings - 1}/$depth'].join('/')}';
 
 final List<RouteMatch<Object?>> _deepMatches =
-    _deepMatcher.match(_deepUrl)?.lastOrNull?.flattened ?? (throw StateError('$_deepUrl matched nothing'));
+    _deepMatcher.match(_deepUrl)?.lastOrNull?.flattened ??
+    (throw StateError('$_deepUrl matched nothing'));
 
 const _kQuery =
     'search=blue%20shoes&page=2&sort=price&order=asc&size=9&color=blue&brand=acme&tag=new&tag=sale'
     '&min=10&max=90&ref=home';
 
-final List<RouteMatch<Object?>> _queryMatches = _flatMatcher(10).match('/page9?$_kQuery')!;
+final List<RouteMatch<Object?>> _queryMatches = _flatMatcher(10)
+    .match('/page9?$_kQuery')!;
 
 PageRouteInfo _deepRouteFrom(int depth) => .new(
   'Level$depth-${_kSiblings - 1}',
@@ -109,5 +153,7 @@ final PageRouteInfo _deepRoute = _deepRouteFrom(0);
 
 final PageRouteInfo _deepestRoute = .new(
   'Level${_kDepth - 1}-${_kSiblings - 1}',
-  rawPathParams: {for (var depth = 0; depth < _kDepth; depth++) 'id$depth': '$depth'},
+  rawPathParams: {
+    for (var depth = 0; depth < _kDepth; depth++) 'id$depth': '$depth',
+  },
 );

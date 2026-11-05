@@ -38,36 +38,44 @@ void main() {
     );
   });
 
-  testWidgets('AutoLeadingButton on the first page of a nested router goes back to the page before the host', (
-    tester,
-  ) async {
-    await pumpRouterConfigApp(tester, router.config());
-    expect(find.byType(BackButton), findsNothing);
+  testWidgets(
+    'AutoLeadingButton on the first page of a nested router goes back to the page before the host',
+    (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
+      expect(find.byType(BackButton), findsNothing);
 
-    unawaited(router.push(const _Route('UserRoute')));
-    await tester.pumpAndSettle();
-    expectTopPage(router, 'ProfileRoute');
-    expect(find.byType(BackButton), findsOneWidget);
+      unawaited(router.push(const _Route('UserRoute')));
+      await tester.pumpAndSettle();
+      expectTopPage(router, 'ProfileRoute');
+      expect(find.byType(BackButton), findsOneWidget);
 
-    await tester.tap(find.byType(BackButton));
-    await tester.pumpAndSettle();
-    expectTopPage(router, 'HomeRoute');
-    expect(router.stack.map((page) => page.name), ['HomeRoute']);
-  });
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      expectTopPage(router, 'HomeRoute');
+      expect(router.stack.map((page) => page.name), ['HomeRoute']);
+    },
+  );
 
-  testWidgets('AutoLeadingButton on a second nested page goes back to the first nested page', (tester) async {
-    await pumpRouterConfigApp(tester, router.config());
-    unawaited(router.push(const _Route('UserRoute')));
-    await tester.pumpAndSettle();
-    unawaited(router.innerRouterOf<StackRouter>('UserRoute')!.push(const _Route('DetailsRoute')));
-    await tester.pumpAndSettle();
-    expectTopPage(router, 'DetailsRoute');
+  testWidgets(
+    'AutoLeadingButton on a second nested page goes back to the first nested page',
+    (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
+      unawaited(router.push(const _Route('UserRoute')));
+      await tester.pumpAndSettle();
+      unawaited(
+        router
+            .innerRouterOf<StackRouter>('UserRoute')!
+            .push(const _Route('DetailsRoute')),
+      );
+      await tester.pumpAndSettle();
+      expectTopPage(router, 'DetailsRoute');
 
-    await tester.tap(find.byType(BackButton));
-    await tester.pumpAndSettle();
-    expectTopPage(router, 'ProfileRoute');
-    expect(router.stack.map((page) => page.name), ['HomeRoute', 'UserRoute']);
-  });
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      expectTopPage(router, 'ProfileRoute');
+      expect(router.stack.map((page) => page.name), ['HomeRoute', 'UserRoute']);
+    },
+  );
 }
 
 PageInfo _page(String name) => .new(

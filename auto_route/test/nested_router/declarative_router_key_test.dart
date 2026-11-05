@@ -14,7 +14,9 @@ import '../router_test_utils.dart';
 // Should: the declarative router carries the key it was given, as
 // AutoRouter() does.
 void main() {
-  testWidgets('AutoRouter.declarative carries the key it is given', (tester) async {
+  testWidgets('AutoRouter.declarative carries the key it is given', (
+    tester,
+  ) async {
     final hostKey = GlobalKey();
     final router = RootStackRouter.build(
       routes: [
@@ -22,12 +24,18 @@ void main() {
           path: '/',
           page: PageInfo(
             'HostRoute',
-            builder: (_) => AutoRouter.declarative(key: hostKey, routes: (_) => [const NamedRoute('HomeRoute')]),
+            builder: (_) => AutoRouter.declarative(
+              key: hostKey,
+              routes: (_) => [const NamedRoute('HomeRoute')],
+            ),
           ),
           children: [
             AutoRoute(
               path: '',
-              page: PageInfo('HomeRoute', builder: (_) => const Text('HomeRoute')),
+              page: PageInfo(
+                'HomeRoute',
+                builder: (_) => const Text('HomeRoute'),
+              ),
             ),
           ],
         ),

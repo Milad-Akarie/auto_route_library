@@ -53,20 +53,27 @@ void main() {
     );
   }
 
-  testWidgets('Changing the theme keeps the page that is open on top of the tabs', (tester) async {
-    await tester.pumpWidget(app(.light));
-    await tester.pumpAndSettle();
-    unawaited(router.pushPath('/f'));
-    await tester.pumpAndSettle();
-    expect(find.text('F'), findsOneWidget);
+  testWidgets(
+    'Changing the theme keeps the page that is open on top of the tabs',
+    (tester) async {
+      await tester.pumpWidget(app(.light));
+      await tester.pumpAndSettle();
+      unawaited(router.pushPath('/f'));
+      await tester.pumpAndSettle();
+      expect(find.text('F'), findsOneWidget);
 
-    await tester.pumpWidget(app(.dark));
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(app(.dark));
+      await tester.pumpAndSettle();
 
-    expect(router.topRoute.name, 'F');
-    expect(router.currentPath, '/f');
-    expect(find.text('F'), findsOneWidget, reason: 'after router.pushPath(/f))');
-  });
+      expect(router.topRoute.name, 'F');
+      expect(router.currentPath, '/f');
+      expect(
+        find.text('F'),
+        findsOneWidget,
+        reason: 'after router.pushPath(/f))',
+      );
+    },
+  );
 
   testWidgets('Changing the theme keeps the tab that is open', (tester) async {
     await tester.pumpWidget(app(.light));
@@ -79,15 +86,22 @@ void main() {
     await tester.pumpWidget(app(.dark));
     await tester.pumpAndSettle();
 
-    expect(router.topRoute.name, 'B', reason: 'after router.navigatePath(/dashboardView/empty/b))');
+    expect(
+      router.topRoute.name,
+      'B',
+      reason: 'after router.navigatePath(/dashboardView/empty/b))',
+    );
     expect(find.text('B'), findsOneWidget);
   });
 }
 
 final _dashboardPage = PageInfo(
   'Dashboard',
-  builder: (_) =>
-      const Scaffold(body: AutoTabsRouter(routes: [PageRouteInfo('A'), PageRouteInfo('B'), PageRouteInfo('C')])),
+  builder: (_) => const Scaffold(
+    body: AutoTabsRouter(
+      routes: [PageRouteInfo('A'), PageRouteInfo('B'), PageRouteInfo('C')],
+    ),
+  ),
 );
 
 PageInfo _page(String name) => .new(

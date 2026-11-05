@@ -21,7 +21,9 @@ void main() {
   // Start on FirstRoute, navigate to SecondRoute, navigate to ThirdRoute,
   // pop from ThirdRoute, then call back() from SecondRoute.
   // back() should land on FirstRoute, not on the ThirdRoute that was popped.
-  testWidgets('Popping then going back should not return to the popped page', (tester) async {
+  testWidgets('Popping then going back should not return to the popped page', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     expectCurrentPage(router, FirstRoute.name);
     expect(router.stack.map((p) => p.name), [FirstRoute.name]);
@@ -31,28 +33,40 @@ void main() {
     unawaited(router.navigate(const SecondRoute()));
     await tester.pumpAndSettle();
     expectCurrentPage(router, SecondRoute.name);
-    expect(router.stack.map((p) => p.name), [FirstRoute.name, SecondRoute.name]);
+    expect(router.stack.map((p) => p.name), [
+      FirstRoute.name,
+      SecondRoute.name,
+    ]);
     expect(router.navigationHistory.length, 2);
     expect(router.urlState.url, '/second-route');
 
     unawaited(router.navigate(const ThirdRoute()));
     await tester.pumpAndSettle();
     expectCurrentPage(router, ThirdRoute.name);
-    expect(router.stack.map((p) => p.name), [FirstRoute.name, SecondRoute.name, ThirdRoute.name]);
+    expect(router.stack.map((p) => p.name), [
+      FirstRoute.name,
+      SecondRoute.name,
+      ThirdRoute.name,
+    ]);
     expect(router.navigationHistory.length, 3);
     expect(router.urlState.url, '/third-route');
 
     router.pop();
     await tester.pumpAndSettle();
     expectCurrentPage(router, SecondRoute.name);
-    expect(router.stack.map((p) => p.name), [FirstRoute.name, SecondRoute.name], reason: 'after router.pop()');
+    expect(router.stack.map((p) => p.name), [
+      FirstRoute.name,
+      SecondRoute.name,
+    ], reason: 'after router.pop()');
     expect(router.navigationHistory.length, 2, reason: 'after router.pop()');
     expect(router.urlState.url, '/second-route', reason: 'after router.pop()');
 
     router.back();
     await tester.pumpAndSettle();
     expectCurrentPage(router, FirstRoute.name);
-    expect(router.stack.map((p) => p.name), [FirstRoute.name], reason: 'after router.back()');
+    expect(router.stack.map((p) => p.name), [
+      FirstRoute.name,
+    ], reason: 'after router.back()');
     expect(router.navigationHistory.length, 1, reason: 'after router.back()');
     expect(router.urlState.url, '/', reason: 'after router.back()');
     expect(router.canNavigateBack, isFalse);
@@ -61,23 +75,27 @@ void main() {
   // https://github.com/Milad-Akarie/auto_route_library/issues/1839
   // pushAll records only the last page, so after popping it the page now on top
   // has no history entry yet; it must take the popped page's entry, not follow it.
-  testWidgets('Popping a page pushed with pushAll then going back should not return to it', (tester) async {
-    await pumpRouterApp(tester, router);
-    unawaited(router.pushAll([const SecondRoute(), const ThirdRoute()]));
-    await tester.pumpAndSettle();
-    expectCurrentPage(router, ThirdRoute.name);
-    expect(router.navigationHistory.length, 2);
+  testWidgets(
+    'Popping a page pushed with pushAll then going back should not return to it',
+    (tester) async {
+      await pumpRouterApp(tester, router);
+      unawaited(router.pushAll([const SecondRoute(), const ThirdRoute()]));
+      await tester.pumpAndSettle();
+      expectCurrentPage(router, ThirdRoute.name);
+      expect(router.navigationHistory.length, 2);
 
-    router.pop();
-    await tester.pumpAndSettle();
-    expectCurrentPage(router, SecondRoute.name);
-    expect(router.navigationHistory.length, 2, reason: 'after router.pop()');
-    expect(router.urlState.url, '/second-route');
+      router.pop();
+      await tester.pumpAndSettle();
+      expectCurrentPage(router, SecondRoute.name);
+      expect(router.navigationHistory.length, 2, reason: 'after router.pop()');
+      expect(router.urlState.url, '/second-route');
 
-    router.back();
-    await tester.pumpAndSettle();
-    expectCurrentPage(router, FirstRoute.name);
-    expect(router.stack.map((p) => p.name), [FirstRoute.name]);
-    expect(router.navigationHistory.length, 1);
-  }, skip: kIsWeb);
+      router.back();
+      await tester.pumpAndSettle();
+      expectCurrentPage(router, FirstRoute.name);
+      expect(router.stack.map((p) => p.name), [FirstRoute.name]);
+      expect(router.navigationHistory.length, 1);
+    },
+    skip: kIsWeb,
+  );
 }

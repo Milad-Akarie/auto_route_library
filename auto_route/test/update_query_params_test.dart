@@ -29,47 +29,59 @@ void main() {
   // Should: the url ends in '?q=c', the page shows 'c', its State is the same
   // one (the count is kept), the stack holds one search page, and building
   // stops.
-  testWidgets('navigate to the route on top with a new query keeps the page and its state', (tester) async {
-    await pumpRouterApp(tester, router, initialLink: '/search?q=a');
-    expect(find.text('q a, count 0'), findsOneWidget);
-    await tester.tap(find.byType(TextButton));
-    await tester.pump();
-    expect(find.text('q a, count 1'), findsOneWidget);
+  testWidgets(
+    'navigate to the route on top with a new query keeps the page and its state',
+    (tester) async {
+      await pumpRouterApp(tester, router, initialLink: '/search?q=a');
+      expect(find.text('q a, count 0'), findsOneWidget);
+      await tester.tap(find.byType(TextButton));
+      await tester.pump();
+      expect(find.text('q a, count 1'), findsOneWidget);
 
-    for (final q in ['b', 'c']) {
-      unawaited(router.navigate(_SearchRoute(q: q)));
-      await tester.pumpAndSettle();
-    }
-    expect(router.urlState.url, '/search?q=c');
-    expect(find.text('q c, count 1'), findsOneWidget);
-    expect(_SearchPageState.states, hasLength(1));
-    expect(router.stack.map((p) => p.name), [FirstRoute.name, _SearchRoute.pageName]);
+      for (final q in ['b', 'c']) {
+        unawaited(router.navigate(_SearchRoute(q: q)));
+        await tester.pumpAndSettle();
+      }
+      expect(router.urlState.url, '/search?q=c');
+      expect(find.text('q c, count 1'), findsOneWidget);
+      expect(_SearchPageState.states, hasLength(1));
+      expect(router.stack.map((p) => p.name), [
+        FirstRoute.name,
+        _SearchRoute.pageName,
+      ]);
 
-    final builds = _SearchPageState.builds;
-    await tester.pump(const Duration(seconds: 1));
-    expect(_SearchPageState.builds, builds);
-  });
+      final builds = _SearchPageState.builds;
+      await tester.pump(const Duration(seconds: 1));
+      expect(_SearchPageState.builds, builds);
+    },
+  );
 
   // flutter/flutter#107279, the same from a url: navigatePath to the path on
   // top with a new query keeps the page and its state.
-  testWidgets('navigatePath to the url on top with a new query keeps the page and its state', (tester) async {
-    await pumpRouterApp(tester, router, initialLink: '/search?q=a');
-    await tester.tap(find.byType(TextButton));
-    await tester.pump();
+  testWidgets(
+    'navigatePath to the url on top with a new query keeps the page and its state',
+    (tester) async {
+      await pumpRouterApp(tester, router, initialLink: '/search?q=a');
+      await tester.tap(find.byType(TextButton));
+      await tester.pump();
 
-    unawaited(router.navigatePath('/search?q=b'));
-    await tester.pumpAndSettle();
-    expect(router.urlState.url, '/search?q=b');
-    expect(find.text('q b, count 1'), findsOneWidget);
-    expect(_SearchPageState.states, hasLength(1));
-  });
+      unawaited(router.navigatePath('/search?q=b'));
+      await tester.pumpAndSettle();
+      expect(router.urlState.url, '/search?q=b');
+      expect(find.text('q b, count 1'), findsOneWidget);
+      expect(_SearchPageState.states, hasLength(1));
+    },
+  );
 }
 
 class _SearchRoute extends PageRouteInfo<void> {
   new({required String q}) : super(pageName, rawQueryParams: {'q': q});
 
   static const String pageName = 'SearchRoute';
-  static final PageInfo page = PageInfo(pageName, builder: (data) => _SearchPage(q: data.queryParams.optString('q')));
+  static final PageInfo page = PageInfo(
+    pageName,
+    builder: (data) => _SearchPage(q: data.queryParams.optString('q')),
+  );
 }
 
 class _SearchPage extends StatefulWidget {
@@ -98,7 +110,10 @@ class _SearchPageState extends State<_SearchPage> {
     return Column(
       children: [
         Text('q ${widget.q ?? 'null'}, count $_count'),
-        TextButton(onPressed: () => setState(() => _count++), child: const Text('count')),
+        TextButton(
+          onPressed: () => setState(() => _count++),
+          child: const Text('count'),
+        ),
       ],
     );
   }

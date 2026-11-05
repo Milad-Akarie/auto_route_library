@@ -57,7 +57,10 @@ void main() {
 
     test('constructors with a converter (#1794)', () {
       expect(const PathParam('id', _kConverter).converter, same(_kConverter));
-      expect(const PathParam.inherit('id', _kConverter).converter, same(_kConverter));
+      expect(
+        const PathParam.inherit('id', _kConverter).converter,
+        same(_kConverter),
+      );
       expect(const PathParam('id').converter, null);
     });
   });

@@ -26,8 +26,15 @@ void main() {
   // Open FirstRoute with query params, push SecondRoute, then pop it.
   // The browser should step back to FirstRoute's own entry, query params and all,
   // so a refresh reopens the same page.
-  testWidgets('Popping on web steps back to the entry with the query params', (tester) async {
-    await pumpRouterConfigApp(tester, router.config(deepLinkBuilder: (_) => const DeepLink.path('/?search=shoes')));
+  testWidgets('Popping on web steps back to the entry with the query params', (
+    tester,
+  ) async {
+    await pumpRouterConfigApp(
+      tester,
+      router.config(
+        deepLinkBuilder: (_) => const DeepLink.path('/?search=shoes'),
+      ),
+    );
     await settleBrowser(tester);
     final start = browserSerialCount;
     expect(browserPath, '/?search=shoes');
@@ -39,7 +46,11 @@ void main() {
     router.pop();
     await settleBrowser(tester);
     expectCurrentPage(router, FirstRoute.name);
-    expect(browserPath, '/?search=shoes', reason: 'after settleBrowser(tester)');
+    expect(
+      browserPath,
+      '/?search=shoes',
+      reason: 'after settleBrowser(tester)',
+    );
     expect(browserSerialCount, start);
   });
 }

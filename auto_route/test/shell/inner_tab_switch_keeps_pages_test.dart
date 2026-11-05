@@ -14,13 +14,19 @@ import '../router_test_utils.dart';
 // Should: the pages below stay in the stack throughout and are neither
 // rebuilt from scratch nor removed.
 void main() {
-  testWidgets('Switching inner tabs keeps the pages below and their state', (tester) async {
+  testWidgets('Switching inner tabs keeps the pages below and their state', (
+    tester,
+  ) async {
     final inits = <String, int>{};
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(
           path: '/',
-          page: _counted('TabsRoute', inits, child: const AutoTabsRouter(routes: [_Route('Tab1')])),
+          page: _counted(
+            'TabsRoute',
+            inits,
+            child: const AutoTabsRouter(routes: [_Route('Tab1')]),
+          ),
           children: [AutoRoute(path: '', page: _counted('Tab1', inits))],
         ),
         AutoRoute(path: '/sample', page: _counted('SampleRoute', inits)),
@@ -29,7 +35,9 @@ void main() {
           page: _counted(
             'AnotherTabsRoute',
             inits,
-            child: const AutoTabsRouter(routes: [_Route('Item0'), _Route('Item1')]),
+            child: const AutoTabsRouter(
+              routes: [_Route('Item0'), _Route('Item1')],
+            ),
           ),
           children: [
             AutoRoute(path: 'item0', page: _counted('Item0', inits)),
@@ -57,12 +65,24 @@ void main() {
         expect(find.text(name, skipOffstage: false), findsOneWidget);
       }
     }
-    expect(inits, {'TabsRoute': 1, 'Tab1': 1, 'SampleRoute': 1, 'AnotherTabsRoute': 1, 'Item0': 1, 'Item1': 1});
+    expect(inits, {
+      'TabsRoute': 1,
+      'Tab1': 1,
+      'SampleRoute': 1,
+      'AnotherTabsRoute': 1,
+      'Item0': 1,
+      'Item1': 1,
+    });
   });
 }
 
-PageInfo _counted(String name, Map<String, int> inits, {Widget? child}) =>
-    .new(name, builder: (_) => _InitCounter(() => inits[name] = (inits[name] ?? 0) + 1, child: child ?? Text(name)));
+PageInfo _counted(String name, Map<String, int> inits, {Widget? child}) => .new(
+  name,
+  builder: (_) => _InitCounter(
+    () => inits[name] = (inits[name] ?? 0) + 1,
+    child: child ?? Text(name),
+  ),
+);
 
 class _InitCounter extends StatefulWidget {
   const new(this.onInit, {required this.child});

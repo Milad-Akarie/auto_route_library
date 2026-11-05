@@ -26,113 +26,143 @@ void main() {
     }
   });
 
-  testWidgets('a guard re-check overriding the children of a nested router opens them', (tester) async {
-    final auth = ValueNotifier(0);
-    addTearDown(auth.dispose);
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          page: _DashboardRoute.page,
-          path: '/',
-          guards: [resetToHome()],
-          children: [
-            AutoRoute(page: _HomeRoute.page, path: '', initial: true),
-            AutoRoute(page: _ProfileRoute.page, path: 'profile'),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router, initialLink: '/profile', reevaluationNotifier: auth);
-    expect(find.text(_ProfileRoute.name), findsOneWidget);
+  testWidgets(
+    'a guard re-check overriding the children of a nested router opens them',
+    (tester) async {
+      final auth = ValueNotifier(0);
+      addTearDown(auth.dispose);
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            page: _DashboardRoute.page,
+            path: '/',
+            guards: [resetToHome()],
+            children: [
+              AutoRoute(page: _HomeRoute.page, path: '', initial: true),
+              AutoRoute(page: _ProfileRoute.page, path: 'profile'),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterApp(
+        tester,
+        router,
+        initialLink: '/profile',
+        reevaluationNotifier: auth,
+      );
+      expect(find.text(_ProfileRoute.name), findsOneWidget);
 
-    auth.value++;
-    await tester.pumpAndSettle();
+      auth.value++;
+      await tester.pumpAndSettle();
 
-    expect(router.topRoute.name, _HomeRoute.name);
-    expect(find.text(_HomeRoute.name), findsOneWidget);
-    expect(router.urlState.url, '/');
-  });
+      expect(router.topRoute.name, _HomeRoute.name);
+      expect(find.text(_HomeRoute.name), findsOneWidget);
+      expect(router.urlState.url, '/');
+    },
+  );
 
-  testWidgets('a guard re-check overriding the children of a tabs router opens that tab', (tester) async {
-    final auth = ValueNotifier(0);
-    addTearDown(auth.dispose);
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          page: _DashboardTabsRoute.page,
-          path: '/',
-          guards: [resetToHome()],
-          children: [
-            AutoRoute(page: _HomeRoute.page, path: '', initial: true),
-            AutoRoute(page: _ProfileRoute.page, path: 'profile'),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router, initialLink: '/profile', reevaluationNotifier: auth);
-    expect(router.topRoute.name, _ProfileRoute.name);
+  testWidgets(
+    'a guard re-check overriding the children of a tabs router opens that tab',
+    (tester) async {
+      final auth = ValueNotifier(0);
+      addTearDown(auth.dispose);
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            page: _DashboardTabsRoute.page,
+            path: '/',
+            guards: [resetToHome()],
+            children: [
+              AutoRoute(page: _HomeRoute.page, path: '', initial: true),
+              AutoRoute(page: _ProfileRoute.page, path: 'profile'),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterApp(
+        tester,
+        router,
+        initialLink: '/profile',
+        reevaluationNotifier: auth,
+      );
+      expect(router.topRoute.name, _ProfileRoute.name);
 
-    auth.value++;
-    await tester.pumpAndSettle();
+      auth.value++;
+      await tester.pumpAndSettle();
 
-    expect(router.innerRouterOf<TabsRouter>(_DashboardTabsRoute.name)!.activeIndex, 0);
-    expect(router.topRoute.name, _HomeRoute.name);
-    expect(find.text(_HomeRoute.name), findsOneWidget);
-    expect(router.urlState.url, '/');
-  });
+      expect(
+        router.innerRouterOf<TabsRouter>(_DashboardTabsRoute.name)!.activeIndex,
+        0,
+      );
+      expect(router.topRoute.name, _HomeRoute.name);
+      expect(find.text(_HomeRoute.name), findsOneWidget);
+      expect(router.urlState.url, '/');
+    },
+  );
 
-  testWidgets('navigate() to an open page whose guard overrides its children opens them', (tester) async {
-    var reset = false;
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          page: _DashboardRoute.page,
-          path: '/',
-          guards: [
-            AutoRouteGuard.simple((resolver, _) {
-              if (reset) {
-                resolver.overrideNext(children: [const _HomeRoute()]);
-              } else {
-                resolver.next();
-              }
-            }),
-          ],
-          children: [
-            AutoRoute(page: _HomeRoute.page, path: '', initial: true),
-            AutoRoute(page: _ProfileRoute.page, path: 'profile'),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    expect(router.topRoute.name, _HomeRoute.name);
+  testWidgets(
+    'navigate() to an open page whose guard overrides its children opens them',
+    (tester) async {
+      var reset = false;
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            page: _DashboardRoute.page,
+            path: '/',
+            guards: [
+              AutoRouteGuard.simple((resolver, _) {
+                if (reset) {
+                  resolver.overrideNext(children: [const _HomeRoute()]);
+                } else {
+                  resolver.next();
+                }
+              }),
+            ],
+            children: [
+              AutoRoute(page: _HomeRoute.page, path: '', initial: true),
+              AutoRoute(page: _ProfileRoute.page, path: 'profile'),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      expect(router.topRoute.name, _HomeRoute.name);
 
-    reset = true;
-    unawaited(router.navigate(const _DashboardRoute(children: [_ProfileRoute()])));
-    await tester.pumpAndSettle();
+      reset = true;
+      unawaited(
+        router.navigate(const _DashboardRoute(children: [_ProfileRoute()])),
+      );
+      await tester.pumpAndSettle();
 
-    expect(
-      router.topRoute.name,
-      _HomeRoute.name,
-      reason: 'after router.navigate(const _DashboardRoute(children: [_Profil',
-    );
-    expect(find.text(_HomeRoute.name), findsOneWidget);
-    expect(router.urlState.url, '/');
-  });
+      expect(
+        router.topRoute.name,
+        _HomeRoute.name,
+        reason:
+            'after router.navigate(const _DashboardRoute(children: [_Profil',
+      );
+      expect(find.text(_HomeRoute.name), findsOneWidget);
+      expect(router.urlState.url, '/');
+    },
+  );
 }
 
 class _DashboardRoute extends PageRouteInfo<void> {
-  const new({required List<PageRouteInfo> children}) : super(name, initialChildren: children);
+  const new({required List<PageRouteInfo> children})
+    : super(name, initialChildren: children);
 
   static const String name = '_DashboardRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const AutoRouter(),
+  );
 }
 
 abstract final class _DashboardTabsRoute {
   static const String name = '_DashboardTabsRoute';
   static final PageInfo page = PageInfo(
     name,
-    builder: (_) => const AutoTabsRouter(routes: [_HomeRoute(), _ProfileRoute()]),
+    builder: (_) =>
+        const AutoTabsRouter(routes: [_HomeRoute(), _ProfileRoute()]),
   );
 }
 
@@ -140,12 +170,18 @@ class _HomeRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_HomeRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text(name)),
+  );
 }
 
 class _ProfileRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_ProfileRoute';
-  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text(name)),
+  );
 }

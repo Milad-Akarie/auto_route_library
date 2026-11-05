@@ -9,9 +9,18 @@ void main() {
   // Presses the buttons labeled 'Open A' and 'Open B' with two fingers at
   // once and lifts the finger on A. With [settleBeforeB], the app settles
   // before the finger on B is lifted, as when B is held while A opens.
-  Future<void> tapAThenB(WidgetTester tester, {bool settleBeforeB = false}) async {
-    final a = await tester.startGesture(tester.getCenter(find.text('Open A')), pointer: 1);
-    final b = await tester.startGesture(tester.getCenter(find.text('Open B')), pointer: 2);
+  Future<void> tapAThenB(
+    WidgetTester tester, {
+    bool settleBeforeB = false,
+  }) async {
+    final a = await tester.startGesture(
+      tester.getCenter(find.text('Open A')),
+      pointer: 1,
+    );
+    final b = await tester.startGesture(
+      tester.getCenter(find.text('Open B')),
+      pointer: 2,
+    );
     await a.up();
     if (settleBeforeB) await tester.pumpAndSettle();
     await b.up();
@@ -31,9 +40,12 @@ void main() {
   // buttons pressed at once only the first lifted opens its page.
   for (final settleBeforeB in [false, true]) {
     testWidgets('Navigator.push opens one page of two buttons pressed at once '
-        '(${settleBeforeB ? 'B held while A opens' : 'same frame'})', (tester) async {
+        '(${settleBeforeB ? 'B held while A opens' : 'same frame'})', (
+      tester,
+    ) async {
       final navigatorKey = GlobalKey<NavigatorState>();
-      Route<void> page(String name) => MaterialPageRoute(builder: (_) => Text(name));
+      Route<void> page(String name) =>
+          MaterialPageRoute(builder: (_) => Text(name));
       await tester.pumpWidget(
         MaterialApp(
           navigatorKey: navigatorKey,
@@ -56,12 +68,17 @@ void main() {
   // second finger's tap still pushed. It should open only the first page.
   for (final settleBeforeB in [false, true]) {
     testWidgets('push opens one page of two buttons pressed at once '
-        '(${settleBeforeB ? 'B held while A opens' : 'same frame'})', (tester) async {
+        '(${settleBeforeB ? 'B held while A opens' : 'same frame'})', (
+      tester,
+    ) async {
       final router = buildRouter();
       await pumpRouterApp(tester, router);
       await tapAThenB(tester, settleBeforeB: settleBeforeB);
 
-      expect(router.stack.map((p) => p.name), [_HomeRoute.pageName, SecondRoute.name]);
+      expect(router.stack.map((p) => p.name), [
+        _HomeRoute.pageName,
+        SecondRoute.name,
+      ]);
       expectTopPage(router, SecondRoute.name);
     });
   }

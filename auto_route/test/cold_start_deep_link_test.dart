@@ -19,20 +19,28 @@ void main() {
       ),
       AutoRoute(
         path: '/books/:id',
-        page: PageInfo('BookRoute', builder: (data) => Text('Book ${data.params.getString('id')}')),
+        page: PageInfo(
+          'BookRoute',
+          builder: (data) => Text('Book ${data.params.getString('id')}'),
+        ),
       ),
     ],
   );
 
-  testWidgets('A cold start from a deep link opens that page, with the delegate and parser', (tester) async {
-    final router = buildRouter();
-    await pumpRouterApp(tester, router, initialLink: '/books/5');
-    expect(tester.takeException(), isNull);
-    expect(find.text('Book 5'), findsOneWidget);
-    expect(router.urlState.url, '/books/5');
-  });
+  testWidgets(
+    'A cold start from a deep link opens that page, with the delegate and parser',
+    (tester) async {
+      final router = buildRouter();
+      await pumpRouterApp(tester, router, initialLink: '/books/5');
+      expect(tester.takeException(), isNull);
+      expect(find.text('Book 5'), findsOneWidget);
+      expect(router.urlState.url, '/books/5');
+    },
+  );
 
-  testWidgets('A cold start without a link opens the initial route', (tester) async {
+  testWidgets('A cold start without a link opens the initial route', (
+    tester,
+  ) async {
     final router = buildRouter();
     await pumpRouterApp(tester, router);
     expect(find.text('Home'), findsOneWidget);

@@ -26,7 +26,10 @@ RootStackRouter _router() => .build(
           routes: const [_Route('Tab1Route'), _Route('Tab2Route')],
           builder: (context, child) => Column(
             children: [
-              TextButton(onPressed: () => context.tabsRouter.setActiveIndex(1), child: const Text('Show tab 2')),
+              TextButton(
+                onPressed: () => context.tabsRouter.setActiveIndex(1),
+                child: const Text('Show tab 2'),
+              ),
               Expanded(child: child),
             ],
           ),
@@ -59,7 +62,10 @@ void main() {
     testWidgets('A tabs host opened without a tab in its url reports its first tab, '
         'includePrefixMatches: $includePrefixMatches', (tester) async {
       final router = _router();
-      await pumpRouterConfigApp(tester, router.config(includePrefixMatches: includePrefixMatches));
+      await pumpRouterConfigApp(
+        tester,
+        router.config(includePrefixMatches: includePrefixMatches),
+      );
       unawaited(router.navigate(const _Route('TabsRoute')));
       await tester.pumpAndSettle();
       expect(find.text('Tab 1'), findsOneWidget);

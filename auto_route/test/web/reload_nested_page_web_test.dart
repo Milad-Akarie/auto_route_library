@@ -21,42 +21,49 @@ void main() {
   // the initial child.
   // Should: GazetteerRoute shows and the url stays '/admin/gazetteer'.
   for (final dashboardInitial in [false, true]) {
-    testWidgets('On web, a reload on a nested page keeps it (initial dashboard: $dashboardInitial)', (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          CustomRoute(
-            page: _page('HomeRoute'),
-            path: '/',
-            initial: true,
-            transitionsBuilder: TransitionsBuilders.fadeIn,
-          ),
-          CustomRoute(
-            page: PageInfo('AdminLayoutRoute', builder: (_) => const AutoRouter()),
-            path: '/admin',
-            children: [
-              CustomRoute(
-                page: _page('DashboardRoute'),
-                path: 'dashboard',
-                initial: dashboardInitial,
-                transitionsBuilder: TransitionsBuilders.fadeIn,
+    testWidgets(
+      'On web, a reload on a nested page keeps it (initial dashboard: $dashboardInitial)',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            CustomRoute(
+              page: _page('HomeRoute'),
+              path: '/',
+              initial: true,
+              transitionsBuilder: TransitionsBuilders.fadeIn,
+            ),
+            CustomRoute(
+              page: PageInfo(
+                'AdminLayoutRoute',
+                builder: (_) => const AutoRouter(),
               ),
-              CustomRoute(
-                page: _page('GazetteerRoute'),
-                path: 'gazetteer',
-                transitionsBuilder: TransitionsBuilders.fadeIn,
-              ),
-            ],
-          ),
-        ],
-      );
-      openBrowserAt(tester, '/admin/gazetteer');
-      await pumpRouterConfigApp(tester, router.config());
-      await settleBrowser(tester);
+              path: '/admin',
+              children: [
+                CustomRoute(
+                  page: _page('DashboardRoute'),
+                  path: 'dashboard',
+                  initial: dashboardInitial,
+                  transitionsBuilder: TransitionsBuilders.fadeIn,
+                ),
+                CustomRoute(
+                  page: _page('GazetteerRoute'),
+                  path: 'gazetteer',
+                  transitionsBuilder: TransitionsBuilders.fadeIn,
+                ),
+              ],
+            ),
+          ],
+        );
+        openBrowserAt(tester, '/admin/gazetteer');
+        await pumpRouterConfigApp(tester, router.config());
+        await settleBrowser(tester);
 
-      expect(find.text('GazetteerRoute'), findsOneWidget);
-      expect(browserPath, '/admin/gazetteer');
-    });
+        expect(find.text('GazetteerRoute'), findsOneWidget);
+        expect(browserPath, '/admin/gazetteer');
+      },
+    );
   }
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));

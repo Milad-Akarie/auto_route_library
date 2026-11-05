@@ -20,47 +20,75 @@ void main() {
     'system back': systemBack,
     'the predictive back gesture': predictiveBack,
   }.entries) {
-    testWidgets('After the splash page, $name on a tab pops pushed pages, then leaves the app', (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(path: '/splash', page: _page('SplashRoute'), initial: true),
-          AutoRoute(
-            path: '/home',
-            page: PageInfo(
-              'HomeRoute',
-              builder: (_) => AutoTabsRouter(routes: [for (final tab in _kTabs) _Route(tab)]),
+    testWidgets(
+      'After the splash page, $name on a tab pops pushed pages, then leaves the app',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              path: '/splash',
+              page: _page('SplashRoute'),
+              initial: true,
             ),
-            children: [for (final tab in _kTabs) AutoRoute(path: tab.toLowerCase(), page: _page(tab))],
+            AutoRoute(
+              path: '/home',
+              page: PageInfo(
+                'HomeRoute',
+                builder: (_) => AutoTabsRouter(
+                  routes: [for (final tab in _kTabs) _Route(tab)],
+                ),
+              ),
+              children: [
+                for (final tab in _kTabs)
+                  AutoRoute(path: tab.toLowerCase(), page: _page(tab)),
+              ],
+            ),
+            AutoRoute(path: '/profile', page: _page('ProfileRoute')),
+          ],
+        );
+        addTearDown(router.dispose);
+        final frameworkHandlesBack = FrameworkHandlesBackRecorder()
+          ..listen(tester);
+        await tester.pumpWidget(
+          MaterialApp.router(
+            theme: androidTheme,
+            routerConfig: router.config(),
           ),
-          AutoRoute(path: '/profile', page: _page('ProfileRoute')),
-        ],
-      );
-      addTearDown(router.dispose);
-      final frameworkHandlesBack = FrameworkHandlesBackRecorder()..listen(tester);
-      await tester.pumpWidget(MaterialApp.router(theme: androidTheme, routerConfig: router.config()));
-      await tester.pumpAndSettle();
-      expect(find.text('SplashRoute'), findsOneWidget);
+        );
+        await tester.pumpAndSettle();
+        expect(find.text('SplashRoute'), findsOneWidget);
 
-      unawaited(router.replaceAll([const _Route('HomeRoute')]));
-      await tester.pumpAndSettle();
-      expect(find.text('Explore'), findsOneWidget);
-      expect(router.stack.map((page) => page.name), ['HomeRoute']);
-      expect(frameworkHandlesBack.last, isFalse);
+        unawaited(router.replaceAll([const _Route('HomeRoute')]));
+        await tester.pumpAndSettle();
+        expect(find.text('Explore'), findsOneWidget);
+        expect(router.stack.map((page) => page.name), ['HomeRoute']);
+        expect(frameworkHandlesBack.last, isFalse);
 
-      unawaited(router.push(const _Route('ProfileRoute')));
-      await tester.pumpAndSettle();
-      expect(frameworkHandlesBack.last, isTrue);
-      await back(tester);
-      expect(find.text('Explore'), findsOneWidget, reason: 'after back(tester)');
-      expect(frameworkHandlesBack.last, isFalse, reason: 'after back(tester)');
-      expect(router.canPop(), isFalse);
-    }, skip: kIsWeb); // Android only: on web Flutter never tells the platform whether it handles back.
+        unawaited(router.push(const _Route('ProfileRoute')));
+        await tester.pumpAndSettle();
+        expect(frameworkHandlesBack.last, isTrue);
+        await back(tester);
+        expect(
+          find.text('Explore'),
+          findsOneWidget,
+          reason: 'after back(tester)',
+        );
+        expect(
+          frameworkHandlesBack.last,
+          isFalse,
+          reason: 'after back(tester)',
+        );
+        expect(router.canPop(), isFalse);
+      },
+      skip: kIsWeb,
+    ); // Android only: on web Flutter never tells the platform whether it handles back.
   }
 }
 
 const _kTabs = ['Explore', 'Dialogs', 'Notifications', 'Settings'];
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
   const new(super.name);

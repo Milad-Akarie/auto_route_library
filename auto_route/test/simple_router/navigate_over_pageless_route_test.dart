@@ -26,12 +26,15 @@ void main() {
     );
   });
 
-  List<String> names() => router.stack.map((page) => page.routeData.name).toList();
+  List<String> names() =>
+      router.stack.map((page) => page.routeData.name).toList();
 
   Future<void> pushPageless(WidgetTester tester, String name) async {
     tester
         .state<NavigatorState>(find.byType(Navigator).first)
-        .push(MaterialPageRoute<void>(builder: (_) => Scaffold(body: Text(name))));
+        .push(
+          MaterialPageRoute<void>(builder: (_) => Scaffold(body: Text(name))),
+        );
     await tester.pumpAndSettle();
     expect(find.text(name), findsOneWidget);
   }
@@ -39,25 +42,31 @@ void main() {
   // Each way of going back to Page1.
   final goToPage1 = {
     'navigate': () => unawaited(router.navigate(const PageRouteInfo('Page1'))),
-    'replaceAll': () => unawaited(router.replaceAll(const [PageRouteInfo('Page1')])),
+    'replaceAll': () =>
+        unawaited(router.replaceAll(const [PageRouteInfo('Page1')])),
     'popUntilRoot': () => router.popUntilRoot(),
   };
 
   for (final MapEntry(key: name, value: go) in goToPage1.entries) {
-    testWidgets('$name to the page under a Navigator.push route removes that route', (tester) async {
-      await pumpRouterApp(tester, router);
-      await pushPageless(tester, 'Page2');
+    testWidgets(
+      '$name to the page under a Navigator.push route removes that route',
+      (tester) async {
+        await pumpRouterApp(tester, router);
+        await pushPageless(tester, 'Page2');
 
-      go();
-      await tester.pumpAndSettle();
+        go();
+        await tester.pumpAndSettle();
 
-      expect(tester.takeException(), isNull);
-      expect(find.text('Page2'), findsNothing);
-      expect(names(), ['Page1']);
-      expectTopPage(router, 'Page1');
-    });
+        expect(tester.takeException(), isNull);
+        expect(find.text('Page2'), findsNothing);
+        expect(names(), ['Page1']);
+        expectTopPage(router, 'Page1');
+      },
+    );
 
-    testWidgets("$name from the comment's Password page shows Page1 alone", (tester) async {
+    testWidgets("$name from the comment's Password page shows Page1 alone", (
+      tester,
+    ) async {
       await pumpRouterApp(tester, router);
       await pushPageless(tester, 'Signup');
       unawaited(router.push(const PageRouteInfo('Login')));
@@ -75,23 +84,27 @@ void main() {
     });
   }
 
-  testWidgets('a guard reevaluation keeps a Navigator.push route over the page', (tester) async {
-    final reevaluate = ChangeNotifier();
-    addTearDown(reevaluate.dispose);
-    router = RootStackRouter.build(
-      guards: [AutoRouteGuardCallback((resolver, _) => resolver.next())],
-      routes: [AutoRoute(page: _page('Page1'), initial: true)],
-    );
-    await pumpRouterApp(tester, router, reevaluationNotifier: reevaluate);
-    await pushPageless(tester, 'Page2');
+  testWidgets(
+    'a guard reevaluation keeps a Navigator.push route over the page',
+    (tester) async {
+      final reevaluate = ChangeNotifier();
+      addTearDown(reevaluate.dispose);
+      router = RootStackRouter.build(
+        guards: [AutoRouteGuardCallback((resolver, _) => resolver.next())],
+        routes: [AutoRoute(page: _page('Page1'), initial: true)],
+      );
+      await pumpRouterApp(tester, router, reevaluationNotifier: reevaluate);
+      await pushPageless(tester, 'Page2');
 
-    reevaluate.notifyListeners();
-    await tester.pumpAndSettle();
+      reevaluate.notifyListeners();
+      await tester.pumpAndSettle();
 
-    expect(tester.takeException(), isNull);
-    expect(find.text('Page2'), findsOneWidget);
-    expect(names(), ['Page1']);
-  });
+      expect(tester.takeException(), isNull);
+      expect(find.text('Page2'), findsOneWidget);
+      expect(names(), ['Page1']);
+    },
+  );
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));

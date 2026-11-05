@@ -17,42 +17,64 @@ import 'package:material_ui/material_ui.dart';
 // If this test fails after a Flutter upgrade, Flutter now restores the
 // title on pop: drop this canary and the note above.
 void main() {
-  testWidgets('popping a page leaves the title of the page left, until the page under it builds', (tester) async {
-    final titles = <String>[];
-    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
-      if (call.method == 'SystemChrome.setApplicationSwitcherDescription') {
-        titles.add((call.arguments as Map<Object?, Object?>)['label']! as String);
-      }
-      return null;
-    });
-    addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, null));
-
-    Page<void> page(String name) => MaterialPage(
-      key: ValueKey(name),
-      child: Title(color: const Color(0xFF000000), title: name, child: Text(name)),
-    );
-    var pages = [page('First')];
-    late StateSetter setPages;
-    await tester.pumpWidget(
-      MaterialApp(
-        home: StatefulBuilder(
-          builder: (context, setState) {
-            setPages = setState;
-            return Navigator(
-              pages: List.of(pages),
-              onDidRemovePage: (removed) => setState(() => pages = [...pages]..remove(removed)),
+  testWidgets(
+    'popping a page leaves the title of the page left, until the page under it builds',
+    (tester) async {
+      final titles = <String>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (call) async {
+          if (call.method == 'SystemChrome.setApplicationSwitcherDescription') {
+            titles.add(
+              (call.arguments as Map<Object?, Object?>)['label']! as String,
             );
-          },
+          }
+          return null;
+        },
+      );
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
         ),
-      ),
-    );
-    setPages(() => pages = [...pages, page('Second')]);
-    await tester.pumpAndSettle();
-    expect(titles.lastOrNull, 'Second');
+      );
 
-    setPages(() => pages = pages.take(1).toList());
-    await tester.pumpAndSettle();
-    expect(find.text('First'), findsOneWidget);
-    expect(titles.lastOrNull, 'Second', reason: 'after setPages(() => pages = pages.take(1).toList())');
-  });
+      Page<void> page(String name) => MaterialPage(
+        key: ValueKey(name),
+        child: Title(
+          color: const Color(0xFF000000),
+          title: name,
+          child: Text(name),
+        ),
+      );
+      var pages = [page('First')];
+      late StateSetter setPages;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: StatefulBuilder(
+            builder: (context, setState) {
+              setPages = setState;
+              return Navigator(
+                pages: List.of(pages),
+                onDidRemovePage: (removed) =>
+                    setState(() => pages = [...pages]..remove(removed)),
+              );
+            },
+          ),
+        ),
+      );
+      setPages(() => pages = [...pages, page('Second')]);
+      await tester.pumpAndSettle();
+      expect(titles.lastOrNull, 'Second');
+
+      setPages(() => pages = pages.take(1).toList());
+      await tester.pumpAndSettle();
+      expect(find.text('First'), findsOneWidget);
+      expect(
+        titles.lastOrNull,
+        'Second',
+        reason: 'after setPages(() => pages = pages.take(1).toList())',
+      );
+    },
+  );
 }

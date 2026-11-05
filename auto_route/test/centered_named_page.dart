@@ -8,5 +8,6 @@ class CenteredNamedPage extends StatelessWidget {
   final String _name;
 
   @override
-  Widget build(BuildContext context) => Scaffold(body: Center(child: Text(_name)));
+  Widget build(BuildContext context) =>
+      Scaffold(body: Center(child: Text(_name)));
 }

@@ -53,7 +53,9 @@ void main() {
     expect(router.canNavigateBack, isFalse);
   }, skip: kIsWeb);
 
-  testWidgets('A page pushed after back() is recorded in the history', (tester) async {
+  testWidgets('A page pushed after back() is recorded in the history', (
+    tester,
+  ) async {
     await pushSecondThenThird(tester);
 
     router.back();
@@ -68,7 +70,10 @@ void main() {
     router.back();
     await tester.pumpAndSettle();
     expectCurrentPage(router, SecondRoute.name);
-    expect(router.stack.map((p) => p.name), [FirstRoute.name, SecondRoute.name]);
+    expect(router.stack.map((p) => p.name), [
+      FirstRoute.name,
+      SecondRoute.name,
+    ]);
     expect(router.navigationHistory.length, 2);
   }, skip: kIsWeb);
 }

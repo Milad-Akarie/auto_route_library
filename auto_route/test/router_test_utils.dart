@@ -9,7 +9,8 @@ Future<void> pumpRouterApp(
   RootStackRouter router, {
   String? initialLink,
   Listenable? reevaluationNotifier,
-  NavigatorObserversBuilder observers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+  NavigatorObserversBuilder observers =
+      AutoRouterDelegate.defaultNavigatorObserversBuilder,
 }) {
   addTearDown(router.dispose);
   return tester
@@ -18,7 +19,8 @@ Future<void> pumpRouterApp(
           routeInformationParser: router.defaultRouteParser(),
           routerDelegate: router.delegate(
             reevaluateListenable: reevaluationNotifier,
-            deepLinkBuilder: (link) => initialLink == null ? link : DeepLink.path(initialLink),
+            deepLinkBuilder: (link) =>
+                initialLink == null ? link : DeepLink.path(initialLink),
             navigatorObservers: observers,
           ),
         ),
@@ -28,9 +30,15 @@ Future<void> pumpRouterApp(
 
 /// Shows [config] in a [MaterialApp] and waits for its first page. The
 /// config's delegate, with its router, is disposed when the test ends.
-Future<void> pumpRouterConfigApp(WidgetTester tester, RouterConfig<UrlState> config) {
-  if (config.routerDelegate case final AutoRouterDelegate delegate) addTearDown(delegate.dispose);
-  return tester.pumpWidget(MaterialApp.router(routerConfig: config)).then((_) => tester.pumpAndSettle());
+Future<void> pumpRouterConfigApp(
+  WidgetTester tester,
+  RouterConfig<UrlState> config,
+) {
+  if (config.routerDelegate case final AutoRouterDelegate delegate)
+    addTearDown(delegate.dispose);
+  return tester
+      .pumpWidget(MaterialApp.router(routerConfig: config))
+      .then((_) => tester.pumpAndSettle());
 }
 
 void expectCurrentPage(StackRouter router, String name) {

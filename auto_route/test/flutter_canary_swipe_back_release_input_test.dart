@@ -35,7 +35,10 @@ void main() {
                 children: [
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: TextButton(onPressed: () => taps++, child: const Text('tap')),
+                    child: TextButton(
+                      onPressed: () => taps++,
+                      child: const Text('tap'),
+                    ),
                   ),
                   Expanded(
                     child: ListView(
@@ -44,7 +47,10 @@ void main() {
                         for (var i = 0; i < 50; i++)
                           SizedBox(
                             height: 80,
-                            child: Align(alignment: Alignment.centerLeft, child: Text('item $i')),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text('item $i'),
+                            ),
                           ),
                       ],
                     ),
@@ -56,7 +62,11 @@ void main() {
         ),
       ),
     );
-    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const Scaffold(body: Text('second'))));
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => const Scaffold(body: Text('second')),
+      ),
+    );
     await tester.pumpAndSettle();
     final gesture = await tester.startGesture(const Offset(2, 300));
     await gesture.moveBy(const Offset(500, 0));
@@ -81,7 +91,11 @@ void main() {
   testWidgets('a drag 250 ms after an iOS swipe back does not scroll the list, until Flutter fixes '
       'flutter/flutter#188840', (tester) async {
     await pumpAndSwipeBack(tester);
-    await tester.drag(find.text('item 3'), const Offset(0, -200), warnIfMissed: false);
+    await tester.drag(
+      find.text('item 3'),
+      const Offset(0, -200),
+      warnIfMissed: false,
+    );
     await tester.pump();
     expect(controller.offset, 0.0);
     await tester.pumpAndSettle();

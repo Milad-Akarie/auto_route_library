@@ -18,45 +18,58 @@ void main() {
     'system back': systemBack,
     'the predictive back gesture': predictiveBack,
   }.entries) {
-    testWidgets('$name on a first page with a PopScope asks it and keeps the app open', (tester) async {
-      final heard = <bool>[];
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            page: PageInfo(
-              'Home',
-              builder: (_) => PopScope(
-                canPop: false,
-                onPopInvokedWithResult: (didPop, _) => heard.add(didPop),
-                child: const Scaffold(body: Text('Home')),
+    testWidgets(
+      '$name on a first page with a PopScope asks it and keeps the app open',
+      (tester) async {
+        final heard = <bool>[];
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              page: PageInfo(
+                'Home',
+                builder: (_) => PopScope(
+                  canPop: false,
+                  onPopInvokedWithResult: (didPop, _) => heard.add(didPop),
+                  child: const Scaffold(body: Text('Home')),
+                ),
               ),
+              initial: true,
             ),
-            initial: true,
+          ],
+        );
+        addTearDown(router.dispose);
+        var appClosed = false;
+        bool? frameworkHandlesBack;
+        tester.binding.handleAppLifecycleStateChanged(.resumed);
+        final messenger = tester.binding.defaultBinaryMessenger
+          ..setMockMethodCallHandler(SystemChannels.platform, (call) async {
+            if (call.method == 'SystemNavigator.pop') appClosed = true;
+            if (call.method == 'SystemNavigator.setFrameworkHandlesBack')
+              frameworkHandlesBack = call.arguments as bool;
+            return null;
+          });
+        addTearDown(
+          () =>
+              messenger.setMockMethodCallHandler(SystemChannels.platform, null),
+        );
+        await tester.pumpWidget(
+          MaterialApp.router(
+            theme: androidTheme,
+            routerConfig: router.config(),
           ),
-        ],
-      );
-      addTearDown(router.dispose);
-      var appClosed = false;
-      bool? frameworkHandlesBack;
-      tester.binding.handleAppLifecycleStateChanged(.resumed);
-      final messenger = tester.binding.defaultBinaryMessenger
-        ..setMockMethodCallHandler(SystemChannels.platform, (call) async {
-          if (call.method == 'SystemNavigator.pop') appClosed = true;
-          if (call.method == 'SystemNavigator.setFrameworkHandlesBack') frameworkHandlesBack = call.arguments as bool;
-          return null;
-        });
-      addTearDown(() => messenger.setMockMethodCallHandler(SystemChannels.platform, null));
-      await tester.pumpWidget(MaterialApp.router(theme: androidTheme, routerConfig: router.config()));
-      await tester.pumpAndSettle();
-      expect(frameworkHandlesBack, isTrue);
+        );
+        await tester.pumpAndSettle();
+        expect(frameworkHandlesBack, isTrue);
 
-      await back(tester);
-      await back(tester);
+        await back(tester);
+        await back(tester);
 
-      expect(heard, [false, false]);
-      expect(appClosed, isFalse);
-      expect(frameworkHandlesBack, isTrue, reason: 'after back(tester)');
-      expect(find.text('Home'), findsOneWidget);
-    }, skip: kIsWeb); // Android only: on web Flutter never tells the platform whether it handles back.
+        expect(heard, [false, false]);
+        expect(appClosed, isFalse);
+        expect(frameworkHandlesBack, isTrue, reason: 'after back(tester)');
+        expect(find.text('Home'), findsOneWidget);
+      },
+      skip: kIsWeb,
+    ); // Android only: on web Flutter never tells the platform whether it handles back.
   }
 }

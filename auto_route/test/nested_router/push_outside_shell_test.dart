@@ -14,7 +14,10 @@ PageInfo _pushing(String name, {String? to}) => .new(
         children: [
           Text(name),
           if (to != null)
-            TextButton(onPressed: () => unawaited(context.router.push(NamedRoute(to))), child: Text('push $to')),
+            TextButton(
+              onPressed: () => unawaited(context.router.push(NamedRoute(to))),
+              child: Text('push $to'),
+            ),
         ],
       ),
     ),
@@ -29,46 +32,54 @@ PageInfo _pushing(String name, {String? to}) => .new(
 // Should: both searches are in the root stack above the tabs, no
 // exception, and back returns to the tabs.
 void main() {
-  testWidgets('A tab page pushes a page outside the tabs, which pushes itself again (flutter/flutter#156585)', (
-    tester,
-  ) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('HostRoute', builder: (_) => const AutoTabsRouter(routes: [_ATab(), _BTab()])),
-          children: [
-            AutoRoute(
-              path: 'a',
-              page: _pushing('ATab', to: 'SearchRoute'),
+  testWidgets(
+    'A tab page pushes a page outside the tabs, which pushes itself again (flutter/flutter#156585)',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HostRoute',
+              builder: (_) => const AutoTabsRouter(routes: [_ATab(), _BTab()]),
             ),
-            AutoRoute(path: 'b', page: _pushing('BTab')),
-          ],
-        ),
-        AutoRoute(
-          path: '/search',
-          page: _pushing('SearchRoute', to: 'SearchRoute'),
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    expect(find.text('ATab'), findsOneWidget);
+            children: [
+              AutoRoute(
+                path: 'a',
+                page: _pushing('ATab', to: 'SearchRoute'),
+              ),
+              AutoRoute(path: 'b', page: _pushing('BTab')),
+            ],
+          ),
+          AutoRoute(
+            path: '/search',
+            page: _pushing('SearchRoute', to: 'SearchRoute'),
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      expect(find.text('ATab'), findsOneWidget);
 
-    await tester.tap(find.text('push SearchRoute'));
-    await tester.pumpAndSettle();
-    expect(find.text('SearchRoute'), findsOneWidget);
+      await tester.tap(find.text('push SearchRoute'));
+      await tester.pumpAndSettle();
+      expect(find.text('SearchRoute'), findsOneWidget);
 
-    await tester.tap(find.text('push SearchRoute'));
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(router.stack.map((p) => p.name), ['HostRoute', 'SearchRoute', 'SearchRoute']);
+      await tester.tap(find.text('push SearchRoute'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(router.stack.map((p) => p.name), [
+        'HostRoute',
+        'SearchRoute',
+        'SearchRoute',
+      ]);
 
-    for (var i = 0; i < 2; i++) {
-      router.pop();
-    }
-    await tester.pumpAndSettle();
-    expect(find.text('ATab'), findsOneWidget, reason: 'after router.pop()');
-  });
+      for (var i = 0; i < 2; i++) {
+        router.pop();
+      }
+      await tester.pumpAndSettle();
+      expect(find.text('ATab'), findsOneWidget, reason: 'after router.pop()');
+    },
+  );
 }
 
 class _ATab extends PageRouteInfo<void> {

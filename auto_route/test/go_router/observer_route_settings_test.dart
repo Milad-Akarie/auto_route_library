@@ -14,44 +14,56 @@ void main() {
   // Steps: an observer records route.settings.name on didPush; push a
   // material route, a custom route with no transition and a custom route
   // built by customRouteBuilder. Should: every name is recorded, none null.
-  testWidgets('NavigatorObserver.didPush gets the route name for every route type', (tester) async {
-    final observer = _NameRecorder();
-    Widget page(RouteData<Object?> _) => const Text('page');
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('HomeRoute', builder: page),
-        ),
-        AutoRoute(
-          path: '/material',
-          page: PageInfo('MaterialRoute', builder: page),
-        ),
-        CustomRoute(
-          path: '/custom',
-          page: PageInfo('CustomRoute', builder: page),
-          transitionsBuilder: TransitionsBuilders.noTransition,
-        ),
-        CustomRoute(
-          path: '/built',
-          page: PageInfo('BuiltRoute', builder: page),
-          customRouteBuilder: <T>(context, child, page) =>
-              PageRouteBuilder<T>(settings: page, pageBuilder: (_, _, _) => child),
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router, observers: () => [observer]);
-    for (final path in ['/material', '/custom', '/built']) {
-      unawaited(router.pushPath(path));
-      await tester.pumpAndSettle();
-    }
-    expect(observer.pushed, ['HomeRoute', 'MaterialRoute', 'CustomRoute', 'BuiltRoute']);
-  });
+  testWidgets(
+    'NavigatorObserver.didPush gets the route name for every route type',
+    (tester) async {
+      final observer = _NameRecorder();
+      Widget page(RouteData<Object?> _) => const Text('page');
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo('HomeRoute', builder: page),
+          ),
+          AutoRoute(
+            path: '/material',
+            page: PageInfo('MaterialRoute', builder: page),
+          ),
+          CustomRoute(
+            path: '/custom',
+            page: PageInfo('CustomRoute', builder: page),
+            transitionsBuilder: TransitionsBuilders.noTransition,
+          ),
+          CustomRoute(
+            path: '/built',
+            page: PageInfo('BuiltRoute', builder: page),
+            customRouteBuilder: <T>(context, child, page) =>
+                PageRouteBuilder<T>(
+                  settings: page,
+                  pageBuilder: (_, _, _) => child,
+                ),
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router, observers: () => [observer]);
+      for (final path in ['/material', '/custom', '/built']) {
+        unawaited(router.pushPath(path));
+        await tester.pumpAndSettle();
+      }
+      expect(observer.pushed, [
+        'HomeRoute',
+        'MaterialRoute',
+        'CustomRoute',
+        'BuiltRoute',
+      ]);
+    },
+  );
 }
 
 class _NameRecorder extends NavigatorObserver {
   final pushed = <String?>[];
 
   @override
-  void didPush(Route<Object?> route, Route<Object?>? previousRoute) => pushed.add(route.settings.name);
+  void didPush(Route<Object?> route, Route<Object?>? previousRoute) =>
+      pushed.add(route.settings.name);
 }

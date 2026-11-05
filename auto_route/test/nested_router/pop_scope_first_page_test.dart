@@ -24,7 +24,8 @@ import '../router_test_utils.dart';
 void main() {
   final routers = {
     'AutoRouter': () => const AutoRouter(),
-    'AutoRouter.declarative': () => AutoRouter.declarative(routes: (_) => [const _GuardedRoute()]),
+    'AutoRouter.declarative': () =>
+        AutoRouter.declarative(routes: (_) => [const _GuardedRoute()]),
   };
 
   for (final MapEntry(key: kind, value: nestedRouter) in routers.entries) {
@@ -47,7 +48,9 @@ void main() {
       });
 
       Future<void> openHost(WidgetTester tester, {ThemeData? theme}) async {
-        await tester.pumpWidget(MaterialApp.router(theme: theme, routerConfig: router.config()));
+        await tester.pumpWidget(
+          MaterialApp.router(theme: theme, routerConfig: router.config()),
+        );
         await tester.pumpAndSettle();
         unawaited(router.push(const _HostRoute()));
         await tester.pumpAndSettle();
@@ -55,7 +58,10 @@ void main() {
       }
 
       void expectHostStays() {
-        expect(router.stack.map((page) => page.name), [FirstRoute.name, _HostRoute.name]);
+        expect(router.stack.map((page) => page.name), [
+          FirstRoute.name,
+          _HostRoute.name,
+        ]);
         expectTopPage(router, _GuardedRoute.name);
       }
 
@@ -66,7 +72,9 @@ void main() {
       };
 
       for (final MapEntry(key: name, value: (back, theme)) in backs.entries) {
-        testWidgets('$name should keep the host when its page has a PopScope', (tester) async {
+        testWidgets('$name should keep the host when its page has a PopScope', (
+          tester,
+        ) async {
           await openHost(tester, theme: theme);
 
           await back(tester);
@@ -79,13 +87,16 @@ void main() {
         });
       }
 
-      testWidgets('the iOS back swipe should keep the host when its page has a PopScope', (tester) async {
-        await openHost(tester, theme: iosTheme);
+      testWidgets(
+        'the iOS back swipe should keep the host when its page has a PopScope',
+        (tester) async {
+          await openHost(tester, theme: iosTheme);
 
-        await swipeBack(tester);
+          await swipeBack(tester);
 
-        expectHostStays();
-      });
+          expectHostStays();
+        },
+      );
 
       // Android only: on web Flutter never tells the platform whether it handles back.
       // Twice each way, as a comment on the issue reports the second back closing the app.
@@ -93,32 +104,40 @@ void main() {
         'system back': systemBack,
         'the predictive back gesture': predictiveBack,
       }.entries) {
-        testWidgets('Flutter should tell Android it handles back after $name on a first page with a PopScope', (
-          tester,
-        ) async {
-          router = RootStackRouter.build(
-            routes: [
-              AutoRoute(
-                page: _HostRoute.page,
-                path: '/',
-                children: [AutoRoute(page: _GuardedRoute.page, path: '')],
+        testWidgets(
+          'Flutter should tell Android it handles back after $name on a first page with a PopScope',
+          (tester) async {
+            router = RootStackRouter.build(
+              routes: [
+                AutoRoute(
+                  page: _HostRoute.page,
+                  path: '/',
+                  children: [AutoRoute(page: _GuardedRoute.page, path: '')],
+                ),
+              ],
+            );
+            addTearDown(router.dispose);
+            final frameworkHandlesBack = FrameworkHandlesBackRecorder()
+              ..listen(tester);
+            await tester.pumpWidget(
+              MaterialApp.router(
+                theme: androidTheme,
+                routerConfig: router.config(),
               ),
-            ],
-          );
-          addTearDown(router.dispose);
-          final frameworkHandlesBack = FrameworkHandlesBackRecorder()..listen(tester);
-          await tester.pumpWidget(MaterialApp.router(theme: androidTheme, routerConfig: router.config()));
-          await tester.pumpAndSettle();
-          expectTopPage(router, _GuardedRoute.name);
-          expect(frameworkHandlesBack.last, isTrue);
-
-          for (var attempt = 1; attempt <= 2; attempt++) {
-            await back(tester);
-            expect(frameworkHandlesBack.last, isTrue);
+            );
+            await tester.pumpAndSettle();
             expectTopPage(router, _GuardedRoute.name);
-            expect(_popAttempts, attempt);
-          }
-        }, skip: kIsWeb);
+            expect(frameworkHandlesBack.last, isTrue);
+
+            for (var attempt = 1; attempt <= 2; attempt++) {
+              await back(tester);
+              expect(frameworkHandlesBack.last, isTrue);
+              expectTopPage(router, _GuardedRoute.name);
+              expect(_popAttempts, attempt);
+            }
+          },
+          skip: kIsWeb,
+        );
       }
     });
   }

@@ -10,7 +10,10 @@ class _HeldGuard extends AutoRouteGuard {
   final release = Completer<void>();
 
   @override
-  Future<void> onNavigation(NavigationResolver resolver, StackRouter router) async {
+  Future<void> onNavigation(
+    NavigationResolver resolver,
+    StackRouter router,
+  ) async {
     await release.future;
     resolver.next();
   }
@@ -22,35 +25,41 @@ class _HeldGuard extends AutoRouteGuard {
 // Reported: the listener never runs.
 // Should: it runs when the guard starts and again when it finishes.
 void main() {
-  testWidgets('activeGuardObserver tells its listeners when a guard starts and ends', (tester) async {
-    final guard = _HeldGuard();
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('HomeRoute', builder: (_) => const Text('Home')),
-        ),
-        AutoRoute(
-          path: '/guarded',
-          page: PageInfo('GuardedRoute', builder: (_) => const Text('Guarded')),
-          guards: [guard],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    final seen = <bool>[];
-    void onChange() => seen.add(router.activeGuardObserver.guardInProgress);
-    router.activeGuardObserver.addListener(onChange);
-    addTearDown(() => router.activeGuardObserver.removeListener(onChange));
+  testWidgets(
+    'activeGuardObserver tells its listeners when a guard starts and ends',
+    (tester) async {
+      final guard = _HeldGuard();
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo('HomeRoute', builder: (_) => const Text('Home')),
+          ),
+          AutoRoute(
+            path: '/guarded',
+            page: PageInfo(
+              'GuardedRoute',
+              builder: (_) => const Text('Guarded'),
+            ),
+            guards: [guard],
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      final seen = <bool>[];
+      void onChange() => seen.add(router.activeGuardObserver.guardInProgress);
+      router.activeGuardObserver.addListener(onChange);
+      addTearDown(() => router.activeGuardObserver.removeListener(onChange));
 
-    unawaited(router.pushPath('/guarded'));
-    await tester.pump();
-    expect(seen, [true]);
-    expect(router.activeGuardObserver.activeGuards, [guard]);
+      unawaited(router.pushPath('/guarded'));
+      await tester.pump();
+      expect(seen, [true]);
+      expect(router.activeGuardObserver.activeGuards, [guard]);
 
-    guard.release.complete();
-    await tester.pumpAndSettle();
-    expect(seen, [true, false]);
-    expect(find.text('Guarded'), findsOneWidget);
-  });
+      guard.release.complete();
+      await tester.pumpAndSettle();
+      expect(seen, [true, false]);
+      expect(find.text('Guarded'), findsOneWidget);
+    },
+  );
 }

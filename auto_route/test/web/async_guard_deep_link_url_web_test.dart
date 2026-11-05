@@ -51,14 +51,21 @@ void main() {
       addTearDown(router.dispose);
       openBrowserAt(tester, '/parent/child');
 
-      await pumpAsRunApp(tester, MaterialApp.router(routerConfig: router.config()));
+      await pumpAsRunApp(
+        tester,
+        MaterialApp.router(routerConfig: router.config()),
+      );
       expect(find.text('ChildRoute'), findsNothing);
       expect(browserPath, '/parent/child');
 
       guardAnswer.complete();
       await settleBrowser(tester);
       expect(find.text('ChildRoute'), findsOneWidget);
-      expect(browserPath, '/parent/child', reason: 'after settleBrowser(tester)');
+      expect(
+        browserPath,
+        '/parent/child',
+        reason: 'after settleBrowser(tester)',
+      );
     },
   );
 }

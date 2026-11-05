@@ -20,30 +20,51 @@ import 'router_test_utils.dart';
 // If this test fails after a Flutter upgrade, Tab now leaves an empty route
 // scope: drop this canary.
 void main() {
-  testWidgets('Tab never leaves a nested page that has nothing to focus', (tester) async {
+  testWidgets('Tab never leaves a nested page that has nothing to focus', (
+    tester,
+  ) async {
     final router = _buildRouter(nestedPageButton: false);
     await pumpRouterApp(tester, router);
-    final nestedScope = FocusScope.of(tester.element(find.byKey(const Key('nested page'))));
+    final nestedScope = FocusScope.of(
+      tester.element(find.byKey(const Key('nested page'))),
+    );
 
     for (var i = 0; i < 10; i++) {
       await tester.sendKeyEvent(.tab);
       await tester.pump();
-      expect(FocusManager.instance.primaryFocus, same(nestedScope), reason: 'Tab $i');
+      expect(
+        FocusManager.instance.primaryFocus,
+        same(nestedScope),
+        reason: 'Tab $i',
+      );
     }
   });
 
-  testWidgets('control: Tab cycles through both panes when the nested page has a button', (tester) async {
-    final router = _buildRouter(nestedPageButton: true);
-    await pumpRouterApp(tester, router);
-    final focused = <String?>[];
-    for (var i = 0; i < 8; i++) {
-      await tester.sendKeyEvent(.tab);
-      await tester.pump();
-      final button = FocusManager.instance.primaryFocus?.context?.findAncestorWidgetOfExactType<IconButton>();
-      focused.add((button?.key as ValueKey<String>?)?.value);
-    }
-    expect(focused, ['nested', 'outer 0', 'outer 1', 'outer 2', 'nested', 'outer 0', 'outer 1', 'outer 2']);
-  });
+  testWidgets(
+    'control: Tab cycles through both panes when the nested page has a button',
+    (tester) async {
+      final router = _buildRouter(nestedPageButton: true);
+      await pumpRouterApp(tester, router);
+      final focused = <String?>[];
+      for (var i = 0; i < 8; i++) {
+        await tester.sendKeyEvent(.tab);
+        await tester.pump();
+        final button = FocusManager.instance.primaryFocus?.context
+            ?.findAncestorWidgetOfExactType<IconButton>();
+        focused.add((button?.key as ValueKey<String>?)?.value);
+      }
+      expect(focused, [
+        'nested',
+        'outer 0',
+        'outer 1',
+        'outer 2',
+        'nested',
+        'outer 0',
+        'outer 1',
+        'outer 2',
+      ]);
+    },
+  );
 }
 
 RootStackRouter _buildRouter({required bool nestedPageButton}) => .build(
@@ -60,7 +81,11 @@ RootStackRouter _buildRouter({required bool nestedPageButton}) => .build(
                   title: const Text('HostRoute'),
                   actions: [
                     for (var i = 0; i < 3; i++)
-                      IconButton(key: ValueKey('outer $i'), icon: const Icon(Icons.help), onPressed: noOp),
+                      IconButton(
+                        key: ValueKey('outer $i'),
+                        icon: const Icon(Icons.help),
+                        onPressed: noOp,
+                      ),
                   ],
                 ),
               ),
@@ -79,7 +104,11 @@ RootStackRouter _buildRouter({required bool nestedPageButton}) => .build(
               appBar: AppBar(
                 actions: [
                   if (nestedPageButton)
-                    const IconButton(key: ValueKey('nested'), icon: Icon(Icons.help), onPressed: noOp),
+                    const IconButton(
+                      key: ValueKey('nested'),
+                      icon: Icon(Icons.help),
+                      onPressed: noOp,
+                    ),
                 ],
               ),
             ),

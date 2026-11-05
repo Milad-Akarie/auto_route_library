@@ -40,7 +40,10 @@ void main() {
                 path: name,
                 guards: [
                   if (name == _kGuardedTab)
-                    AutoRouteGuard.simple((resolver, _) => _reject ? resolver.reject() : resolver.next()),
+                    AutoRouteGuard.simple(
+                      (resolver, _) =>
+                          _reject ? resolver.reject() : resolver.next(),
+                    ),
                 ],
               ),
           ],
@@ -49,7 +52,9 @@ void main() {
     );
     addTearDown(router.dispose);
     frameworkHandlesBack = FrameworkHandlesBackRecorder()..listen(tester);
-    await tester.pumpWidget(MaterialApp.router(theme: androidTheme, routerConfig: router.config()));
+    await tester.pumpWidget(
+      MaterialApp.router(theme: androidTheme, routerConfig: router.config()),
+    );
     await tester.pumpAndSettle();
     if (overFirstPage) {
       unawaited(router.push(const _Route('TabsRoute')));
@@ -58,7 +63,11 @@ void main() {
     return router.innerRouterOf<TabsRouter>(_tabsPage.name)!;
   }
 
-  Future<void> visit(WidgetTester tester, TabsRouter tabs, List<int> indexes) async {
+  Future<void> visit(
+    WidgetTester tester,
+    TabsRouter tabs,
+    List<int> indexes,
+  ) async {
     for (final index in indexes) {
       tabs.setActiveIndex(index);
       await tester.pumpAndSettle();
@@ -76,23 +85,33 @@ void main() {
     'system back': systemBack,
     'the predictive back gesture': predictiveBack,
   }.entries) {
-    testWidgets('$name after tabs 0, 2, 1 shows 2, then 0, then Android closes the app', (tester) async {
-      final tabs = await pumpApp(tester);
-      expect(frameworkHandlesBack.last, isFalse);
-      await visit(tester, tabs, [2, 1]);
-      expect(frameworkHandlesBack.last, isTrue);
+    testWidgets(
+      '$name after tabs 0, 2, 1 shows 2, then 0, then Android closes the app',
+      (tester) async {
+        final tabs = await pumpApp(tester);
+        expect(frameworkHandlesBack.last, isFalse);
+        await visit(tester, tabs, [2, 1]);
+        expect(frameworkHandlesBack.last, isTrue);
 
-      await back(tester);
-      expectTab(tabs, 2);
-      expect(frameworkHandlesBack.last, isTrue, reason: 'after back(tester)');
+        await back(tester);
+        expectTab(tabs, 2);
+        expect(frameworkHandlesBack.last, isTrue, reason: 'after back(tester)');
 
-      await back(tester);
-      expectTab(tabs, 0);
-      expect(frameworkHandlesBack.last, isFalse, reason: 'after back(tester)');
-    }, skip: kIsWeb);
+        await back(tester);
+        expectTab(tabs, 0);
+        expect(
+          frameworkHandlesBack.last,
+          isFalse,
+          reason: 'after back(tester)',
+        );
+      },
+      skip: kIsWeb,
+    );
   }
 
-  testWidgets('back after tabs 0, 2, 1 shows 2, then 0, then leaves the tabs', (tester) async {
+  testWidgets('back after tabs 0, 2, 1 shows 2, then 0, then leaves the tabs', (
+    tester,
+  ) async {
     final tabs = await pumpApp(tester, overFirstPage: true);
     await visit(tester, tabs, [2, 1]);
 
@@ -120,17 +139,20 @@ void main() {
     expect(find.text('FirstRoute'), findsOneWidget);
   });
 
-  testWidgets('a tab visited again is gone back to once, from where it was visited last', (tester) async {
-    final tabs = await pumpApp(tester, overFirstPage: true);
-    await visit(tester, tabs, [1, 0, 2]);
+  testWidgets(
+    'a tab visited again is gone back to once, from where it was visited last',
+    (tester) async {
+      final tabs = await pumpApp(tester, overFirstPage: true);
+      await visit(tester, tabs, [1, 0, 2]);
 
-    await systemBack(tester);
-    expectTab(tabs, 0);
-    await systemBack(tester);
-    expectTab(tabs, 1);
-    await systemBack(tester);
-    expect(find.text('FirstRoute'), findsOneWidget);
-  });
+      await systemBack(tester);
+      expectTab(tabs, 0);
+      await systemBack(tester);
+      expectTab(tabs, 1);
+      await systemBack(tester);
+      expect(find.text('FirstRoute'), findsOneWidget);
+    },
+  );
 
   testWidgets('back skips a tab whose guards keep it out', (tester) async {
     final tabs = await pumpApp(tester, overFirstPage: true);
@@ -141,22 +163,31 @@ void main() {
     expectTab(tabs, 0);
   });
 
-  testWidgets('with a homeIndex, back shows the home tab once the history is gone through', (tester) async {
-    final tabs = await pumpApp(tester, homeIndex: 0, overFirstPage: true);
-    await visit(tester, tabs, [1, 0, 3]);
+  testWidgets(
+    'with a homeIndex, back shows the home tab once the history is gone through',
+    (tester) async {
+      final tabs = await pumpApp(tester, homeIndex: 0, overFirstPage: true);
+      await visit(tester, tabs, [1, 0, 3]);
 
-    await systemBack(tester);
-    expectTab(tabs, 0);
-    await systemBack(tester);
-    expectTab(tabs, 1);
-    await systemBack(tester);
-    expectTab(tabs, 0);
-    await systemBack(tester);
-    expect(find.text('FirstRoute'), findsOneWidget);
-  });
+      await systemBack(tester);
+      expectTab(tabs, 0);
+      await systemBack(tester);
+      expectTab(tabs, 1);
+      await systemBack(tester);
+      expectTab(tabs, 0);
+      await systemBack(tester);
+      expect(find.text('FirstRoute'), findsOneWidget);
+    },
+  );
 
-  testWidgets('without backThroughHistory, back leaves the tabs from any tab', (tester) async {
-    final tabs = await pumpApp(tester, backThroughHistory: false, overFirstPage: true);
+  testWidgets('without backThroughHistory, back leaves the tabs from any tab', (
+    tester,
+  ) async {
+    final tabs = await pumpApp(
+      tester,
+      backThroughHistory: false,
+      overFirstPage: true,
+    );
     await visit(tester, tabs, [2, 1]);
 
     await systemBack(tester);
@@ -166,7 +197,12 @@ void main() {
 
 const _kFirstTab = 'NewsRoute';
 const _kGuardedTab = 'RankingRoute';
-const List<String> _kTabNames = [_kFirstTab, 'FeedRoute', _kGuardedTab, 'ProfileRoute'];
+const List<String> _kTabNames = [
+  _kFirstTab,
+  'FeedRoute',
+  _kGuardedTab,
+  'ProfileRoute',
+];
 var _backThroughHistory = true;
 var _homeIndex = -1;
 var _reject = false;

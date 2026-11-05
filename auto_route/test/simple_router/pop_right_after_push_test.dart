@@ -14,15 +14,17 @@ import '../router_test_utils.dart';
 void main() {
   late RootStackRouter router;
 
-  RootStackRouter buildRouter({List<AutoRouteGuard> guardsOfB = const []}) => .build(
-    routes: [
-      AutoRoute(page: _page('A'), initial: true),
-      AutoRoute(page: _page('B'), guards: guardsOfB),
-      AutoRoute(page: _page('C')),
-    ],
-  );
+  RootStackRouter buildRouter({List<AutoRouteGuard> guardsOfB = const []}) =>
+      .build(
+        routes: [
+          AutoRoute(page: _page('A'), initial: true),
+          AutoRoute(page: _page('B'), guards: guardsOfB),
+          AutoRoute(page: _page('C')),
+        ],
+      );
 
-  List<String> names() => router.stack.map((page) => page.routeData.name).toList();
+  List<String> names() =>
+      router.stack.map((page) => page.routeData.name).toList();
 
   Future<void> openAThenC(WidgetTester tester) async {
     await pumpRouterApp(tester, router);
@@ -30,7 +32,9 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets("The reporter's button: push then pop on the first page", (tester) async {
+  testWidgets("The reporter's button: push then pop on the first page", (
+    tester,
+  ) async {
     router = buildRouter();
     await pumpRouterApp(tester, router);
 
@@ -42,20 +46,27 @@ void main() {
     expectTopPage(router, 'A');
   });
 
-  testWidgets('pop right after push pops the pushed page and completes it with the result', (tester) async {
-    router = buildRouter();
-    await openAThenC(tester);
+  testWidgets(
+    'pop right after push pops the pushed page and completes it with the result',
+    (tester) async {
+      router = buildRouter();
+      await openAThenC(tester);
 
-    String? result;
-    unawaited(router.push<String>(const PageRouteInfo('B')).then((value) => result = value));
-    router.pop('closed');
-    await tester.pumpAndSettle();
+      String? result;
+      unawaited(
+        router
+            .push<String>(const PageRouteInfo('B'))
+            .then((value) => result = value),
+      );
+      router.pop('closed');
+      await tester.pumpAndSettle();
 
-    expect(tester.takeException(), isNull);
-    expect(result, 'closed');
-    expect(names(), ['A', 'C']);
-    expectTopPage(router, 'C');
-  });
+      expect(tester.takeException(), isNull);
+      expect(result, 'closed');
+      expect(names(), ['A', 'C']);
+      expectTopPage(router, 'C');
+    },
+  );
 
   testWidgets('maybePop right after push pops the pushed page', (tester) async {
     router = buildRouter();
@@ -70,23 +81,28 @@ void main() {
     expectTopPage(router, 'C');
   });
 
-  testWidgets('pop after a quick task that follows the push pops the pushed page', (tester) async {
-    router = buildRouter();
-    await openAThenC(tester);
+  testWidgets(
+    'pop after a quick task that follows the push pops the pushed page',
+    (tester) async {
+      router = buildRouter();
+      await openAThenC(tester);
 
-    unawaited(router.push(const PageRouteInfo('B')));
-    await Future<void>.value();
-    router.pop();
-    await tester.pumpAndSettle();
+      unawaited(router.push(const PageRouteInfo('B')));
+      await Future<void>.value();
+      router.pop();
+      await tester.pumpAndSettle();
 
-    expect(names(), ['A', 'C']);
-    expectTopPage(router, 'C');
-  });
+      expect(names(), ['A', 'C']);
+      expectTopPage(router, 'C');
+    },
+  );
 
   // Decided: a pop does not wait for a push whose guard is still
   // deciding, since the guard may be waiting on the very route the pop closes, such as
   // a dialog. The pop acts on the stack as it is, and B lands after it.
-  testWidgets('pop during a push whose guard is deciding pops the page below', (tester) async {
+  testWidgets('pop during a push whose guard is deciding pops the page below', (
+    tester,
+  ) async {
     router = buildRouter(
       guardsOfB: [
         AutoRouteGuardCallback((resolver, _) async {

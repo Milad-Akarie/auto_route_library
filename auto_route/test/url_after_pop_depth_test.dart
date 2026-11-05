@@ -18,22 +18,46 @@ import 'router_test_utils.dart';
 // a trailing slash.
 RootStackRouter _router() => .build(
   routes: [
-    NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => const NamedPage('HomeRoute')),
-    NamedRouteDef(name: 'ARoute', path: '/a', builder: (_, _) => const NamedPage('ARoute')),
-    NamedRouteDef(name: 'DetailsRoute', path: '/a/details', builder: (_, _) => const NamedPage('DetailsRoute')),
+    NamedRouteDef(
+      name: 'HomeRoute',
+      path: '/',
+      builder: (_, _) => const NamedPage('HomeRoute'),
+    ),
+    NamedRouteDef(
+      name: 'ARoute',
+      path: '/a',
+      builder: (_, _) => const NamedPage('ARoute'),
+    ),
+    NamedRouteDef(
+      name: 'DetailsRoute',
+      path: '/a/details',
+      builder: (_, _) => const NamedPage('DetailsRoute'),
+    ),
     NamedRouteDef(
       name: 'OneRoute',
       path: '/one',
       builder: (_, _) => const AutoRouter(),
       children: [
-        NamedRouteDef(name: 'OneIndexRoute', path: '', builder: (_, _) => const NamedPage('OneIndexRoute')),
+        NamedRouteDef(
+          name: 'OneIndexRoute',
+          path: '',
+          builder: (_, _) => const NamedPage('OneIndexRoute'),
+        ),
         NamedRouteDef(
           name: 'TwoRoute',
           path: 'two',
           builder: (_, _) => const AutoRouter(),
           children: [
-            NamedRouteDef(name: 'TwoIndexRoute', path: '', builder: (_, _) => const NamedPage('TwoIndexRoute')),
-            NamedRouteDef(name: 'ThreeRoute', path: 'three', builder: (_, _) => const NamedPage('ThreeRoute')),
+            NamedRouteDef(
+              name: 'TwoIndexRoute',
+              path: '',
+              builder: (_, _) => const NamedPage('TwoIndexRoute'),
+            ),
+            NamedRouteDef(
+              name: 'ThreeRoute',
+              path: 'three',
+              builder: (_, _) => const NamedPage('ThreeRoute'),
+            ),
           ],
         ),
       ],
@@ -42,38 +66,45 @@ RootStackRouter _router() => .build(
 );
 
 void main() {
-  testWidgets('maybePop and Navigator.pop from a pushed page report the parent url without a trailing slash', (
-    tester,
-  ) async {
-    final router = _router();
-    await pumpRouterConfigApp(tester, router.config());
-    unawaited(router.push(const NamedRoute('ARoute')));
-    await tester.pumpAndSettle();
-    unawaited(router.push(const NamedRoute('DetailsRoute')));
-    await tester.pumpAndSettle();
-    expect(router.currentUrl, '/a/details');
+  testWidgets(
+    'maybePop and Navigator.pop from a pushed page report the parent url without a trailing slash',
+    (tester) async {
+      final router = _router();
+      await pumpRouterConfigApp(tester, router.config());
+      unawaited(router.push(const NamedRoute('ARoute')));
+      await tester.pumpAndSettle();
+      unawaited(router.push(const NamedRoute('DetailsRoute')));
+      await tester.pumpAndSettle();
+      expect(router.currentUrl, '/a/details');
 
-    await router.maybePopTop();
-    await tester.pumpAndSettle();
-    expect(find.text('ARoute'), findsOneWidget);
-    expect(router.currentUrl, '/a');
+      await router.maybePopTop();
+      await tester.pumpAndSettle();
+      expect(find.text('ARoute'), findsOneWidget);
+      expect(router.currentUrl, '/a');
 
-    unawaited(router.push(const NamedRoute('DetailsRoute')));
-    await tester.pumpAndSettle();
-    Navigator.of(tester.element(find.text('DetailsRoute'))).pop();
-    await tester.pumpAndSettle();
-    expect(
-      find.text('ARoute'),
-      findsOneWidget,
-      reason: 'after Navigator.of(tester.element(find.text(DetailsRoute))).po',
-    );
-    expect(router.currentUrl, '/a', reason: 'after Navigator.of(tester.element(find.text(DetailsRoute))).po');
-    expect(router.urlState.url, '/a');
+      unawaited(router.push(const NamedRoute('DetailsRoute')));
+      await tester.pumpAndSettle();
+      Navigator.of(tester.element(find.text('DetailsRoute'))).pop();
+      await tester.pumpAndSettle();
+      expect(
+        find.text('ARoute'),
+        findsOneWidget,
+        reason:
+            'after Navigator.of(tester.element(find.text(DetailsRoute))).po',
+      );
+      expect(
+        router.currentUrl,
+        '/a',
+        reason:
+            'after Navigator.of(tester.element(find.text(DetailsRoute))).po',
+      );
+      expect(router.urlState.url, '/a');
 
-    await router.maybePopTop();
-    await tester.pumpAndSettle();
-    expect(router.currentUrl, '/');
-  });
+      await router.maybePopTop();
+      await tester.pumpAndSettle();
+      expect(router.currentUrl, '/');
+    },
+  );
 
   testWidgets(
     'Opening a page three levels deep in one jump reports its full url, and popping it reports the page under',
@@ -93,24 +124,29 @@ void main() {
     },
   );
 
-  testWidgets('Popping twice out of a page three levels deep reports /one/two, then the page under', (tester) async {
-    final router = _router();
-    await pumpRouterConfigApp(tester, router.config());
-    unawaited(router.navigatePath('/one/two'));
-    await tester.pumpAndSettle();
-    final twoRouter = router.innerRouterOf<StackRouter>('OneRoute')!.innerRouterOf<StackRouter>('TwoRoute')!;
-    unawaited(twoRouter.push(const NamedRoute('ThreeRoute')));
-    await tester.pumpAndSettle();
-    expect(router.currentUrl, '/one/two/three');
+  testWidgets(
+    'Popping twice out of a page three levels deep reports /one/two, then the page under',
+    (tester) async {
+      final router = _router();
+      await pumpRouterConfigApp(tester, router.config());
+      unawaited(router.navigatePath('/one/two'));
+      await tester.pumpAndSettle();
+      final twoRouter = router
+          .innerRouterOf<StackRouter>('OneRoute')!
+          .innerRouterOf<StackRouter>('TwoRoute')!;
+      unawaited(twoRouter.push(const NamedRoute('ThreeRoute')));
+      await tester.pumpAndSettle();
+      expect(router.currentUrl, '/one/two/three');
 
-    await router.maybePopTop();
-    await tester.pumpAndSettle();
-    expect(find.text('TwoIndexRoute'), findsOneWidget);
-    expect(router.currentUrl, '/one/two');
+      await router.maybePopTop();
+      await tester.pumpAndSettle();
+      expect(find.text('TwoIndexRoute'), findsOneWidget);
+      expect(router.currentUrl, '/one/two');
 
-    await router.maybePopTop();
-    await tester.pumpAndSettle();
-    expect(find.text('HomeRoute'), findsOneWidget);
-    expect(router.currentUrl, '/');
-  });
+      await router.maybePopTop();
+      await tester.pumpAndSettle();
+      expect(find.text('HomeRoute'), findsOneWidget);
+      expect(router.currentUrl, '/');
+    },
+  );
 }

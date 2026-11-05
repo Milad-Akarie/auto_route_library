@@ -13,45 +13,63 @@ void main() {
   // Steps: open '/dashboard/activities/done', then replace with
   // DashboardRoute(children: [ActivitiesRoute(children: [PendingRoute()])]).
   // Should: the nested router shows Pending, and the url follows.
-  testWidgets('replace with the same route and other nested children opens those children', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        NamedRouteDef.shell(
-          name: 'DashboardRoute',
-          path: '/dashboard',
-          children: [
-            NamedRouteDef.shell(
-              name: 'ActivitiesRoute',
-              path: 'activities',
-              children: [
-                NamedRouteDef(name: 'PendingRoute', path: '', builder: (_, _) => const NamedPage('PendingRoute')),
-                NamedRouteDef(name: 'DoneRoute', path: 'done', builder: (_, _) => const NamedPage('DoneRoute')),
-              ],
-            ),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router, initialLink: '/dashboard/activities/done');
-    expect(find.text('DoneRoute'), findsOneWidget);
+  testWidgets(
+    'replace with the same route and other nested children opens those children',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          NamedRouteDef.shell(
+            name: 'DashboardRoute',
+            path: '/dashboard',
+            children: [
+              NamedRouteDef.shell(
+                name: 'ActivitiesRoute',
+                path: 'activities',
+                children: [
+                  NamedRouteDef(
+                    name: 'PendingRoute',
+                    path: '',
+                    builder: (_, _) => const NamedPage('PendingRoute'),
+                  ),
+                  NamedRouteDef(
+                    name: 'DoneRoute',
+                    path: 'done',
+                    builder: (_, _) => const NamedPage('DoneRoute'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterApp(
+        tester,
+        router,
+        initialLink: '/dashboard/activities/done',
+      );
+      expect(find.text('DoneRoute'), findsOneWidget);
 
-    router.markUrlStateForReplace();
-    unawaited(
-      router.replace(
-        const NamedRoute(
-          'DashboardRoute',
-          children: [
-            NamedRoute('ActivitiesRoute', children: [NamedRoute('PendingRoute')]),
-          ],
+      router.markUrlStateForReplace();
+      unawaited(
+        router.replace(
+          const NamedRoute(
+            'DashboardRoute',
+            children: [
+              NamedRoute(
+                'ActivitiesRoute',
+                children: [NamedRoute('PendingRoute')],
+              ),
+            ],
+          ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
 
-    expect(tester.takeException(), isNull);
-    expect(find.text('PendingRoute'), findsOneWidget);
-    expect(find.text('DoneRoute'), findsNothing);
-    expect(router.urlState.url, '/dashboard/activities');
-    expect(router.stack.map((p) => p.name), ['DashboardRoute']);
-  });
+      expect(tester.takeException(), isNull);
+      expect(find.text('PendingRoute'), findsOneWidget);
+      expect(find.text('DoneRoute'), findsNothing);
+      expect(router.urlState.url, '/dashboard/activities');
+      expect(router.stack.map((p) => p.name), ['DashboardRoute']);
+    },
+  );
 }

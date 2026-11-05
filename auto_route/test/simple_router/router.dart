@@ -8,6 +8,9 @@ class SimpleRouter extends MainRouter {
     AutoRoute(page: FirstRoute.page, path: '/'),
     AutoRoute(page: SecondRoute.page),
     AutoRoute(page: ThirdRoute.page),
-    AutoRoute(page: FourthRoute.page, guards: [AutoRouteGuard.simple((resolver, _) => resolver.reject())]),
+    AutoRoute(
+      page: FourthRoute.page,
+      guards: [AutoRouteGuard.simple((resolver, _) => resolver.reject())],
+    ),
   ];
 }

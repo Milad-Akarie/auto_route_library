@@ -10,30 +10,33 @@ void main() {
   // bottomNavigationBuilder while the app opens, then on a tab change.
   // Reported: the builder runs twice when there is more than one route.
   // Should: it runs once to open the page, and once per tab change.
-  testWidgets('AutoTabsScaffold builds its bottom navigation once when it opens', (tester) async {
-    _bottomNavigationBuilds = 0;
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          page: _NavigationRoute.page,
-          path: '/',
-          initial: true,
-          children: [
-            AutoRoute(page: _UsersRoute.page, path: 'users'),
-            AutoRoute(page: _PostsRoute.page, path: 'posts'),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterConfigApp(tester, router.config());
-    expect(find.text(_UsersRoute.name), findsOneWidget);
-    expect(_bottomNavigationBuilds, 1);
+  testWidgets(
+    'AutoTabsScaffold builds its bottom navigation once when it opens',
+    (tester) async {
+      _bottomNavigationBuilds = 0;
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            page: _NavigationRoute.page,
+            path: '/',
+            initial: true,
+            children: [
+              AutoRoute(page: _UsersRoute.page, path: 'users'),
+              AutoRoute(page: _PostsRoute.page, path: 'posts'),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterConfigApp(tester, router.config());
+      expect(find.text(_UsersRoute.name), findsOneWidget);
+      expect(_bottomNavigationBuilds, 1);
 
-    await tester.tap(find.text('Posts'));
-    await tester.pumpAndSettle();
-    expect(find.text(_PostsRoute.name), findsOneWidget);
-    expect(_bottomNavigationBuilds, 2);
-  });
+      await tester.tap(find.text('Posts'));
+      await tester.pumpAndSettle();
+      expect(find.text(_PostsRoute.name), findsOneWidget);
+      expect(_bottomNavigationBuilds, 2);
+    },
+  );
 }
 
 var _bottomNavigationBuilds = 0;

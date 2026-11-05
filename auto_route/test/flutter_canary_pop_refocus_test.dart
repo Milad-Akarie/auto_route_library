@@ -38,7 +38,11 @@ void main() {
       expect(node.hasFocus, isFalse);
 
       final navigator = Navigator.of(context)
-        ..push(MaterialPageRoute<void>(builder: (_) => const Scaffold(body: Text('second'))));
+        ..push(
+          MaterialPageRoute<void>(
+            builder: (_) => const Scaffold(body: Text('second')),
+          ),
+        );
       await tester.pumpAndSettle();
       navigator.pop();
       await tester.pumpAndSettle();

@@ -43,60 +43,75 @@ void main() {
   // Should: a parent's setState doesn't build the page again, and neither
   // that nor a hot reload creates a new page state. A hot reload builds every
   // widget again, which is how Flutter's hot reload works.
-  testWidgets('A query param page in nested tabs keeps its state when a parent rebuilds', (tester) async {
-    _ParamPageState.created = 0;
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          initial: true,
-          page: PageInfo('MainRoute', builder: (_) => const AutoRouter()),
-          children: [
-            AutoRoute(
-              path: 'nested1',
-              page: PageInfo(
-                'NestedRoutingRoute',
-                builder: (_) => const AutoTabsRouter.tabBar(routes: [NamedRoute('PageThatRequiresQueryParamRoute')]),
-              ),
-              children: [
-                AutoRoute(
-                  path: 'nested2',
-                  initial: true,
-                  page: PageInfo(
-                    'PageThatRequiresQueryParamRoute',
-                    builder: (data) => _ParamPage(param: data.queryParams.getBool('param', false)),
+  testWidgets(
+    'A query param page in nested tabs keeps its state when a parent rebuilds',
+    (tester) async {
+      _ParamPageState.created = 0;
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            initial: true,
+            page: PageInfo('MainRoute', builder: (_) => const AutoRouter()),
+            children: [
+              AutoRoute(
+                path: 'nested1',
+                page: PageInfo(
+                  'NestedRoutingRoute',
+                  builder: (_) => const AutoTabsRouter.tabBar(
+                    routes: [NamedRoute('PageThatRequiresQueryParamRoute')],
                   ),
                 ),
-              ],
-            ),
-          ],
+                children: [
+                  AutoRoute(
+                    path: 'nested2',
+                    initial: true,
+                    page: PageInfo(
+                      'PageThatRequiresQueryParamRoute',
+                      builder: (data) => _ParamPage(
+                        param: data.queryParams.getBool('param', false),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+      late StateSetter setParentState;
+      await tester.pumpWidget(
+        StatefulBuilder(
+          builder: (context, setState) {
+            setParentState = setState;
+            return MaterialApp.router(routerConfig: router.config());
+          },
         ),
-      ],
-    );
-    addTearDown(router.dispose);
-    late StateSetter setParentState;
-    await tester.pumpWidget(
-      StatefulBuilder(
-        builder: (context, setState) {
-          setParentState = setState;
-          return MaterialApp.router(routerConfig: router.config());
-        },
-      ),
-    );
-    await tester.pumpAndSettle();
-    unawaited(router.navigatePath('/nested1/nested2?param=true'));
-    await tester.pumpAndSettle();
-    expect(find.text('param true'), findsOneWidget);
-    expect(_ParamPageState.created, 1);
+      );
+      await tester.pumpAndSettle();
+      unawaited(router.navigatePath('/nested1/nested2?param=true'));
+      await tester.pumpAndSettle();
+      expect(find.text('param true'), findsOneWidget);
+      expect(_ParamPageState.created, 1);
 
-    _ParamPageState.builds = 0;
-    setParentState(noOp);
-    await tester.pumpAndSettle();
-    expect(_ParamPageState.builds, 0);
+      _ParamPageState.builds = 0;
+      setParentState(noOp);
+      await tester.pumpAndSettle();
+      expect(_ParamPageState.builds, 0);
 
-    unawaited(tester.binding.reassembleApplication());
-    await tester.pumpAndSettle();
-    expect(find.text('param true'), findsOneWidget, reason: 'after tester.binding.reassembleApplication())');
-    expect(_ParamPageState.created, 1, reason: 'after tester.binding.reassembleApplication())');
-  });
+      unawaited(tester.binding.reassembleApplication());
+      await tester.pumpAndSettle();
+      expect(
+        find.text('param true'),
+        findsOneWidget,
+        reason: 'after tester.binding.reassembleApplication())',
+      );
+      expect(
+        _ParamPageState.created,
+        1,
+        reason: 'after tester.binding.reassembleApplication())',
+      );
+    },
+  );
 }

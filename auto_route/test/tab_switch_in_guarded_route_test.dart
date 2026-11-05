@@ -15,50 +15,57 @@ import 'router_test_utils.dart';
 // takes the user elsewhere. A navigate to a url inside '/app' asks its guard
 // again, as every navigation to a guarded route does; setActiveIndex does not.
 void main() {
-  testWidgets('Switching tabs inside a guarded route shows the tab asked for without a redirect', (tester) async {
-    var guardCalls = 0;
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(path: '/login', page: _page('LoginRoute')),
-        AutoRoute(
-          path: '/app',
-          initial: true,
-          guards: [
-            AutoRouteGuard.simple((resolver, _) {
-              guardCalls++;
-              resolver.next();
-            }),
-          ],
-          page: PageInfo(
-            'AppRoute',
-            builder: (_) => const AutoTabsScaffold(routes: [NamedRoute('HomeRoute'), NamedRoute('ProfileRoute')]),
+  testWidgets(
+    'Switching tabs inside a guarded route shows the tab asked for without a redirect',
+    (tester) async {
+      var guardCalls = 0;
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(path: '/login', page: _page('LoginRoute')),
+          AutoRoute(
+            path: '/app',
+            initial: true,
+            guards: [
+              AutoRouteGuard.simple((resolver, _) {
+                guardCalls++;
+                resolver.next();
+              }),
+            ],
+            page: PageInfo(
+              'AppRoute',
+              builder: (_) => const AutoTabsScaffold(
+                routes: [NamedRoute('HomeRoute'), NamedRoute('ProfileRoute')],
+              ),
+            ),
+            children: [
+              AutoRoute(path: 'home', page: _page('HomeRoute')),
+              AutoRoute(path: 'profile', page: _page('ProfileRoute')),
+            ],
           ),
-          children: [
-            AutoRoute(path: 'home', page: _page('HomeRoute')),
-            AutoRoute(path: 'profile', page: _page('ProfileRoute')),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterConfigApp(tester, router.config());
-    expect(guardCalls, 1);
-    expect(find.text('HomeRoute'), findsOneWidget);
+        ],
+      );
+      await pumpRouterConfigApp(tester, router.config());
+      expect(guardCalls, 1);
+      expect(find.text('HomeRoute'), findsOneWidget);
 
-    unawaited(router.navigatePath('/app/profile'));
-    await tester.pumpAndSettle();
-    final callsAfterNavigate = guardCalls;
-    expect(find.text('ProfileRoute'), findsOneWidget);
-    router.innerRouterOf<TabsRouter>('AppRoute')!.setActiveIndex(0);
-    await tester.pumpAndSettle();
-    expect(
-      find.text('HomeRoute'),
-      findsOneWidget,
-      reason: 'after router.innerRouterOf<TabsRouter>(AppRoute)!.setActiveInd',
-    );
-    expect(router.currentUrl, '/app/home');
-    // setActiveIndex stays inside the route and asks no guard of it.
-    expect(guardCalls, callsAfterNavigate);
-  });
+      unawaited(router.navigatePath('/app/profile'));
+      await tester.pumpAndSettle();
+      final callsAfterNavigate = guardCalls;
+      expect(find.text('ProfileRoute'), findsOneWidget);
+      router.innerRouterOf<TabsRouter>('AppRoute')!.setActiveIndex(0);
+      await tester.pumpAndSettle();
+      expect(
+        find.text('HomeRoute'),
+        findsOneWidget,
+        reason:
+            'after router.innerRouterOf<TabsRouter>(AppRoute)!.setActiveInd',
+      );
+      expect(router.currentUrl, '/app/home');
+      // setActiveIndex stays inside the route and asks no guard of it.
+      expect(guardCalls, callsAfterNavigate);
+    },
+  );
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));

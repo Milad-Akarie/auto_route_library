@@ -20,47 +20,67 @@ import 'no_op.dart';
 // route: add a check to auto_route/test/leaks/released_objects_test.dart that
 // a replaced page releases its RouteData, and drop this canary.
 void main() {
-  testWidgets('a page replaced in Navigator.pages releases its State, but its route stays reachable', (tester) async {
-    final routes = <WeakReference<Route<Object?>>>[];
-    final states = <WeakReference<State>>[];
-    var pages = <Page<void>>[
-      const MaterialPage(key: ValueKey('home'), child: Text('home')),
-      MaterialPage(key: const ValueKey('page 0'), child: _TrackedPage(states)),
-    ];
-    late StateSetter setPages;
-    await tester.pumpWidget(
-      MaterialApp(
-        home: StatefulBuilder(
-          builder: (context, setState) {
-            setPages = setState;
-            return Navigator(observers: [_PushObserver(routes)], pages: pages, onDidRemovePage: ignoreArgument);
-          },
+  testWidgets(
+    'a page replaced in Navigator.pages releases its State, but its route stays reachable',
+    (tester) async {
+      final routes = <WeakReference<Route<Object?>>>[];
+      final states = <WeakReference<State>>[];
+      var pages = <Page<void>>[
+        const MaterialPage(key: ValueKey('home'), child: Text('home')),
+        MaterialPage(
+          key: const ValueKey('page 0'),
+          child: _TrackedPage(states),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    for (var i = 1; i <= 10; i++) {
-      setPages(() => pages = [...pages.take(1), MaterialPage(key: ValueKey('page $i'), child: _TrackedPage(states))]);
+      ];
+      late StateSetter setPages;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: StatefulBuilder(
+            builder: (context, setState) {
+              setPages = setState;
+              return Navigator(
+                observers: [_PushObserver(routes)],
+                pages: pages,
+                onDidRemovePage: ignoreArgument,
+              );
+            },
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
-    }
-    expect(routes, hasLength(12));
-    final replacedRoutes = routes.sublist(1, 11);
-    final replacedStates = states.sublist(0, 10);
-    for (var round = 0; round < 10 && replacedStates.any((state) => state.target != null); round++) {
+      for (var i = 1; i <= 10; i++) {
+        setPages(
+          () => pages = [
+            ...pages.take(1),
+            MaterialPage(key: ValueKey('page $i'), child: _TrackedPage(states)),
+          ],
+        );
+        await tester.pumpAndSettle();
+      }
+      expect(routes, hasLength(12));
+      final replacedRoutes = routes.sublist(1, 11);
+      final replacedStates = states.sublist(0, 10);
+      for (
+        var round = 0;
+        round < 10 && replacedStates.any((state) => state.target != null);
+        round++
+      ) {
+        await tester.runAsync(() => forceGC(fullGcCycles: 2));
+      }
       await tester.runAsync(() => forceGC(fullGcCycles: 2));
-    }
-    await tester.runAsync(() => forceGC(fullGcCycles: 2));
 
-    expect(replacedStates.where((state) => state.target != null), isEmpty);
-    expect(
-      [
-        for (final (index, route) in replacedRoutes.indexed)
-          if (route.target != null) index,
-      ],
-      [9],
-      reason: 'only the most recently replaced route is kept',
-    );
-  }, skip: kIsWeb); // Web has no reachabilityBarrier to wait for a full collection on.
+      expect(replacedStates.where((state) => state.target != null), isEmpty);
+      expect(
+        [
+          for (final (index, route) in replacedRoutes.indexed)
+            if (route.target != null) index,
+        ],
+        [9],
+        reason: 'only the most recently replaced route is kept',
+      );
+    },
+    skip: kIsWeb,
+  ); // Web has no reachabilityBarrier to wait for a full collection on.
 }
 
 class _TrackedPage extends StatefulWidget {
@@ -89,5 +109,6 @@ class _PushObserver extends NavigatorObserver {
   final List<WeakReference<Route<Object?>>> routes;
 
   @override
-  void didPush(Route<Object?> route, Route<Object?>? previousRoute) => routes.add(WeakReference(route));
+  void didPush(Route<Object?> route, Route<Object?>? previousRoute) =>
+      routes.add(WeakReference(route));
 }

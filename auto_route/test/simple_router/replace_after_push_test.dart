@@ -12,10 +12,17 @@ import '../router_test_utils.dart';
 // Should: the page updates in place: same page, no second page in the
 // tree, no transition.
 void main() {
-  testWidgets('Replacing a pushed page with itself updates it in place', (tester) async {
+  testWidgets('Replacing a pushed page with itself updates it in place', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
-        NamedRouteDef(name: 'HomeRoute', path: '/', initial: true, builder: (_, _) => const Text('home')),
+        NamedRouteDef(
+          name: 'HomeRoute',
+          path: '/',
+          initial: true,
+          builder: (_, _) => const Text('home'),
+        ),
         NamedRouteDef(
           name: 'DayRoute',
           path: '/day/:id',
@@ -30,7 +37,9 @@ void main() {
     final keyBefore = router.stack.lastOrNull?.routeKey;
     expect(keyBefore, isNotNull);
 
-    unawaited(router.replace(const NamedRoute('DayRoute', params: {'id': '2'})));
+    unawaited(
+      router.replace(const NamedRoute('DayRoute', params: {'id': '2'})),
+    );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 50));
     // Mid-transition both pages would be built.
