@@ -104,8 +104,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
       return _defaultFormatOutput(libVersion, generated);
       // Any formatter failure is logged with the unformatted output, so the
       // generator's bug can be found.
-      // ignore: avoid_catches_without_on_clauses
-    } catch (e, stack) {
+    } on Object catch (e, stack) {
       log.severe(
         '''
 An error `${e.runtimeType}` occurred while formatting the generated source for

@@ -5,6 +5,7 @@ import 'package:auto_route_generator/src/models/route_config.dart';
 import 'package:auto_route_generator/src/models/url_param_type.dart';
 import 'package:auto_route_generator/src/resolvers/route_parameter_resolver.dart';
 import 'package:auto_route_generator/src/resolvers/type_resolver.dart';
+import 'package:build/build.dart' show log;
 import 'package:source_gen/source_gen.dart';
 
 /// extracts route configs from class fields and their meta data
@@ -63,11 +64,9 @@ class RouteConfigResolver {
         (p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam,
       );
       if (unParsableRequiredArgs.isNotEmpty) {
-        // build_runner shows a builder's print as its output.
-        // ignore: avoid_print
-        print(
-          '\nWARNING => Because [$className] has required parameters ${unParsableRequiredArgs.map((e) => e.paramName)} '
-          'that can not be parsed from path,\n@PathParam() and @QueryParam() annotations will be ignored.\n',
+        log.warning(
+          'Because [$className] has required parameters ${unParsableRequiredArgs.map((e) => e.paramName)} '
+          'that can not be parsed from path, @PathParam() and @QueryParam() annotations will be ignored.',
         );
       }
     }

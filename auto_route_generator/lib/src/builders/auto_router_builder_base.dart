@@ -89,11 +89,8 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
       }
       // A cache that can't be written only costs the next build its speed, so
       // any failure is reported and the build goes on.
-      // ignore: avoid_catches_without_on_clauses
-    } catch (e) {
-      // build_runner shows a builder's print as its output.
-      // ignore: avoid_print
-      print('Could not write config routerCache');
+    } on Object catch (e) {
+      log.warning('Could not write config routerCache', e);
     }
 
     return '$_kHeader\n${generateLibrary(item, routes: routes..sort((a, b) => a.className.compareTo(b.className)), ignoreForFile: ignoreForFile, outputPath: buildStep.primaryOutput.path)}';
