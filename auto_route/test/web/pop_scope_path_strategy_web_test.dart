@@ -2,7 +2,6 @@
 library;
 
 import 'dart:async';
-import 'dart:ui_web' as ui_web;
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -21,10 +20,7 @@ import 'pop_scope_web_test.dart' show pressBrowserBackOn;
 // the browser's back button: the page stays and PopScope hears of the attempt.
 void main() {
   useRealBrowserHistory();
-  // The analyzer reads flutter_web_plugins' stub, whose type is not a ui_web.UrlStrategy and whose
-  // constructor is const; the web build's is the reverse of both, hence the cast and the ignore.
-  // ignore: prefer_const_constructors
-  ui_web.debugDefaultUrlStrategyOverride = PathUrlStrategy() as ui_web.UrlStrategy?;
+  usePathUrlStrategy();
 
   late RootStackRouter router;
   setUp(() async {
@@ -51,8 +47,8 @@ void main() {
     await pressBrowserBackOn(tester, router);
     expectCurrentPage(router, _FormRoute.name);
     expect(_attempts, 1);
-    expect(browserPath, '/form');
-    expect(window.location.pathname, endsWith('/form'));
+    expect(browserPath, '/form', reason: 'after pressBrowserBackOn(tester, router)');
+    expect(window.location.pathname, endsWith('/form'), reason: 'after pressBrowserBackOn(tester, router)');
   });
 }
 
