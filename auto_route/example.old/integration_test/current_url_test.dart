@@ -67,7 +67,8 @@ void main() {
       '/second-page?redirectTo=%2Ffirst-page%3FredirectTo%3D%2Frandom-page',
     );
 
-    unawaited(router.navigatePath(router.currentUrl));
+    final url = router.currentUrl;
+    unawaited(router.navigatePath(url));
     await tester.pumpAndSettle();
     expect(
       find.text('SecondRoute to /first-page?redirectTo=/random-page'),
