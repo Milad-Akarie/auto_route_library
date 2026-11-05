@@ -70,7 +70,6 @@ class AutoPageView extends StatefulWidget {
 class AutoPageViewState extends State<AutoPageView> {
   PageController get _controller => widget.controller;
   // The router belongs to the parent widget, not to this state.
-  // ignore: dispose-fields
   late final TabsRouter _router = widget.router;
   late List<Widget> _children;
   int _warpUnderwayCount = 0;
