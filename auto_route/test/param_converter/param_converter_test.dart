@@ -38,14 +38,15 @@ void main() {
   testWidgets('A required param the converter refuses fails naming the key and the text', (tester) async {
     final router = UserRouter();
     await pumpRouterApp(tester, router);
-    Object? caught;
-    try {
-      await router.navigatePath('/user/nobody');
-      // The error is the one an app catches for a bad path param.
-      // ignore: avoid_catching_errors
-    } on MissingRequiredParameterError catch (e) {
-      caught = e;
-    }
-    expect(caught?.toString(), contains('Failed to parse [UserId] id value from nobody'));
+    await expectLater(
+      () => router.navigatePath('/user/nobody'),
+      throwsA(
+        isA<MissingRequiredParameterError>().having(
+          (e) => e.toString(),
+          'message',
+          contains('Failed to parse [UserId] id value from nobody'),
+        ),
+      ),
+    );
   });
 }

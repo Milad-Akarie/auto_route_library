@@ -21,18 +21,6 @@ void main() {
     );
   });
 
-  // The error a navigation to [path] fails with, or null.
-  Future<Object?> errorOf(String path) async {
-    try {
-      await router.navigatePath(path);
-      // The router reports a param it can't parse with this error.
-      // ignore: avoid_catching_errors
-    } on FlutterError catch (e) {
-      return e;
-    }
-    return null;
-  }
-
   Matcher invalidParam(String type, String key, String value) => isA<FlutterError>().having(
     (e) => e.toString(),
     'message',
@@ -50,7 +38,7 @@ void main() {
   // and the page under it stays.
   testWidgets('A required int path param given text fails with its name and value', (tester) async {
     await pumpRouterApp(tester, router);
-    expect(await errorOf('/book/abc'), invalidParam('int', 'id', 'abc'));
+    await expectLater(() => router.navigatePath('/book/abc'), throwsA(invalidParam('int', 'id', 'abc')));
     await tester.pumpAndSettle();
     expectCurrentPage(router, FirstRoute.name);
 
@@ -63,27 +51,19 @@ void main() {
   // compiles only while auto_route.dart exports MissingRequiredParameterError.
   testWidgets('A bad path param fails with a MissingRequiredParameterError', (tester) async {
     await pumpRouterApp(tester, router);
-    Object? caught;
-    try {
-      await router.navigatePath('/book/abc');
-      // The error is what the issue asks apps to catch.
-      // ignore: avoid_catching_errors
-    } on MissingRequiredParameterError catch (e) {
-      caught = e;
-    }
-    expect(caught, isA<MissingRequiredParameterError>());
+    await expectLater(() => router.navigatePath('/book/abc'), throwsA(isA<MissingRequiredParameterError>()));
   });
 
   // flutter/flutter#155598, the same for a decimal where an int is expected.
   testWidgets('A required int path param given a decimal fails with its name and value', (tester) async {
     await pumpRouterApp(tester, router);
-    expect(await errorOf('/book/1.5'), invalidParam('int', 'id', '1.5'));
+    await expectLater(() => router.navigatePath('/book/1.5'), throwsA(invalidParam('int', 'id', '1.5')));
   });
 
   // flutter/flutter#155598, the same for a required double.
   testWidgets('A required double path param given text fails with its name and value', (tester) async {
     await pumpRouterApp(tester, router);
-    expect(await errorOf('/price/abc'), invalidParam('double', 'amount', 'abc'));
+    await expectLater(() => router.navigatePath('/price/abc'), throwsA(invalidParam('double', 'amount', 'abc')));
   });
 
   // flutter/flutter#155598, the reporter's own case: a nullable int, here a

@@ -14,9 +14,9 @@ class _ReadingObserver extends AutoRouterObserver {
     if (route is! PopupRoute) return;
     try {
       found.add(RouteData.of(route.navigator!.context).name);
-      // RouteData.of reports a missing scope with this error.
-      // ignore: avoid_catching_errors
-    } on FlutterError catch (e) {
+    } catch (e) {
+      // RouteData.of reports a missing scope with a FlutterError.
+      if (e is! FlutterError) rethrow;
       found.add('error: ${e.message.split('\n').firstOrNull ?? ''}');
     }
   }

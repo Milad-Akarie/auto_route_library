@@ -20,7 +20,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // A benchmark the runner runs only when named, so not a `_test` file.
-// ignore: prefer-correct-test-file-name
 void main() {
   test('url benchmark', () {
     final benchmarks = <BenchmarkBase>[
@@ -43,8 +42,7 @@ void main() {
     for (final benchmark in benchmarks) {
       final microseconds = benchmark.measure();
       // The runner shows what a test prints; this is the benchmark's output.
-      // ignore: avoid_print
-      print('RESULT ${benchmark.name} ${microseconds.toStringAsFixed(3)}');
+      debugPrint('RESULT ${benchmark.name} ${microseconds.toStringAsFixed(3)}');
     }
   }, timeout: .none);
 }

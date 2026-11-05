@@ -83,8 +83,7 @@ void main() {
     test('constructor', () {
       // Since it's a private constructor, test the exported constant.
       // It compiles only if the constant exists, which is what it checks.
-      // ignore: avoid-misused-test-matchers
-      expect(urlFragment, isNotNull);
+      expect(urlFragment, isA<UrlFragment>());
     });
   });
 }

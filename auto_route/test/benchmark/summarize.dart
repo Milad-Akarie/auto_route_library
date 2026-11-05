@@ -13,7 +13,6 @@
 import 'dart:io';
 
 // A command-line tool kept with the benchmarks, not a test.
-// ignore: prefer-correct-test-file-name
 void main(List<String> args) {
   final split = args.indexOf('--vs');
   if (split < 0) {

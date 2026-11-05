@@ -64,14 +64,7 @@ class _Templates extends StatelessWidget {
       onPressed: () => showDialog<void>(
         context: context,
         builder: (dialogContext) {
-          var threw = false;
-          try {
-            RouteData.of(dialogContext);
-            // RouteData.of reports a missing scope with a FlutterError.
-            // ignore: avoid_catching_errors
-          } on FlutterError {
-            threw = true;
-          }
+          final threw = _throwsFlutterError(() => RouteData.of(dialogContext));
           return AlertDialog(
             content: Column(
               mainAxisSize: .min,
@@ -98,4 +91,15 @@ class _Nested extends StatelessWidget {
           MaterialPageRoute<void>(builder: (inner) => Text('nested in ${RouteData.of(inner).name}')),
     ),
   );
+}
+
+/// Whether [read] fails with a FlutterError, which is how RouteData.of reports a missing scope.
+bool _throwsFlutterError(void Function() read) {
+  try {
+    read();
+  } catch (e) {
+    if (e is! FlutterError) rethrow;
+    return true;
+  }
+  return false;
 }

@@ -41,9 +41,9 @@ void main() {
     unawaited(router.push<String>(const _ChildRoute()).then(results.add));
     await tester.pumpAndSettle();
 
-    // The explicit null is what the test is about.
-    // ignore: avoid_redundant_argument_values
-    router.pop(null);
+    // The explicit null is what the test is about, so it is passed as a value.
+    String? nothing;
+    router.pop(nothing);
     await tester.pumpAndSettle();
 
     expect(results, [null]);

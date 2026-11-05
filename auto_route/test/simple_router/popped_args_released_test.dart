@@ -15,6 +15,10 @@ class _DetailArgs {
   final int counter;
 }
 
+// Built from a parameter, so the args are not const: a const instance is never garbage collected, which is what this
+// test checks.
+NamedRoute<_DetailArgs> _detailRoute(int counter) => .new('DetailRoute', args: _DetailArgs(counter));
+
 PageInfo _detailPage = PageInfo('DetailRoute', builder: (data) => Text('Detail ${data.argsAs<_DetailArgs>().counter}'));
 
 /// Allocates garbage until the VM has run two full collections.
@@ -53,10 +57,7 @@ void main() {
       late final WeakReference<_DetailArgs> args;
       // In a closure, so no local variable of this test holds the args.
       () {
-        // Not const: a const instance is never garbage collected, which is
-        // what this test checks.
-        // ignore: prefer_const_constructors
-        final route = NamedRoute('DetailRoute', args: _DetailArgs(42));
+        final route = _detailRoute(42);
         args = WeakReference(route.args!);
         unawaited(router.push(route));
       }();

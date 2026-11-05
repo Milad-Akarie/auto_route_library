@@ -11,9 +11,8 @@ int _countEntries(NavigationHistory history) => history.length;
 void main() {
   test('NavigationHistory can be named through package:auto_route/auto_route.dart', () {
     final router = SimpleRouter();
-    // The explicit type is the point of this test.
-    // ignore: omit_local_variable_types
-    final NavigationHistory history = router.navigationHistory;
+    // The type is named by _countEntries, which compiles only while it is exported.
+    final history = router.navigationHistory;
 
     expect(_countEntries(history), history.length);
     expect(history, same(router.navigationHistory));

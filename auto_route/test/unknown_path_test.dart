@@ -63,15 +63,10 @@ void main() {
       await tester.pumpAndSettle();
       expect(failures.singleOrNull, isA<RouteNotFoundFailure>().having((f) => f.path, 'path', '/nope'));
 
-      Object? error;
-      try {
-        await open(router, '/nope', null);
-        // The router reports an unknown path with this error.
-        // ignore: avoid_catching_errors
-      } on FlutterError catch (e) {
-        error = e;
-      }
-      expect(error, isA<FlutterError>().having((e) => e.message, 'message', startsWith('Can not navigate to /nope')));
+      await expectLater(
+        () => open(router, '/nope', null),
+        throwsA(isA<FlutterError>().having((e) => e.message, 'message', startsWith('Can not navigate to /nope'))),
+      );
       expectCurrentPage(router, FirstRoute.name);
     });
 

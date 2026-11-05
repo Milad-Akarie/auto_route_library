@@ -131,10 +131,9 @@ class TabsScaffoldDefaultRoute extends PageRouteInfo<void> {
   static PageInfo page = PageInfo(name, builder: (data) => const AutoTabsScaffold());
 }
 
-// A test route: PageRouteInfo's == is the one under test.
-// ignore: prefer-overriding-parent-equality
-class TabPageWithRequiredArgument extends PageRouteInfo<void> {
-  const new({required this.argument}) : super(TabPageWithRequiredArgument.name);
+// A test route whose page reads a required argument.
+class TabPageWithRequiredArgument extends PageRouteInfo<String> {
+  const new({required String argument}) : super(TabPageWithRequiredArgument.name, args: argument);
 
   static const String name = 'TabPageWithRequiredArgument';
   static PageInfo page = PageInfo(
@@ -144,6 +143,4 @@ class TabPageWithRequiredArgument extends PageRouteInfo<void> {
       return Scaffold(body: Text(args));
     },
   );
-
-  final String argument;
 }

@@ -63,9 +63,9 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(router.stack.map((p) => p.name), ['HostRoute', 'SearchRoute', 'SearchRoute']);
 
-    router
-      ..pop()
-      ..pop();
+    for (var i = 0; i < 2; i++) {
+      router.pop();
+    }
     await tester.pumpAndSettle();
     expect(find.text('ATab'), findsOneWidget, reason: 'after router.pop()');
   });

@@ -80,15 +80,12 @@ void main() {
     expect(failure.path, '/shop/1/reviews');
     expect(failure.toString(), allOf(contains('/shop/1/reviews'), contains(tree)));
 
-    Object? error;
-    try {
-      await router.pushPath('/shop/1/reviews');
-      // The router reports an unknown path with this error.
-      // ignore: avoid_catching_errors
-    } on FlutterError catch (e) {
-      error = e;
-    }
-    expect(error?.toString(), allOf(contains('/shop/1/reviews'), contains(tree)));
+    await expectLater(
+      () => router.pushPath('/shop/1/reviews'),
+      throwsA(
+        isA<FlutterError>().having((e) => e.toString(), 'message', allOf(contains('/shop/1/reviews'), contains(tree))),
+      ),
+    );
   });
 
   testWidgets('an unknown route reports its name and the route tree', (tester) async {
@@ -100,14 +97,9 @@ void main() {
     final [failure as RouteNotFoundFailure] = failures;
     expect(failure.toString(), allOf(contains('CartRoute'), contains(tree)));
 
-    Object? error;
-    try {
-      await router.push(const PageRouteInfo('CartRoute'));
-      // The router reports an unknown route with this error.
-      // ignore: avoid_catching_errors
-    } on FlutterError catch (e) {
-      error = e;
-    }
-    expect(error?.toString(), allOf(contains('CartRoute'), contains(tree)));
+    await expectLater(
+      () => router.push(const PageRouteInfo('CartRoute')),
+      throwsA(isA<FlutterError>().having((e) => e.toString(), 'message', allOf(contains('CartRoute'), contains(tree)))),
+    );
   });
 }
