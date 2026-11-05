@@ -25,12 +25,12 @@ void main() {
     final pageViewFinder = find.byType(AutoTabView);
     final scrollController = tester.widget<AutoTabView>(pageViewFinder).controller;
     expect(scrollController.index, 0);
-    await tester.drag(pageViewFinder, const Offset(-200, 0.0));
+    await tester.drag(pageViewFinder, const Offset(-200, 0));
     await tester.pumpAndSettle();
     expect(scrollController.index, 1);
     expectTopPage(router, Tab2Nested1Route.name);
     expect(router.urlState.path, '/tab2');
-    await tester.drag(pageViewFinder, const Offset(-200, 0.0));
+    await tester.drag(pageViewFinder, const Offset(-200, 0));
     await tester.pumpAndSettle();
     expect(scrollController.index, 2);
     expectTopPage(router, Tab3Nested1Route.name);

@@ -57,7 +57,7 @@ class _Stats {
     final sorted = [...values]..sort();
     final middle = sorted.length ~/ 2;
     final centre = sorted.skip(sorted.length.isOdd ? middle : middle - 1).take(sorted.length.isOdd ? 1 : 2);
-    return centre.fold(0.0, (sum, value) => sum + value) / centre.length;
+    return centre.fold<double>(0, (sum, value) => sum + value) / centre.length;
   }
 }
 
