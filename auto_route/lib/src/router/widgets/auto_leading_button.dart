@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
@@ -149,18 +151,22 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
           final topPage = scope.controller.topPage;
           final useCloseButton = topPage?.fullscreenDialog ?? false;
           if (widget.builder != null) {
-            return widget.builder!(leadingContext, useCloseButton ? .close : .back, scope.controller.maybePopTop);
+            return widget.builder!(
+              leadingContext,
+              useCloseButton ? .close : .back,
+              () => unawaited(scope.controller.maybePopTop()),
+            );
           }
           leading = useCloseButton
               ? CloseButton(
                   key: const ValueKey(LeadingType.close),
                   color: widget.color,
-                  onPressed: scope.controller.maybePopTop,
+                  onPressed: () => unawaited(scope.controller.maybePopTop()),
                 )
               : BackButton(
                   key: const ValueKey(LeadingType.back),
                   color: widget.color,
-                  onPressed: scope.controller.maybePopTop,
+                  onPressed: () => unawaited(scope.controller.maybePopTop()),
                 );
         }
         final scaffold = Scaffold.maybeOf(leadingContext);

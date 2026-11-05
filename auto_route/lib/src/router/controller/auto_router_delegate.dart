@@ -25,7 +25,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   }) {
     _navigatorObservers = navigatorObservers();
     controller.navigationHistory.addListener(_handleRebuild);
-    reevaluateListenable?.addListener(controller.reevaluateGuards);
+    reevaluateListenable?.addListener(_reevaluateGuards);
     if (!kIsWeb) {
       // Pages can change without the url changing; the Router saves them
       // through currentConfiguration.
@@ -323,6 +323,9 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     routeTraversalEdgeBehavior: routeTraversalEdgeBehavior,
   );
 
+  // A listener returns nothing, so the reevaluation runs on its own.
+  void _reevaluateGuards() => unawaited(controller.reevaluateGuards());
+
   void _handleRebuild() {
     final context = controller.navigatorKey.currentContext;
     if (urlState.shouldReplace && context != null) {
@@ -349,7 +352,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     _disposed = true;
     super.dispose();
     controller.navigationHistory.removeListener(_handleRebuild);
-    reevaluateListenable?.removeListener(controller.reevaluateGuards);
+    reevaluateListenable?.removeListener(_reevaluateGuards);
     controller.removeListener(notifyListeners);
     controller.removeListener(_reportFirstPage);
     controller.dispose();

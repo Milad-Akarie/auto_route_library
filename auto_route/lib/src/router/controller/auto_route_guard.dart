@@ -308,21 +308,25 @@ class NavigationResolver {
       target,
       onFailure: onFailure,
       replace: replace,
-      onMatch: (scope, match) async {
-        _redirectingResolvers[match.id] = this;
-        await _completer.future;
-        _isRedirecting = false;
-        final routeData = scope.stackData.firstWhereOrNull((e) => e.matchId == match.id);
-        if (routeData != null) {
-          scope.markUrlStateForReplace();
-          scope._removeRoute(match);
-          // complete the pop completer with null result
-          routeData.onPopInvoked(null);
-        }
-      },
+      onMatch: (scope, match) => unawaited(_removeRedirectOnceResolved(scope, match)),
     );
     if (!_completer.isCompleted) {
       reject();
+    }
+  }
+
+  // Once this resolver is resolved, the redirect route that [redirectUntil]
+  // pushed leaves the stack.
+  Future<void> _removeRedirectOnceResolved(StackRouter scope, RouteMatch<Object?> match) async {
+    _redirectingResolvers[match.id] = this;
+    await _completer.future;
+    _isRedirecting = false;
+    final routeData = scope.stackData.firstWhereOrNull((e) => e.matchId == match.id);
+    if (routeData != null) {
+      scope.markUrlStateForReplace();
+      scope._removeRoute(match);
+      // complete the pop completer with null result
+      routeData.onPopInvoked(null);
     }
   }
 
