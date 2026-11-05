@@ -7,9 +7,13 @@ import 'package:material_ui/material_ui.dart';
 /// `WidgetTester.restartAndRestore` rebuilds it from scratch; [router] is
 /// the router of the last start.
 class RestorableRouterApp extends StatefulWidget {
-  const new(this._routerBuilder, {super.key});
+  const new(this._routerBuilder, {super.key, this.navRestorationScopeId});
 
   final RootStackRouter Function() _routerBuilder;
+
+  /// The restoration scope of the root navigator, which restores the routes
+  /// pushed with `Navigator.restorablePush`.
+  final String? navRestorationScopeId;
 
   static late RootStackRouter router;
 
@@ -31,7 +35,9 @@ class _RestorableRouterAppState extends State<RestorableRouterApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       restorationScopeId: 'app',
-      routerConfig: router.config(),
+      routerConfig: router.config(
+        navRestorationScopeId: widget.navRestorationScopeId,
+      ),
     );
   }
 }
