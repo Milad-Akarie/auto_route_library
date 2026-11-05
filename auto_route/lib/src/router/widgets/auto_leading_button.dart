@@ -62,12 +62,12 @@ class AutoLeadingButton extends StatefulWidget {
   ///         ),
   ///     ),
   const new builder({
+    required NullableWidgetBuilder builder,
     super.key,
     this.color,
     bool? showIfParentCanPop,
     this.showIfChildCanPop = true,
     this.ignorePagelessRoutes = false,
-    required NullableWidgetBuilder builder,
   }) : _nullableBuilder = builder,
        builder = null,
        _showIfParentCanPop = showIfParentCanPop ?? true;

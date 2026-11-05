@@ -10,12 +10,12 @@ import 'package:material_ui/material_ui.dart';
 class AutoPageView extends StatefulWidget {
   /// Default constructor
   const new({
-    super.key,
     required this.animatePageTransition,
-    this.duration = const Duration(milliseconds: 300),
     required this.controller,
-    this.physics,
     required this.router,
+    super.key,
+    this.duration = const Duration(milliseconds: 300),
+    this.physics,
     this.lazyLoad = true,
     this.dragStartBehavior = DragStartBehavior.start,
     this.scrollDirection = Axis.horizontal,

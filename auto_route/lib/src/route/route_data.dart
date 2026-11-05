@@ -12,11 +12,11 @@ class RouteData<R> {
   new({
     required RouteMatch<Object?> route,
     required this.router,
-    this._popCompleter,
-    this._parent,
     required this.stackKey,
     required List<RouteMatch<Object?>> pendingChildren,
     required this.type,
+    this._popCompleter,
+    this._parent,
   }) : _route = route,
        _ownQueryParams = route.queryParams,
        _ownFragment = route.fragment,

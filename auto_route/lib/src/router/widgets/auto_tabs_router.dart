@@ -46,8 +46,8 @@ abstract class AutoTabsRouter extends StatefulWidget {
   }) = _AutoTabsRouterIndexedStack;
 
   const new _({
-    super.key,
     required this.routes,
+    super.key,
     this.homeIndex = -1,
     this.backThroughHistory = false,
     this.inheritNavigatorObservers = true,
@@ -103,9 +103,9 @@ abstract class AutoTabsRouter extends StatefulWidget {
   ///
   /// Clients can use this builder to render tabbed-pages
   const factory builder({
+    required AutoTabsBuilder builder,
     Key? key,
     List<PageRouteInfo>? routes,
-    required AutoTabsBuilder builder,
     OnNavigationChanged? onNavigate,
     OnNavigationChanged? onRouterReady,
     int homeIndex,
@@ -799,11 +799,11 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
 
 class _AutoTabsRouterBuilder extends AutoTabsRouter {
   const new({
+    required this.builder,
     super.key,
     super.routes,
     this.onNavigate,
     this.onRouterReady,
-    required this.builder,
     super.homeIndex,
     super.backThroughHistory,
     super.inheritNavigatorObservers,
@@ -938,7 +938,7 @@ mixin _RouteAwareTabsMixin<T extends StatefulWidget> on State<T> {
 /// A Wrapper widget to utilize [AutomaticKeepAliveClientMixin]
 class KeepAliveTab extends StatefulWidget {
   /// Default contractor
-  const new({super.key, required this.page, this.initiallyLoaded = true});
+  const new({required this.page, super.key, this.initiallyLoaded = true});
 
   /// Whether the tab should be initially loaded
   final bool initiallyLoaded;

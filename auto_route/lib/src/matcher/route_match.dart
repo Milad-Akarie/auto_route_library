@@ -30,6 +30,7 @@ class RouteMatch<T> {
     required this.segments,
     required this.stringMatch,
     required this.key,
+    required this.id,
     this.children,
     this.args,
     this.params = const Parameters({}),
@@ -37,7 +38,6 @@ class RouteMatch<T> {
     this.fragment = '',
     this.redirectedFrom,
     this.autoFilled = false,
-    required this.id,
     this._evaluatedGuards = const [],
   });
 

@@ -60,8 +60,8 @@ class AutoRoute {
   }
 
   new _({
-    this._path,
     required this.page,
+    this._path,
     this.usesPathAsKey = false,
     this.guards = const [],
     this.fullMatch = false,
@@ -454,8 +454,9 @@ class CustomRoute extends AutoRoute {
 class NamedRouteDef extends AutoRoute {
   /// Default constructor
   new({
-    super.path,
     required String name,
+    required WidgetBuilderWithData builder,
+    super.path,
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
@@ -469,14 +470,14 @@ class NamedRouteDef extends AutoRoute {
     super.allowSnapshotting = true,
     super.restorationId,
     super.type,
-    required WidgetBuilderWithData builder,
   }) : super._(page: PageInfo.builder(name, builder: builder));
 
   /// Creates a guarded route
   new guarded({
-    super.path,
     required String name,
     required OnNavigation onNavigation,
+    required WidgetBuilderWithData builder,
+    super.path,
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
@@ -489,7 +490,6 @@ class NamedRouteDef extends AutoRoute {
     super.allowSnapshotting = true,
     super.restorationId,
     super.type,
-    required WidgetBuilderWithData builder,
   }) : super._(
          guards: [AutoRouteGuard.simple(onNavigation)],
          page: PageInfo.builder(name, builder: builder),
@@ -498,12 +498,12 @@ class NamedRouteDef extends AutoRoute {
   /// Creates a guarded route
   new shell({
     required String name,
+    required super.children,
     super.path,
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
     super.usesPathAsKey = false,
-    required super.children,
     super.guards,
     super.meta = const {},
     super.title,

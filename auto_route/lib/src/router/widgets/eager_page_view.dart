@@ -121,12 +121,12 @@ class EagerPageView extends StatefulWidget {
   ///
 
   new({
+    required this.controller,
+    required this.cacheExtent,
     super.key,
     this.scrollDirection = Axis.horizontal,
     this.reverse = false,
-    required this.controller,
     this.physics,
-    required this.cacheExtent,
     this.pageSnapping = true,
     this.onPageChanged,
     List<Widget> children = const <Widget>[],

@@ -79,11 +79,11 @@ class CupertinoPageTransition extends StatelessWidget {
   ///  * `linearTransition` is whether to perform the transitions linearly.
   ///    Used to precisely track back gesture drags.
   new({
-    super.key,
     required Animation<double> primaryRouteAnimation,
     required Animation<double> secondaryRouteAnimation,
     required this.child,
     required bool linearTransition,
+    super.key,
   }) : _primaryPositionAnimation =
            (linearTransition
                    ? primaryRouteAnimation
@@ -155,11 +155,11 @@ class CupertinoFullscreenDialogTransition extends StatelessWidget {
   ///  * `linearTransition` is whether to perform the secondary transition linearly.
   ///    Used to precisely track back gesture drags.
   new({
-    super.key,
     required Animation<double> primaryRouteAnimation,
     required Animation<double> secondaryRouteAnimation,
     required this.child,
     required bool linearTransition,
+    super.key,
   }) : _positionAnimation = CurvedAnimation(
          parent: primaryRouteAnimation,
          curve: Curves.linearToEaseOut,
@@ -210,7 +210,7 @@ class CupertinoFullscreenDialogTransition extends StatelessWidget {
 /// The type `T` specifies the return type of the route with which this gesture
 /// detector is associated.
 class _CupertinoBackGestureDetector<T> extends StatefulWidget {
-  const new({super.key, required this.enabledCallback, required this.onStartPopGesture, required this.child});
+  const new({required this.enabledCallback, required this.onStartPopGesture, required this.child, super.key});
 
   final Widget child;
 

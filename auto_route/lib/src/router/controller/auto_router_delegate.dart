@@ -374,9 +374,9 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 class _AutoRootRouter extends StatefulWidget {
   const new({
     required this.router,
+    required this.navigatorObserversBuilder,
     this.navRestorationScopeId,
     this.navigatorObservers = const [],
-    required this.navigatorObserversBuilder,
     this.placeholderBuilder,
     this.clipBehavior = Clip.hardEdge,
     this.routeTraversalEdgeBehavior,

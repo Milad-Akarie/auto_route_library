@@ -6,10 +6,10 @@ import 'package:material_ui/material_ui.dart';
 class AutoPageRouteBuilder<T> extends PageRoute<T> {
   /// Default constructor
   new({
+    required this.child,
     this.transitionBuilder,
     this.transitionDuration = const Duration(milliseconds: 300),
     this.opaque = true,
-    required this.child,
     super.fullscreenDialog,
   });
 

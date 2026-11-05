@@ -18,10 +18,10 @@ class AutoTabView extends StatefulWidget {
   /// Creates a page view with one child per tab.
 
   const new({
-    super.key,
     required this.controller,
-    this.physics,
     required this.router,
+    super.key,
+    this.physics,
     this.lazyLoad = true,
     this.scrollDirection = Axis.horizontal,
     this.dragStartBehavior = DragStartBehavior.start,

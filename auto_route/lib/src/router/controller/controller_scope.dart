@@ -8,12 +8,12 @@ import 'package:flutter/widgets.dart';
 class RouterScope extends InheritedWidget {
   /// Default constructor
   const new({
-    super.key,
     required super.child,
     required this.controller,
-    this.navigatorObservers = const [],
     required this.inheritableObserversBuilder,
     required this.stateHash,
+    super.key,
+    this.navigatorObservers = const [],
   });
 
   /// The controller to inject
@@ -91,7 +91,7 @@ class RouterScope extends InheritedWidget {
 /// so it can be looked up by any child widget
 class StackRouterScope extends InheritedWidget {
   /// Default constructor
-  const new({super.key, required super.child, required this.controller, required this.stateHash});
+  const new({required super.child, required this.controller, required this.stateHash, super.key});
 
   /// The controller to inject
   final StackRouter controller;
@@ -133,7 +133,7 @@ class StackRouterScope extends InheritedWidget {
 /// so it can be looked up by any child widget
 class TabsRouterScope extends InheritedWidget {
   /// Default constructor
-  const new({super.key, required super.child, required this.stateHash, required this.controller});
+  const new({required super.child, required this.stateHash, required this.controller, super.key});
 
   /// The controller to inject
   final TabsRouter controller;

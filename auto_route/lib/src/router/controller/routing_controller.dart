@@ -821,10 +821,10 @@ class TabsRouter extends RoutingController {
     required RouteCollection routeCollection,
     required this.key,
     required this._routeData,
-    this.homeIndex = -1,
-    this.backThroughHistory = false,
     required this.preload,
     required this.matchId,
+    this.homeIndex = -1,
+    this.backThroughHistory = false,
     this._parent,
   }) : _routeCollection = routeCollection,
        _matcher = RouteMatcher(routeCollection);
@@ -2074,9 +2074,9 @@ abstract class StackRouter extends RoutingController {
 
   Future<T?> _redirect<T extends Object?>(
     PageRouteInfo route, {
+    required void Function(StackRouter scope, RouteMatch<Object?> match) onMatch,
     OnNavigationFailure? onFailure,
     bool replace = false,
-    required void Function(StackRouter scope, RouteMatch<Object?> match) onMatch,
   }) {
     final scope = _findStackScope(route);
     if (replace) {
@@ -2894,8 +2894,8 @@ class NestedStackRouter extends StackRouter {
     required super.key,
     required super.matchId,
     required RouteData<Object?> routeData,
-    this.managedByWidget = false,
     required RoutingController super.parent,
+    this.managedByWidget = false,
     super.onNavigate,
     super.navigatorKey,
   }) : _routeCollection = routeCollection,

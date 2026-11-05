@@ -54,9 +54,9 @@ class AutoRouter extends StatefulWidget {
   /// Builds a [_DeclarativeAutoRouter] which uses
   /// a declarative list of routes to update navigator stack
   static Widget declarative({
+    required RoutesBuilder routes,
     Key? key,
     NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
-    required RoutesBuilder routes,
     RoutePopCallBack? onPopRoute,
     String? navRestorationScopeId,
     bool inheritNavigatorObservers = true,
@@ -211,8 +211,8 @@ class AutoRouterState extends State<AutoRouter> {
 
 class _DeclarativeAutoRouter extends StatefulWidget {
   const new({
-    super.key,
     required this.routesBuilder,
+    super.key,
     this.navigatorObserversBuilder = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.onPopRoute,
     this.navigatorKey,
