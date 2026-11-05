@@ -222,12 +222,11 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     }
     // Saved before the launch link was, the routes alone.
     final routes = _restoredRoutes(saved is Map ? saved[_routesKey] : saved);
+    // A saved route that no longer matches drops the saved stack, rather
+    // than throwing.
     final matches = routes == null || routes.isEmpty || controller.hasEntries
         ? null
-        : controller._matchAllOrReportFailure(routes, (_) {
-            // A saved route that no longer matches is dropped rather than
-            // thrown.
-          });
+        : controller._matchAllOrReportFailure(routes, shouldThrow: false);
     final buildable = matches == null
         ? const <RouteMatch<Object?>>[]
         : _buildableMatches(matches, controller);

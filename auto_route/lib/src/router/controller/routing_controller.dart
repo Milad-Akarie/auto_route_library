@@ -315,10 +315,13 @@ abstract class RoutingController with ChangeNotifier {
     return matcher.matchByRoute(route);
   }
 
+  // Reports a route no route matches to [onFailure]; without one, throws it,
+  // or with [shouldThrow] false returns null.
   RouteMatch<Object?>? _matchOrReportFailure(
-    PageRouteInfo route, [
+    PageRouteInfo route, {
     OnNavigationFailure? onFailure,
-  ]) {
+    bool shouldThrow = true,
+  }) {
     var match = matcher.matchByRoute(route);
     if (match != null) {
       return match;
@@ -330,6 +333,7 @@ abstract class RoutingController with ChangeNotifier {
         onFailure(failure);
         return null;
       }
+      if (!shouldThrow) return null;
       throw FlutterError(failure.toString());
     }
     return _reuseOpenAncestors(match);
@@ -374,12 +378,17 @@ abstract class RoutingController with ChangeNotifier {
   }
 
   List<RouteMatch<Object?>>? _matchAllOrReportFailure(
-    List<PageRouteInfo> routes, [
+    List<PageRouteInfo> routes, {
     OnNavigationFailure? onFailure,
-  ]) {
+    bool shouldThrow = true,
+  }) {
     final matches = <RouteMatch<Object?>>[];
     for (final route in routes) {
-      final match = _matchOrReportFailure(route, onFailure);
+      final match = _matchOrReportFailure(
+        route,
+        onFailure: onFailure,
+        shouldThrow: shouldThrow,
+      );
       if (match != null) {
         // Only a stack opens listed routes one above the other; a tabs router
         // shows each listed route as its own tab.
@@ -557,7 +566,7 @@ abstract class RoutingController with ChangeNotifier {
     PageRouteInfo route, {
     OnNavigationFailure? onFailure,
   }) async {
-    final match = _matchOrReportFailure(route, onFailure);
+    final match = _matchOrReportFailure(route, onFailure: onFailure);
     if (match != null) {
       return await _navigateAll([match], onFailure: onFailure);
     }
@@ -906,7 +915,7 @@ abstract class RoutingController with ChangeNotifier {
     List<PageRouteInfo> routes, {
     OnNavigationFailure? onFailure,
   }) {
-    final matches = _matchAllOrReportFailure(routes, onFailure);
+    final matches = _matchAllOrReportFailure(routes, onFailure: onFailure);
     if (matches != null) {
       return _navigateAll(matches, onFailure: onFailure);
     }
@@ -963,7 +972,7 @@ class TabsRouter extends RoutingController {
     PageRouteInfo route, {
     OnNavigationFailure? onFailure,
   }) async {
-    final match = _matchOrReportFailure(route, onFailure);
+    final match = _matchOrReportFailure(route, onFailure: onFailure);
     if (match == null) return null;
     if (_pages.isNotEmpty && _tabIndexOf(match) == -1) {
       if (onFailure != null) {
@@ -2305,7 +2314,7 @@ abstract class StackRouter extends RoutingController {
     int? insertAt,
   }) async {
     assert(!managedByWidget, _managedByWidgetMessage);
-    final match = _matchOrReportFailure(route, onFailure);
+    final match = _matchOrReportFailure(route, onFailure: onFailure);
     if (match == null) {
       return null;
     }
@@ -2449,7 +2458,7 @@ abstract class StackRouter extends RoutingController {
     required bool updateExistingRoutes,
     OnNavigationFailure? onFailure,
   }) async {
-    final matches = _matchAllOrReportFailure(routes, onFailure);
+    final matches = _matchAllOrReportFailure(routes, onFailure: onFailure);
     if (matches != null) {
       await _replaceAllMatches(
         matches,
@@ -2720,7 +2729,7 @@ abstract class StackRouter extends RoutingController {
     OnNavigationFailure? onFailure,
     bool notify = true,
   }) async {
-    final matches = _matchAllOrReportFailure(routes, onFailure);
+    final matches = _matchAllOrReportFailure(routes, onFailure: onFailure);
     if (matches != null) {
       await _pushAllGuarded<void>(
         matches,
