@@ -22,18 +22,18 @@ class RouteConfig {
   /// Deserializes the route config from json
   factory fromJson(Map<String, dynamic> map) {
     final pathParams = <PathParamConfig>[];
-    final pathParamsJson = map['pathParams'] as List<Object?>?;
+    final pathParamsJson = (map['pathParams'] as List<Object?>?)?.cast<Map<String, dynamic>>();
     if (pathParamsJson != null) {
       for (final arg in pathParamsJson) {
-        pathParams.add(PathParamConfig.fromJson(arg as Map<String, dynamic>));
+        pathParams.add(PathParamConfig.fromJson(arg));
       }
     }
 
     final parameters = <ParamConfig>[];
-    final parametersJson = map['parameters'] as List<Object?>?;
+    final parametersJson = (map['parameters'] as List<Object?>?)?.cast<Map<String, dynamic>>();
     if (parametersJson != null) {
       for (final arg in parametersJson) {
-        parameters.add(ParamConfig.fromJson(arg as Map<String, dynamic>));
+        parameters.add(ParamConfig.fromJson(arg));
       }
     }
 

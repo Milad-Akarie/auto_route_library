@@ -52,10 +52,10 @@ class ResolvedType {
   /// deserializes the type from json
   factory fromJson(Map<String, dynamic> map) {
     final typedArgs = <ResolvedType>[];
-    final typeArguments = map['typeArguments'] as List<Object?>?;
+    final typeArguments = (map['typeArguments'] as List<Object?>?)?.cast<Map<String, dynamic>>();
     if (typeArguments != null) {
       for (final arg in typeArguments) {
-        typedArgs.add(ResolvedType.fromJson(arg as Map<String, dynamic>));
+        typedArgs.add(ResolvedType.fromJson(arg));
       }
     }
     return ResolvedType._(
@@ -191,7 +191,7 @@ class FunctionTypeParts {
   /// deserializes the parts from json
   factory fromJson(Map<String, dynamic> map) {
     List<ResolvedType> list(String key) => [
-      for (final e in map[key] as List<Object?>) ResolvedType.fromJson(e as Map<String, dynamic>),
+      for (final e in (map[key] as List<Object?>).cast<Map<String, dynamic>>()) ResolvedType.fromJson(e),
     ];
     Map<String, ResolvedType> named(String key) => {
       for (final e in (map[key] as Map<String, dynamic>).entries)

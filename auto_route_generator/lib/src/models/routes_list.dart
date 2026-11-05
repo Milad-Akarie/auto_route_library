@@ -9,7 +9,7 @@ class RoutesList {
   factory fromJson(Map<String, dynamic> map) {
     return RoutesList(
       routes: List.unmodifiable(
-        (map['routes'] as List<Object?>).map((e) => RouteConfig.fromJson(e as Map<String, dynamic>)),
+        (map['routes'] as List<Object?>).cast<Map<String, dynamic>>().map(RouteConfig.fromJson),
       ),
       inputPath: map['inputPath'] as String,
       inputHash: map['inputHash'] as int?,
