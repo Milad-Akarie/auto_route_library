@@ -36,7 +36,7 @@ void main() {
               FirstRoute.name,
               builder: (_) => const _CounterPage(),
             ),
-            onNavigation: (resolver, router) {
+            onNavigation: (resolver, _) {
               if (isLoggedIn.value) {
                 resolver.next();
               } else {
@@ -76,7 +76,7 @@ void main() {
           AutoRoute(page: FirstRoute.page, initial: true),
           AutoRoute.guarded(
             page: SecondRoute.page,
-            onNavigation: (resolver, router) {
+            onNavigation: (resolver, _) {
               if (reevaluationNotifier.value) {
                 unawaited(resolver.redirectUntil(const ThirdRoute()));
               } else {

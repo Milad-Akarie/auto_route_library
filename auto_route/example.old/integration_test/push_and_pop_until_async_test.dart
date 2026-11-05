@@ -107,12 +107,12 @@ void main() {
   );
 
   group('from a nested router', () {
-    late RootStackRouter router;
+    late RootStackRouter groupRouter;
     late List<String> observed;
     setUp(() {
       observed = [];
       // Cupertino pages slide on every platform, web included.
-      router = RootStackRouter.build(
+      groupRouter = RootStackRouter.build(
         defaultRouteType: const RouteType.cupertino(),
         routes: [
           AutoRoute(page: _page('HomeRoute'), path: '/', initial: true),
@@ -142,12 +142,12 @@ void main() {
     ) async {
       await pumpRouterApp(
         tester,
-        router,
+        groupRouter,
         navigatorObservers: () => [_NamesObserver(observed)],
       );
-      unawaited(router.push(const PageRouteInfo('ShellRoute')));
+      unawaited(groupRouter.push(const PageRouteInfo('ShellRoute')));
       await tester.pumpAndSettle();
-      final nested = router.innerRouterOf<StackRouter>('ShellRoute')!;
+      final nested = groupRouter.innerRouterOf<StackRouter>('ShellRoute')!;
       unawaited(nested.push(const PageRouteInfo('S2Route')));
       await tester.pumpAndSettle();
       observed.clear();
@@ -191,11 +191,11 @@ void main() {
           reason: '$frames',
         );
         expect(observed, ['push DoneRoute', 'remove ShellRoute']);
-        expect(namesOf(router), ['HomeRoute', 'DoneRoute']);
+        expect(namesOf(groupRouter), ['HomeRoute', 'DoneRoute']);
 
-        unawaited(router.maybePop());
+        unawaited(groupRouter.maybePop());
         await tester.pumpAndSettle();
-        expectCurrentPage(router, 'HomeRoute');
+        expectCurrentPage(groupRouter, 'HomeRoute');
       },
     );
 
@@ -214,15 +214,15 @@ void main() {
       );
       expect(observed, containsAll(['push DoneRoute', 'remove S2Route']));
       expect(observed.where((event) => event.startsWith('pop')), isEmpty);
-      expect(namesOf(router), ['HomeRoute', 'ShellRoute', 'DoneRoute']);
+      expect(namesOf(groupRouter), ['HomeRoute', 'ShellRoute', 'DoneRoute']);
 
-      unawaited(router.maybePop());
+      unawaited(groupRouter.maybePop());
       await tester.pumpAndSettle();
-      expect(router.topRoute.name, 'S1Route');
+      expect(groupRouter.topRoute.name, 'S1Route');
       expect(find.text('S1Route'), findsOneWidget);
-      unawaited(router.maybePop());
+      unawaited(groupRouter.maybePop());
       await tester.pumpAndSettle();
-      expectCurrentPage(router, 'HomeRoute');
+      expectCurrentPage(groupRouter, 'HomeRoute');
     });
   });
 }
@@ -238,14 +238,14 @@ class _NamesObserver extends AutoRouterObserver {
   final List<String> events;
 
   @override
-  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) =>
+  void didPush(Route<Object?> route, Route<Object?>? previousRoute) =>
       events.add('push ${route.settings.name}');
 
   @override
-  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) =>
+  void didPop(Route<Object?> route, Route<Object?>? previousRoute) =>
       events.add('pop ${route.settings.name}');
 
   @override
-  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) =>
+  void didRemove(Route<Object?> route, Route<Object?>? previousRoute) =>
       events.add('remove ${route.settings.name}');
 }

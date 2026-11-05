@@ -26,13 +26,13 @@ void main() {
           path: '/',
           initial: true,
           guards: [
-            AutoRouteGuard.simple((resolver, router) {
+            AutoRouteGuard.simple((resolver, guardRouter) {
               if (authRepo.isLoggedIn) {
                 resolver.next();
                 return;
               }
               resolver.reject();
-              unawaited(router.replaceAll([const _LoginRoute()]));
+              unawaited(guardRouter.replaceAll([const _LoginRoute()]));
             }),
           ],
         ),

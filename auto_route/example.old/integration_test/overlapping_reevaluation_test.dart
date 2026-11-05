@@ -33,7 +33,7 @@ void main() {
           AutoRoute(
             page: SecondRoute.page,
             guards: [
-              AutoRouteGuard.simple((resolver, router) async {
+              AutoRouteGuard.simple((resolver, _) async {
                 calls++;
                 await Future<void>.delayed(const Duration(milliseconds: 50));
                 if (reevaluationNotifier.value) resolver.next();
