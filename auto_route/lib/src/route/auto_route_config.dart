@@ -574,9 +574,7 @@ class RouteCollection {
         subCollections[r.name] = RouteCollection.fromList(r.children!, onGeneratePath: onGeneratePath);
       }
 
-      // Replaced below when the route's path is generated.
-      // ignore: avoid-unnecessary-local-variable
-      var routeToUse = r;
+      final AutoRoute routeToUse;
       if (r._path != null) {
         if (!root && r.path.startsWith('/')) {
           throw FlutterError('Sub-paths can not start with a "/": ${r.path}');
