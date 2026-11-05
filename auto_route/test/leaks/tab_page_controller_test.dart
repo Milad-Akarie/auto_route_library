@@ -76,8 +76,8 @@ void main() {
     expect(pageControllers.undisposed, 0);
   });
 
-  // Steps: push TabsHostRoute, whose page holds an AutoTabsRouter.pageView,
-  // swipe to the second tab, then pop the host.
+  // Steps: push TabsHostRoute, whose page holds a pageView tabs router.
+  // Swipe to the second tab, then pop the host.
   // Happened: the PageController the tabs router creates stayed undisposed, one
   // more on each visit. Should: popping the host disposes it.
   testWidgets(

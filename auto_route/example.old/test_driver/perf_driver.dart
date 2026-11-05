@@ -7,7 +7,7 @@ import 'package:integration_test/integration_test_driver.dart';
 // Host side of integration_test/navigation_benchmark.dart. Summarizes each
 // case's timeline into build/navigation_benchmark.json and prints one
 // `RESULT <case>.<measure> <value>` line per number, the lines
-// auto_route/test/benchmark/summarize.dart reads.
+// auto_route/tool/summarize_benchmark.dart reads.
 // The host side of `flutter drive`, not a test.
 Future<void> main() => integrationDriver(responseDataCallback: _summarize);
 

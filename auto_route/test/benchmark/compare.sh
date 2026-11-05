@@ -6,7 +6,7 @@
 # <benchmark> is url (the VM) or url-chrome. The before and after runs take
 # turns, before first, so a busy Mac slows both alike. Each run's output goes
 # to <output folder>/before/ or <output folder>/after/, as run.sh writes it.
-# Then summarize.dart prints each case's median before and after, the change,
+# Then tool/summarize_benchmark.dart prints each case's median before and after, the change,
 # and the larger spread; a change inside the spread is noise. The before commit
 # must have the benchmark. Run it from auto_route/.
 set -eu
@@ -33,4 +33,4 @@ while [ "$i" -le "$runs" ]; do
   i=$((i + 1))
 done
 
-dart run test/benchmark/summarize.dart "$out/before/$benchmark"-*.txt --vs "$out/after/$benchmark"-*.txt
+dart run tool/summarize_benchmark.dart "$out/before/$benchmark"-*.txt --vs "$out/after/$benchmark"-*.txt

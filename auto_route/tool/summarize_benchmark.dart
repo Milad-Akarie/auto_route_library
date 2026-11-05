@@ -1,10 +1,10 @@
 // Summarizes benchmark runs: the `RESULT <case> <value>` lines that
-// url_benchmark.dart and the example app's navigation benchmark print.
+// url_benchmark_test.dart and the example app's navigation benchmark print.
 //
-//   dart run test/benchmark/summarize.dart <run files>
+//   dart run tool/summarize_benchmark.dart <run files>
 //     prints each case's median, lowest and highest value, and its spread:
 //     (highest - lowest) / median.
-//   dart run test/benchmark/summarize.dart <before files> --vs <after files>
+//   dart run tool/summarize_benchmark.dart <before files> --vs <after files>
 //     prints each case's median before and after, the change, and the larger
 //     of the two spreads. A change smaller than that spread is noise.
 //
@@ -12,7 +12,7 @@
 
 import 'dart:io';
 
-// A command-line tool kept with the benchmarks, not a test.
+// A command-line tool for the benchmarks in test/benchmark, not a test.
 void main(List<String> args) {
   final split = args.indexOf('--vs');
   if (split < 0) {

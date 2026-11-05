@@ -2,16 +2,19 @@
 // against the routes, matching a route by name, and building the url back.
 //
 // auto_route needs Flutter, so this runs through the Flutter test runner,
-// which in Chrome only serves files under test/. The name has no `_test`, so
-// a plain `flutter test` leaves it out. From auto_route/:
+// which in Chrome only serves files under test/. A plain `flutter test` skips
+// it, since a timing run is no check. From auto_route/, run it on purpose:
 //
-//   flutter test test/benchmark/url_benchmark.dart
-//   flutter test test/benchmark/url_benchmark.dart --platform chrome
+//   flutter test --run-skipped test/benchmark/url_benchmark_test.dart
+//   flutter test --run-skipped test/benchmark/url_benchmark_test.dart \
+//     --platform chrome
 //
 // Each case prints one line, `RESULT <case> <microseconds per run>`.
-// summarize.dart, next to this file, turns several runs into medians and
+// tool/summarize_benchmark.dart turns several runs into medians and
 // spreads. The runner runs the VM in JIT mode with asserts on, so the numbers
 // are for comparing two versions of the code on one machine, not for apps.
+@Skip('A timing run, not a check. Run it with --run-skipped.')
+library;
 
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/matcher/route_matcher.dart';
@@ -19,7 +22,6 @@ import 'package:benchmark_harness/benchmark_harness.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-// A benchmark the runner runs only when named, so not a `_test` file.
 void main() {
   test('url benchmark', () {
     final benchmarks = <BenchmarkBase>[
