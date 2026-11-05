@@ -100,12 +100,22 @@ class AutoRoutePage<T> extends Page<T> {
     };
   }
 
-  /// Builds a the widget that's scoped
-  /// with [routeData]
+  /// Builds the page's widget, scoped with [routeData].
+  ///
+  /// The widget's semantics carry the route's name as their
+  /// `Semantics.identifier`, so UI testing tools, and
+  /// `find.bySemanticsIdentifier` in widget tests, find the page by its route
+  /// name, whatever its route type.
   // Public API: changing it is the maintainer's call.
   // ignore: avoid-unused-parameters
   Widget buildPage(BuildContext context) {
-    return RouteDataScope(routeData: routeData, child: _child);
+    // explicitChildNodes keeps the page's own nodes apart, as the route's
+    // scopesRoute node above does.
+    return Semantics(
+      identifier: routeData.name,
+      explicitChildNodes: true,
+      child: RouteDataScope(routeData: routeData, child: _child),
+    );
   }
 
   /// Creates a PageRoute variant based on

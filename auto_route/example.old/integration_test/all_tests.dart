@@ -78,6 +78,7 @@ import 'optional_args_on_back_test.dart' as optional_args_on_back;
 import 'overlapping_reevaluation_test.dart' as overlapping_reevaluation;
 import 'override_args_on_reevaluate_test.dart' as override_args_on_reevaluate;
 import 'override_children_on_reevaluate_test.dart' as override_children_on_reevaluate;
+import 'page_semantics_identifier_test.dart' as page_semantics_identifier;
 import 'page_view_swipe_back_test.dart' as page_view_swipe_back;
 import 'page_view_zero_duration_test.dart' as page_view_zero_duration;
 import 'pageless_push_rebuild_test.dart' as pageless_push_rebuild;
@@ -265,6 +266,7 @@ void main() {
   group('overlapping reevaluation', overlapping_reevaluation.main);
   group('override args on reevaluate', override_args_on_reevaluate.main);
   group('override children on reevaluate', override_children_on_reevaluate.main);
+  group('page semantics identifier', page_semantics_identifier.main);
   group('page view swipe back', page_view_swipe_back.main);
   group('page view zero duration', page_view_zero_duration.main);
   group('pageless push rebuild', pageless_push_rebuild.main);

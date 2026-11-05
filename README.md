@@ -2130,6 +2130,14 @@ testWidgets('opens the details page', (tester) async {
 
 A page under test that needs a bloc or another provider gets it from above `MaterialApp.router`, as in any Flutter test. A provider created by an [`AutoRouteWrapper`](#wrapping-routes) is created by the page itself; to replace it with a mock, make its `create` read from your service locator and register the mock there.
 
+#### Finding a page by its route name
+
+Every page's semantics carry its route name as their identifier, whatever its route type. UI testing tools that read the accessibility tree, such as Appium and Maestro, find the page shown by that name: an `accessibilityIdentifier` on iOS and a `resource-id` on Android. A widget test finds it the same way:
+
+```dart
+expect(find.bySemanticsIdentifier('DetailsRoute'), findsOneWidget);
+```
+
 ## Examples
 
 - [Declarative Navigation](https://github.com/Milad-Akarie/auto_route_library/blob/master/auto_route/example/lib/declarative/declarative.router.dart)
