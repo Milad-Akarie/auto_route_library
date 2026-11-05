@@ -12,7 +12,7 @@ const kUrlCollectionTypes = {'List', 'Set', 'Iterable'};
 /// resolvers ask it what the type allows, and the route builder asks it for
 /// the code. A type with no entry is one a url can not give.
 sealed class UrlParamType {
-  const new();
+  const new _();
 
   /// The entry for a param read and written by the `ParamConverter`
   /// constant [name], declared in [import].
@@ -46,7 +46,7 @@ sealed class UrlParamType {
 
   /// Whether a `List`, `Set` or `Iterable` query param can hold items of the
   /// type: the url gives each item as text, as it is ([isTextItem]) or for
-  /// [parseItem] to convert.
+  /// [_parseItem] to convert.
   bool get isListItem => false;
 
   /// Whether an item of the type is the url's text as it is, so a `List` of
@@ -60,7 +60,7 @@ sealed class UrlParamType {
 
   /// The function that converts the text of one item to [type], for a
   /// [isListItem] type that is not [isTextItem].
-  Expression parseItem(ResolvedType type) => throw UnsupportedError('${type.name} items are not parsed');
+  Expression _parseItem(ResolvedType type) => throw UnsupportedError('${type.name} items are not parsed');
 
   /// The code that gives the url's value for [value], a variable of [type].
   Expression write(Expression value, ResolvedType type) => value;
@@ -69,7 +69,7 @@ sealed class UrlParamType {
 /// A type `Parameters` has a pair of readers for, `opt<name>` for a nullable
 /// type and `get<name>` for the rest, or `get` alone when [name] is `null`.
 final class _GetterParam extends UrlParamType {
-  const new(this.name, {this.inPath = false, this.parsesItems = false});
+  const new(this.name, {this.inPath = false, this.parsesItems = false}) : super._();
 
   final String? name;
 
@@ -93,7 +93,7 @@ final class _GetterParam extends UrlParamType {
   }
 
   @override
-  Expression parseItem(ResolvedType type) => switch (type.name) {
+  Expression _parseItem(ResolvedType type) => switch (type.name) {
     'bool' => const CodeExpression(
       Code("(text) => text.toLowerCase() == 'true' ? true : text.toLowerCase() == 'false' ? false : null"),
     ),
@@ -103,7 +103,7 @@ final class _GetterParam extends UrlParamType {
 
 /// An enum, read and written by its name.
 final class _EnumParam extends UrlParamType {
-  const new();
+  const new() : super._();
 
   @override
   bool get isListItem => true;
@@ -115,7 +115,7 @@ final class _EnumParam extends UrlParamType {
   }
 
   @override
-  Expression parseItem(ResolvedType type) => Method(
+  Expression _parseItem(ResolvedType type) => Method(
     (b) => b
       ..requiredParameters.add(Parameter((parameterBuilder) => parameterBuilder..name = 'name'))
       ..lambda = true
@@ -133,7 +133,7 @@ final class _EnumParam extends UrlParamType {
 /// A `List`, `Set` or `Iterable`, read from its key repeated in the url,
 /// with each item read by its own type's entry.
 final class _CollectionParam extends UrlParamType {
-  const new();
+  const new() : super._();
 
   @override
   Expression read(Expression params, Expression key, ResolvedType type, Expression? defaultValue) {
@@ -150,7 +150,7 @@ final class _CollectionParam extends UrlParamType {
     var value = params.property('optList').call([key]);
     if (parses) {
       final itemRefer = refer(item.name, item.import);
-      value = value.nullSafeProperty('map').call([itemType.parseItem(item)]).property('whereType').call([], {}, [
+      value = value.nullSafeProperty('map').call([itemType._parseItem(item)]).property('whereType').call([], {}, [
         itemRefer,
       ]);
     }
@@ -181,7 +181,7 @@ final class _CollectionParam extends UrlParamType {
 
 /// A param of any type, read and written by a `ParamConverter` constant.
 final class _ConverterParam extends UrlParamType {
-  const new(this.name, this.import);
+  const new(this.name, this.import) : super._();
 
   final String name;
   final String? import;

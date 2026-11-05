@@ -9,22 +9,22 @@ import 'package:source_gen/source_gen.dart';
 
 /// A comment configuring `dart_style` to use the default code width so no
 /// configuration discovery is required.
-const kDartFormatWidth = '// dart format width=80';
+const _kDartFormatWidth = '// dart format width=80';
 
 /// A [Builder] which skips resolving cached files
 abstract class CacheAwareBuilder<T> extends Builder {
   /// Default constructor
   new({
     required this.annotationName,
-    this.generatedExtension = '.g.dart',
+    this._generatedExtension = '.g.dart',
     List<String> additionalOutputExtensions = const [],
-    this.allowSyntaxErrors = false,
+    this._allowSyntaxErrors = false,
     this.options,
-  }) : buildExtensions = validatedBuildExtensionsFrom(options != null ? Map.of(options.config) : null, {
-         '.dart': [generatedExtension, ...additionalOutputExtensions],
+  }) : buildExtensions = _validatedBuildExtensionsFrom(options != null ? Map.of(options.config) : null, {
+         '.dart': [_generatedExtension, ...additionalOutputExtensions],
        }) {
-    if (generatedExtension.isEmpty || !generatedExtension.startsWith('.')) {
-      throw ArgumentError.value(generatedExtension, 'generatedExtension', 'Extension must be in the format of .*');
+    if (_generatedExtension.isEmpty || !_generatedExtension.startsWith('.')) {
+      throw ArgumentError.value(_generatedExtension, 'generatedExtension', 'Extension must be in the format of .*');
     }
 
     if (options != null && additionalOutputExtensions.isNotEmpty) {
@@ -36,10 +36,10 @@ abstract class CacheAwareBuilder<T> extends Builder {
   }
 
   /// The [buildExtensions] configuration for `.dart`
-  final String generatedExtension;
+  final String _generatedExtension;
 
   /// Whether to allow syntax errors in input libraries.
-  final bool allowSyntaxErrors;
+  final bool _allowSyntaxErrors;
 
   /// The name of the annotation to look for.
   final String annotationName;
@@ -48,7 +48,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
   bool get cacheEnabled;
 
   String _defaultFormatOutput(LibraryLanguageVersion libVersion, String code) {
-    return DartFormatter(languageVersion: libVersion.effective, pageWidth: 80).format('$kDartFormatWidth\n$code');
+    return DartFormatter(languageVersion: libVersion.effective, pageWidth: 80).format('$_kDartFormatWidth\n$code');
   }
 
   /// Custom ignore for file rules passed from the options
@@ -64,8 +64,8 @@ abstract class CacheAwareBuilder<T> extends Builder {
   Future<void> build(BuildStep buildStep) async {
     final resolver = buildStep.resolver;
     if (!await resolver.isLibrary(buildStep.inputId)) return;
-    final unit = await resolver.compilationUnitFor(buildStep.inputId, allowSyntaxErrors: allowSyntaxErrors);
-    if (!(await hasAnyTopLevelAnnotations(buildStep.inputId, buildStep, unit))) {
+    final unit = await resolver.compilationUnitFor(buildStep.inputId, allowSyntaxErrors: _allowSyntaxErrors);
+    if (!(await _hasAnyTopLevelAnnotations(buildStep.inputId, buildStep, unit))) {
       return;
     }
 
@@ -80,7 +80,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
       }
     }
 
-    final lib = await resolver.libraryFor(buildStep.inputId, allowSyntaxErrors: allowSyntaxErrors);
+    final lib = await resolver.libraryFor(buildStep.inputId, allowSyntaxErrors: _allowSyntaxErrors);
     final generated = await onResolve(LibraryReader(lib), buildStep, cacheHash);
     if (generated == null) return;
     await _writeContent(buildStep, lib.languageVersion, generated);
@@ -99,7 +99,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
   Future<T?> onResolve(LibraryReader library, BuildStep buildStep, int stepHash);
 
   /// Validates the generated content and prepares it for writing
-  String validateAndFormatDartCode(BuildStep buildStep, LibraryLanguageVersion libVersion, String generated) {
+  String _validateAndFormatDartCode(BuildStep buildStep, LibraryLanguageVersion libVersion, String generated) {
     try {
       return _defaultFormatOutput(libVersion, generated);
       // Any formatter failure is logged with the unformatted output, so the
@@ -124,16 +124,16 @@ source formatter.''',
     var output = await onGenerateContent(buildStep, generated);
     final outputId = buildStep.primaryOutput;
     if (outputId.extension.endsWith('.dart')) {
-      output = validateAndFormatDartCode(buildStep, libVersion, output);
+      output = _validateAndFormatDartCode(buildStep, libVersion, output);
     }
     await buildStep.writeAsString(outputId, output);
   }
 
   @override
-  String toString() => 'Generating $generatedExtension: $runtimeType';
+  String toString() => 'Generating $_generatedExtension: $runtimeType';
 
   /// Checks if the current compilation unit has any top level annotations
-  Future<bool> hasAnyTopLevelAnnotations(AssetId input, BuildStep buildStep, [CompilationUnit? unit]) async {
+  Future<bool> _hasAnyTopLevelAnnotations(AssetId input, BuildStep buildStep, [CompilationUnit? unit]) async {
     if (!await buildStep.canRead(input)) return false;
     final parsed = unit ?? await buildStep.resolver.compilationUnitFor(input);
     final partIds = <AssetId>[];
@@ -151,7 +151,7 @@ source formatter.''',
       }
     }
     for (final partId in partIds) {
-      if (await hasAnyTopLevelAnnotations(partId, buildStep)) {
+      if (await _hasAnyTopLevelAnnotations(partId, buildStep)) {
         return true;
       }
     }
@@ -166,7 +166,7 @@ source formatter.''',
 /// returns [defaultExtensions] when it is not set. Each output must end like
 /// the default one: in `.dart` for a Dart output, or in the full extension
 /// otherwise, such as `.route.json`.
-Map<String, List<String>> validatedBuildExtensionsFrom(
+Map<String, List<String>> _validatedBuildExtensionsFrom(
   Map<String, dynamic>? optionsMap,
   Map<String, List<String>> defaultExtensions,
 ) {

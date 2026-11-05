@@ -8,9 +8,9 @@ const kCompileErrorsExtension = '.compile_errors.txt';
 /// the output too when it is a library of its own, and writes the analyzer
 /// errors in them, one per line.
 class CompileCheckBuilder implements Builder {
-  const new(this.routerPath, this.outputPath);
-  final String routerPath;
-  final String outputPath;
+  const new(this._routerPath, this._outputPath);
+  final String _routerPath;
+  final String _outputPath;
 
   @override
   Map<String, List<String>> get buildExtensions => const {
@@ -19,9 +19,9 @@ class CompileCheckBuilder implements Builder {
 
   @override
   Future<void> build(BuildStep buildStep) async {
-    if (buildStep.inputId.path != routerPath) return;
+    if (buildStep.inputId.path != _routerPath) return;
     final libraries = [buildStep.inputId];
-    final outputId = AssetId(buildStep.inputId.package, outputPath);
+    final outputId = AssetId(buildStep.inputId.package, _outputPath);
     if (await buildStep.canRead(outputId) && await buildStep.resolver.isLibrary(outputId)) {
       libraries.add(outputId);
     }

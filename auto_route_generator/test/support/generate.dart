@@ -10,10 +10,10 @@ import 'generated_router.dart';
 export 'generated_router.dart';
 
 /// The package the test sources live in.
-const kTestPackage = 'app';
+const _kTestPackage = 'app';
 
 /// The router library [generateRouter] adds when the sources hold none.
-const kDefaultRouterSource = '''
+const _kDefaultRouterSource = '''
 import 'package:auto_route/auto_route.dart';
 
 import 'router.gr.dart';
@@ -31,7 +31,7 @@ TestReaderWriter? _packages;
 /// import `package:flutter` and `package:auto_route`.
 Future<TestReaderWriter> _loadPackages() async {
   if (_packages == null) {
-    final readerWriter = TestReaderWriter(rootPackage: kTestPackage);
+    final readerWriter = TestReaderWriter(rootPackage: _kTestPackage);
     await readerWriter.testing.loadIsolateSources();
     _packages = readerWriter;
   }
@@ -57,14 +57,14 @@ Future<GeneratedRouter> generateRouter(
   String? outputPath,
 }) async {
   final packages = await _loadPackages();
-  final readerWriter = TestReaderWriter(rootPackage: kTestPackage);
+  final readerWriter = TestReaderWriter(rootPackage: _kTestPackage);
   for (final id in packages.testing.assets) {
     readerWriter.testing.writeBytes(id, packages.testing.readBytes(id));
   }
   final assets = {
     for (final entry in sources.entries)
-      entry.key.contains('|') ? entry.key : '$kTestPackage|${entry.key}': entry.value,
-    if (!sources.containsKey(routerPath)) '$kTestPackage|$routerPath': kDefaultRouterSource,
+      entry.key.contains('|') ? entry.key : '$_kTestPackage|${entry.key}': entry.value,
+    if (!sources.containsKey(routerPath)) '$_kTestPackage|$routerPath': _kDefaultRouterSource,
   };
   outputPath ??= routerPath.replaceFirst(RegExp(r'\.dart$'), '.gr.dart');
   final result = await testBuilders(
@@ -74,13 +74,13 @@ Future<GeneratedRouter> generateRouter(
       CompileCheckBuilder(routerPath, outputPath),
     ],
     assets,
-    rootPackage: kTestPackage,
+    rootPackage: _kTestPackage,
     readerWriter: readerWriter,
     flattenOutput: true,
   );
   final files = result.readerWriter.testing;
-  final outputId = AssetId(kTestPackage, outputPath);
-  final checkId = AssetId(kTestPackage, routerPath.replaceFirst(RegExp(r'\.dart$'), kCompileErrorsExtension));
+  final outputId = AssetId(_kTestPackage, outputPath);
+  final checkId = AssetId(_kTestPackage, routerPath.replaceFirst(RegExp(r'\.dart$'), kCompileErrorsExtension));
   return GeneratedRouter(
     files.exists(outputId) ? files.readString(outputId) : null,
     result.errors.toList(),

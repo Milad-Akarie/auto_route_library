@@ -89,7 +89,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
               // A type argument can't be part of a constant.
               ..constant = parameters.isEmpty && !r.isGeneric
               ..optionalParameters.addAll([
-                ...buildArgParams(nonInheritedParameters, emitter, toThis: false),
+                ..._buildArgParams(nonInheritedParameters, emitter, toThis: false),
                 Parameter(
                   (parameterBuilder) => parameterBuilder
                     ..named = true
@@ -154,7 +154,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
             Constructor(
               (constructorBuilder) => constructorBuilder
                 ..constant = true
-                ..optionalParameters.addAll(buildArgParams(nonInheritedParameters, emitter, useSafeName: false)),
+                ..optionalParameters.addAll(_buildArgParams(nonInheritedParameters, emitter, useSafeName: false)),
             ),
           )
           ..methods.addAll([
@@ -301,7 +301,7 @@ Expression _defaultValue(ParamConfig p, [String? code]) {
 }
 
 /// Builds a list of [Parameter]s from the given [parameters]
-Iterable<Parameter> buildArgParams(
+Iterable<Parameter> _buildArgParams(
   List<ParamConfig> parameters,
   DartEmitter emitter, {
   bool toThis = true,

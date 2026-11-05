@@ -9,23 +9,23 @@ const _kUnPreferredImports = {'dart:ui'};
 /// A Helper class that resolves types
 class TypeResolver {
   /// Default constructor
-  const new(this.libs, [this.targetFile]);
+  const new(this._libs, [this._targetFile]);
 
   /// The list of resolved libraries in `BuildStep`
-  final List<LibraryElement> libs;
+  final List<LibraryElement> _libs;
 
   /// The target file to resolve relative paths to
-  final Uri? targetFile;
+  final Uri? _targetFile;
 
   /// Resolved the import path of the given [element]
   String? resolveImport(Element? element) {
     // return early if source is null or element is a core type
-    if (libs.isEmpty || element?.library?.uri == null || _isCoreDartType(element!)) {
+    if (_libs.isEmpty || element?.library?.uri == null || _isCoreDartType(element!)) {
       return null;
     }
 
     final fallBackImports = <String>{};
-    for (final lib in libs) {
+    for (final lib in _libs) {
       if (!_isCoreDartType(lib) && lib.exportNamespace.definedNames2.values.contains(element)) {
         final uri = lib.uri;
         if (_kUnPreferredImports.contains(uri.toString())) {
@@ -35,7 +35,7 @@ class TypeResolver {
         if (uri.scheme == 'asset') {
           return _assetToPackage(lib.uri);
         }
-        return targetFile == null ? lib.uri.toString() : _relative(uri, targetFile!);
+        return _targetFile == null ? lib.uri.toString() : _relative(uri, _targetFile!);
       }
     }
     return fallBackImports.firstOrNull;

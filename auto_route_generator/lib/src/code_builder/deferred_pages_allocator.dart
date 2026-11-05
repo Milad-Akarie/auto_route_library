@@ -5,23 +5,23 @@ import 'package:path/path.dart' as p;
 /// Allocates symbols for deferred pages
 class DeferredPagesAllocator implements Allocator {
   /// Default constructor
-  new(this.routes, {required this.defaultDeferredLoading, this.outputPath});
+  new(this._routes, {required this._defaultDeferredLoading, this._outputPath});
   static const _doNotPrefix = ['dart:core'];
 
   final _imports = <String, int>{};
   var _keys = 1;
 
   /// The list of routes to generate
-  final List<RouteConfig> routes;
+  final List<RouteConfig> _routes;
 
   /// The default deferred loading value
-  final bool defaultDeferredLoading;
+  final bool _defaultDeferredLoading;
 
   /// Where the router is written, as a path inside its package.
   ///
   /// Imports of files outside `lib/` are written relative to it, since they
   /// have no `package:` URI and a Flutter build rejects `asset:` imports.
-  final String? outputPath;
+  final String? _outputPath;
 
   @override
   String allocate(Reference reference) {
@@ -39,7 +39,7 @@ class DeferredPagesAllocator implements Allocator {
   Iterable<Directive> get imports => _imports.entries.map((entry) {
     final importPath = entry.key;
     final uri = _importUri(importPath);
-    if (routes.isDeferred(importPath, defaultDeferredLoading: defaultDeferredLoading)) {
+    if (_routes.isDeferred(importPath, defaultDeferredLoading: _defaultDeferredLoading)) {
       return Directive.importDeferredAs(uri, '_i${entry.value}');
     }
     return Directive.import(uri, as: '_i${entry.value}');
@@ -47,7 +47,7 @@ class DeferredPagesAllocator implements Allocator {
 
   String _importUri(String importPath) {
     final uri = Uri.parse(importPath);
-    final output = outputPath;
+    final output = _outputPath;
     if (uri.scheme != 'asset' || output == null || uri.pathSegments.length < 2) return importPath;
     // The first segment of an asset: URI is the package.
     return p.posix.relative(uri.pathSegments.skip(1).join('/'), from: p.posix.dirname(output));

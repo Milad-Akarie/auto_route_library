@@ -10,7 +10,7 @@ class RouteConfig {
   const new({
     required this.className,
     this.name,
-    this.pathParams = const [],
+    this._pathParams = const [],
     this.pageType,
     this.parameters = const [],
     this.hasWrappedRoute,
@@ -40,7 +40,7 @@ class RouteConfig {
     return RouteConfig(
       typeParameters: [
         for (final p in map['typeParameters'] as List<Object?>? ?? const [])
-          RouteTypeParameter.fromJson(p as Map<String, dynamic>),
+          RouteTypeParameter._fromJson(p as Map<String, dynamic>),
       ],
       name: map['name'] as String?,
       pathParams: pathParams,
@@ -57,7 +57,7 @@ class RouteConfig {
   final String? name;
 
   /// the path parameters of the route
-  final List<PathParamConfig> pathParams;
+  final List<PathParamConfig> _pathParams;
 
   /// the page type of the route
   final ResolvedType? pageType;
@@ -130,7 +130,7 @@ class RouteConfig {
     return RouteConfig(
       typeParameters: typeParameters ?? this.typeParameters,
       name: name ?? this.name,
-      pathParams: pathParams ?? this.pathParams,
+      pathParams: pathParams ?? this._pathParams,
       pageType: pageType ?? this.pageType,
       className: className ?? this.className,
       parameters: parameters ?? this.parameters,
@@ -144,7 +144,7 @@ class RouteConfig {
   Map<String, dynamic> toJson() {
     return {
       'name': name,
-      'pathParams': pathParams.map((e) => e.toJson()).toList(),
+      'pathParams': _pathParams.map((e) => e.toJson()).toList(),
       'pageType': pageType?.toJson(),
       'className': className,
       'parameters': parameters.map((e) => e.toJson()).toList(),
@@ -160,10 +160,10 @@ class RouteConfig {
 /// `PickerPage<T extends Item>`.
 class RouteTypeParameter {
   /// Default constructor
-  const new({required this.name, this.bound});
+  const new({required this.name, this._bound});
 
   /// Deserializes the type parameter from json
-  factory fromJson(Map<String, dynamic> map) {
+  factory _fromJson(Map<String, dynamic> map) {
     final bound = map['bound'];
     return RouteTypeParameter(
       name: map['name'] as String,
@@ -175,15 +175,15 @@ class RouteTypeParameter {
   final String name;
 
   /// The type after `extends`, or `null` when there is none.
-  final ResolvedType? bound;
+  final ResolvedType? _bound;
 
   /// The type parameter as it is declared, with its bound.
   TypeReference get declaration => .new(
     (b) => b
       ..symbol = name
-      ..bound = bound?.refer,
+      ..bound = _bound?.refer,
   );
 
   /// Serializes the type parameter to json
-  Map<String, dynamic> toJson() => {'name': name, 'bound': ?bound?.toJson()};
+  Map<String, dynamic> toJson() => {'name': name, 'bound': ?_bound?.toJson()};
 }

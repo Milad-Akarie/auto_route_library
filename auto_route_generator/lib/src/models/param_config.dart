@@ -13,24 +13,24 @@ class ParamConfig {
     required this.name,
     required this.isNamed,
     required this.isPositional,
-    required this.hasRequired,
-    required this.isOptional,
+    required this._hasRequired,
+    required this._isOptional,
     required this.isRequired,
     required this.isPathParam,
     required this.isQueryParam,
     required this.isUrlFragment,
     required this.isInheritedPathParam,
-    this.alias,
+    this._alias,
     this.defaultValueCode,
     this.defaultValueImport,
     this.defaultValueSymbol,
-    this.converter,
+    this._converter,
   });
 
   /// Deserializes the parameter from a json map
   factory fromJson(Map<String, dynamic> map) {
     if (map['isFunctionParam'] == true) {
-      return FunctionParamConfig.fromJson(map);
+      return FunctionParamConfig._fromJson(map);
     }
 
     return ParamConfig(
@@ -49,7 +49,9 @@ class ParamConfig {
       defaultValueCode: map['defaultValueCode'] as String?,
       defaultValueImport: map['defaultValueImport'] as String?,
       defaultValueSymbol: map['defaultValueSymbol'] as String?,
-      converter: map['converter'] == null ? null : ParamConverterRef.fromJson(map['converter'] as Map<String, dynamic>),
+      converter: map['converter'] == null
+          ? null
+          : ParamConverterRef._fromJson(map['converter'] as Map<String, dynamic>),
     );
   }
 
@@ -60,16 +62,16 @@ class ParamConfig {
   final String name;
 
   /// the alias of the parameter
-  final String? alias;
+  final String? _alias;
 
   /// whether the parameter is positional
   final bool isPositional;
 
   /// whether the parameter is optional
-  final bool isOptional;
+  final bool _isOptional;
 
   /// whether the parameter is required
-  final bool hasRequired;
+  final bool _hasRequired;
 
   /// whether the parameter is required
   final bool isRequired;
@@ -103,7 +105,7 @@ class ParamConfig {
 
   /// The `ParamConverter` the param's `@PathParam` or `@QueryParam` names,
   /// or `null` when it names none.
-  final ParamConverterRef? converter;
+  final ParamConverterRef? _converter;
 
   /// If the parameter name conflicts with a reserved name
   /// add a zero to the end of the name
@@ -121,22 +123,22 @@ class ParamConfig {
   /// How the generated code reads this param from the url and writes it
   /// back, or `null` when a url can not give its type.
   UrlParamType? get urlType {
-    final converter = this.converter;
-    return converter == null ? UrlParamType.of(type) : UrlParamType.converter(converter.name, converter.import);
+    final converter = this._converter;
+    return converter == null ? UrlParamType.of(type) : UrlParamType.converter(converter._name, converter._import);
   }
 
   /// Returns the alias if exists otherwise the name
-  String get paramName => alias ?? name;
+  String get paramName => _alias ?? name;
 
   /// Serializes the parameter to a json map
   Map<String, dynamic> toJson() {
     return {
       'type': type.toJson(),
       'name': name,
-      'alias': alias,
+      'alias': _alias,
       'isPositional': isPositional,
-      'isOptional': isOptional,
-      'hasRequired': hasRequired,
+      'isOptional': _isOptional,
+      'hasRequired': _hasRequired,
       'isRequired': isRequired,
       'isNamed': isNamed,
       'isPathParam': isPathParam,
@@ -146,7 +148,7 @@ class ParamConfig {
       'defaultValueCode': defaultValueCode,
       'defaultValueImport': defaultValueImport,
       'defaultValueSymbol': defaultValueSymbol,
-      'converter': ?converter?.toJson(),
+      'converter': ?_converter?.toJson(),
     };
   }
 }
@@ -156,7 +158,7 @@ class ParamConfig {
 class FunctionParamConfig extends ParamConfig {
   /// Default constructor
   const new({
-    required this.returnType,
+    required this._returnType,
     required super.type,
     required super.name,
     required super.isPositional,
@@ -164,14 +166,14 @@ class FunctionParamConfig extends ParamConfig {
     required super.isOptional,
     required super.isNamed,
     required super.isRequired,
-    this.params = const [],
+    this._params = const [],
     super.alias,
     super.defaultValueCode,
     super.defaultValueImport,
   }) : super(isPathParam: false, isQueryParam: false, isInheritedPathParam: false, isUrlFragment: false);
 
   /// Deserializes the parameter from a json map
-  factory fromJson(Map<String, dynamic> map) {
+  factory _fromJson(Map<String, dynamic> map) {
     final params = <ParamConfig>[];
     final paramsJson = (map['params'] as List<Object?>?)?.cast<Map<String, dynamic>>();
     if (paramsJson != null) {
@@ -196,10 +198,10 @@ class FunctionParamConfig extends ParamConfig {
   }
 
   /// the return type of the function
-  final ResolvedType returnType;
+  final ResolvedType _returnType;
 
   /// the list of parameters of the function
-  final List<ParamConfig> params;
+  final List<ParamConfig> _params;
 
   @override
   Map<String, dynamic> toJson() {
@@ -207,65 +209,67 @@ class FunctionParamConfig extends ParamConfig {
       // used for deserialization
       'isFunctionParam': true,
       'type': type.toJson(),
-      'returnType': returnType.toJson(),
+      'returnType': _returnType.toJson(),
       'name': name,
-      'alias': alias,
+      'alias': _alias,
       'isPositional': isPositional,
-      'isOptional': isOptional,
-      'hasRequired': hasRequired,
+      'isOptional': _isOptional,
+      'hasRequired': _hasRequired,
       'isRequired': isRequired,
       'isNamed': isNamed,
       'isPathParam': isPathParam,
       'isQueryParam': isQueryParam,
       'defaultValueCode': defaultValueCode,
       'defaultValueImport': defaultValueImport,
-      'params': params.map((e) => e.toJson()).toList(),
+      'params': _params.map((e) => e.toJson()).toList(),
     };
   }
 
   /// Returns the list of required parameters
-  List<ParamConfig> get requiredParams => params.where((p) => p.isPositional && !p.isOptional).toList();
+  List<ParamConfig> get _requiredParams => _params.where((p) => p.isPositional && !p._isOptional).toList();
 
   /// Returns the list of optional parameters
-  List<ParamConfig> get optionalParams => params.where((p) => p.isPositional && p.isOptional).toList();
+  List<ParamConfig> get _optionalParams => _params.where((p) => p.isPositional && p._isOptional).toList();
 
   /// Returns the list of named parameters
-  List<ParamConfig> get namedOptionalParams => params.where((p) => p.isNamed && p.isOptional).toList(growable: false);
+  List<ParamConfig> get _namedOptionalParams =>
+      _params.where((p) => p.isNamed && p._isOptional).toList(growable: false);
 
   /// Returns the list of named required parameters
-  List<ParamConfig> get namedRequiredParams => params.where((p) => p.isNamed && !p.isOptional).toList(growable: false);
+  List<ParamConfig> get _namedRequiredParams =>
+      _params.where((p) => p.isNamed && !p._isOptional).toList(growable: false);
 
   /// Returns A function reference of the function type
   cb.FunctionType get funRefer => cb.FunctionType(
     (b) => b
-      ..returnType = returnType.refer
-      ..requiredParameters.addAll(requiredParams.map((e) => e.type.refer))
-      ..optionalParameters.addAll(optionalParams.map((e) => e.type.refer))
+      ..returnType = _returnType.refer
+      ..requiredParameters.addAll(_requiredParams.map((e) => e.type.refer))
+      ..optionalParameters.addAll(_optionalParams.map((e) => e.type.refer))
       ..isNullable = type.isNullable
-      ..namedParameters.addAll({}..addEntries(namedOptionalParams.map((e) => MapEntry(e.name, e.type.refer))))
-      ..namedRequiredParameters.addAll({}..addEntries(namedRequiredParams.map((e) => MapEntry(e.name, e.type.refer)))),
+      ..namedParameters.addAll({}..addEntries(_namedOptionalParams.map((e) => MapEntry(e.name, e.type.refer))))
+      ..namedRequiredParameters.addAll({}..addEntries(_namedRequiredParams.map((e) => MapEntry(e.name, e.type.refer)))),
   );
 }
 
 /// Holds information about a path parameter
 class PathParamConfig {
   /// Default constructor
-  const new({required this.name, required this.isOptional});
+  const new _({required this._name, required this._isOptional});
 
   /// Deserializes the path parameter from a json map
   factory fromJson(Map<String, dynamic> map) {
-    return PathParamConfig(name: map['name'] as String, isOptional: map['isOptional'] as bool);
+    return PathParamConfig._(name: map['name'] as String, isOptional: map['isOptional'] as bool);
   }
 
   /// The name of the path parameter
-  final String name;
+  final String _name;
 
   /// Whether the path parameter is optional
-  final bool isOptional;
+  final bool _isOptional;
 
   /// Serializes the path parameter to a json map
   Map<String, dynamic> toJson() {
-    return {'name': name, 'isOptional': isOptional};
+    return {'name': _name, 'isOptional': _isOptional};
   }
 }
 
@@ -274,19 +278,19 @@ class PathParamConfig {
 /// with.
 class ParamConverterRef {
   /// Default constructor
-  const new({required this.name, this.import});
+  const new({required this._name, this._import});
 
   /// Deserializes the reference from a json map
-  factory fromJson(Map<String, dynamic> map) {
+  factory _fromJson(Map<String, dynamic> map) {
     return ParamConverterRef(name: map['name'] as String, import: map['import'] as String?);
   }
 
   /// The name of the constant, such as `userIdConverter`.
-  final String name;
+  final String _name;
 
   /// The import of the library that declares the constant.
-  final String? import;
+  final String? _import;
 
   /// Serializes the reference to a json map
-  Map<String, dynamic> toJson() => {'name': name, 'import': import};
+  Map<String, dynamic> toJson() => {'name': _name, 'import': _import};
 }

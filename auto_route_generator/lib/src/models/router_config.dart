@@ -2,9 +2,9 @@
 class RouterConfig {
   /// Default constructor
   const new({
-    required this.routerClassName,
+    required this._routerClassName,
     required this.path,
-    required this.cacheHash,
+    required this._cacheHash,
     required this.generateForDir,
     this.replaceInRouteName,
     this.deferredLoading = false,
@@ -27,7 +27,7 @@ class RouterConfig {
   }
 
   /// The name of the router class
-  final String routerClassName;
+  final String _routerClassName;
 
   /// The string to replace in route names
   final String? replaceInRouteName;
@@ -42,7 +42,7 @@ class RouterConfig {
   final String path;
 
   /// The cache hash of the router properties
-  final int? cacheHash;
+  final int? _cacheHash;
 
   /// The list of directories to generate for
   final List<String> generateForDir;
@@ -53,12 +53,12 @@ class RouterConfig {
   /// Serializes this instance to a map
   Map<String, dynamic> toJson() {
     return {
-      'routerClassName': routerClassName,
+      'routerClassName': _routerClassName,
       'replaceInRouteName': replaceInRouteName,
       'deferredLoading': deferredLoading,
       'usesPartBuilder': isPartOfLibrary,
       'path': path,
-      'cacheHash': cacheHash,
+      'cacheHash': _cacheHash,
       'generateForDir': generateForDir,
       'argsEquality': argsEquality,
     };
