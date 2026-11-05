@@ -54,7 +54,7 @@ void main() {
       await back(tester);
 
       expect(tabs.activeIndex, 0);
-      expect(find.text(_kTabNames[0]), findsOneWidget);
+      expect(find.text(_kTabNames.first), findsOneWidget);
       expect(frameworkHandlesBack.last, isFalse);
     }, skip: kIsWeb);
   }

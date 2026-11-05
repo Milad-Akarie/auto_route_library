@@ -11,6 +11,8 @@ import '../router_test_utils.dart';
 /// Weak references to the state of every [_TrackedPage] built, by its label.
 final _pageStates = <String, WeakReference<State>>{};
 
+WeakReference<State> _pageState(String label) => _pageStates[label]!;
+
 /// A page that records a weak reference to its state, to check that nothing
 /// holds the state once the page leaves the stack.
 class _TrackedPage extends StatefulWidget {
@@ -104,10 +106,10 @@ void main() {
       final routeData = WeakReference(router.current);
 
       router.pop();
-      await _settleAndCollect(tester, [routeData, _pageStates['DetailRoute']!]);
+      await _settleAndCollect(tester, [routeData, _pageState('DetailRoute')]);
       expect(find.text('DetailRoute'), findsNothing);
       expect(routeData.target, isNull);
-      expect(_pageStates['DetailRoute']!.target, isNull);
+      expect(_pageState('DetailRoute').target, isNull);
     },
     // Web has no reachabilityBarrier to wait for a full collection on.
     skip: kIsWeb,
@@ -122,7 +124,7 @@ void main() {
     for (var i = 0; i < 50; i++) {
       unawaited(router.pushPath('/detail'));
       await tester.pumpAndSettle();
-      states.add(_pageStates['DetailRoute']!);
+      states.add(_pageState('DetailRoute'));
       router.pop();
       await tester.pumpAndSettle();
     }
@@ -142,11 +144,11 @@ void main() {
     final childData = WeakReference(nested.target!.current);
 
     router.pop();
-    await _settleAndCollect(tester, [nested, childData, _pageStates['StackChildRoute']!]);
+    await _settleAndCollect(tester, [nested, childData, _pageState('StackChildRoute')]);
     expect(router.childControllers, isEmpty);
     expect(nested.target, isNull);
     expect(childData.target, isNull);
-    expect(_pageStates['StackChildRoute']!.target, isNull);
+    expect(_pageState('StackChildRoute').target, isNull);
   }, skip: kIsWeb);
 
   for (final tabsType in ['IndexedStack', 'PageView', 'TabBar']) {
@@ -166,11 +168,11 @@ void main() {
       expect(_pageStates.keys, containsAll(['Tab1Route', 'Tab2Route']));
 
       router.pop();
-      await _settleAndCollect(tester, [tabsRouter, _pageStates['Tab1Route']!, _pageStates['Tab2Route']!]);
+      await _settleAndCollect(tester, [tabsRouter, _pageState('Tab1Route'), _pageState('Tab2Route')]);
       expect(router.childControllers, isEmpty);
       expect(tabsRouter.target, isNull);
-      expect(_pageStates['Tab1Route']!.target, isNull);
-      expect(_pageStates['Tab2Route']!.target, isNull);
+      expect(_pageState('Tab1Route').target, isNull);
+      expect(_pageState('Tab2Route').target, isNull);
     }, skip: kIsWeb);
   }
 
@@ -190,7 +192,7 @@ void main() {
     for (var i = 0; i < 20; i++) {
       unawaited(router.pushPath('/detail'));
       await tester.pumpAndSettle();
-      states.add(_pageStates['DetailRoute']!);
+      states.add(_pageState('DetailRoute'));
       datas.add(WeakReference(router.current));
       unawaited(router.pushPath('/stack'));
       await tester.pumpAndSettle();

@@ -31,17 +31,17 @@ void main() {
         router.innerRouterOf<TabsRouter>('TabsRoute')!.setActiveIndex(2);
         await tester.pumpAndSettle();
 
-        expect(find.text(_kTabNames[2]), findsOneWidget);
+        expect(find.text(_kLastTab), findsOneWidget);
         expect(_builds, {for (final name in _kTabNames) name: 1});
         expect(observer.initialized, _kTabNames);
-        expect(observer.changed, [_kTabNames[2]]);
+        expect(observer.changed, [_kLastTab]);
       });
 
       testWidgets('by default only the active tab is built before the first switch', (tester) async {
         final router = _buildRouter(kind);
         await pumpRouterApp(tester, router);
 
-        expect(_builds, {_kTabNames[0]: 1});
+        expect(_builds, {_kTabNames.first: 1});
       });
     });
   }
@@ -49,7 +49,8 @@ void main() {
 
 enum _Kind { tabBar, pageView }
 
-const _kTabNames = ['NewsRoute', 'FeedRoute', 'ProfileRoute'];
+const _kLastTab = 'ProfileRoute';
+const List<String> _kTabNames = ['NewsRoute', 'FeedRoute', _kLastTab];
 
 // How often each tab's page was built.
 final _builds = <String, int>{};
