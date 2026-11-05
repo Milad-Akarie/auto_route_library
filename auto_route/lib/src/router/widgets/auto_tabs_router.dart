@@ -355,7 +355,6 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
                 activeIndex: _index,
                 tabsHash: _tabsHash,
                 lazyLoad: widget.lazyLoad,
-                animation: _animation,
                 navigatorObservers: _navigatorObservers,
                 itemBuilder: (context, index) {
                   return KeepAliveTab(key: _tabKeyOf(stack[index]), page: stack[index]);
@@ -404,7 +403,6 @@ class _IndexedStackBuilder extends StatefulWidget {
     required this.stack,
     required this.lazyLoad,
     required this.tabsHash,
-    required this.animation,
     super.key,
   });
 
@@ -414,7 +412,6 @@ class _IndexedStackBuilder extends StatefulWidget {
   final List<AutoRoutePage<Object?>> stack;
   final List<NavigatorObserver> navigatorObservers;
   final int tabsHash;
-  final Animation<double> animation;
 
   @override
   _IndexedStackBuilderState createState() => .new();
