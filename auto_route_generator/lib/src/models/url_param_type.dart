@@ -117,7 +117,7 @@ final class _EnumParam extends UrlParamType {
   @override
   Expression parseItem(ResolvedType type) => Method(
     (b) => b
-      ..requiredParameters.add(Parameter((b) => b..name = 'name'))
+      ..requiredParameters.add(Parameter((parameterBuilder) => parameterBuilder..name = 'name'))
       ..lambda = true
       ..body = _byName(type).index(refer('name')).code,
   ).closure;
@@ -168,7 +168,7 @@ final class _CollectionParam extends UrlParamType {
     if (!item.isEnum) return value;
     final name = Method(
       (b) => b
-        ..requiredParameters.add(Parameter((b) => b..name = 'item'))
+        ..requiredParameters.add(Parameter((parameterBuilder) => parameterBuilder..name = 'item'))
         ..lambda = true
         ..body = UrlParamType.of(item)!.write(refer('item'), item).code,
     ).closure;

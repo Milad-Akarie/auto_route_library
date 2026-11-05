@@ -99,16 +99,20 @@ class TypeResolver {
         parts: FunctionTypeParts(
           returnType: _resolveNestedType(type.returnType),
           requiredParameters: [
-            for (final p in type.formalParameters.where((p) => p.isRequiredPositional)) _resolveNestedType(p.type),
+            for (final p in type.formalParameters.where((parameter) => parameter.isRequiredPositional))
+              _resolveNestedType(p.type),
           ],
           optionalParameters: [
-            for (final p in type.formalParameters.where((p) => p.isOptionalPositional)) _resolveNestedType(p.type),
+            for (final p in type.formalParameters.where((parameter) => parameter.isOptionalPositional))
+              _resolveNestedType(p.type),
           ],
           namedParameters: {
-            for (final p in type.formalParameters.where((p) => p.isOptionalNamed)) p.name!: _resolveNestedType(p.type),
+            for (final p in type.formalParameters.where((parameter) => parameter.isOptionalNamed))
+              p.name!: _resolveNestedType(p.type),
           },
           namedRequiredParameters: {
-            for (final p in type.formalParameters.where((p) => p.isRequiredNamed)) p.name!: _resolveNestedType(p.type),
+            for (final p in type.formalParameters.where((parameter) => parameter.isRequiredNamed))
+              p.name!: _resolveNestedType(p.type),
           },
         ),
         isNullable: type.nullabilitySuffix == .question,

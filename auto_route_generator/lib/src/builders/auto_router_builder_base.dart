@@ -47,7 +47,7 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
   int calculateUpdatableHash(CompilationUnit unit) {
     var calculatedHash = 0;
     for (final clazz in unit.declarations.whereType<ClassDeclaration>().where(
-      (e) => e.metadata.any((e) => e.name.name == annotationName),
+      (e) => e.metadata.any((annotation) => annotation.name.name == annotationName),
     )) {
       final routerAnnotation = clazz.metadata.firstWhere((e) => e.name.name == annotationName);
       final partDirectives = unit.directives.whereType<PartDirective>().fold<int>(

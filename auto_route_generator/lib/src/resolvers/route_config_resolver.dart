@@ -56,7 +56,7 @@ class RouteConfigResolver {
       element: element,
     );
 
-    final pathParameters = parameters.where((element) => element.isPathParam);
+    final pathParameters = parameters.where((candidate) => candidate.isPathParam);
 
     if (parameters.any((p) => p.isPathParam || p.isQueryParam)) {
       final unParsableRequiredArgs = parameters.where(

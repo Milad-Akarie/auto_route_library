@@ -58,15 +58,15 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
         ..docs.addAll(['/// generated route for \n/// [${_pageClassRefer(r)?.accept(emitter)}]'])
         ..name = r.getName(router.replaceInRouteName)
         ..types.addAll(r.typeParameters.map((t) => t.declaration))
-        ..extend = TypeReference((b) {
-          b
+        ..extend = TypeReference((typeReferenceBuilder) {
+          typeReferenceBuilder
             ..symbol = 'PageRouteInfo'
             ..url = kAutoRouteImport
             ..types.add(hasArgs ? typedArgsClassRefer : refer('void'));
         })
         ..fields.addAll([
           Field(
-            (b) => b
+            (fieldBuilder) => fieldBuilder
               ..modifier = .constant
               ..name = 'name'
               ..static = true
@@ -74,7 +74,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
               ..assignment = _plainString(r.getName(router.replaceInRouteName)).code,
           ),
           Field(
-            (b) => b
+            (fieldBuilder) => fieldBuilder
               ..name = 'page'
               ..static = true
               ..type = pageInfoRefer
@@ -82,14 +82,14 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
           ),
         ])
         ..constructors.addAll([
-          Constructor((b) {
-            b
+          Constructor((constructorBuilder) {
+            constructorBuilder
               // A type argument can't be part of a constant.
               ..constant = parameters.isEmpty && !r.isGeneric
               ..optionalParameters.addAll([
                 ...buildArgParams(nonInheritedParameters, emitter, toThis: false),
                 Parameter(
-                  (b) => b
+                  (parameterBuilder) => parameterBuilder
                     ..named = true
                     ..name = 'children'
                     ..type = listRefer(kPageRouteType, nullable: true),
@@ -141,7 +141,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
           ..fields.addAll([
             ...nonInheritedParameters.map(
               (param) => Field(
-                (b) => b
+                (fieldBuilder) => fieldBuilder
                   ..modifier = .final$
                   ..name = param.name
                   ..type = param is FunctionParamConfig ? param.funRefer : param.type.refer,
@@ -150,7 +150,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
           ])
           ..constructors.add(
             Constructor(
-              (b) => b
+              (constructorBuilder) => constructorBuilder
                 ..constant = true
                 ..optionalParameters.addAll(buildArgParams(nonInheritedParameters, emitter, useSafeName: false)),
             ),
@@ -158,7 +158,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
           ..methods.addAll([
             if (r.isGeneric) _buildPageMethod(r),
             Method(
-              (b) => b
+              (methodBuilder) => methodBuilder
                 ..name = 'toString'
                 ..lambda = false
                 ..annotations.add(refer('override'))
@@ -169,20 +169,20 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
             ),
             if (router.argsEquality)
               Method(
-                (b) => b
+                (methodBuilder) => methodBuilder
                   ..name = 'operator =='
                   ..lambda = false
                   ..annotations.add(refer('override'))
                   ..returns = refer('bool')
                   ..requiredParameters.add(
                     Parameter(
-                      (b) => b
+                      (parameterBuilder) => parameterBuilder
                         ..name = 'other'
                         ..type = refer('Object'),
                     ),
                   )
                   ..body = Block(
-                    (b) => b
+                    (blockBuilder) => blockBuilder
                       ..statements.addAll([
                         const Code('if (identical(this, other)) return true;'),
                         Code('if (other is! ${typedArgsClassRefer.accept(emitter)}) return false;'),
@@ -225,14 +225,14 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
               ),
             if (router.argsEquality)
               Method(
-                (b) => b
+                (methodBuilder) => methodBuilder
                   ..name = 'hashCode'
                   ..type = .getter
                   ..annotations.add(refer('override'))
                   ..returns = refer('int')
                   ..lambda = true
                   ..body = Block(
-                    (b) => b.statements.addAll(
+                    (blockBuilder) => blockBuilder.statements.addAll(
                       [
                         if (equatableParams.isEmpty) literalNum(0).code,
                         for (final p in equatableParams)
@@ -342,7 +342,8 @@ Expression _buildMethod(RouteConfig r, RouterConfig router) {
       ? r.pageType!.refer.constInstance([])
       : r.isGeneric
       ? refer('args').property('buildPage').call([], {
-          for (final p in r.parameters.where((p) => p.isInheritedPathParam)) p.name: _getUrlPartAssignment(p),
+          for (final p in r.parameters.where((parameter) => parameter.isInheritedPathParam))
+            p.name: _getUrlPartAssignment(p),
         })
       : _getPageInstance(r, (p) => refer('args').property(p.name));
 
@@ -358,9 +359,9 @@ Expression _buildMethod(RouteConfig r, RouterConfig router) {
   final nonInheritedParameters = r.parameters.where((p) => !p.isInheritedPathParam);
   return Method(
     (b) => b
-      ..requiredParameters.add(Parameter((b) => b.name = 'data'))
+      ..requiredParameters.add(Parameter((parameterBuilder) => parameterBuilder.name = 'data'))
       ..body = Block(
-        (b) => b.statements.addAll([
+        (blockBuilder) => blockBuilder.statements.addAll([
           if ((!r.hasUnparsableRequiredArgs) && r.parameters.any((p) => p.isPathParam) ||
               inheritedParameters.isNotEmpty)
             declareFinal('pathParams').assign(refer('data').property('inheritedPathParams')).statement,
@@ -376,7 +377,7 @@ Expression _buildMethod(RouteConfig r, RouterConfig router) {
                         {
                           if (!r.hasUnparsableRequiredArgs)
                             'orElse': Method(
-                              (b) => b
+                              (methodBuilder) => methodBuilder
                                 ..lambda = true
                                 ..body = r.pathQueryParams.isEmpty
                                     ? refer('${r.getName(router.replaceInRouteName)}Args').constInstance([]).code
@@ -447,7 +448,7 @@ Method _buildPageMethod(RouteConfig r) {
       ..optionalParameters.addAll(
         inherited.map(
           (p) => Parameter(
-            (b) => b
+            (parameterBuilder) => parameterBuilder
               ..name = p.name
               ..named = true
               ..required = true

@@ -132,7 +132,7 @@ class _CompileCheckBuilder implements Builder {
       for (final fragment in library.fragments) {
         final result = await library.session.getErrors(fragment.source.fullName);
         if (result is ErrorsResult) {
-          for (final e in result.diagnostics.where((e) => e.severity == .error)) {
+          for (final e in result.diagnostics.where((diagnostic) => diagnostic.severity == .error)) {
             errors.add('${fragment.source.uri.pathSegments.last}: ${e.message}');
           }
         }
