@@ -56,9 +56,12 @@ void main() {
         String key,
         Future<void> Function(int index, Stopwatch call) step,
       ) async {
-        if (!warmUp) return measure(key, step);
-        for (var index = 0; index < 3; index++) {
-          await step(index, Stopwatch());
+        if (warmUp) {
+          for (var index = 0; index < 3; index++) {
+            await step(index, Stopwatch());
+          }
+        } else {
+          await measure(key, step);
         }
       }
 

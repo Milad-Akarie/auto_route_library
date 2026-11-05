@@ -189,7 +189,7 @@ Future<bool?> androidSendsBackToFlutter() async {
   // Flutter tells Android through a separate platform message; give it time to
   // arrive.
   await Future<void>.delayed(const Duration(milliseconds: 300));
-  return const MethodChannel('auto_route_example/system_back')
+  return await const MethodChannel('auto_route_example/system_back')
       .invokeMethod<bool>('sendsBackToFlutter');
 }
 
