@@ -1795,7 +1795,7 @@ We implement an AutoRouter observer by extending an `AutoRouterObserver` which i
 class MyObserver extends AutoRouterObserver {
 
   @override
-  void didPush(Route route, Route? previousRoute) {
+  void didPush(Route<Object?> route, Route<Object?>? previousRoute) {
     print('New route pushed: ${route.settings.name}');
   }
 

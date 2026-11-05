@@ -322,11 +322,11 @@ class AutoRouteObserver extends AutoRouterObserver {
   }
 
   @override
-  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) =>
+  void didPop(Route<Object?> route, Route<Object?>? previousRoute) =>
       _notifyPop(route, previousRoute);
 
   @override
-  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
+  void didRemove(Route<Object?> route, Route<Object?>? previousRoute) {
     // navigate() and popUntil() remove a page instead of popping it when, for
     // example, a dialog above it is still closing. When that shows the route
     // underneath again, its subscribers hear what a pop would tell them.
@@ -364,7 +364,7 @@ class AutoRouteObserver extends AutoRouterObserver {
   }
 
   @override
-  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+  void didPush(Route<Object?> route, Route<Object?>? previousRoute) {
     if (route.settings is AutoRoutePage &&
         previousRoute?.settings is AutoRoutePage) {
       final previousKey = (previousRoute!.settings as AutoRoutePage).routeKey;

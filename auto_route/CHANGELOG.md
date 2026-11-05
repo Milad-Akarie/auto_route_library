@@ -13,6 +13,11 @@
   `context.routeData`, `context.topRoute`, `RoutingController.current`, `topRoute` and `stackData`,
   `AutoRoutePage.routeData` and the `AutoRoutePageBuilder` and `RouteDataPredicate` callbacks, so the result `popped`
   completes with is `Object?`. Read it with a cast, `await routeData.popped as bool?`.
+- **BREAKING CHANGE**: every `Route<dynamic>` in the API is `Route<Object?>`: the `didPush`, `didPop` and `didRemove` of
+  `AutoRouterObserver`, and `PagelessRoutesObserver`'s `current`, `routeOf`, `topPageRoute`, `routeWhere`,
+  `pagelessRoutesOver` and observer methods. An override that names `Route<dynamic>` still compiles, as the two types
+  are interchangeable there; a route read from them gives `Object?` where it gave `dynamic`, so cast what it returns,
+  `await route.popped as bool?`.
 
 ## 12.3.0
 - **BREAKING CHANGE**: `Parameters.optBool` and `getBool` take their default by name:
