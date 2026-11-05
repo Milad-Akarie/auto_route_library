@@ -28,8 +28,8 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
   }) {
     // On web the engine starts the app with no state, even when the browser
     // entry it opens at holds the state the app saved there, as when the
-    // user comes back to the app from another site (flutter/flutter#108697);
-    // so the state is read from the entry itself.
+    // user comes back to the app from another site (flutter/flutter#108697).
+    // So the state is read from the entry itself.
     final initialRouteInfo =
         initialRouteInformation ??
         RouteInformation(
@@ -55,8 +55,8 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
       return;
     }
 
-    // On web DefaultRouteParser hands over the uri escaped for the engine;
-    // compare and keep the app's own uri, and escape one that skipped it.
+    // On web DefaultRouteParser hands over the uri escaped for the engine.
+    // Compare and keep the app's own uri, and escape one that skipped it.
     final appRouteInformation = routeInformation is AutoRouteInformation && routeInformation.appUri != null
         ? RouteInformation(uri: routeInformation.appUri, state: routeInformation.state)
         : routeInformation;

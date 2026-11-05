@@ -45,8 +45,8 @@ class NavigationHistoryImpl extends NavigationHistory {
         !isNewUrl && !_isSteppingBack && !_isPageOfEntry(browserIndex, newState) && _isPushedOverSameUrl(newState);
     _addsEntryWithSameUrl = notify && isPushedOverSameUrl;
     try {
-      // While stepping back, the browser reports the new url once it gets there;
-      // a notification now would make the router write it as a new entry.
+      // While stepping back, the browser reports the new url once it gets there.
+      // A notification now would make the router write it as a new entry.
       super.onNewUrlState(newState, notify: notify && !_isSteppingBack);
     } finally {
       _addsEntryWithSameUrl = false;

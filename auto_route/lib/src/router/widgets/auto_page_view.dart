@@ -282,7 +282,6 @@ class AutoPageViewState extends State<AutoPageView> {
         physics: widget.physics == null
             ? const PageScrollPhysics().applyTo(const ClampingScrollPhysics())
             : const PageScrollPhysics().applyTo(widget.physics),
-        // children: _children,
         children: _children,
       ),
     );

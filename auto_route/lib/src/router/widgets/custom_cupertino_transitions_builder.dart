@@ -532,13 +532,9 @@ class _CupertinoEdgeShadowPainter extends BoxPainter {
       return;
     }
 
-    // The following code simulates drawing a [LinearGradient] configured as
-    // follows:
-    //
-    // LinearGradient(
-    //   begin: AlignmentDirectional(0.90, 0.0), // Spans 5% of the page.
-    //   colors: _decoration._colors,
-    // )
+    // The following code simulates drawing a [LinearGradient] that begins at
+    // AlignmentDirectional(0.90, 0.0), so it spans 5% of the page, with
+    // `_decoration._colors` as its colors.
     //
     // A performance evaluation on Feb 8, 2021 showed, that drawing the gradient
     // manually as implemented below is more performant than relying on

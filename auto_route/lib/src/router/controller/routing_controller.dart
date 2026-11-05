@@ -1155,8 +1155,8 @@ class TabsRouter extends RoutingController {
   /// after match validation and deciding initial index
   void setupRoutes(List<PageRouteInfo>? routes) {
     final routesToPush = _resolveRoutes(routes);
-    // Tabs restored after the app was ended each come with their own stack;
-    // the last pending one is the active tab.
+    // Tabs restored after the app was ended each come with their own stack.
+    // The last pending one is the active tab.
     for (final pending in _routeData.pendingChildren) {
       final index = routesToPush.indexWhere((r) => r.key == pending.key);
       if (index != -1) routesToPush[index] = pending;
@@ -1231,8 +1231,8 @@ class TabsRouter extends RoutingController {
       final data = _createRouteData<Object?>(route, routeData);
       try {
         _pages.add(data.buildPage());
-        // A page that needs args it can't get is reported with the reason;
-        // that is the error to catch.
+        // A page that needs args it can't get is reported with the reason.
+        // That is the error to catch.
         // ignore: avoid_catching_errors
       } on MissingRequiredParameterError catch (e) {
         if (fromDefault) {
@@ -2594,8 +2594,8 @@ abstract class StackRouter extends RoutingController {
     if (isReevaluating && _leaveReportHolds == 0) {
       return _holdingLeaveReports(() => _navigateAll<T>(routes, onFailure: onFailure, isReevaluating: true));
     }
-    // pages pushed after the stack was composed for reevaluation are not in [routes];
-    // a reevaluated page may be rebuilt, so it's known by its route data
+    // pages pushed after the stack was composed for reevaluation are not in [routes].
+    // A reevaluated page may be rebuilt, so it's known by its route data
     final reevaluatedRoutes = {
       for (final route in routes)
         if (route is ReevaluatableRouteMatch) route.currentPage.routeData,

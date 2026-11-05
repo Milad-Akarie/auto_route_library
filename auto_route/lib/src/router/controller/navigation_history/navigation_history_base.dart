@@ -139,8 +139,8 @@ abstract class NavigationHistory with ChangeNotifier {
   /// Notifies `AutoRouteDelegate` of url configuration changed
   /// if [newState] is different from current
   void onNewUrlState(UrlState newState, {bool notify = true}) {
-    // Two pages of the same route with equal arguments have equal url states;
-    // only the page on top tells them apart.
+    // Two pages of the same route with equal arguments have equal url states.
+    // Only the page on top tells them apart.
     if (_urlState != newState || _urlState.topMatch?.id != newState.topMatch?.id) {
       _urlState = newState;
       if (notify) {
