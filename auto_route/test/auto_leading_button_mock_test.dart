@@ -65,7 +65,7 @@ class _MockStackRouter extends Fake implements StackRouter {
   AutoRoutePage<dynamic>? get topPage => null;
 
   @override
-  Future<bool> maybePopTop<T extends Object?>([T? result]) async {
+  Future<bool> maybePopTop<T>([T? result]) async {
     maybePopTopCalls++;
     return true;
   }
