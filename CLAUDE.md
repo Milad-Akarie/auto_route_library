@@ -20,6 +20,12 @@ The old example app lives in `auto_route/example.old/` until the new one in `aut
 - `master` holds stable releases. Only the maintainer moves it, when `dev` reaches a new stable.
 - CI runs on every push to any branch. So the maintainer lands each finished piece on the local `dev` and pushes `dev` once, when the last piece of a batch has landed, not after each fix: CI then runs once per batch.
 
+## Every lint rule stays on
+Every analyzer and DCM rule stays on. A finding is fixed in code, never switched off, excluded or ignored.
+Use the DCM MCP tools (`add_roots` with the package folder first, then `dcm_analyze` and `dcm_fix`) or the `dcm` command.
+A finding that can't be fixed without changing public API or behavior stays standing, and the report names its file, line, rule and reason.
+`.github/scripts/check_lint_rules_on.sh` proves it: it fails on a rule set to `false`, a per-rule `exclude:` or an `// ignore:` comment.
+
 ## Proving a fix
 1. A headless test in `auto_route/test/` that fails before the fix and passes after it. Its comment names the issue and the steps.
    For a fix in the code generator, the test goes in `auto_route_generator/test/` instead, built on `test/support/generate.dart`, which runs both builders on source strings and reports whether the generated router compiles. Run it from `auto_route_generator/` with `dart test`. The committed `.gr.dart` files must then regenerate the same as before, except where the fix means to change them.
