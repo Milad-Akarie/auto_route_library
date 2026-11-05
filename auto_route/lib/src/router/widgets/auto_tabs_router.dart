@@ -689,7 +689,9 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
   @override
   void dispose() {
     _controller?.removeListener(_onTabsChanged);
-    _tabController.dispose();
+    _tabController
+      ..removeListener(_onTabControllerChanged)
+      ..dispose();
     super.dispose();
   }
 
@@ -700,13 +702,11 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
       length: _controller!.pageCount,
       vsync: this,
     );
-    // Not removable, and needs no removal: this state disposes each tab
-    // controller it replaces, and the last one when it is disposed, which
-    // drops the listener.
-    // ignore: avoid-unremovable-callbacks-in-listeners
-    _tabController.addListener(() {
-      _controller!.setActiveIndex(_tabController.index);
-    });
+    _tabController.addListener(_onTabControllerChanged);
+  }
+
+  void _onTabControllerChanged() {
+    _controller!.setActiveIndex(_tabController.index);
   }
 
   @override
@@ -715,7 +715,7 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
     if (!const ListEquality<Object?>().equals(widget.routes, oldWidget.routes)) {
       _controller!.replaceAll(widget.routes, _tabController.index);
       _tabsHash = const ListEquality<Object?>().hash(widget.routes);
-      final oldTabController = _tabController;
+      final oldTabController = _tabController..removeListener(_onTabControllerChanged);
       _updateTabController();
       // Stops its animation, whose listener would otherwise reach this router
       // after it is disposed.
