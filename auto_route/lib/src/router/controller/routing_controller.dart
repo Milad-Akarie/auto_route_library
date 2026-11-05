@@ -2518,12 +2518,59 @@ abstract class StackRouter extends RoutingController {
   }
 
   /// Pop the whole stack except for the first entry
+  ///
+  /// Right after a push, or as a restored app starts, it waits for the
+  /// navigator to build the pages, as [popUntil] does.
   void popUntilRoot() {
-    assert(
-      _navigatorKey.currentState != null,
-      'The navigator of this router is not mounted.',
-    );
-    _didPopUntilShowingNoneBetween((route) => route.isFirst);
+    _whenPagesBuilt(isScoped: true, () {
+      assert(
+        _navigatorKey.currentState != null,
+        'The navigator of this router is not mounted.',
+      );
+      _didPopUntilShowingNoneBetween((route) => route.isFirst);
+    });
+  }
+
+  // Runs [pop] once the navigators it walks have built every page, as a pop
+  // that hands each [Route] to a predicate needs. Right after a push, or as
+  // a restored app starts, before its first frame, the pages are on the
+  // stack but no navigator has a route for them yet, so the pop would find
+  // nothing to close and the pages would stay. It waits for the pushes
+  // landing now, then for the frame that builds their pages, and pops after
+  // that frame even if a page is still not built.
+  void _whenPagesBuilt(
+    VoidCallback pop, {
+    required bool isScoped,
+    bool isAfterFrame = false,
+  }) {
+    final routers = isScoped
+        ? [this]
+        : _topMostRouter()._buildRoutersHierarchy().whereType<StackRouter>();
+    final landing = [for (final router in routers) ...router._landingPushes];
+    if (landing.isNotEmpty) {
+      unawaited(
+        Future.wait(landing).then((_) {
+          if (!_isDisposed) _whenPagesBuilt(pop, isScoped: isScoped);
+        }),
+      );
+      return;
+    }
+    final isBuilt = routers.every((router) {
+      final navigator = router._navigatorKey.currentState;
+      return navigator != null &&
+          router._pages.every(navigator.widget.pages.contains);
+    });
+    if (isBuilt || isAfterFrame) {
+      pop();
+      return;
+    }
+    SchedulerBinding.instance
+      ..addPostFrameCallback((_) {
+        if (!_isDisposed) {
+          _whenPagesBuilt(pop, isScoped: isScoped, isAfterFrame: true);
+        }
+      })
+      ..ensureVisualUpdate();
   }
 
   // Navigator.popUntil pops every route with its exit animation, so each
@@ -2561,7 +2608,10 @@ abstract class StackRouter extends RoutingController {
       // route is still known, then take the page off the stack, or the
       // navigator would build it again.
       if (page is AutoRoutePage) page.onPopInvoked(true, null);
-      navigator.removeRoute(route);
+      // A page added under a page still coming in, as two pushes in one
+      // frame leave it, is not installed in the navigator yet, which can't
+      // remove it; taking it off the stack drops it on the next build.
+      if (route.navigator != null) navigator.removeRoute(route);
       if (page is AutoRoutePage) onPopPage(page);
     }
     // A pop may close the top route's own history first, such as an open
@@ -2625,8 +2675,21 @@ abstract class StackRouter extends RoutingController {
   /// if [scoped] is set to true the predicate will
   /// visit all StackRouters in hierarchy starting from
   /// top until satisfied
+  ///
+  /// Right after a push, or as a restored app starts, before its first
+  /// frame, the navigator has no route yet for the pages it would close, so
+  /// it waits for the navigator to build them, then pops.
   void popUntil(RoutePredicate predicate, {bool scoped = true}) {
-    if (scoped) {
+    _whenPagesBuilt(
+      isScoped: scoped,
+      () => _popUntilNow(predicate, isScoped: scoped),
+    );
+  }
+
+  // [popUntil] on the routes the navigators have now, for a caller that
+  // pushes right after it, which a later pop would also close.
+  void _popUntilNow(RoutePredicate predicate, {required bool isScoped}) {
+    if (isScoped) {
       _didPopUntilShowingNoneBetween(predicate);
       return;
     }
@@ -3315,7 +3378,11 @@ abstract class StackRouter extends RoutingController {
   /// When no route has [name], it pops down to the first page and keeps it,
   /// instead of leaving no page.
   void popUntilRouteWithName(String name, {bool scoped = true}) {
-    _popUntilKeepingFirstPage(ModalRoute.withName(name), scoped: scoped);
+    _whenPagesBuilt(
+      isScoped: scoped,
+      () =>
+          _popUntilKeepingFirstPage(ModalRoute.withName(name), scoped: scoped),
+    );
   }
 
   /// Helper to pop all routes until route with [path] is found
@@ -3324,14 +3391,18 @@ abstract class StackRouter extends RoutingController {
   /// When no route has [path], it pops down to the first page and keeps it,
   /// instead of leaving no page.
   void popUntilRouteWithPath(String path, {bool scoped = true}) {
-    _popUntilKeepingFirstPage((route) {
-      if (route.settings is AutoRoutePage) {
-        return (route.settings as AutoRoutePage).routeData.match == path;
-      }
-      // Assuming pageless routes are either dialogs or bottomSheetModals and
-      // the user set a path as in RouteSettings(name: path) when showing theme
-      return route.settings.name == path;
-    }, scoped: scoped);
+    _whenPagesBuilt(
+      isScoped: scoped,
+      () => _popUntilKeepingFirstPage(scoped: scoped, (route) {
+        if (route.settings is AutoRoutePage) {
+          return (route.settings as AutoRoutePage).routeData.match == path;
+        }
+        // Assuming pageless routes are either dialogs or bottomSheetModals
+        // and the user set a path as in RouteSettings(name: path) when
+        // showing them
+        return route.settings.name == path;
+      }),
+    );
   }
 }
 

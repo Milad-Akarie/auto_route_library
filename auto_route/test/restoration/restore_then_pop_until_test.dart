@@ -59,15 +59,25 @@ void main() {
   });
 
   // flutter/flutter#124946, popUntil before that frame, as the restored app
-  // starts: the root navigator isn't built yet, so there is no route to pop.
-  // Should: no error while the restored pages and the note come back.
-  testWidgets("popUntil before a restored app's first frame throws nothing", (
-    tester,
-  ) async {
+  // starts. The root navigator isn't built yet, so popUntil found no route
+  // to pop and the restored pages stayed; it now waits for the navigator to
+  // build them.
+  // Should: no error, and Home alone is left.
+  testWidgets("popUntil before a restored app's first frame", (tester) async {
     await openAndRestore(tester);
-    RestorableRouterApp.router.popUntil((route) => route.isFirst);
+    final router = RestorableRouterApp.router;
+    final restored = router.stack.map((p) => p.name).join(', ');
+    router.popUntil((route) => route.isFirst);
     await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
+    expect(
+      (
+        restored,
+        tester.takeException(),
+        router.stack.map((p) => p.name).join(', '),
+        find.text('note').evaluate().length,
+      ),
+      ('HomeRoute, ListRoute, DetailRoute', null, 'HomeRoute', 0),
+    );
   });
 }
 

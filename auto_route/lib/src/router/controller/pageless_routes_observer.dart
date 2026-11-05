@@ -9,8 +9,11 @@ import 'package:meta/meta.dart';
 class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
   bool _hasPagelessTopRoute = false;
 
-  // The routes the navigator holds, in no particular order.
-  final _routes = <Route<Object?>>[];
+  // The routes the navigator holds, in no particular order, each with the
+  // navigator it was pushed to. A route added under a page that is still
+  // coming in has no navigator of its own until that page is in place, so
+  // the navigator is kept here to tell when it was disposed.
+  final _routes = <Route<Object?>, NavigatorState?>{};
 
   // The page route each pageless route was pushed over, directly or over
   // other pageless routes on that page.
@@ -26,7 +29,7 @@ class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
   /// built one for it yet.
   @internal
   Route<dynamic>? routeOf(Page<dynamic> page) {
-    return _routes.lastWhereOrNull((route) => route.settings == page);
+    return _routes.keys.lastWhereOrNull((route) => route.settings == page);
   }
 
   /// The page route on top of the [Navigator], under the pageless routes
@@ -40,7 +43,7 @@ class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
   /// The last route the [Navigator] holds that passes [test].
   @internal
   Route<dynamic>? routeWhere(bool Function(Route<dynamic> route) test) {
-    return _routes.lastWhereOrNull(
+    return _routes.keys.lastWhereOrNull(
       (route) => route.navigator != null && test(route),
     );
   }
@@ -57,11 +60,10 @@ class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
 
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    // A navigator that was disposed leaves its routes without a navigator.
-    _routes
-      ..removeWhere((each) => each.navigator == null)
-      ..add(route);
-    _pageUnder.removeWhere((each, _) => each.navigator == null);
+    // A navigator that was disposed leaves its routes behind, unremoved.
+    _routes.removeWhere((_, navigator) => !(navigator?.mounted ?? false));
+    _remember(route);
+    _pageUnder.removeWhere((each, _) => !_routes.containsKey(each));
     if (route.settings is! Page && previousRoute != null) {
       final pageUnder = previousRoute.settings is Page
           ? previousRoute
@@ -83,12 +85,14 @@ class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
     _routes.remove(oldRoute);
     final pageUnder = _pageUnder.remove(oldRoute);
     if (newRoute != null) {
-      _routes.add(newRoute);
+      _remember(newRoute);
       if (pageUnder != null && newRoute.settings is! Page) {
         _pageUnder[newRoute] = pageUnder;
       }
     }
   }
+
+  void _remember(Route<Object?> route) => _routes[route] = navigator;
 
   void _forget(Route<Object?> route) {
     _routes.remove(route);

@@ -286,7 +286,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     }
     final topMost = controller.topMostRouter();
     if (topMost is StackRouter && topMost.hasPagelessTopRoute) {
-      topMost.popUntil((route) => route.settings is Page);
+      topMost._popUntilNow((route) => route.settings is Page, isScoped: true);
     }
 
     final pageToPush = history.pageToPushForBrowserEntry(configuration);
@@ -312,7 +312,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
           ? platLink
           : await deepLinkBuilder!(platLink);
       if (rebuildStackOnDeepLink) {
-        controller.popUntil((route) => false);
+        controller._popUntilNow((route) => false, isScoped: true);
       }
       await _handleDeepLink(resolvedLink);
     }
