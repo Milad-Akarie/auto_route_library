@@ -284,7 +284,6 @@ class RouteMatch<T> {
 @immutable
 // Inherits RouteMatch's ==, so it equals a match of the same route, params
 // and args whichever page it re-evaluates; changing that is a behavior change.
-// ignore: prefer-overriding-parent-equality
 class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
   /// Creates a new instance of [ReevaluatableRouteMatch]
   new({required this.currentPage, required this.originalMatch})
