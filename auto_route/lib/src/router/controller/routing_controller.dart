@@ -3205,8 +3205,8 @@ abstract class StackRouter extends RoutingController {
     _markLeaving(_pages.reversed.take(count), withPush ? .replaced : .removed);
     for (var i = 0; i < count; i++) {
       final shownRoute = pagelessRoutesObserver.routeOf(_pages.last);
-      final shownNavigator = shownRoute?.navigator;
       if (!withPush && shownRoute != null) {
+        final shownNavigator = shownRoute.navigator;
         shownNavigator?.removeRoute(shownRoute);
       }
       _removeLast(notify: false);
