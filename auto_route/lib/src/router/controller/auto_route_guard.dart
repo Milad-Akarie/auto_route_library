@@ -295,17 +295,17 @@ class NavigationResolver {
   /// The returned future completes once [route] is closed, whether by
   /// [next] or by a pop, and at once when a redirect is already running or
   /// [route] can't be opened.
-  Future<void> redirectUntil(PageRouteInfo route, {OnNavigationFailure? onFailure, bool replace = false}) async {
+  Future<void> redirectUntil(PageRouteInfo target, {OnNavigationFailure? onFailure, bool replace = false}) async {
     if (_isRedirecting) return;
     _isRedirecting = true;
     // keep the page being reevaluated under the redirect route so its state is preserved
-    final reevaluatedRoute = this.route;
+    final reevaluatedRoute = route;
     if (reevaluatedRoute is ReevaluatableRouteMatch<Object?, Object?> &&
         !_router._pages.contains(reevaluatedRoute.currentPage)) {
       _router._pages.add(reevaluatedRoute.currentPage);
     }
     await _router._redirect(
-      route,
+      target,
       onFailure: onFailure,
       replace: replace,
       onMatch: (scope, match) async {

@@ -69,7 +69,7 @@ class Parameters {
   // The router keeps a repeated query key as a list of its values.
   static String? _stringOf(Object? value) => switch (value) {
     null => null,
-    final String value => value,
+    final String text => text,
     final List<Object?> values => values.isEmpty ? null : values.last?.toString(),
     _ => value.toString(),
   };

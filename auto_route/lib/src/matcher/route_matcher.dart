@@ -27,7 +27,7 @@ class RouteMatcher {
 
   List<RouteMatch<Object?>>? _match(
     Uri uri,
-    RouteCollection collection, {
+    RouteCollection routeCollection, {
     bool includePrefixMatches = false,
     bool root = false,
     String? redirectedFrom,
@@ -35,7 +35,7 @@ class RouteMatcher {
   }) {
     final pathSegments = _split(uri.path);
     final matches = <RouteMatch<Object?>>[];
-    for (final config in collection.routes) {
+    for (final config in routeCollection.routes) {
       var match = _matchByPath(uri, pathSegments, config, redirectedFrom: redirectedFrom);
       if (match != null) {
         if (!includePrefixMatches || config.path == '*') {
@@ -54,7 +54,7 @@ class RouteMatcher {
           }
           return _handleRedirect(
             redirectChain: [...redirectChain, redirectFrom],
-            routesCollection: collection,
+            routesCollection: routeCollection,
             includePrefixMatches: includePrefixMatches,
             redirectTo: redirectToUri.replace(
               queryParameters: {...redirectToUri.queryParametersAll, ...uri.queryParametersAll},
@@ -72,7 +72,7 @@ class RouteMatcher {
             );
             final children = _match(
               rest,
-              collection.subCollectionOf(config.name),
+              routeCollection.subCollectionOf(config.name),
               includePrefixMatches: includePrefixMatches,
             );
             match = match.copyWith(children: children);
@@ -86,7 +86,9 @@ class RouteMatcher {
           //
           // include empty route if exists
           if (config.hasSubTree && !match.hasChildren) {
-            match = match.copyWith(children: _match(uri.replace(path: ''), collection.subCollectionOf(config.name)));
+            match = match.copyWith(
+              children: _match(uri.replace(path: ''), routeCollection.subCollectionOf(config.name)),
+            );
           }
 
           matches.add(match);

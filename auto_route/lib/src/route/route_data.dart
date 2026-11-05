@@ -112,8 +112,8 @@ class RouteData<R> {
   /// if args is null and [orElse] is null an error is thrown
   /// otherwise [orElse] is called and args are built by it
   T argsAs<T>({T Function()? orElse}) {
-    final args = _match.args;
-    if (args == null) {
+    final given = _match.args;
+    if (given == null) {
       if (orElse == null) {
         final messages = ['$T can not be null because the corresponding page has a required parameter'];
         if (_match.autoFilled) {
@@ -126,10 +126,10 @@ class RouteData<R> {
         throw MissingRequiredParameterError('\n${messages.join('\n')}\n');
       }
       return orElse();
-    } else if (args case final T typed) {
+    } else if (given case final T typed) {
       return typed;
     }
-    throw MissingRequiredParameterError('Expected [$T],  found [${args.runtimeType}]');
+    throw MissingRequiredParameterError('Expected [$T],  found [${given.runtimeType}]');
   }
 
   // The query params and fragment this route was opened with. A route pushed
@@ -181,8 +181,7 @@ class RouteData<R> {
 
   /// Collects all path params form all previous ancestors
   Parameters get inheritedPathParams {
-    final params = breadcrumbs.map((e) => e.params).reduce((value, element) => value + element);
-    return params;
+    return breadcrumbs.map((e) => e.params).reduce((value, element) => value + element);
   }
 
   /// Helper to access [RouteMatch.params]
@@ -242,8 +241,8 @@ class RouteData<R> {
   @internal
   void onPoppedByNavigator() {
     _isPoppedByNavigator = true;
-    if ((router, animation) case (final StackRouter router, final animation?)) {
-      router._addLeavingAnimation(animation);
+    if ((router, animation) case (final StackRouter stackRouter, final leaving?)) {
+      stackRouter._addLeavingAnimation(leaving);
     }
   }
 
@@ -271,25 +270,25 @@ class RouteData<R> {
   @Deprecated('Set animation instead')
   // The old name, kept as a method so existing calls still compile until it is removed.
   // ignore: use_setters_to_change_properties
-  void setAnimation(Animation<Object?>? animation) => this.animation = animation;
+  void setAnimation(Animation<Object?>? value) => animation = value;
 
   /// Returns the current animation completion future
   /// if the current route is animating
   ///
   /// If the current route is not animating, it returns null
   Future<void>? get animationCompletion {
-    if (animation case final animation?) {
-      if (animation.isAnimating) {
+    if (animation case final running?) {
+      if (running.isAnimating) {
         // if the current route is animating, we wait for it to complete
         final completer = Completer<void>();
         void listener(AnimationStatus _) {
-          if (!animation.isAnimating) {
+          if (!running.isAnimating) {
             completer.complete();
-            animation.removeStatusListener(listener);
+            running.removeStatusListener(listener);
           }
         }
 
-        animation.addStatusListener(listener);
+        running.addStatusListener(listener);
         return completer.future;
       }
     }

@@ -370,10 +370,10 @@ class UrlState {
   RouteMatch<Object?>? get topMatch => hasSegments ? segments.last : null;
 
   RouteMatch<Object?>? _findSegment(
-    List<RouteMatch<Object?>> segments,
+    List<RouteMatch<Object?>> among,
     bool Function(RouteMatch<Object?> segment) predicate,
   ) {
-    for (final segment in segments) {
+    for (final segment in among) {
       if (predicate(segment)) {
         return segment;
       } else if (segment.hasChildren) {

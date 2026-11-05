@@ -57,9 +57,9 @@ class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
   void didPush(Route<Object?> route, Route<Object?>? previousRoute) {
     // A navigator that was disposed leaves its routes without a navigator.
     _routes
-      ..removeWhere((route) => route.navigator == null)
+      ..removeWhere((each) => each.navigator == null)
       ..add(route);
-    _pageUnder.removeWhere((route, _) => route.navigator == null);
+    _pageUnder.removeWhere((each, _) => each.navigator == null);
     if (route.settings is! Page && previousRoute != null) {
       final pageUnder = previousRoute.settings is Page ? previousRoute : _pageUnder[previousRoute];
       if (pageUnder != null) _pageUnder[route] = pageUnder;

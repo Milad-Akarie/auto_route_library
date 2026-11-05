@@ -49,27 +49,27 @@ class _PredictiveBackGestureDetectorState extends State<_PredictiveBackGestureDe
 
   _PredictiveBackPhase get phase => _phase;
   _PredictiveBackPhase _phase = .idle;
-  set phase(_PredictiveBackPhase phase) {
-    if (_phase != phase && mounted) {
-      setState(() => _phase = phase);
+  set phase(_PredictiveBackPhase value) {
+    if (_phase != value && mounted) {
+      setState(() => _phase = value);
     }
   }
 
   /// The back event when the gesture first started.
   PredictiveBackEvent? get startBackEvent => _startBackEvent;
   PredictiveBackEvent? _startBackEvent;
-  set startBackEvent(PredictiveBackEvent? startBackEvent) {
-    if (_startBackEvent != startBackEvent && mounted) {
-      setState(() => _startBackEvent = startBackEvent);
+  set startBackEvent(PredictiveBackEvent? value) {
+    if (_startBackEvent != value && mounted) {
+      setState(() => _startBackEvent = value);
     }
   }
 
   /// The most recent back event during the gesture.
   PredictiveBackEvent? get currentBackEvent => _currentBackEvent;
   PredictiveBackEvent? _currentBackEvent;
-  set currentBackEvent(PredictiveBackEvent? currentBackEvent) {
-    if (_currentBackEvent != currentBackEvent && mounted) {
-      setState(() => _currentBackEvent = currentBackEvent);
+  set currentBackEvent(PredictiveBackEvent? value) {
+    if (_currentBackEvent != value && mounted) {
+      setState(() => _currentBackEvent = value);
     }
   }
 

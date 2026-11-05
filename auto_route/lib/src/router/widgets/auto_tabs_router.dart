@@ -221,7 +221,7 @@ abstract class AutoTabsRouterState<T extends AutoTabsRouter> extends State<T> {
 
   GlobalKey _tabKeyOf(AutoRoutePage<Object?> page) {
     if (_tabKeys.length > _controller!.pageCount) {
-      final matchIds = {for (final page in _controller!.stack) page.routeData.matchId};
+      final matchIds = {for (final tab in _controller!.stack) tab.routeData.matchId};
       _tabKeys.removeWhere((matchId, _) => !matchIds.contains(matchId));
     }
     return _tabKeys.putIfAbsent(page.routeData.matchId, GlobalKey.new);

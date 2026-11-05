@@ -257,7 +257,7 @@ class AutoRoute {
   /// A simplified copyWith
   ///
   /// Returns a new AutoRoute instance with the provided path
-  AutoRoute changePath(String path) => copyWith(path: path);
+  AutoRoute changePath(String newPath) => copyWith(path: newPath);
 
   /// A simplified copyWith
   ///

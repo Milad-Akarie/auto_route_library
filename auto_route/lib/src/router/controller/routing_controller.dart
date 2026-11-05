@@ -105,8 +105,8 @@ abstract class RoutingController with ChangeNotifier {
     _childControllers.remove(childController);
   }
 
-  RoutingController? _topInnerControllerOf(Key key) {
-    return _childControllers.lastWhereOrNull((c) => c.key == key);
+  RoutingController? _topInnerControllerOf(Key routeKey) {
+    return _childControllers.lastWhereOrNull((c) => c.key == routeKey);
   }
 
   // The nested router of the page [data] belongs to. Found by the page's
@@ -118,8 +118,8 @@ abstract class RoutingController with ChangeNotifier {
     return _innerControllerOfMatch(data.matchId) ?? _topInnerControllerOf(data.key);
   }
 
-  RoutingController? _innerControllerOfMatch(Key key) {
-    return _childControllers.lastWhereOrNull((c) => c.matchId == key);
+  RoutingController? _innerControllerOfMatch(Key matchKey) {
+    return _childControllers.lastWhereOrNull((c) => c.matchId == matchKey);
   }
 
   // The pages open in this router, in the shape a nested router opens from
@@ -190,13 +190,13 @@ abstract class RoutingController with ChangeNotifier {
   }) => _getCurrentHierarchy(stackData, asPath: asPath, ignoreParams: ignoreParams, ignorePending: ignorePending);
 
   List<HierarchySegment> _getCurrentHierarchy(
-    List<RouteData<Object?>> stack, {
+    List<RouteData<Object?>> pages, {
     required bool asPath,
     required bool ignorePending,
     required bool ignoreParams,
   }) {
     final hierarchy = <HierarchySegment>[];
-    for (final data in stack) {
+    for (final data in pages) {
       final segmentName = asPath ? data.match : data.name;
       final childCtrl = _innerControllerOfPage(data);
       final childSegments = <HierarchySegment>[];
@@ -268,7 +268,7 @@ abstract class RoutingController with ChangeNotifier {
     RouteData<Object?> parent, {
     Completer<T?>? popCompleter,
   }) {
-    final routeData = RouteData<T>(
+    final created = RouteData<T>(
       popCompleter: popCompleter,
       route: route,
       router: this,
@@ -279,21 +279,21 @@ abstract class RoutingController with ChangeNotifier {
     );
     final takenRestorationIds = {
       for (final page in _pages)
-        if (page.routeData.matchId != routeData.matchId) page.restorationId,
+        if (page.routeData.matchId != created.matchId) page.restorationId,
     };
-    final restorationId = routeData._baseRestorationId;
-    routeData._restorationId = restorationId;
-    for (var i = 1; takenRestorationIds.contains(routeData._restorationId); i++) {
-      routeData._restorationId = '$restorationId#$i';
+    final restorationId = created._baseRestorationId;
+    created._restorationId = restorationId;
+    for (var i = 1; takenRestorationIds.contains(created._restorationId); i++) {
+      created._restorationId = '$restorationId#$i';
     }
     for (final ctr in _childControllers) {
-      if (ctr._markedForDataUpdate && ctr.key == routeData.key) {
-        ctr.updateRouteData(routeData);
+      if (ctr._markedForDataUpdate && ctr.key == created.key) {
+        ctr.updateRouteData(created);
         ctr._markedForDataUpdate = false;
       }
     }
 
-    return routeData;
+    return created;
   }
 
   /// Helper to find route match
@@ -1104,7 +1104,7 @@ class TabsRouter extends RoutingController {
   Future<bool> maybePop<T extends Object?>([T? result]) {
     final shown = _showTabOnBack();
     if (shown is bool) return shown ? SynchronousFuture(true) : _maybePopParent(result);
-    return shown.then((shown) => shown ? true : _maybePopParent<T>(result));
+    return shown.then((wasShown) => wasShown ? true : _maybePopParent<T>(result));
   }
 
   Future<bool> _maybePopParent<T extends Object?>(T? result) {
@@ -1125,7 +1125,7 @@ class TabsRouter extends RoutingController {
     if (shown is bool) {
       popParentUnless(shown: shown);
     } else {
-      unawaited(shown.then((shown) => popParentUnless(shown: shown)));
+      unawaited(shown.then((wasShown) => popParentUnless(shown: wasShown)));
     }
   }
 
@@ -1143,8 +1143,8 @@ class TabsRouter extends RoutingController {
     } else {
       return false;
     }
-    FutureOr<bool> next(_TabChange change) {
-      if (change != .rejected) return true;
+    FutureOr<bool> next(_TabChange outcome) {
+      if (outcome != .rejected) return true;
       return fromHistory ? _showTabOnBack() : false;
     }
 
@@ -1285,9 +1285,9 @@ class TabsRouter extends RoutingController {
 
   /// Resets [_pages] stack with given [routes]
   /// and sets `previousActiveRoute` as active index if provided
-  void replaceAll(List<PageRouteInfo>? routes, int previousIndex) {
+  void replaceAll(List<PageRouteInfo>? routes, int fromIndex) {
     final routesToPush = _resolveRoutes(routes);
-    final previousActiveRoute = stackData[previousIndex];
+    final previousActiveRoute = stackData[fromIndex];
     final previousPages = List.of(_pages);
     final previousHistory = _tabHistoryNames;
 
@@ -1422,8 +1422,8 @@ class TabsRouter extends RoutingController {
     if (_childControllers.isEmpty) {
       return null;
     }
-    final matchId = _pages[index].routeData.matchId;
-    final innerRouter = _innerControllerOfMatch(matchId);
+    final pageMatchId = _pages[index].routeData.matchId;
+    final innerRouter = _innerControllerOfMatch(pageMatchId);
     if (innerRouter is StackRouter) {
       return innerRouter;
     }
@@ -2147,7 +2147,7 @@ abstract class StackRouter extends RoutingController {
       },
     );
     if (rejected) {
-      for (final page in _pages.where((page) => !previousPages.contains(page))) {
+      for (final page in _pages.where((added) => !previousPages.contains(added))) {
         page.routeData.onPopInvoked(null);
       }
       _pages
@@ -2457,10 +2457,10 @@ abstract class StackRouter extends RoutingController {
     int? index,
     OnNavigationFailure? onFailure,
   }) {
-    final topRoute = _pages.lastOrNull?.routeData;
-    if (topRoute != null && !topRoute._match.keepHistory) {
+    final shownTop = _pages.lastOrNull?.routeData;
+    if (shownTop != null && !shownTop._match.keepHistory) {
       markUrlStateForReplace();
-      _removeRoute(topRoute._match, notify: false);
+      _removeRoute(shownTop._match, notify: false);
     }
     var match = route;
     final takenOver = index == null ? _shownTopTakenOverBy(route) : null;
