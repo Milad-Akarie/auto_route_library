@@ -292,7 +292,6 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     final route = topRoute;
     if (route == null) return false;
     // WillPopScope answers only through the deprecated willPop.
-    // ignore: deprecated_member_use
     if (await route.willPop() == .doNotPop) return true;
     if (route.popDisposition == .doNotPop) {
       route.onPopInvokedWithResult(false, null);
