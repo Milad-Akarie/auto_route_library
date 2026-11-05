@@ -240,6 +240,5 @@ class _RootRouteMatcher extends RouteMatcher {
   // The collection passed to super is the one of the moment; a hot reload
   // replaces it.
   @override
-  // ignore: avoid-suspicious-super-overrides
   RouteCollection get collection => _router.routeCollection;
 }
