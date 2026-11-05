@@ -29,6 +29,8 @@
 - **BREAKING CHANGE**: `RouteData.animation` is an `Animation<double>?`, not an `Animation<dynamic>?`, the type of the
   route animation it holds, so `routeData.animation?.value` is a `double`. Code that sets it passes the route's own
   `animation`, as before.
+- **BREAKING CHANGE**: `ReevaluateListenable.stream` takes a `Stream<Object?>`, not a `Stream<dynamic>`. Any stream
+  still fits, so a call needs no change; code that tears the constructor off as a function names `Stream<Object?>`.
 
 ## 12.3.0
 - **BREAKING CHANGE**: `Parameters.optBool` and `getBool` take their default by name:

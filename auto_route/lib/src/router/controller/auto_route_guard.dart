@@ -103,7 +103,7 @@ abstract class ReevaluateListenable extends ChangeNotifier {
   new();
 
   /// Builds [ReevaluateListenable] from a stream
-  factory stream(Stream<dynamic> stream) = _StreamReevaluateListenable;
+  factory stream(Stream<Object?> stream) = _StreamReevaluateListenable;
 }
 
 class _StreamReevaluateListenable extends ReevaluateListenable {
