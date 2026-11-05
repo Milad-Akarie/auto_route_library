@@ -6,6 +6,9 @@ void main() {
   runApp(DeclarativeNavigationExampleApp());
 }
 
+/// Routes of the declarative navigation example.
+///
+/// One main route holds the three steps (name, age and result) as children.
 @AutoRouterConfig(generateForDir: ['lib/declarative'])
 class DecRouter extends RootStackRouter {
   @override
@@ -22,7 +25,12 @@ class DecRouter extends RootStackRouter {
   ];
 }
 
+/// Root widget of the declarative navigation example.
+///
+/// Asks for a name and an age, then shows both, with the visible step chosen by
+/// the data entered so far.
 class DeclarativeNavigationExampleApp extends StatelessWidget {
+  /// Creates the app, which builds its own [DecRouter].
   new({super.key});
   final _router = DecRouter();
 
@@ -34,8 +42,12 @@ class DeclarativeNavigationExampleApp extends StatelessWidget {
   }
 }
 
+/// Host page of the declarative example.
+///
+/// Keeps the profile entered so far and lets it decide which step shows.
 @RoutePage()
 class MainScreen extends StatefulWidget {
+  /// Creates the page.
   const new({super.key});
 
   @override
@@ -89,9 +101,13 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
+/// First step of the declarative example: asks for a name.
 @RoutePage()
 class NameInputScreen extends StatefulWidget {
+  /// Takes the callback that receives the name when the user submits it.
   const new({required this.onNameSubmitted, super.key});
+
+  /// Called with the entered text when the user submits the name.
   final ValueChanged<String> onNameSubmitted;
 
   @override
@@ -133,10 +149,17 @@ class _NameInputScreenState extends State<NameInputScreen> {
   }
 }
 
+/// Second step of the declarative example: asks for an age.
 // age submit page
 @RoutePage()
 class AgeInputScreen extends StatefulWidget {
+  /// Takes the callback that receives the age when the user submits it.
   const new({required this.onAgeSubmitted, super.key});
+
+  /// Called with the entered number when the user submits the age.
+  ///
+  /// The text is parsed as an integer, so a non-numeric entry throws a
+  /// [FormatException].
   final ValueChanged<int> onAgeSubmitted;
 
   @override
@@ -178,10 +201,16 @@ class _AgeInputScreenState extends State<AgeInputScreen> {
   }
 }
 
+/// Last step of the declarative example: shows the profile and a reset button.
 @RoutePage()
 class ResultScreen extends StatelessWidget {
+  /// Both arguments are required.
   const new({required this.profile, required this.onReset, super.key});
+
+  /// The name and age to show.
   final Profile profile;
+
+  /// Called when the user presses the reset button.
   final VoidCallback onReset;
 
   @override
@@ -208,12 +237,20 @@ class ResultScreen extends StatelessWidget {
   }
 }
 
+/// The name and age collected so far by the declarative example.
+///
+/// A `null` field means that step is not done yet.
 class Profile {
+  /// Creates a profile; both fields start empty.
   const new({this.name, this.age});
 
+  /// The entered name, or `null` before it is submitted.
   final String? name;
+
+  /// The entered age, or `null` before it is submitted.
   final int? age;
 
+  /// Returns a copy with [name] and [age] replaced when they are not `null`.
   Profile copyWith({String? name, int? age}) {
     return Profile(
       name: name ?? this.name,

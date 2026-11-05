@@ -7,14 +7,21 @@ import 'package:example/mobile/router/router.gr.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 
+/// Settings tab page, which shows its path and query parameters and has buttons
+/// that navigate with new ones.
 @RoutePage(name: 'SettingsTab')
 class SettingsPage extends StatefulWidget {
+  /// Takes the [tab] path parameter and the [query] query parameter.
   const new({
     super.key,
     @pathParam this.tab = 'none',
     @queryParam this.query = 'none',
   });
+
+  /// The `tab` path parameter, `none` when the url has none.
   final String tab;
+
+  /// The `query` query parameter, `none` when the url has none.
   final String query;
 
   @override

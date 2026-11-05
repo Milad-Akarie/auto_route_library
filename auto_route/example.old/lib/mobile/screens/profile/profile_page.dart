@@ -6,15 +6,19 @@ import 'package:example/mobile/screens/home_page.dart';
 import 'package:example/mobile/screens/user-data/data_collector.dart';
 import 'package:material_ui/material_ui.dart';
 
+/// Page of the profile tab with buttons that test navigation.
 @RoutePage()
 class ProfilePage extends StatefulWidget {
+  /// Creates the page.
   const new({super.key});
 
   @override
   ProfilePageState createState() => .new();
 }
 
+/// State of [ProfilePage]; holds the data the user collected.
 class ProfilePageState extends State<ProfilePage> {
+  /// The data from the user data flow, or `null` while it is not collected.
   UserData? userData;
 
   @override

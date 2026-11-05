@@ -2,9 +2,13 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/web_demo/web_main.dart';
 import 'package:material_ui/material_ui.dart';
 
+/// Web login page; pressing the button signs the user in.
 @RoutePage()
 class WebLoginPage extends StatelessWidget {
+  /// Takes [onResult].
   const new({super.key, this.onResult});
+
+  /// Called with `true` after the user signs in.
   final ValueChanged<bool>? onResult;
 
   @override

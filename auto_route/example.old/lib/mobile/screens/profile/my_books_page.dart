@@ -4,9 +4,16 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:material_ui/material_ui.dart';
 
+/// Page of the profile tab with buttons that test navigation: to settings, back
+/// and to home.
+///
+/// Shows the `filter` query parameter and the url fragment.
 @RoutePage()
 class MyBooksPage extends StatelessWidget {
+  /// Takes the [filter] query parameter.
   const new({super.key, @queryParam this.filter = 'none2'});
+
+  /// The `filter` query parameter, `none2` when the url has none.
   final String? filter;
 
   @override

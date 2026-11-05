@@ -9,9 +9,17 @@ import 'package:material_ui/material_ui.dart';
 
 // Route names here are written as the paths they stand for.
 // ignore_for_file: constant_identifier_names
+/// Routes of the mobile example app.
+///
+/// Holds a home page with books, profile and settings tabs, and a login page.
+/// The book details route is guarded: it sends users who are not signed in to
+/// the login page.
 @AutoRouterConfig(generateForDir: ['lib/mobile'])
 class AppRouter extends RootStackRouter {
+  /// Takes the [AuthService] that the guard of the book details route asks.
   new(this.authService);
+
+  /// The sign-in state that decides whether book details can be opened.
   final AuthService authService;
 
   @override
@@ -57,16 +65,28 @@ class AppRouter extends RootStackRouter {
   ];
 }
 
+/// Shell route of the books tab, which only holds the book pages.
 const BooksTab = EmptyShellRoute('BooksTab');
+
+/// Shell route of the profile tab, which only holds the profile pages.
 const ProfileTab = EmptyShellRoute('ProfileTab');
 
+/// A named route that can build its own page.
 abstract class RouteDef {
+  /// Takes the route [name] and, optionally, its [path].
   new(this.name, {this.path});
+
+  /// The name of this route.
   final String name;
+
+  /// The path of this route, or `null` when it has none of its own.
   final String? path;
 
+  /// Builds the page for this route from its [data].
   Widget build(BuildContext context, RouteData<dynamic> data);
 
+  /// Returns the definition that matches the route [data], which is this one
+  /// unless a subclass overrides it.
   RouteDef buildFromData(RouteData<dynamic> data) {
     // A route that does not depend on its data is its own definition.
     // ignore: avoid_returning_this

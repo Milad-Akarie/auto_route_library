@@ -3,10 +3,16 @@ import 'package:example/mobile/screens/user-data/data_collector.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 
+/// Host of the user data flow; hands a [SettingsState] to the pages below it.
+///
+/// Its steps are commented out, so it shows an empty declarative router.
 // An example page, kept as written so the example shows the same code.
 // ignore: avoid-unnecessary-stateful-widgets
 class UserDataCollectorPage extends StatefulWidget implements AutoRouteWrapper {
+  /// Takes [onResult].
   const new({super.key, this.onResult});
+
+  /// Called with the collected data when the flow ends.
   // The generated router copies this type into its args class.
   // ignore: inference_failure_on_function_return_type
   final Function(UserData data)? onResult;
@@ -23,6 +29,7 @@ class UserDataCollectorPage extends StatefulWidget implements AutoRouteWrapper {
   }
 }
 
+/// State of [UserDataCollectorPage].
 class UserDataCollectorPageState extends State<UserDataCollectorPage> {
   @override
   Widget build(BuildContext context) {

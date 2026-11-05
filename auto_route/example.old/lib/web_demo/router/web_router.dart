@@ -6,9 +6,16 @@ import 'package:example/web_demo/web_main.dart';
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
+/// Routes of the web example app.
+///
+/// The main page needs a signed-in user, and the posts of a user also need a
+/// verified one. Both guards redirect to their own page.
 @AutoRouterConfig(generateForDir: ['lib/web_demo'])
 class WebAppRouter extends RootStackRouter {
+  /// Takes the [AuthService] that the guards ask.
   new(this.authService);
+
+  /// The sign-in state the guards check.
   AuthService authService;
 
   @override
@@ -66,16 +73,22 @@ class WebAppRouter extends RootStackRouter {
   ];
 }
 
+/// Main page of the web example, with buttons to open a user and to sign out.
 @RoutePage()
 // An example page, kept as written so the example shows the same code.
 // ignore: avoid-unnecessary-stateful-widgets
 class MainWebPage extends StatefulWidget {
+  /// All arguments are optional.
   const new({
     super.key,
     this.navigate,
     this.showUserPosts,
   });
+
+  /// Replaces the default of the button that opens user 2.
   final VoidCallback? navigate;
+
+  /// Not used by this page.
   final VoidCallback? showUserPosts;
 
   @override
@@ -143,11 +156,15 @@ class _MainWebPageState extends State<MainWebPage> {
   }
 }
 
+/// Page that shows its `id` path parameter; not part of any route.
 class QueryPage extends StatelessWidget {
+  /// Takes the [id] path parameter.
   const new({
     super.key,
     @pathParam this.id = '-',
   });
+
+  /// The id from the path, `-` when the url has none.
   final String id;
 
   @override
@@ -160,16 +177,25 @@ class QueryPage extends StatelessWidget {
   }
 }
 
+/// Profile of a user, with a button that opens the favorite posts.
 @RoutePage()
 class UserProfilePage extends StatefulWidget {
+  /// All arguments are optional.
   const new({
     super.key,
     this.navigate,
     @PathParam('userID') this.userId = -1,
     @queryParam this.likes = 0,
   });
+
+  /// Replaces the default of the button that opens the favorite posts.
   final VoidCallback? navigate;
+
+  /// The `likes` query parameter, 0 when the url has none.
   final int likes;
+
+  /// The user id, taken from the `userID` path parameter; -1 when the url has
+  /// none.
   final int userId;
 
   @override
@@ -234,20 +260,26 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 }
 
+/// Posts of a user, with a nested router for the lists of all and favorite
+/// posts.
 @RoutePage()
 // An example page, kept as written so the example shows the same code.
 // ignore: avoid-unnecessary-stateful-widgets
 class UserPostsPage extends StatefulWidget {
+  /// Takes the user [id], which is inherited from the parent route.
   const new({
     @PathParam.inherit('userID') required this.id,
     super.key,
   });
+
+  /// The id of the user whose posts show.
   final int id;
 
   @override
   UserPostsPageState createState() => .new();
 }
 
+/// State of [UserPostsPage].
 class UserPostsPageState extends State<UserPostsPage> {
   @override
   Widget build(BuildContext context) {
@@ -289,24 +321,34 @@ class UserPostsPageState extends State<UserPostsPage> {
   }
 }
 
+/// Page of a user, with a nested router for the profile and the posts.
 @RoutePage()
 // An example page, kept as written so the example shows the same code.
 // ignore: avoid-unnecessary-stateful-widgets
 class UserPage extends StatefulWidget {
+  /// All arguments are optional.
   const new({
     super.key,
     @PathParam('userID') this.id = -1,
     @QueryParam() this.query,
     @urlFragment this.fragment,
   });
+
+  /// The user id, taken from the `userID` path parameter; -1 when the url has
+  /// none.
   final int id;
+
+  /// The `query` values from the url, or `null` when there are none.
   final List<String>? query;
+
+  /// The url fragment, or `null` when there is none.
   final String? fragment;
 
   @override
   UserPageState createState() => .new();
 }
 
+/// State of [UserPage].
 class UserPageState extends State<UserPage> {
   @override
   Widget build(BuildContext context) {
@@ -328,8 +370,10 @@ class UserPageState extends State<UserPage> {
   }
 }
 
+/// Page for urls that match no route.
 @RoutePage()
 class NotFoundScreen extends StatelessWidget {
+  /// Creates the page.
   const new({super.key});
 
   @override
@@ -345,9 +389,13 @@ class NotFoundScreen extends StatelessWidget {
   }
 }
 
+/// Lists all posts of a user, with buttons for the favorite posts and back.
 @RoutePage()
 class UserAllPostsPage extends StatelessWidget {
+  /// Takes [navigate].
   const new({super.key, this.navigate});
+
+  /// Replaces the default action of both buttons.
   final VoidCallback? navigate;
 
   @override
@@ -383,8 +431,10 @@ class UserAllPostsPage extends StatelessWidget {
   }
 }
 
+/// Lists the favorite posts of a user.
 @RoutePage()
 class UserFavoritePostsPage extends StatelessWidget {
+  /// Creates the page.
   const new({super.key});
 
   @override

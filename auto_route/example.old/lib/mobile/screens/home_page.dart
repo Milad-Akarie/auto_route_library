@@ -6,26 +6,42 @@ import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
+/// Home page of the mobile example, which holds the books, profile and settings
+/// tabs.
+///
+/// On the web it shows a navigation rail, elsewhere a bottom bar.
 @RoutePage()
 class HomePage extends StatefulWidget {
+  /// Creates the page.
   const new({super.key});
 
   @override
   HomePageState createState() => .new();
 }
 
+/// One entry of the home page navigation: the route it opens and how it looks.
 class RouteDestination {
+  /// All fields are required.
   const new({
     required this.route,
     required this.icon,
     required this.label,
   });
+
+  /// The route that opens when this destination is chosen.
   final PageRouteInfo route;
+
+  /// The icon shown for this destination.
   final IconData icon;
+
+  /// The text shown for this destination.
   final String label;
 }
 
+/// State of [HomePage]; builds the navigation and decides whether the settings
+/// tab shows.
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  /// The destinations of the navigation rail shown on the web.
   final destinations = [
     RouteDestination(
       route: BooksTab(),
@@ -44,6 +60,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     ),
   ];
 
+  /// Shows or hides the settings tab in the bottom bar.
   void toggleSettingsTap() => setState(() {
     _showSettingsTap = !_showSettingsTap;
   });
@@ -113,6 +130,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           );
   }
 
+  /// Builds the bottom navigation bar for [tabsRouter].
+  ///
+  /// Returns an empty box when the active route sets `hideBottomNav` in its
+  /// meta.
   // The signature of AutoTabsScaffold's bottomNavigationBuilder.
   // ignore: avoid-unused-parameters
   Widget buildBottomNav(BuildContext context, TabsRouter tabsRouter) {
@@ -141,8 +162,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 }
 
+/// A page with a button that opens the home page.
 @RoutePage()
 class WelcomeScreen extends StatelessWidget {
+  /// Creates the page.
   const new({super.key});
 
   @override

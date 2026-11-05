@@ -6,9 +6,12 @@ void main() {
   runApp(NestedNavigationApp());
 }
 
+/// Root widget of the nested navigation example.
 class NestedNavigationApp extends StatelessWidget {
+  /// Creates the app, which builds its own [NestedRouter].
   new({super.key});
 
+  /// The router of this app.
   final nestedRouter = NestedRouter();
 
   @override
@@ -19,6 +22,7 @@ class NestedNavigationApp extends StatelessWidget {
   }
 }
 
+/// Routes of the nested navigation example: a host page with two child pages.
 @AutoRouterConfig(generateForDir: ['lib/nested-navigation'])
 class NestedRouter extends RootStackRouter {
   @override
@@ -34,8 +38,11 @@ class NestedRouter extends RootStackRouter {
   ];
 }
 
+/// Host page whose body is a nested router, with a back button when that router
+/// can pop.
 @RoutePage()
 class HostScreen extends StatelessWidget {
+  /// Creates the page.
   const new({super.key});
 
   @override
@@ -53,8 +60,11 @@ class HostScreen extends StatelessWidget {
   }
 }
 
+/// Child page with a button that opens [SecondScreen] in the host's nested
+/// router.
 @RoutePage()
 class FirstScreen extends StatelessWidget {
+  /// Creates the page.
   const new({super.key});
 
   @override
@@ -70,8 +80,10 @@ class FirstScreen extends StatelessWidget {
   }
 }
 
+/// Child page with a button that pops back to [FirstScreen].
 @RoutePage()
 class SecondScreen extends StatelessWidget {
+  /// Creates the page.
   const new({super.key});
 
   @override

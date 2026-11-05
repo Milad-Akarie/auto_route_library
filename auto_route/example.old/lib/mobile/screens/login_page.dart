@@ -3,9 +3,14 @@ import 'package:example/mobile/router/auth_guard.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 
+/// Mock login page; pressing the button signs the user in through the
+/// [AuthService] above it.
 @RoutePage()
 class LoginPage extends StatelessWidget {
+  /// Takes [showBackButton].
   const new({super.key, this.showBackButton = true});
+
+  /// Whether the app bar may show a back button; defaults to `true`.
   final bool showBackButton;
 
   @override

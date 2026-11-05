@@ -3,10 +3,12 @@ import 'package:example/data/db.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:material_ui/material_ui.dart';
 
+/// Lists all books and opens the details page of the one the user taps.
 @RoutePage()
 // An example page, kept as written so the example shows the same code.
 // ignore: avoid-unnecessary-stateful-widgets
 class BookListScreen extends StatefulWidget {
+  /// Creates the page.
   const new({super.key});
 
   @override

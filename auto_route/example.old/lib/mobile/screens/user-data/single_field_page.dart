@@ -1,20 +1,31 @@
 import 'package:material_ui/material_ui.dart';
 
+/// A step of the user data flow: a message, one text field and a next button
+/// that stays disabled while the field is empty.
 class SingleFieldPage extends StatefulWidget {
+  /// Takes the texts and the [onNext] callback.
   const new({
     super.key,
     this.message = '',
     this.willPopMessage = '',
     this.onNext,
   });
+
+  /// The prompt shown above the text field.
   final String message;
+
+  /// The text of the snack bar shown when the user leaves this page.
   final String willPopMessage;
+
+  /// Called with the entered text when the user presses next; `null` does
+  /// nothing.
   final void Function(String)? onNext;
 
   @override
   SingleFieldPageState createState() => .new();
 }
 
+/// State of [SingleFieldPage]; holds the entered text.
 class SingleFieldPageState extends State<SingleFieldPage> {
   String _text = '';
   final _scaffoldKey = GlobalKey<ScaffoldState>();

@@ -2,19 +2,25 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/data/db.dart';
 import 'package:material_ui/material_ui.dart';
 
+/// Shows one book, with a counter of reads that the user raises with a button.
 @RoutePage(name: 'BookDetailsRoute')
 class BookDetailsPage extends StatefulWidget {
+  /// Takes the book [id], which defaults to -1 and so finds no book.
   const new({
     super.key,
     @pathParam this.id = -1,
   });
+
+  /// The id of the book to show, read from the path.
   final int id;
 
   @override
   BookDetailsPageState createState() => .new();
 }
 
+/// State of [BookDetailsPage]; holds the counter of reads.
 class BookDetailsPageState extends State<BookDetailsPage> {
+  /// How many reads are shown; starts at 1 and is raised by the button.
   int counter = 1;
 
   @override

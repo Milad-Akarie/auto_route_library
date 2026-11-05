@@ -7,7 +7,12 @@ import 'package:provider/provider.dart';
 
 void main() => runApp(const MyApp());
 
+/// Root widget of the mobile example app.
+///
+/// Owns the [AuthService] and the [AppRouter], and shares the service and a
+/// [BooksDBProvider] with every page.
 class MyApp extends StatefulWidget {
+  /// Creates the app.
   const new({super.key});
 
   @override
