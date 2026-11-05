@@ -25,6 +25,15 @@ class RouteData<R> {
   RouteData<dynamic>? _parent;
   final Completer<R?>? _popCompleter;
 
+  // The [AutoRouteLeaveListener]s in this page, told when the page is left.
+  final _leaveCallbacks = <RouteLeaveCallback>[];
+
+  void _reportLeave(RouteLeaveKind kind) {
+    for (final callback in List.of(_leaveCallbacks)) {
+      callback(kind);
+    }
+  }
+
   /// The router this instance was created by
   final RoutingController router;
 

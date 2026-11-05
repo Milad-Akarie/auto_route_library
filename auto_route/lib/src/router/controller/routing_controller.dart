@@ -18,6 +18,7 @@ part '../../route/route_data.dart';
 part 'auto_route_guard.dart';
 part 'auto_router_delegate.dart';
 part 'root_stack_router.dart';
+part 'route_leave.dart';
 part 'routes_restoration.dart';
 
 // The controllers still serve the deprecated members they declare.
@@ -1402,6 +1403,81 @@ abstract class StackRouter extends RoutingController {
   /// Whether a reevaluation is in progress
   bool _isReevaluating = false;
 
+  // The pages as the last report of leaves saw them, bottom first.
+  var _pagesAtLastLeaveReport = <AutoRoutePage<dynamic>>[];
+
+  // How the pages taken off the stack since the last report left, where the
+  // change says it; others are told from the change itself.
+  final _leaveKinds = <RouteData<dynamic>, RouteLeaveKind>{};
+
+  // While above 0, a reevaluation takes pages off and puts back the ones its
+  // guards keep, so leaves wait for its end.
+  var _leaveReportHolds = 0;
+
+  void _markLeaving(Iterable<AutoRoutePage<dynamic>> pages, RouteLeaveKind kind) {
+    for (final page in pages) {
+      _leaveKinds.putIfAbsent(page.routeData, () => kind);
+    }
+  }
+
+  Future<T> _holdingLeaveReports<T>(Future<T> Function() change) async {
+    _leaveReportHolds++;
+    try {
+      return await change();
+    } finally {
+      _leaveReportHolds--;
+      _reportLeaves();
+    }
+  }
+
+  @override
+  void notifyListeners() {
+    _reportLeaves();
+    super.notifyListeners();
+  }
+
+  // Tells each page that left the stack since the last report how it left,
+  // and the page that was on top that a new page now covers it. A page taken
+  // off with no recorded kind left by a pop when it was on top and nothing
+  // took its place, was replaced when a new page did, and was removed when it
+  // was below the top. A page that a new page of the same route takes over,
+  // as a navigation to the route already shown does, stays on screen and
+  // hasn't left.
+  void _reportLeaves() {
+    if (_leaveReportHolds > 0 || _disposed) return;
+    final before = [for (final page in _pagesAtLastLeaveReport) page.routeData];
+    final now = [for (final page in _pages) page.routeData];
+    final takenOver = {
+      for (final page in _pages)
+        if (!before.contains(page.routeData)) page.routeKey,
+    };
+    final previousPages = _pagesAtLastLeaveReport;
+    _pagesAtLastLeaveReport = List.of(_pages);
+    final kinds = Map.of(_leaveKinds);
+    _leaveKinds.clear();
+    if (before.isEmpty) return;
+    final stillShown = now.toSet();
+    final oldTop = before.last;
+    final newTopIsNew = now.isNotEmpty && !before.contains(now.last);
+    final leaves = <(RouteData<dynamic>, RouteLeaveKind)>[
+      for (final page in previousPages.reversed)
+        if (!stillShown.contains(page.routeData) && !takenOver.contains(page.routeKey))
+          (
+            page.routeData,
+            kinds[page.routeData] ??
+                switch (page.routeData == oldTop) {
+                  true when newTopIsNew => .replaced,
+                  true => .popped,
+                  false => .removed,
+                },
+          ),
+      if (stillShown.contains(oldTop) && newTopIsNew) (oldTop, .covered),
+    ];
+    for (final (data, kind) in leaves) {
+      data._reportLeave(kind);
+    }
+  }
+
   /// Re-builds all routes in stack and reevaluate guarded
   /// once by re-visiting the onNavigation method when evaluation logic changes
   ///
@@ -1641,12 +1717,16 @@ abstract class StackRouter extends RoutingController {
   }
 
   /// Removes the very last entry from [_pages]
-  bool removeLast() => _removeLast();
+  bool removeLast() {
+    _markLeaving(_pages.reversed.take(1), .removed);
+    return _removeLast();
+  }
 
   /// Removes given [route] and any corresponding controllers
   ///
   /// finally calls [notifyAll] if notify is true
   void removeRoute(RouteData<dynamic> route, {bool notify = true}) {
+    _markLeaving(_pages.where((page) => page.routeData == route), .removed);
     _removeRoute(route._match, notify: notify);
   }
 
@@ -1654,7 +1734,9 @@ abstract class StackRouter extends RoutingController {
   /// this is not called when pageless routes are popped e.g popping a dialog
   /// that does not use [PageRoute] will not trigger this method
   void onPopPage(AutoRoutePage<Object?> page) {
-    if (!_pages.remove(page)) return;
+    if (!_pages.contains(page)) return;
+    _markLeaving([page], .popped);
+    _pages.remove(page);
     _shareTopPathData();
     notifyListeners();
     navigationHistory.rebuildUrlAfterPop();
@@ -1692,7 +1774,9 @@ abstract class StackRouter extends RoutingController {
   bool _removeLast({bool notify = true}) {
     var didRemove = false;
     if (_pages.isNotEmpty) {
-      removeRoute(_pages.last.routeData, notify: notify);
+      // Not removeRoute, which counts the page as removed: callers that push
+      // in its place count it as replaced.
+      _removeRoute(_pages.last.routeData._match, notify: notify);
       didRemove = true;
     }
     return didRemove;
@@ -1739,6 +1823,7 @@ abstract class StackRouter extends RoutingController {
     final anchorPage = _pages.lastWhereOrNull((p) => p.routeKey == anchor.key);
     if (anchorPage != null) {
       for (final candidate in List<AutoRoutePage<dynamic>>.unmodifiable(_pages).reversed) {
+        _markLeaving([candidate], .removed);
         _pages.removeLast();
         if (candidate.routeKey == anchorPage.routeKey) {
           // use the existing match id to avoid breaking child controllers
@@ -1780,6 +1865,7 @@ abstract class StackRouter extends RoutingController {
     if (kept == 0) return 0;
     final next = start + kept;
     if (next < _pages.length && _pages[next].routeKey != matches[kept].key) {
+      _markLeaving(_pages.sublist(next), .removed);
       _pages.removeRange(next, _pages.length);
     }
     return kept;
@@ -1844,7 +1930,9 @@ abstract class StackRouter extends RoutingController {
       onAccepted: () {
         // a guard may have removed it already, e.g. with redirectUntil(replace: true)
         if (replaced != null && scope._pages.any((page) => page.routeData == replaced)) {
-          scope._removeRoute(replaced._match, notify: false);
+          scope
+            .._markLeaving(scope._pages.where((page) => page.routeData == replaced), .replaced)
+            .._removeRoute(replaced._match, notify: false);
         }
         markUrlStateForReplace();
       },
@@ -1859,7 +1947,9 @@ abstract class StackRouter extends RoutingController {
   }) {
     final scope = _findStackScope(route);
     if (replace) {
-      scope._removeLast(notify: false);
+      scope
+        .._markLeaving(scope._pages.reversed.take(1), .replaced)
+        .._removeLast(notify: false);
       markUrlStateForReplace();
     }
     return scope._push<T>(route, onFailure: onFailure, onMatch: (match) => onMatch(scope, match));
@@ -1917,6 +2007,7 @@ abstract class StackRouter extends RoutingController {
   }
 
   Future<void> _replaceAllMatches(List<RouteMatch<dynamic>> matches, {required bool updateExistingRoutes}) async {
+    _markLeaving(_pages, .replaced);
     // A guard can reject the new routes; the whole batch is then rejected and the stack restored.
     final previousPages = List.of(_pages);
     final previousStackKey = _stackKey;
@@ -2086,6 +2177,7 @@ abstract class StackRouter extends RoutingController {
       if (predicate(candidate.routeData)) {
         break;
       }
+      _markLeaving([candidate], .removed);
       _removeLast(notify: false);
       didRemove = true;
     }
@@ -2127,6 +2219,9 @@ abstract class StackRouter extends RoutingController {
       final data = _createRouteData<dynamic>(match, routeData);
       _pages.add(data.buildPage());
     }
+    // The app's list builds new pages each time, so only pops are reported.
+    _pagesAtLastLeaveReport = List.of(_pages);
+    _leaveKinds.clear();
 
     navigationHistory.onNewUrlState(
       UrlState.fromSegments(root.currentSegments, shouldReplace: current == routeData),
@@ -2204,6 +2299,7 @@ abstract class StackRouter extends RoutingController {
       } else {
         // A page its guard now closes leaves its history entry to the page
         // below, as a pop does; a new entry would lead back to the guard.
+        if (match is ReevaluatableRouteMatch) _markLeaving([match.currentPage], .removed);
         if (match is ReevaluatableRouteMatch && _pages.remove(match.currentPage)) {
           markUrlStateForReplace();
         }
@@ -2369,6 +2465,11 @@ abstract class StackRouter extends RoutingController {
     OnNavigationFailure? onFailure,
     bool isReevaluating = false,
   }) async {
+    // A reevaluation takes every page off and puts back the ones its guards
+    // keep, so only the pages it closes are reported, once it ends.
+    if (isReevaluating && _leaveReportHolds == 0) {
+      return _holdingLeaveReports(() => _navigateAll<T>(routes, onFailure: onFailure, isReevaluating: true));
+    }
     // pages pushed after the stack was composed for reevaluation are not in [routes];
     // a reevaluated page may be rebuilt, so it's known by its route data
     final reevaluatedRoutes = {
@@ -2430,6 +2531,7 @@ abstract class StackRouter extends RoutingController {
   }
 
   void _reset() {
+    _markLeaving(_pages, .removed);
     _pages.clear();
     _childControllers.clear();
   }
@@ -2547,6 +2649,7 @@ abstract class StackRouter extends RoutingController {
   // the old top under the new page; otherwise each is removed from the
   // navigator here, and this router is notified.
   void _removePagesUntil(int count, {required bool withPush}) {
+    _markLeaving(_pages.reversed.take(count), withPush ? .replaced : .removed);
     for (var i = 0; i < count; i++) {
       final shownRoute = pagelessRoutesObserver.routeOf(_pages.last);
       if (!withPush) shownRoute?.navigator?.removeRoute(shownRoute);
@@ -2585,7 +2688,9 @@ abstract class StackRouter extends RoutingController {
       onFailure: onFailure,
     );
     if (scope != null) {
-      scope.router._removeLast(notify: false);
+      scope.router
+        .._markLeaving(scope.router._pages.reversed.take(1), .replaced)
+        .._removeLast(notify: false);
       markUrlStateForReplace();
       return scope.router._pushAllGuarded(scope.matches, onFailure: onFailure);
     }

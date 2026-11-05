@@ -1752,6 +1752,35 @@ class BooksListPage extends State<BookListPage> with AutoRouteAwareStateMixin<Bo
 
 The page that leaves always hears first: on a push, the covered page hears `didPushNext` before the new page hears `didPush`; on a pop, the popped page hears `didPop` before the page under it hears `didPopNext`. A page built while covered, such as the pages a deep link stacks under its top page, hears `didPush` and then `didPushNext`.
 
+### Knowing when a page is left
+
+Guards run when a page is entered. To hear when a page is left, and how, put an `AutoRouteLeaveListener` in the page. Its `onLeave` gets a `RouteLeaveKind`, once per leave, while the page is still on screen:
+
+- `popped`: back button, system back, back swipe, browser back, or `pop`, `maybePop`, `popUntil`.
+- `covered`: a page was pushed over it; it stays in the stack.
+- `replaced`: `replace`, `replaceAll`, `pushAndPopUntil` put another page in its place.
+- `removed`: a navigation to a page below or a deep link, `removeRoute`, `removeWhere`, `removeUntil`, `removeLast`, or a guard that closes it on reevaluation.
+
+```dart
+@RoutePage()
+class EditorPage extends StatelessWidget {
+  const EditorPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AutoRouteLeaveListener(
+      onLeave: (kind) {
+        if (kind == RouteLeaveKind.covered) draft.save();
+        if (kind == RouteLeaveKind.removed) draft.discard();
+      },
+      child: const EditorForm(),
+    );
+  }
+}
+```
+
+Only a pop can be refused: wrap the page in a `PopScope(canPop: false)` and ask in its `onPopInvokedWithResult`. A refused pop is never reported. The other leaves come from the app's own calls, and a guard on the route being opened can stop them. A navigation that opens the page already on top updates it in place and isn't a leave. In a router built by `AutoRouter.declarative`, only pops are reported, since the app's list decides the pages; a tab switch isn't a leave either, and `AutoRouteAware` reports it.
+
 ## Customizations
 
 ##### AutoRouterConfig

@@ -142,6 +142,7 @@ import 'route_aware_deep_link_test.dart' as route_aware_deep_link;
 import 'route_aware_in_dialog_test.dart' as route_aware_in_dialog;
 import 'route_aware_mixin_test.dart' as route_aware_mixin;
 import 'route_aware_pop_order_test.dart' as route_aware_pop_order;
+import 'route_leave_test.dart' as route_leave;
 import 'route_not_found_tree_test.dart' as route_not_found_tree;
 import 'set_query_param_test.dart' as set_query_param;
 import 'simultaneous_taps_test.dart' as simultaneous_taps;
@@ -326,6 +327,7 @@ void main() {
   group('route aware in dialog', route_aware_in_dialog.main);
   group('route aware mixin', route_aware_mixin.main);
   group('route aware pop order', route_aware_pop_order.main);
+  group('route leave', route_leave.main);
   group('route not found tree', route_not_found_tree.main);
   group('set query param', set_query_param.main);
   group('simultaneous taps', simultaneous_taps.main);
