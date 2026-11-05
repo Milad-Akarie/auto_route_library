@@ -80,14 +80,14 @@ class _FormRoute extends PageRouteInfo<void> {
 }
 
 class _InfoRouteArgs {
-  const new({this.key, required this.title});
+  const new({required this.title, this.key});
 
   final Key? key;
   final String title;
 }
 
 class _InfoRoute extends PageRouteInfo<_InfoRouteArgs> {
-  new({Key? key, required String title})
+  new({required String title, Key? key})
     : super(
         name,
         args: _InfoRouteArgs(key: key, title: title),

@@ -222,8 +222,8 @@ class UserProfilePage extends StatelessWidget {
 @RoutePage()
 class UserPostsPage extends StatelessWidget {
   const new({
-    super.key,
     @PathParam.inherit('userID') required this.id,
+    super.key,
   });
   final int id;
 

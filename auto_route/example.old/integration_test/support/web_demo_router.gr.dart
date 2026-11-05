@@ -174,7 +174,7 @@ class UserPostsRoute extends PageRouteInfo<UserPostsRouteArgs> {
       final args = data.argsAs<UserPostsRouteArgs>(
         orElse: () => UserPostsRouteArgs(),
       );
-      return UserPostsPage(key: args.key, id: pathParams.getInt('userID'));
+      return UserPostsPage(id: pathParams.getInt('userID'), key: args.key);
     },
   );
 }

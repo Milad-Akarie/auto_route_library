@@ -18,17 +18,17 @@ import 'package:material_ui/material_ui.dart' as _i3;
 /// [_i1.Venue$Page]
 class Venue$Route extends _i2.PageRouteInfo<Venue$RouteArgs> {
   Venue$Route({
+    required String user$id,
     _i3.Key? key,
     String? venue$id,
-    required String user$id,
     String? tab$name,
     List<_i2.PageRouteInfo>? children,
   }) : super(
          Venue$Route.name,
          args: Venue$RouteArgs(
+           user$id: user$id,
            key: key,
            venue$id: venue$id,
-           user$id: user$id,
            tab$name: tab$name,
          ),
          rawPathParams: {'user\$id': user$id},
@@ -50,9 +50,9 @@ class Venue$Route extends _i2.PageRouteInfo<Venue$RouteArgs> {
         ),
       );
       return _i1.Venue$Page(
+        user$id: args.user$id,
         key: args.key,
         venue$id: args.venue$id,
-        user$id: args.user$id,
         tab$name: args.tab$name,
       );
     },
@@ -61,36 +61,36 @@ class Venue$Route extends _i2.PageRouteInfo<Venue$RouteArgs> {
 
 class Venue$RouteArgs {
   const Venue$RouteArgs({
+    required this.user$id,
     this.key,
     this.venue$id,
-    required this.user$id,
     this.tab$name,
   });
+
+  final String user$id;
 
   final _i3.Key? key;
 
   final String? venue$id;
 
-  final String user$id;
-
   final String? tab$name;
 
   @override
   String toString() {
-    return 'Venue\$RouteArgs{key: $key, venue\$id: ${venue$id}, user\$id: ${user$id}, tab\$name: ${tab$name}}';
+    return 'Venue\$RouteArgs{user\$id: ${user$id}, key: $key, venue\$id: ${venue$id}, tab\$name: ${tab$name}}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! Venue$RouteArgs) return false;
-    return key == other.key &&
+    return user$id == other.user$id &&
+        key == other.key &&
         venue$id == other.venue$id &&
-        user$id == other.user$id &&
         tab$name == other.tab$name;
   }
 
   @override
   int get hashCode =>
-      key.hashCode ^ venue$id.hashCode ^ user$id.hashCode ^ tab$name.hashCode;
+      user$id.hashCode ^ key.hashCode ^ venue$id.hashCode ^ tab$name.hashCode;
 }

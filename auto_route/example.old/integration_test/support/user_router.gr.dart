@@ -30,13 +30,13 @@ class UserHomeRoute extends PageRouteInfo<void> {
 /// [UserProfileView]
 class UserProfileRoute extends PageRouteInfo<UserProfileRouteArgs> {
   UserProfileRoute({
-    Key? key,
     required UserId id,
+    Key? key,
     UserId? by,
     List<PageRouteInfo>? children,
   }) : super(
          UserProfileRoute.name,
-         args: UserProfileRouteArgs(key: key, id: id, by: by),
+         args: UserProfileRouteArgs(id: id, key: key, by: by),
          rawPathParams: {'id': userIdConverter.toParam(id)},
          rawQueryParams: {
            'by': by == null ? null : userIdConverter.toParam(by),
@@ -57,32 +57,32 @@ class UserProfileRoute extends PageRouteInfo<UserProfileRouteArgs> {
           by: queryParams.optTyped<UserId>('by', userIdConverter),
         ),
       );
-      return UserProfileView(key: args.key, id: args.id, by: args.by);
+      return UserProfileView(id: args.id, key: args.key, by: args.by);
     },
   );
 }
 
 class UserProfileRouteArgs {
-  const UserProfileRouteArgs({this.key, required this.id, this.by});
-
-  final Key? key;
+  const UserProfileRouteArgs({required this.id, this.key, this.by});
 
   final UserId id;
+
+  final Key? key;
 
   final UserId? by;
 
   @override
   String toString() {
-    return 'UserProfileRouteArgs{key: $key, id: $id, by: $by}';
+    return 'UserProfileRouteArgs{id: $id, key: $key, by: $by}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! UserProfileRouteArgs) return false;
-    return key == other.key && id == other.id && by == other.by;
+    return id == other.id && key == other.key && by == other.by;
   }
 
   @override
-  int get hashCode => key.hashCode ^ id.hashCode ^ by.hashCode;
+  int get hashCode => id.hashCode ^ key.hashCode ^ by.hashCode;
 }

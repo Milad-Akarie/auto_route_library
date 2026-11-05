@@ -7,9 +7,9 @@ import 'package:material_ui/material_ui.dart';
 @RoutePage()
 class Venue$Page extends StatelessWidget {
   const new({
+    @PathParam() required this.user$id,
     super.key,
     this.venue$id,
-    @PathParam() required this.user$id,
     @QueryParam() this.tab$name,
   });
 

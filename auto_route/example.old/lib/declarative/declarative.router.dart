@@ -91,7 +91,7 @@ class _MainScreenState extends State<MainScreen> {
 
 @RoutePage()
 class NameInputScreen extends StatefulWidget {
-  const new({super.key, required this.onNameSubmitted});
+  const new({required this.onNameSubmitted, super.key});
   final ValueChanged<String> onNameSubmitted;
 
   @override
@@ -136,7 +136,7 @@ class _NameInputScreenState extends State<NameInputScreen> {
 // age submit page
 @RoutePage()
 class AgeInputScreen extends StatefulWidget {
-  const new({super.key, required this.onAgeSubmitted});
+  const new({required this.onAgeSubmitted, super.key});
   final ValueChanged<int> onAgeSubmitted;
 
   @override
@@ -180,7 +180,7 @@ class _AgeInputScreenState extends State<AgeInputScreen> {
 
 @RoutePage()
 class ResultScreen extends StatelessWidget {
-  const new({super.key, required this.profile, required this.onReset});
+  const new({required this.profile, required this.onReset, super.key});
   final Profile profile;
   final VoidCallback onReset;
 

@@ -31,7 +31,7 @@ class BooksDB {
 }
 
 class BooksDBProvider extends InheritedWidget {
-  new({super.key, required super.child});
+  new({required super.child, super.key});
   final booksDb = BooksDB();
 
   @override
@@ -92,7 +92,7 @@ class User {
 }
 
 class UsersDBProvider extends InheritedWidget {
-  new({super.key, required super.child});
+  new({required super.child, super.key});
   final usersDB = UsersDB();
 
   @override

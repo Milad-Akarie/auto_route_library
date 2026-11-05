@@ -239,8 +239,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
 // ignore: avoid-unnecessary-stateful-widgets
 class UserPostsPage extends StatefulWidget {
   const new({
-    super.key,
     @PathParam.inherit('userID') required this.id,
+    super.key,
   });
   final int id;
 
