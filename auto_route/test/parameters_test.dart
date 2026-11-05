@@ -198,7 +198,7 @@ void main() {
     () {
       const params = Parameters({'yes': true, 'no': false});
       expect(params.optBool('yes'), true);
-      expect(params.optBool('no', true), false);
+      expect(params.optBool('no', defaultValue: true), false);
       expect(params.getBool('yes'), true);
       expect(params.getBool('no'), false);
     },
@@ -217,9 +217,9 @@ void main() {
       expect(params.optBool('a'), true);
       expect(params.optBool('b'), false);
       expect(params.optBool('c'), null);
-      expect(params.optBool('c', true), true);
+      expect(params.optBool('c', defaultValue: true), true);
       expect(params.optBool('d'), null);
-      expect(params.optBool('missing', false), false);
+      expect(params.optBool('missing', defaultValue: false), false);
       expect(
         () => params.getBool('c'),
         throwsA(isA<MissingRequiredParameterError>()),

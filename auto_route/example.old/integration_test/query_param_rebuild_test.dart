@@ -45,7 +45,10 @@ void main() {
                       page: PageInfo(
                         'ParamRoute',
                         builder: (data) => _ParamPage(
-                          isParamSet: data.queryParams.getBool('param', false),
+                          isParamSet: data.queryParams.getBool(
+                            'param',
+                            defaultValue: false,
+                          ),
                         ),
                       ),
                     ),

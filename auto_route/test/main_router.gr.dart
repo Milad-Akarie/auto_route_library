@@ -388,7 +388,7 @@ class TabsHostRoute extends PageRouteInfo<TabsHostRouteArgs> {
           tabsType: queryParams.getString('tabsType', 'IndexedStack'),
           shouldUseDefaultRoutes: queryParams.getBool(
             'shouldUseDefaultRoutes',
-            false,
+            defaultValue: false,
           ),
         ),
       );

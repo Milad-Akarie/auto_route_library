@@ -106,6 +106,12 @@ final class _GetterParam extends UrlParamType {
     final method = name == null
         ? 'get'
         : '${type.isNullable ? 'opt' : 'get'}$name';
+    // optBool and getBool take their default by name.
+    if (name == 'Bool' && defaultValue != null) {
+      return params
+          .property(method)
+          .call([key], {'defaultValue': defaultValue});
+    }
     return params.property(method).call([key, ?defaultValue]);
   }
 

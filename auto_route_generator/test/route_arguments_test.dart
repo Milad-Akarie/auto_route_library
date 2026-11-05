@@ -162,7 +162,10 @@ required this.url,
         result.source,
         contains("queryParams.getString('filter', 'none')"),
       );
-      expect(result.source, contains("queryParams.getBool('update', false)"));
+      expect(
+        result.source,
+        contains("queryParams.getBool('update', defaultValue: false)"),
+      );
     });
   });
 
