@@ -17,7 +17,7 @@ void main() {
           initial: true,
           children: [
             AutoRoute(path: '', page: _page('FeedRoute')),
-            AutoRoute(path: 'wallet', page: _page('WalletRoute'), guards: [_SlowGuard()]),
+            AutoRoute(path: 'wallet', page: _page('WalletRoute'), guards: const [_SlowGuard()]),
           ],
         ),
         AutoRoute(path: '/sign-in', page: _page('SignInRoute')),
@@ -78,6 +78,8 @@ void main() {
 PageInfo _page(String name) => .new(name, builder: (_) => Text(name));
 
 class _SlowGuard extends AutoRouteGuard {
+  const _SlowGuard();
+
   @override
   Future<void> onNavigation(NavigationResolver resolver, StackRouter router) async {
     await Future<void>.delayed(const Duration(seconds: 2));

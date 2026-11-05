@@ -51,7 +51,7 @@ void main() {
 
 /// Runs [body] against [matcher], reporting microseconds per run.
 class _Benchmark extends BenchmarkBase {
-  _Benchmark(super.name, this.matcher, this.body);
+  const _Benchmark(super.name, this.matcher, this.body);
 
   final RouteMatcher matcher;
   final Object? Function(RouteMatcher matcher) body;

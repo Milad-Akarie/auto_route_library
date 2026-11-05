@@ -44,7 +44,7 @@ void main() {
         NamedRouteDef(
           name: 'ExploreRoute',
           path: '/explore',
-          guards: [_ToSchoolsGuard()],
+          guards: const [_ToSchoolsGuard()],
           builder: (_, _) => const AutoRouter(),
           children: [NamedRouteDef(name: 'SchoolsRoute', path: 'schools', builder: (_, _) => page('schools'))],
         ),
@@ -58,6 +58,8 @@ void main() {
 }
 
 class _ToSchoolsGuard extends AutoRouteGuard {
+  const _ToSchoolsGuard();
+
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
     if (resolver.route.stringMatch == 'explore' || resolver.route.children?.isEmpty != false) {

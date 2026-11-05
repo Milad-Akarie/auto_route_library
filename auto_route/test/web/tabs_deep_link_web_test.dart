@@ -30,7 +30,7 @@ void main() {
           page: _tabsPage,
           path: '/',
           initial: true,
-          guards: [_LateGuard()],
+          guards: const [_LateGuard()],
           children: [
             AutoRoute(page: _page('HomeRoute'), path: 'home'),
             AutoRoute(
@@ -80,6 +80,8 @@ final _tabsPage = PageInfo(
 
 // Lets the app in a moment later, as a guard checking sign-in does.
 class _LateGuard extends AutoRouteGuard {
+  const _LateGuard();
+
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
     unawaited(Future.delayed(const Duration(milliseconds: 20), () => resolver.next()));

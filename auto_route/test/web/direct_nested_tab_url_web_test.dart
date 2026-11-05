@@ -18,17 +18,17 @@ void main() {
         AutoRoute(
           path: '/merchants',
           page: _shell('MerchantsRoute'),
-          guards: [_AllowGuard()],
+          guards: const [_AllowGuard()],
           children: [
-            AutoRoute(path: '', page: _page('MerchantsListRoute'), guards: [_AllowGuard()], initial: true),
+            AutoRoute(path: '', page: _page('MerchantsListRoute'), guards: const [_AllowGuard()], initial: true),
             AutoRoute(
               path: ':id',
               page: _MerchantRoute.page,
-              guards: [_AllowGuard()],
+              guards: const [_AllowGuard()],
               children: [
-                AutoRoute(path: 'dashboard', page: _page('DashboardRoute'), guards: [_AllowGuard()]),
-                AutoRoute(path: 'purchases', page: _page('PurchasesRoute'), guards: [_AllowGuard()]),
-                AutoRoute(path: 'profile', page: _page('ProfileRoute'), guards: [_AllowGuard()]),
+                AutoRoute(path: 'dashboard', page: _page('DashboardRoute'), guards: const [_AllowGuard()]),
+                AutoRoute(path: 'purchases', page: _page('PurchasesRoute'), guards: const [_AllowGuard()]),
+                AutoRoute(path: 'profile', page: _page('ProfileRoute'), guards: const [_AllowGuard()]),
               ],
             ),
           ],
@@ -65,6 +65,8 @@ void main() {
 }
 
 class _AllowGuard extends AutoRouteGuard {
+  const _AllowGuard();
+
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) => resolver.next();
 }
