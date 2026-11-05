@@ -2,17 +2,10 @@ import 'dart:async';
 
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
+import 'package:auto_route_generator/src/builders/build_step_primary_output.dart';
 import 'package:build/build.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:source_gen/source_gen.dart';
-
-/// The output a builder with one output writes.
-extension BuildStepPrimaryOutput on BuildStep {
-  /// The first of [BuildStep.allowedOutputs], failing with a message that
-  /// names the input when the builder has none.
-  AssetId get primaryOutput =>
-      allowedOutputs.firstOrNull ?? (throw StateError('${inputId.path} has no allowed output to write.'));
-}
 
 /// A comment configuring `dart_style` to use the default code width so no
 /// configuration discovery is required.

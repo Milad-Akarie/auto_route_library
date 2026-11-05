@@ -1,9 +1,10 @@
 import 'dart:core';
 
+import 'package:auto_route_generator/src/code_builder/iterable_x.dart';
 import 'package:auto_route_generator/src/code_builder/library_builder.dart';
+import 'package:auto_route_generator/src/models/param_config.dart';
 import 'package:auto_route_generator/src/models/resolved_type.dart';
 import 'package:auto_route_generator/src/models/route_config.dart';
-import 'package:auto_route_generator/src/models/route_parameter_config.dart';
 import 'package:auto_route_generator/src/models/router_config.dart';
 import 'package:code_builder/code_builder.dart';
 
@@ -480,16 +481,3 @@ Expression _getUrlPartAssignment(ParamConfig p) {
 
 /// The value a url parameter puts in the url.
 Expression _getUrlPartValue(ParamConfig p) => p.urlType?.write(refer(p.name), p.type) ?? refer(p.name);
-
-extension _IterableX<T> on Iterable<T> {
-  Iterable<T> insertBetween(T element) sync* {
-    final iterator = this.iterator;
-    if (iterator.moveNext()) {
-      yield iterator.current;
-      while (iterator.moveNext()) {
-        yield element;
-        yield iterator.current;
-      }
-    }
-  }
-}

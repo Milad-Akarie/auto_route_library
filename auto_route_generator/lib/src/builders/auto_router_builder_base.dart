@@ -6,6 +6,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route_generator/build_utils.dart';
 import 'package:auto_route_generator/src/builders/auto_route_builder.dart';
+import 'package:auto_route_generator/src/builders/build_step_primary_output.dart';
 import 'package:auto_route_generator/src/builders/cache_aware_builder.dart';
 import 'package:auto_route_generator/src/code_builder/library_builder.dart';
 import 'package:auto_route_generator/src/models/route_config.dart';

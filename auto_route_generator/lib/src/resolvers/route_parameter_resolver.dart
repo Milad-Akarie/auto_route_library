@@ -5,7 +5,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route_generator/build_utils.dart';
-import 'package:auto_route_generator/src/models/route_parameter_config.dart';
+import 'package:auto_route_generator/src/models/param_config.dart';
 import 'package:auto_route_generator/src/models/url_param_type.dart';
 import 'package:auto_route_generator/src/resolvers/type_resolver.dart';
 import 'package:source_gen/source_gen.dart';

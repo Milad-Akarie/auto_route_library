@@ -317,9 +317,10 @@ class Range {
         ),
       });
       expect(result.errors, hasLength(1));
-      expect(result.errors, [
+      expect(
+        result.errors.join(),
         allOf(contains('a List query param can hold String, int, double, num, bool or enum'), contains('not Color')),
-      ]);
+      );
     });
 
     test('of ints as a path param is a build error', () async {
@@ -352,12 +353,13 @@ class Range {
         ),
       });
       expect(result.errors, hasLength(1));
-      expect(result.errors, [
+      expect(
+        result.errors.join(),
         allOf(
           contains('Parameter [mode] must be of a type that can be parsed from a [String]'),
           contains('valid types: [String, int, double, num, bool, dynamic]'),
         ),
-      ]);
+      );
     });
   });
   // #1305: a page that takes a model from another library, as in "pass User

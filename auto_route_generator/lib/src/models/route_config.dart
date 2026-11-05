@@ -1,5 +1,5 @@
+import 'package:auto_route_generator/src/models/param_config.dart';
 import 'package:auto_route_generator/src/models/resolved_type.dart';
-import 'package:auto_route_generator/src/models/route_parameter_config.dart';
 import 'package:auto_route_generator/utils.dart';
 import 'package:code_builder/code_builder.dart' show TypeReference;
 
