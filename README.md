@@ -1562,6 +1562,23 @@ AutoRouteGuard.simple((resolver, router) {
 
 **Note:** a global guard runs for the route it redirects to as well, so let that route through, as both examples do.
 
+#### Reading the widget tree in a guard
+
+`resolver.context` is the context of the router that runs the guard, so a guard can read what's provided above that router, such as a widget wrapped around `MaterialApp.router`, or around the `AutoRouter` of the parent page for a nested route:
+
+```dart
+AutoRouteGuard.simple((resolver, router) {
+  final session = SessionScope.of(resolver.context);
+  if (session.isSignedIn || resolver.routeName == LoginRoute.name) {
+    resolver.next();
+  } else {
+    resolver.redirectUntil(const LoginRoute());
+  }
+})
+```
+
+The context is there once the router's widget is built, and the guard of the app's first page already runs after that. A navigation started before then, such as a `push` before `runApp`, runs its guards without one: reading `resolver.context` there fails, in a debug build with `Router is not mounted`.
+
 ### Using a Reevaluate Listenable
 
 Route guards can prevent users from accessing private pages until they're logged in, but auth state may change when the user is already navigated to the private page, to make sure private pages are only accessed by logged-in users all the time, we need a listenable that tells the router that the auth state has changed and you need to re-evaluate your stack.
