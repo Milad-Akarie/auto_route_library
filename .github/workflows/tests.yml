@@ -49,6 +49,9 @@ jobs:
       - name: Committed routers regenerate unchanged
         if: success() || failure()
         run: .github/scripts/check_generated_routers.sh
+      - name: Every lint rule is on and nothing is ignored
+        if: success() || failure()
+        run: bash .github/scripts/check_lint_rules_on.sh
 
   generator:
     name: Generator tests
