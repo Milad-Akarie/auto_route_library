@@ -14,7 +14,8 @@ import 'bool_query_param_test.dart' as bool_query_param;
 import 'camel_case_path_test.dart' as camel_case_path;
 import 'current_hierarchy_test.dart' as current_hierarchy;
 import 'current_url_test.dart' as current_url;
-import 'custom_route_barrier_dismissible_test.dart' as custom_route_barrier_dismissible;
+import 'custom_route_barrier_dismissible_test.dart'
+    as custom_route_barrier_dismissible;
 import 'custom_route_current_result_test.dart' as custom_route_current_result;
 import 'custom_route_query_params_test.dart' as custom_route_query_params;
 import 'custom_route_swipe_back_test.dart' as custom_route_swipe_back;
@@ -27,7 +28,8 @@ import 'declarative_routes_update_test.dart' as declarative_routes_update;
 import 'deep_link_parent_build_test.dart' as deep_link_parent_build;
 import 'deferred_and_eager_page_test.dart' as deferred_and_eager_page;
 import 'deferred_page_popped_test.dart' as deferred_page_popped;
-import 'dialog_args_route_information_test.dart' as dialog_args_route_information;
+import 'dialog_args_route_information_test.dart'
+    as dialog_args_route_information;
 import 'dialog_then_page_animates_test.dart' as dialog_then_page_animates;
 import 'dialog_then_page_pop_test.dart' as dialog_then_page_pop;
 import 'disposed_nested_router_test.dart' as disposed_nested_router;
@@ -45,7 +47,8 @@ import 'hero_nested_router_test.dart' as hero_nested_router;
 import 'home_index_back_test.dart' as home_index_back;
 import 'host_back_button_test.dart' as host_back_button;
 import 'hot_reload_routes_test.dart' as hot_reload_routes;
-import 'indexed_stack_curved_animation_test.dart' as indexed_stack_curved_animation;
+import 'indexed_stack_curved_animation_test.dart'
+    as indexed_stack_curved_animation;
 import 'inherited_id_child_test.dart' as inherited_id_child;
 import 'inherited_order_id_test.dart' as inherited_order_id;
 import 'keep_history_test.dart' as keep_history;
@@ -60,7 +63,8 @@ import 'moved_router_keeps_pages_test.dart' as moved_router_keeps_pages;
 import 'navigate_absolute_path_test.dart' as navigate_absolute_path;
 import 'navigate_after_dialog_test.dart' as navigate_after_dialog;
 import 'navigate_awaits_test.dart' as navigate_awaits;
-import 'navigate_inherited_path_params_test.dart' as navigate_inherited_path_params;
+import 'navigate_inherited_path_params_test.dart'
+    as navigate_inherited_path_params;
 import 'navigate_nested_update_test.dart' as navigate_nested_update;
 import 'navigate_over_pageless_route_test.dart' as navigate_over_pageless_route;
 import 'navigate_root_from_nested_test.dart' as navigate_root_from_nested;
@@ -80,7 +84,8 @@ import 'non_ascii_url_test.dart' as non_ascii_url;
 import 'optional_args_on_back_test.dart' as optional_args_on_back;
 import 'overlapping_reevaluation_test.dart' as overlapping_reevaluation;
 import 'override_args_on_reevaluate_test.dart' as override_args_on_reevaluate;
-import 'override_children_on_reevaluate_test.dart' as override_children_on_reevaluate;
+import 'override_children_on_reevaluate_test.dart'
+    as override_children_on_reevaluate;
 import 'page_semantics_identifier_test.dart' as page_semantics_identifier;
 import 'page_view_swipe_back_test.dart' as page_view_swipe_back;
 import 'page_view_zero_duration_test.dart' as page_view_zero_duration;
@@ -89,7 +94,8 @@ import 'param_converter_test.dart' as param_converter;
 import 'parent_pages_build_test.dart' as parent_pages_build;
 import 'pop_and_back_test.dart' as pop_and_back;
 import 'pop_and_push_all_test.dart' as pop_and_push_all;
-import 'pop_and_push_from_animating_modal_test.dart' as pop_and_push_from_animating_modal;
+import 'pop_and_push_from_animating_modal_test.dart'
+    as pop_and_push_from_animating_modal;
 import 'pop_right_after_push_test.dart' as pop_right_after_push;
 import 'pop_scope_once_test.dart' as pop_scope_once;
 import 'pop_scope_test.dart' as pop_scope;
@@ -97,7 +103,8 @@ import 'pop_until_hides_middle_test.dart' as pop_until_hides_middle;
 import 'pop_until_missing_route_test.dart' as pop_until_missing_route;
 import 'pop_while_reevaluating_test.dart' as pop_while_reevaluating;
 import 'popped_args_released_test.dart' as popped_args_released;
-import 'predictive_back_nested_under_root_test.dart' as predictive_back_nested_under_root;
+import 'predictive_back_nested_under_root_test.dart'
+    as predictive_back_nested_under_root;
 import 'prefix_matches_nested_test.dart' as prefix_matches_nested;
 import 'prefix_matches_tabs_test.dart' as prefix_matches_tabs;
 import 'push_all_nested_routes_test.dart' as push_all_nested_routes;
@@ -169,7 +176,8 @@ import 'tab_shared_parent_url_test.dart' as tab_shared_parent_url;
 import 'tab_shared_route_navigate_test.dart' as tab_shared_route_navigate;
 import 'tab_view_page_controller_test.dart' as tab_view_page_controller;
 import 'tabs_deep_link_test.dart' as tabs_deep_link;
-import 'tabs_page_view_page_controller_test.dart' as tabs_page_view_page_controller;
+import 'tabs_page_view_page_controller_test.dart'
+    as tabs_page_view_page_controller;
 import 'tabs_pop_scope_test.dart' as tabs_pop_scope;
 import 'tabs_scaffold_build_count_test.dart' as tabs_scaffold_build_count;
 import 'tabs_url_without_initial_test.dart' as tabs_url_without_initial;
@@ -206,7 +214,10 @@ void main() {
   group('camel case path', camel_case_path.main);
   group('current hierarchy', current_hierarchy.main);
   group('current url', current_url.main);
-  group('custom route barrier dismissible', custom_route_barrier_dismissible.main);
+  group(
+    'custom route barrier dismissible',
+    custom_route_barrier_dismissible.main,
+  );
   group('custom route current result', custom_route_current_result.main);
   group('custom route query params', custom_route_query_params.main);
   group('custom route swipe back', custom_route_swipe_back.main);
@@ -272,7 +283,10 @@ void main() {
   group('optional args on back', optional_args_on_back.main);
   group('overlapping reevaluation', overlapping_reevaluation.main);
   group('override args on reevaluate', override_args_on_reevaluate.main);
-  group('override children on reevaluate', override_children_on_reevaluate.main);
+  group(
+    'override children on reevaluate',
+    override_children_on_reevaluate.main,
+  );
   group('page semantics identifier', page_semantics_identifier.main);
   group('page view swipe back', page_view_swipe_back.main);
   group('page view zero duration', page_view_zero_duration.main);
@@ -281,7 +295,10 @@ void main() {
   group('parent pages build', parent_pages_build.main);
   group('pop and back', pop_and_back.main);
   group('pop and push all', pop_and_push_all.main);
-  group('pop and push from animating modal', pop_and_push_from_animating_modal.main);
+  group(
+    'pop and push from animating modal',
+    pop_and_push_from_animating_modal.main,
+  );
   group('pop right after push', pop_right_after_push.main);
   group('pop scope once', pop_scope_once.main);
   group('pop scope', pop_scope.main);
@@ -289,7 +306,10 @@ void main() {
   group('pop until missing route', pop_until_missing_route.main);
   group('pop while reevaluating', pop_while_reevaluating.main);
   group('popped args released', popped_args_released.main);
-  group('predictive back nested under root', predictive_back_nested_under_root.main);
+  group(
+    'predictive back nested under root',
+    predictive_back_nested_under_root.main,
+  );
   group('prefix matches nested', prefix_matches_nested.main);
   group('prefix matches tabs', prefix_matches_tabs.main);
   group('push all nested routes', push_all_nested_routes.main);

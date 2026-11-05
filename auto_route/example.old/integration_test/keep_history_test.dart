@@ -28,7 +28,9 @@ void main() {
   // Steps: open FirstRoute, which has keepHistory: false, then push SecondRoute.
   // Should: FirstRoute leaves the stack, and on web SecondRoute takes its
   // browser entry instead of adding one.
-  testWidgets('Pushing from a page without history replaces it', (tester) async {
+  testWidgets('Pushing from a page without history replaces it', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     await expectBrowserUrl('/');
     final entryBefore = browserEntryIndex();
@@ -43,7 +45,9 @@ void main() {
   // Steps: open FirstRoute, which has keepHistory: false, then replaceAll with
   // SecondRoute, as a splash screen does.
   // Should: on web SecondRoute takes FirstRoute's browser entry.
-  testWidgets('replaceAll from a page without history replaces its entry', (tester) async {
+  testWidgets('replaceAll from a page without history replaces its entry', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     await expectBrowserUrl('/');
     final entryBefore = browserEntryIndex();

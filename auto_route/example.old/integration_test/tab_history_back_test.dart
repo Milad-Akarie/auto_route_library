@@ -20,7 +20,10 @@ import 'support/tab_history_router.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  Future<TabsRouter> pumpApp(WidgetTester tester, {bool overFirstPage = false}) async {
+  Future<TabsRouter> pumpApp(
+    WidgetTester tester, {
+    bool overFirstPage = false,
+  }) async {
     final router = buildTabHistoryRouter(overFirstPage: overFirstPage);
     await pumpRouterApp(tester, router);
     if (overFirstPage) {
@@ -40,29 +43,35 @@ void main() {
     expect(find.text(tabHistoryTabNames[index]), findsOneWidget);
   }
 
-  testWidgets('system back after tabs 0, 2, 1 shows 2, then 0, then the page under the tabs', (tester) async {
-    final tabs = await pumpApp(tester, overFirstPage: true);
+  testWidgets(
+    'system back after tabs 0, 2, 1 shows 2, then 0, then the page under the tabs',
+    (tester) async {
+      final tabs = await pumpApp(tester, overFirstPage: true);
 
-    await systemBack(tester);
-    expectTab(tabs, 2);
-    await systemBack(tester);
-    expectTab(tabs, 0);
-    await systemBack(tester);
-    expect(find.text(tabHistoryFirstPageName), findsOneWidget);
-    expect(find.text(tabHistoryTabNames[0]), findsNothing);
-  });
+      await systemBack(tester);
+      expectTab(tabs, 2);
+      await systemBack(tester);
+      expectTab(tabs, 0);
+      await systemBack(tester);
+      expect(find.text(tabHistoryFirstPageName), findsOneWidget);
+      expect(find.text(tabHistoryTabNames[0]), findsNothing);
+    },
+  );
 
-  testWidgets('system back after tabs 0, 2, 1 on the first page shows 2, then 0, then lets the app close', (
-    tester,
-  ) async {
-    final tabs = await pumpApp(tester);
-    expect(await androidSendsBackToFlutter(), anyOf(isNull, isTrue));
+  testWidgets(
+    'system back after tabs 0, 2, 1 on the first page shows 2, then 0, then lets the app close',
+    (
+      tester,
+    ) async {
+      final tabs = await pumpApp(tester);
+      expect(await androidSendsBackToFlutter(), anyOf(isNull, isTrue));
 
-    await systemBack(tester);
-    expectTab(tabs, 2);
-    expect(await androidSendsBackToFlutter(), anyOf(isNull, isTrue));
-    await systemBack(tester);
-    expectTab(tabs, 0);
-    expect(await androidSendsBackToFlutter(), anyOf(isNull, isFalse));
-  });
+      await systemBack(tester);
+      expectTab(tabs, 2);
+      expect(await androidSendsBackToFlutter(), anyOf(isNull, isTrue));
+      await systemBack(tester);
+      expectTab(tabs, 0);
+      expect(await androidSendsBackToFlutter(), anyOf(isNull, isFalse));
+    },
+  );
 }

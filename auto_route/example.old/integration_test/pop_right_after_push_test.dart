@@ -24,11 +24,14 @@ void main() {
     );
   });
 
-  List<String> names() => router.stack.map((page) => page.routeData.name).toList();
+  List<String> names() =>
+      router.stack.map((page) => page.routeData.name).toList();
 
   // Steps: on A, tap a button that calls push(B) then pop().
   // Should: B is popped and A stays, with no exception.
-  testWidgets("The reporter's button: push then pop on the first page", (tester) async {
+  testWidgets("The reporter's button: push then pop on the first page", (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
 
     await tester.tap(find.text('Push and pop'));
@@ -40,7 +43,9 @@ void main() {
 
   // Steps: open A, then C; tap C's button, which calls push(B) then pop().
   // Should: the stack is [A, C] again, with C on screen.
-  testWidgets('push then pop over a pushed page leaves that page', (tester) async {
+  testWidgets('push then pop over a pushed page leaves that page', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     unawaited(router.push(const PageRouteInfo('C')));
     await tester.pumpAndSettle();

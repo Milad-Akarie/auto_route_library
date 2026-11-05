@@ -57,7 +57,9 @@ void main() {
   // Steps: start on FirstRoute, push SecondRoute, push ThirdRoute, call back(),
   // push ThirdRoute again, then call back().
   // Should: the second ThirdRoute is recorded, so back() lands on SecondRoute.
-  testWidgets('A page pushed after back() is recorded in the history', (tester) async {
+  testWidgets('A page pushed after back() is recorded in the history', (
+    tester,
+  ) async {
     await pushSecondThenThird(tester);
 
     router.back();
@@ -75,7 +77,10 @@ void main() {
     await expectBrowserUrl('/second-route');
     await tester.pumpAndSettle();
     expectCurrentPage(router, SecondRoute.name);
-    expect(router.stack.map((p) => p.name), [FirstRoute.name, SecondRoute.name]);
+    expect(router.stack.map((p) => p.name), [
+      FirstRoute.name,
+      SecondRoute.name,
+    ]);
     if (!kIsWeb) expect(router.navigationHistory.length, 2);
   });
 }

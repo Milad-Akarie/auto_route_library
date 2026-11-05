@@ -103,7 +103,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   // ),
                 ),
                 body: child,
-                bottomNavigationBar: buildBottomNav(context, context.tabsRouter),
+                bottomNavigationBar: buildBottomNav(
+                  context,
+                  context.tabsRouter,
+                ),
               );
             },
           );

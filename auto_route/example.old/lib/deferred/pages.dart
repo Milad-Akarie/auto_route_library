@@ -9,7 +9,8 @@ class DeferredFirstPage extends StatelessWidget {
   const DeferredFirstPage({super.key});
 
   @override
-  Widget build(BuildContext context) => const Scaffold(body: Text('First page'));
+  Widget build(BuildContext context) =>
+      const Scaffold(body: Text('First page'));
 }
 
 @RoutePage()
@@ -17,5 +18,6 @@ class DeferredSecondPage extends StatelessWidget {
   const DeferredSecondPage({super.key});
 
   @override
-  Widget build(BuildContext context) => const Scaffold(body: Text('Second page'));
+  Widget build(BuildContext context) =>
+      const Scaffold(body: Text('Second page'));
 }

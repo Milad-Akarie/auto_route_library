@@ -15,32 +15,36 @@ void main() {
   // does on web, so the stack is rebuilt as [Page1, Page2]; then swipe back
   // from the left edge. Both pages hold a Hero with transitionOnUserGestures.
   // Should: Page1 shows, with no error.
-  testWidgets('With includePrefixMatches, swiping back from a deep link animates a Hero without an error', (
-    tester,
-  ) async {
-    final router = RootStackRouter.build(
-      defaultRouteType: const RouteType.cupertino(),
-      routes: [
-        AutoRoute(page: _page1, path: '/'),
-        AutoRoute(page: _page2, path: '/second'),
-      ],
-    );
-    await pumpRouterConfigApp(
+  testWidgets(
+    'With includePrefixMatches, swiping back from a deep link animates a Hero without an error',
+    (
       tester,
-      router.config(
-        includePrefixMatches: true,
-        deepLinkBuilder: (link) => link.initial ? const DeepLink.path('/second') : link,
-      ),
-    );
-    expect(router.stack.map((p) => p.name), ['Page1Route', 'Page2Route']);
-    expect(find.text('Page 2'), findsOneWidget);
+    ) async {
+      final router = RootStackRouter.build(
+        defaultRouteType: const RouteType.cupertino(),
+        routes: [
+          AutoRoute(page: _page1, path: '/'),
+          AutoRoute(page: _page2, path: '/second'),
+        ],
+      );
+      await pumpRouterConfigApp(
+        tester,
+        router.config(
+          includePrefixMatches: true,
+          deepLinkBuilder: (link) =>
+              link.initial ? const DeepLink.path('/second') : link,
+        ),
+      );
+      expect(router.stack.map((p) => p.name), ['Page1Route', 'Page2Route']);
+      expect(find.text('Page 2'), findsOneWidget);
 
-    await swipeBack(tester);
-    expect(tester.takeException(), isNull);
-    expect(router.stack.map((p) => p.name), ['Page1Route']);
-    expect(find.text('Page 1'), findsOneWidget);
-    await expectBrowserUrl('/');
-  });
+      await swipeBack(tester);
+      expect(tester.takeException(), isNull);
+      expect(router.stack.map((p) => p.name), ['Page1Route']);
+      expect(find.text('Page 1'), findsOneWidget);
+      await expectBrowserUrl('/');
+    },
+  );
 }
 
 final PageInfo _page1 = _heroPage('Page1Route', 'Page 1');
@@ -50,7 +54,11 @@ PageInfo _heroPage(String name, String label) => .new(
   name,
   builder: (_) => Scaffold(
     body: Center(
-      child: Hero(tag: #tag, transitionOnUserGestures: true, child: Text(label)),
+      child: Hero(
+        tag: #tag,
+        transitionOnUserGestures: true,
+        child: Text(label),
+      ),
     ),
   ),
 );

@@ -17,7 +17,11 @@ void main() {
       defaultRouteType: const RouteType.adaptive(),
       routes: [
         AutoRoute(path: '/', page: _First1Route.page),
-        CustomRoute(path: '/modal', page: _Modal1Route.page, customRouteBuilder: _modalSheetBuilder),
+        CustomRoute(
+          path: '/modal',
+          page: _Modal1Route.page,
+          customRouteBuilder: _modalSheetBuilder,
+        ),
       ],
     );
   });
@@ -40,13 +44,24 @@ void main() {
       await tester.tap(find.text('Test'));
       await tester.pumpAndSettle();
     }
-    expect(router.stack.map((p) => p.name), [_First1Route.name, _First1Route.name]);
+    expect(router.stack.map((p) => p.name), [
+      _First1Route.name,
+      _First1Route.name,
+    ]);
     expect(find.text('Test'), findsNothing);
   });
 }
 
-Route<T> _modalSheetBuilder<T>(BuildContext _, Widget child, AutoRoutePage<T> page) {
-  return ModalBottomSheetRoute(settings: page, builder: (context) => child, isScrollControlled: true);
+Route<T> _modalSheetBuilder<T>(
+  BuildContext _,
+  Widget child,
+  AutoRoutePage<T> page,
+) {
+  return ModalBottomSheetRoute(
+    settings: page,
+    builder: (context) => child,
+    isScrollControlled: true,
+  );
 }
 
 class _First1Route extends PageRouteInfo<void> {

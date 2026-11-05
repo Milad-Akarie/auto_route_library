@@ -29,14 +29,20 @@ void main() {
   });
 
   // The pages on screen, bottom to top.
-  List<String> shown() =>
-      ['HomeRoute', 'BRoute', 'CRoute', 'DRoute'].where((name) => find.text(name).evaluate().isNotEmpty).toList();
+  List<String> shown() => [
+    'HomeRoute',
+    'BRoute',
+    'CRoute',
+    'DRoute',
+  ].where((name) => find.text(name).evaluate().isNotEmpty).toList();
 
   // Steps: open HomeRoute, BRoute and CRoute, then call pushAndPopUntil(DRoute)
   // with a predicate that keeps HomeRoute, and look at every frame while DRoute
   // slides in.
   // Should: only CRoute shows under DRoute, then DRoute alone; back goes to HomeRoute.
-  testWidgets('pushAndPopUntil never shows the pages it removes', (tester) async {
+  testWidgets('pushAndPopUntil never shows the pages it removes', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     unawaited(router.push(const PageRouteInfo('BRoute')));
     await tester.pumpAndSettle();
@@ -55,7 +61,9 @@ void main() {
       frames.add(shown());
     }
     expect(
-      frames.where((frame) => frame.contains('HomeRoute') || frame.contains('BRoute')),
+      frames.where(
+        (frame) => frame.contains('HomeRoute') || frame.contains('BRoute'),
+      ),
       isEmpty,
       reason: 'frames: $frames',
     );

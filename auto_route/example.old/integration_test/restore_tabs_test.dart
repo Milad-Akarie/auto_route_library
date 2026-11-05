@@ -40,7 +40,10 @@ void main() {
             page: const EmptyShellRoute('TransitionsTabRoute'),
             children: [
               AutoRoute(path: '', page: namedPage('TransitionsRoute')),
-              AutoRoute(path: 'details', page: namedPage('TransitionDetailsRoute')),
+              AutoRoute(
+                path: 'details',
+                page: namedPage('TransitionDetailsRoute'),
+              ),
             ],
           ),
           AutoRoute(path: 'settings', page: namedPage('SettingsRoute')),
@@ -59,11 +62,19 @@ void main() {
   // home tab.
   // Should: the transitions tab shows after the restore, and the home tab
   // still shows InternalRoute, with HomeRoute under it.
-  testWidgets('a tab that is not active keeps its stack after restoration', (tester) async {
+  testWidgets('a tab that is not active keeps its stack after restoration', (
+    tester,
+  ) async {
     await pumpRestorableApp(tester, buildRouter);
-    unawaited(RestorableRouterApp.router.replace(const NamedRoute('BottomNavigationRoute')));
+    unawaited(
+      RestorableRouterApp.router.replace(
+        const NamedRoute('BottomNavigationRoute'),
+      ),
+    );
     await tester.pumpAndSettle();
-    unawaited(RestorableRouterApp.router.push(const NamedRoute('InternalRoute')));
+    unawaited(
+      RestorableRouterApp.router.push(const NamedRoute('InternalRoute')),
+    );
     await tester.pumpAndSettle();
     expect(find.text('InternalRoute'), findsOneWidget);
     await tapTab(tester, 'transitions');
@@ -85,12 +96,22 @@ void main() {
   // Should: every tab shows the page it showed before the restore.
   testWidgets('every tab keeps its stack after restoration', (tester) async {
     await pumpRestorableApp(tester, buildRouter);
-    unawaited(RestorableRouterApp.router.replace(const NamedRoute('BottomNavigationRoute')));
+    unawaited(
+      RestorableRouterApp.router.replace(
+        const NamedRoute('BottomNavigationRoute'),
+      ),
+    );
     await tester.pumpAndSettle();
-    unawaited(RestorableRouterApp.router.push(const NamedRoute('InternalRoute')));
+    unawaited(
+      RestorableRouterApp.router.push(const NamedRoute('InternalRoute')),
+    );
     await tester.pumpAndSettle();
     await tapTab(tester, 'transitions');
-    unawaited(RestorableRouterApp.router.push(const NamedRoute('TransitionDetailsRoute')));
+    unawaited(
+      RestorableRouterApp.router.push(
+        const NamedRoute('TransitionDetailsRoute'),
+      ),
+    );
     await tester.pumpAndSettle();
     await tapTab(tester, 'settings');
 
@@ -107,7 +128,11 @@ void main() {
 final _bottomNavigationPage = PageInfo(
   'BottomNavigationRoute',
   builder: (_) => AutoTabsRouter(
-    routes: const [NamedRoute('HomeTabRoute'), NamedRoute('TransitionsTabRoute'), NamedRoute('SettingsRoute')],
+    routes: const [
+      NamedRoute('HomeTabRoute'),
+      NamedRoute('TransitionsTabRoute'),
+      NamedRoute('SettingsRoute'),
+    ],
     builder: (context, child) {
       final tabsRouter = AutoTabsRouter.of(context);
       return Scaffold(
@@ -118,8 +143,14 @@ final _bottomNavigationPage = PageInfo(
           onTap: tabsRouter.setActiveIndex,
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
-            BottomNavigationBarItem(icon: Icon(Icons.move_up), label: 'transitions'),
-            BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'settings'),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.move_up),
+              label: 'transitions',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              label: 'settings',
+            ),
           ],
         ),
       );

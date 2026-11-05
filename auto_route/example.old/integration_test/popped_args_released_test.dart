@@ -24,11 +24,18 @@ void main() {
         routes: [
           AutoRoute(
             path: '/',
-            page: PageInfo('HomeRoute', builder: (_) => const _TextPage('HomeRoute')),
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => const _TextPage('HomeRoute'),
+            ),
           ),
           AutoRoute(
             path: '/detail',
-            page: PageInfo('DetailRoute', builder: (data) => _TextPage('Detail ${data.argsAs<_DetailArgs>().counter}')),
+            page: PageInfo(
+              'DetailRoute',
+              builder: (data) =>
+                  _TextPage('Detail ${data.argsAs<_DetailArgs>().counter}'),
+            ),
           ),
         ],
       );
@@ -39,7 +46,10 @@ void main() {
         // Not const: a const instance is never garbage collected, which is
         // what this test checks.
         // ignore: prefer_const_constructors
-        final route = NamedRoute<_DetailArgs>('DetailRoute', args: _DetailArgs(42));
+        final route = NamedRoute<_DetailArgs>(
+          'DetailRoute',
+          args: _DetailArgs(42),
+        );
         args = WeakReference(route.args!);
         unawaited(router.push(route));
       }();
@@ -69,7 +79,8 @@ class _TextPage extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) => Scaffold(body: SafeArea(child: Text(text)));
+  Widget build(BuildContext context) =>
+      Scaffold(body: SafeArea(child: Text(text)));
 }
 
 /// Allocates garbage until the VM has run two full collections.

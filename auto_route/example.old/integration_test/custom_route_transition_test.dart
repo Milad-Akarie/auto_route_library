@@ -19,50 +19,54 @@ void main() {
   // ':id/controller' with its own builder. Open '/devices/add', then
   // '/devices/1/controller'.
   // Should: the controller page is built with its own builder.
-  testWidgets('A CustomRoute pushed in a nested router uses its own transitionsBuilder', (tester) async {
-    final used = <String>{};
-    RouteTransitionsBuilder recording(String builder) {
-      return (context, animation, secondaryAnimation, child) {
-        used.add('$builder:${ModalRoute.of(context)!.settings.name}');
-        return child;
-      };
-    }
+  testWidgets(
+    'A CustomRoute pushed in a nested router uses its own transitionsBuilder',
+    (tester) async {
+      final used = <String>{};
+      RouteTransitionsBuilder recording(String builder) {
+        return (context, animation, secondaryAnimation, child) {
+          used.add('$builder:${ModalRoute.of(context)!.settings.name}');
+          return child;
+        };
+      }
 
-    final router = RootStackRouter.build(
-      defaultRouteType: RouteType.custom(
-        transitionsBuilder: recording('default'),
-        duration: const Duration(milliseconds: 500),
-      ),
-      routes: [
-        AutoRoute(page: _page('HomeRoute'), path: '/'),
-        AutoRoute(
-          page: const PageInfo.emptyShell('ShellRoute'),
-          path: '/devices',
-          usesPathAsKey: true,
-          children: [
-            AutoRoute(page: _page('AddRoute'), path: 'add'),
-            CustomRoute(
-              page: _page('ControllerRoute'),
-              path: ':id/controller',
-              transitionsBuilder: recording('slideTop'),
-              usesPathAsKey: true,
-            ),
-          ],
+      final router = RootStackRouter.build(
+        defaultRouteType: RouteType.custom(
+          transitionsBuilder: recording('default'),
+          duration: const Duration(milliseconds: 500),
         ),
-      ],
-    );
-    await pumpRouterAppWithConfig(tester, router);
-    unawaited(router.navigatePath('/devices/add'));
-    await tester.pumpAndSettle();
-    used.clear();
+        routes: [
+          AutoRoute(page: _page('HomeRoute'), path: '/'),
+          AutoRoute(
+            page: const PageInfo.emptyShell('ShellRoute'),
+            path: '/devices',
+            usesPathAsKey: true,
+            children: [
+              AutoRoute(page: _page('AddRoute'), path: 'add'),
+              CustomRoute(
+                page: _page('ControllerRoute'),
+                path: ':id/controller',
+                transitionsBuilder: recording('slideTop'),
+                usesPathAsKey: true,
+              ),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterAppWithConfig(tester, router);
+      unawaited(router.navigatePath('/devices/add'));
+      await tester.pumpAndSettle();
+      used.clear();
 
-    unawaited(router.navigatePath('/devices/1/controller'));
-    await tester.pumpAndSettle();
+      unawaited(router.navigatePath('/devices/1/controller'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('ControllerRoute'), findsOneWidget);
-    expect(used, contains('slideTop:ControllerRoute'));
-    expect(used, isNot(contains('default:ControllerRoute')));
-  });
+      expect(find.text('ControllerRoute'), findsOneWidget);
+      expect(used, contains('slideTop:ControllerRoute'));
+      expect(used, isNot(contains('default:ControllerRoute')));
+    },
+  );
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));

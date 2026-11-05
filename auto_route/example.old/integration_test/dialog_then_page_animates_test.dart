@@ -27,13 +27,17 @@ void main() {
   // button pops the dialog and calls router.removeLast() in the same frame.
   // Should: the page animates out while the dialog does, then the home page
   // shows, with no assertion.
-  testWidgets('a page left right after popping its dialog animates out', (tester) async {
+  testWidgets('a page left right after popping its dialog animates out', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     unawaited(router.push(const _EditorRoute()));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Close editor'));
     await tester.pumpAndSettle();
-    final editorRoute = ModalRoute.of(tester.element(find.text('Close editor')))!;
+    final editorRoute = ModalRoute.of(
+      tester.element(find.text('Close editor')),
+    )!;
     // Recorded rather than sampled at a fixed time: on a slow device the
     // exit animation can be over before any later frame is pumped.
     final statuses = <AnimationStatus>[];
@@ -41,7 +45,10 @@ void main() {
 
     await tester.tap(find.text('Discard'));
     await tester.pumpAndSettle();
-    expect(statuses, containsAllInOrder([AnimationStatus.reverse, AnimationStatus.dismissed]));
+    expect(
+      statuses,
+      containsAllInOrder([AnimationStatus.reverse, AnimationStatus.dismissed]),
+    );
     expect(tester.takeException(), isNull);
     expect(router.stack.map((p) => p.name), [_HomeRoute.name]);
     expectCurrentPage(router, _HomeRoute.name);

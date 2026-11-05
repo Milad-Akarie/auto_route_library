@@ -14,11 +14,17 @@ void main() {
   // Steps: an app with an AutoRouteObserver taps a button that opens a
   // dialog showing a route aware widget, then closes the dialog.
   // Should: the widget shows, the dialog closes, and nothing throws.
-  testWidgets('a route aware widget in a dialog shows without throwing', (tester) async {
+  testWidgets('a route aware widget in a dialog shows without throwing', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [AutoRoute(page: _HomeRoute.page, path: '/', initial: true)],
     );
-    await pumpRouterApp(tester, router, navigatorObservers: () => [AutoRouteObserver()]);
+    await pumpRouterApp(
+      tester,
+      router,
+      navigatorObservers: () => [AutoRouteObserver()],
+    );
 
     await tester.tap(find.text('Open dialog'));
     await tester.pumpAndSettle();
@@ -45,7 +51,10 @@ class _HomeRoute extends PageRouteInfo<void> {
             children: [
               const Text(name),
               ElevatedButton(
-                onPressed: () => showDialog<void>(context: context, builder: (_) => const _AwareText()),
+                onPressed: () => showDialog<void>(
+                  context: context,
+                  builder: (_) => const _AwareText(),
+                ),
                 child: const Text('Open dialog'),
               ),
             ],
@@ -63,7 +72,8 @@ class _AwareText extends StatefulWidget {
   State<_AwareText> createState() => _AwareTextState();
 }
 
-class _AwareTextState extends State<_AwareText> with AutoRouteAwareStateMixin<_AwareText> {
+class _AwareTextState extends State<_AwareText>
+    with AutoRouteAwareStateMixin<_AwareText> {
   @override
   Widget build(BuildContext context) => const Text('Aware');
 }

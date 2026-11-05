@@ -18,43 +18,54 @@ void main() {
   // reevaluateListenable is the auth store. Start logged in, tap Increment
   // three times, tap Log out, then tap Log in.
   // Should: HomeRoute comes back with its counter still at 3.
-  testWidgets('Logging out and back in keeps the state of the guarded home page (#2338)', (tester) async {
-    final authStore = _AuthStore();
-    final authGuard = AutoRouteGuard.simple((resolver, router) {
-      final isHome = resolver.route.name == _HomePage.routeName;
-      if (!isHome || authStore.isLoggedIn) {
-        resolver.next();
-      } else {
-        unawaited(resolver.redirectUntil(const PageRouteInfo(_LoginPage.routeName)));
+  testWidgets(
+    'Logging out and back in keeps the state of the guarded home page (#2338)',
+    (tester) async {
+      final authStore = _AuthStore();
+      final authGuard = AutoRouteGuard.simple((resolver, router) {
+        final isHome = resolver.route.name == _HomePage.routeName;
+        if (!isHome || authStore.isLoggedIn) {
+          resolver.next();
+        } else {
+          unawaited(
+            resolver.redirectUntil(const PageRouteInfo(_LoginPage.routeName)),
+          );
+        }
+      });
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            initial: true,
+            page: PageInfo(
+              _HomePage.routeName,
+              builder: (_) => _HomePage(authStore),
+            ),
+            guards: [authGuard],
+          ),
+          AutoRoute(
+            page: PageInfo(
+              _LoginPage.routeName,
+              builder: (_) => _LoginPage(authStore),
+            ),
+            guards: [authGuard],
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router, reevaluationNotifier: authStore);
+      for (var i = 0; i < 3; i++) {
+        await tester.tap(find.text('Increment'));
+        await tester.pumpAndSettle();
       }
-    });
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          initial: true,
-          page: PageInfo(_HomePage.routeName, builder: (_) => _HomePage(authStore)),
-          guards: [authGuard],
-        ),
-        AutoRoute(
-          page: PageInfo(_LoginPage.routeName, builder: (_) => _LoginPage(authStore)),
-          guards: [authGuard],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router, reevaluationNotifier: authStore);
-    for (var i = 0; i < 3; i++) {
-      await tester.tap(find.text('Increment'));
+      expect(find.text('Counter 3'), findsOneWidget);
+      await tester.tap(find.text('Log out'));
       await tester.pumpAndSettle();
-    }
-    expect(find.text('Counter 3'), findsOneWidget);
-    await tester.tap(find.text('Log out'));
-    await tester.pumpAndSettle();
-    expect(router.topRoute.name, _LoginPage.routeName);
-    await tester.tap(find.text('Log in'));
-    await tester.pumpAndSettle();
-    expect(router.topRoute.name, _HomePage.routeName);
-    expect(find.text('Counter 3'), findsOneWidget);
-  });
+      expect(router.topRoute.name, _LoginPage.routeName);
+      await tester.tap(find.text('Log in'));
+      await tester.pumpAndSettle();
+      expect(router.topRoute.name, _HomePage.routeName);
+      expect(find.text('Counter 3'), findsOneWidget);
+    },
+  );
 }
 
 class _AuthStore extends ChangeNotifier {
@@ -91,8 +102,14 @@ class _HomePageState extends State<_HomePage> {
         child: Column(
           children: [
             Text('Counter $counter'),
-            TextButton(onPressed: () => setState(() => counter++), child: const Text('Increment')),
-            TextButton(onPressed: widget.authStore.logOut, child: const Text('Log out')),
+            TextButton(
+              onPressed: () => setState(() => counter++),
+              child: const Text('Increment'),
+            ),
+            TextButton(
+              onPressed: widget.authStore.logOut,
+              child: const Text('Log out'),
+            ),
           ],
         ),
       ),
@@ -110,7 +127,10 @@ class _LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: TextButton(onPressed: authStore.logIn, child: const Text('Log in')),
+        child: TextButton(
+          onPressed: authStore.logIn,
+          child: const Text('Log in'),
+        ),
       ),
     );
   }

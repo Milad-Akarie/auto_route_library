@@ -24,56 +24,67 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('the predictive back gesture pops the root page above a nested stack', (tester) async {
-    final router = RootStackRouter.build(
-      defaultRouteType: const RouteType.material(enablePredictiveBackGesture: true),
-      routes: [
-        AutoRoute(
-          page: PageInfo('HostRoute', builder: (_) => const AutoRouter()),
-          path: '/',
-          children: [
-            AutoRoute(page: _page('FirstRoute'), path: '', initial: true),
-            AutoRoute(page: _page('SecondRoute'), path: 'second'),
-          ],
+  testWidgets(
+    'the predictive back gesture pops the root page above a nested stack',
+    (tester) async {
+      final router = RootStackRouter.build(
+        defaultRouteType: const RouteType.material(
+          enablePredictiveBackGesture: true,
         ),
-        AutoRoute(page: _page('TopRoute'), path: '/top'),
-      ],
-    );
-    await pumpRouterApp(tester, router, theme: ThemeData(platform: .android));
-    final host = router.innerRouterOf<StackRouter>('HostRoute')!;
-    unawaited(host.push(const _Route('SecondRoute')));
-    await tester.pumpAndSettle();
-    unawaited(router.push(const _Route('TopRoute')));
-    await tester.pumpAndSettle();
-
-    Future<void> send(String method, [Map<String, Object?>? arguments]) {
-      final message = const StandardMethodCodec().encodeMethodCall(MethodCall(method, arguments));
-      return tester.binding.defaultBinaryMessenger.handlePlatformMessage(
-        SystemChannels.backGesture.name,
-        message,
-        (_) {},
+        routes: [
+          AutoRoute(
+            page: PageInfo('HostRoute', builder: (_) => const AutoRouter()),
+            path: '/',
+            children: [
+              AutoRoute(page: _page('FirstRoute'), path: '', initial: true),
+              AutoRoute(page: _page('SecondRoute'), path: 'second'),
+            ],
+          ),
+          AutoRoute(page: _page('TopRoute'), path: '/top'),
+        ],
       );
-    }
+      await pumpRouterApp(tester, router, theme: ThemeData(platform: .android));
+      final host = router.innerRouterOf<StackRouter>('HostRoute')!;
+      unawaited(host.push(const _Route('SecondRoute')));
+      await tester.pumpAndSettle();
+      unawaited(router.push(const _Route('TopRoute')));
+      await tester.pumpAndSettle();
 
-    Map<String, Object?> event(double x, double progress) => {
-      'touchOffset': [x, 300.0],
-      'progress': progress,
-      'swipeEdge': 0,
-    };
-    await send('startBackGesture', event(5, 0));
-    await tester.pump();
-    await send('updateBackGestureProgress', event(150, 0.5));
-    await tester.pump();
-    await send('commitBackGesture');
-    await tester.pumpAndSettle();
+      Future<void> send(String method, [Map<String, Object?>? arguments]) {
+        final message = const StandardMethodCodec().encodeMethodCall(
+          MethodCall(method, arguments),
+        );
+        return tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+          SystemChannels.backGesture.name,
+          message,
+          (_) {},
+        );
+      }
 
-    expect(router.stack.map((page) => page.routeData.name), ['HostRoute']);
-    expect(host.stack.map((page) => page.routeData.name), ['FirstRoute', 'SecondRoute']);
-    expectTopPage(router, 'SecondRoute');
-  });
+      Map<String, Object?> event(double x, double progress) => {
+        'touchOffset': [x, 300.0],
+        'progress': progress,
+        'swipeEdge': 0,
+      };
+      await send('startBackGesture', event(5, 0));
+      await tester.pump();
+      await send('updateBackGestureProgress', event(150, 0.5));
+      await tester.pump();
+      await send('commitBackGesture');
+      await tester.pumpAndSettle();
+
+      expect(router.stack.map((page) => page.routeData.name), ['HostRoute']);
+      expect(host.stack.map((page) => page.routeData.name), [
+        'FirstRoute',
+        'SecondRoute',
+      ]);
+      expectTopPage(router, 'SecondRoute');
+    },
+  );
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
   const _Route(super.name);

@@ -31,20 +31,24 @@ void main() {
   // Steps: push a sign-in page with a required argument the url can't hold,
   // push another page on top, then press the browser's back button.
   // Should: the sign-in page shows again with its argument.
-  testWidgets('The browser back button returns to a page with its required argument', (tester) async {
-    await pumpRouterAppWithConfig(tester, router);
-    unawaited(router.push(_SignInRoute(email: 'sam@example.com')));
-    await tester.pumpAndSettle();
-    unawaited(router.push(const SecondRoute()));
-    await tester.pumpAndSettle();
-    await expectBrowserUrl('/forgot-password');
+  testWidgets(
+    'The browser back button returns to a page with its required argument',
+    (tester) async {
+      await pumpRouterAppWithConfig(tester, router);
+      unawaited(router.push(_SignInRoute(email: 'sam@example.com')));
+      await tester.pumpAndSettle();
+      unawaited(router.push(const SecondRoute()));
+      await tester.pumpAndSettle();
+      await expectBrowserUrl('/forgot-password');
 
-    pressBrowserBack();
-    await expectBrowserUrl('/sign-in');
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(find.text('Sign in as sam@example.com'), findsOneWidget);
-  }, skip: !kIsWeb);
+      pressBrowserBack();
+      await expectBrowserUrl('/sign-in');
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Sign in as sam@example.com'), findsOneWidget);
+    },
+    skip: !kIsWeb,
+  );
 }
 
 class _SignInArgs {
@@ -59,6 +63,7 @@ class _SignInRoute extends PageRouteInfo<_SignInArgs> {
   static const String name = 'SignInRoute';
   static PageInfo page = PageInfo(
     name,
-    builder: (data) => Scaffold(body: Text('Sign in as ${data.argsAs<_SignInArgs>().email}')),
+    builder: (data) =>
+        Scaffold(body: Text('Sign in as ${data.argsAs<_SignInArgs>().email}')),
   );
 }

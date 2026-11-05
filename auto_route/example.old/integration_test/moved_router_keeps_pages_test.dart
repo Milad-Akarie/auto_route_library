@@ -15,7 +15,9 @@ void main() {
   // Steps: on a wide window, open message 2 beside the list. Make the window
   // narrow, then go back.
   // Should: message 2 stays open alone with its url; back shows the list.
-  testWidgets('a nested router keeps its pages when the two panes become one', (tester) async {
+  testWidgets('a nested router keeps its pages when the two panes become one', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(
@@ -32,7 +34,9 @@ void main() {
               path: ':id',
               page: PageInfo(
                 'MessageRoute',
-                builder: (data) => Scaffold(body: Text('Showing message ${data.params.getString('id')}')),
+                builder: (data) => Scaffold(
+                  body: Text('Showing message ${data.params.getString('id')}'),
+                ),
               ),
             ),
           ],
@@ -87,7 +91,11 @@ class _InboxPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: _isWide(context) ? const Text('Pick a message') : const _MessageList());
+    return Scaffold(
+      body: _isWide(context)
+          ? const Text('Pick a message')
+          : const _MessageList(),
+    );
   }
 }
 
@@ -99,7 +107,10 @@ class _MessageList extends StatelessWidget {
     return Column(
       children: [
         for (final id in ['1', '2'])
-          TextButton(onPressed: () => context.router.navigatePath('/mail/$id'), child: Text('Message $id')),
+          TextButton(
+            onPressed: () => context.router.navigatePath('/mail/$id'),
+            child: Text('Message $id'),
+          ),
       ],
     );
   }

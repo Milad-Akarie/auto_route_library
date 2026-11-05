@@ -18,13 +18,18 @@ void main() {
     // dispose the router, or its delegate.
     // Should: the router, its delegate, url provider and navigation history
     // are all disposed.
-    testWidgets('disposing $disposed disposes all the root router created', (tester) async {
+    testWidgets('disposing $disposed disposes all the root router created', (
+      tester,
+    ) async {
       final notifiers = DisposalTracker<ChangeNotifier>();
       final router = RootStackRouter.build(
         routes: [
           AutoRoute(
             path: '/',
-            page: PageInfo('HomeRoute', builder: (_) => const _TextPage('HomeRoute')),
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => const _TextPage('HomeRoute'),
+            ),
           ),
         ],
       );
@@ -56,5 +61,6 @@ class _TextPage extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) => Scaffold(body: SafeArea(child: Text(text)));
+  Widget build(BuildContext context) =>
+      Scaffold(body: SafeArea(child: Text(text)));
 }

@@ -23,7 +23,8 @@ class UserIdConverter extends ParamConverter<UserId> {
   const UserIdConverter();
 
   @override
-  UserId? fromParam(String value) => RegExp(r'^u-\d+$').hasMatch(value) ? .new(value.substring(2)) : null;
+  UserId? fromParam(String value) =>
+      RegExp(r'^u-\d+$').hasMatch(value) ? .new(value.substring(2)) : null;
 
   @override
   String toParam(UserId value) => 'u-${value.value}';
@@ -31,7 +32,10 @@ class UserIdConverter extends ParamConverter<UserId> {
 
 const userIdConverter = UserIdConverter();
 
-@AutoRouterConfig(replaceInRouteName: 'View,Route', generateForDir: ['integration_test/support/user_router'])
+@AutoRouterConfig(
+  replaceInRouteName: 'View,Route',
+  generateForDir: ['integration_test/support/user_router'],
+)
 class UserRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
@@ -60,5 +64,6 @@ class UserProfileView extends StatelessWidget {
   final UserId? by;
 
   @override
-  Widget build(BuildContext context) => Scaffold(body: Text('User ${id.value} by ${by?.value}'));
+  Widget build(BuildContext context) =>
+      Scaffold(body: Text('User ${id.value} by ${by?.value}'));
 }

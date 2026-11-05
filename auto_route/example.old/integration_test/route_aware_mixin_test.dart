@@ -17,37 +17,46 @@ void main() {
   // through config(), and BookListRoute uses AutoRouteAwareStateMixin. Push
   // BookDetailsRoute, then go back.
   // Should: BookListRoute gets didPushNext, then didPopNext.
-  testWidgets('AutoRouteAwareStateMixin hears push and pop with the observer given to config()', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('BookListRoute', builder: (_) => const RouteAwarePage()),
+  testWidgets(
+    'AutoRouteAwareStateMixin hears push and pop with the observer given to config()',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'BookListRoute',
+              builder: (_) => const RouteAwarePage(),
+            ),
+          ),
+          AutoRoute(
+            path: '/details',
+            page: PageInfo(
+              'BookDetailsRoute',
+              builder: (_) => const TestPage(),
+            ),
+          ),
+        ],
+      );
+      await pumpRouterConfigApp(
+        tester,
+        router.config(
+          navigatorObservers: () => [AutoRouteObserver()],
+          deepLinkBuilder: (link) => link.initial ? DeepLink.defaultPath : link,
         ),
-        AutoRoute(
-          path: '/details',
-          page: PageInfo('BookDetailsRoute', builder: (_) => const TestPage()),
-        ),
-      ],
-    );
-    await pumpRouterConfigApp(
-      tester,
-      router.config(
-        navigatorObservers: () => [AutoRouteObserver()],
-        deepLinkBuilder: (link) => link.initial ? DeepLink.defaultPath : link,
-      ),
-    );
-    expectTopPage(router, 'BookListRoute');
+      );
+      expectTopPage(router, 'BookListRoute');
 
-    routeAwareEvents.clear();
-    unawaited(router.push(const NamedRoute('BookDetailsRoute')));
-    await tester.pumpAndSettle();
-    expectTopPage(router, 'BookDetailsRoute');
-    expect(routeAwareEvents, ['BookListRoute.didPushNext']);
+      routeAwareEvents.clear();
+      unawaited(router.push(const NamedRoute('BookDetailsRoute')));
+      await tester.pumpAndSettle();
+      expectTopPage(router, 'BookDetailsRoute');
+      expect(routeAwareEvents, ['BookListRoute.didPushNext']);
 
-    routeAwareEvents.clear();
-    await systemBack(tester);
-    expectTopPage(router, 'BookListRoute');
-    expect(routeAwareEvents, ['BookListRoute.didPopNext']);
-  });
+      routeAwareEvents.clear();
+      await systemBack(tester);
+      expectTopPage(router, 'BookListRoute');
+      expect(routeAwareEvents, ['BookListRoute.didPopNext']);
+    },
+  );
 }

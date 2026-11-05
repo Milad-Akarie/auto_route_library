@@ -40,7 +40,9 @@ class BooksDBProvider extends InheritedWidget {
   }
 
   static BooksDB? of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<BooksDBProvider>()?.booksDb;
+    return context
+        .dependOnInheritedWidgetOfExactType<BooksDBProvider>()
+        ?.booksDb;
   }
 }
 
@@ -99,6 +101,8 @@ class UsersDBProvider extends InheritedWidget {
   }
 
   static UsersDB? of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<UsersDBProvider>()?.usersDB;
+    return context
+        .dependOnInheritedWidgetOfExactType<UsersDBProvider>()
+        ?.usersDB;
   }
 }

@@ -29,7 +29,9 @@ void main() {
   testWidgets('A "#" in a path param survives a refresh', (tester) async {
     final router = buildRouter();
     await pumpRouterAppWithConfig(tester, router);
-    unawaited(router.push(_SecondsRoute(id: '123#456#789', query: '123#456#789')));
+    unawaited(
+      router.push(_SecondsRoute(id: '123#456#789', query: '123#456#789')),
+    );
     await tester.pumpAndSettle();
     expect(find.text('id 123#456#789, query 123#456#789'), findsOneWidget);
     const encoded = '/seconds/123%23456%23789?query=123%23456%23789';

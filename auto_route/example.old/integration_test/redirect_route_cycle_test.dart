@@ -16,31 +16,34 @@ void main() {
   // to '/a'.
   // Should: the push fails with an error that names both paths, and the app
   // stays on '/'.
-  testWidgets('RedirectRoutes pointing at each other report the loop (flutter/flutter#104441)', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        NamedRouteDef(
-          name: 'HomeRoute',
-          path: '/',
-          builder: (_, _) => const Scaffold(body: Text('HomeRoute')),
-        ),
-        RedirectRoute(path: '/a', redirectTo: '/b'),
-        RedirectRoute(path: '/b', redirectTo: '/a'),
-      ],
-    );
-    await pumpRouterApp(tester, router);
+  testWidgets(
+    'RedirectRoutes pointing at each other report the loop (flutter/flutter#104441)',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          NamedRouteDef(
+            name: 'HomeRoute',
+            path: '/',
+            builder: (_, _) => const Scaffold(body: Text('HomeRoute')),
+          ),
+          RedirectRoute(path: '/a', redirectTo: '/b'),
+          RedirectRoute(path: '/b', redirectTo: '/a'),
+        ],
+      );
+      await pumpRouterApp(tester, router);
 
-    expect(
-      () => router.pushPath('/a'),
-      throwsA(
-        isA<FlutterError>().having(
-          (e) => e.toString(),
-          'message',
-          allOf(contains('Redirect loop'), contains('/a'), contains('/b')),
+      expect(
+        () => router.pushPath('/a'),
+        throwsA(
+          isA<FlutterError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(contains('Redirect loop'), contains('/a'), contains('/b')),
+          ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(find.text('HomeRoute'), findsOneWidget);
-  });
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('HomeRoute'), findsOneWidget);
+    },
+  );
 }

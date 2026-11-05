@@ -26,8 +26,15 @@ void main() {
               page: _BookRoute.page,
               path: '',
               children: [
-                AutoRoute(page: _BookTabRoute.pageFor('BookOverviewRoute'), path: 'overview', initial: true),
-                AutoRoute(page: _BookTabRoute.pageFor('BookPricingRoute'), path: 'pricing'),
+                AutoRoute(
+                  page: _BookTabRoute.pageFor('BookOverviewRoute'),
+                  path: 'overview',
+                  initial: true,
+                ),
+                AutoRoute(
+                  page: _BookTabRoute.pageFor('BookPricingRoute'),
+                  path: 'pricing',
+                ),
               ],
             ),
           ],
@@ -42,16 +49,19 @@ void main() {
   // Should: the book page reads id 1 over its overview tab, and the url, and
   // on web the address bar, is '/books/1/overview?someQueryParam=1234', not
   // '/books/:id/overview'.
-  testWidgets("navigate() to a route fills its path param into its ancestor's path", (tester) async {
-    await pumpRouterAppWithConfig(tester, router);
-    unawaited(router.navigate(_BookRoute(id: 1, someQueryParam: 1234)));
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(find.text('Book 1, query 1234'), findsOneWidget);
-    expect(find.text('BookOverviewRoute'), findsOneWidget);
-    expect(router.urlState.url, '/books/1/overview?someQueryParam=1234');
-    await expectBrowserUrl('/books/1/overview?someQueryParam=1234');
-  });
+  testWidgets(
+    "navigate() to a route fills its path param into its ancestor's path",
+    (tester) async {
+      await pumpRouterAppWithConfig(tester, router);
+      unawaited(router.navigate(_BookRoute(id: 1, someQueryParam: 1234)));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Book 1, query 1234'), findsOneWidget);
+      expect(find.text('BookOverviewRoute'), findsOneWidget);
+      expect(router.urlState.url, '/books/1/overview?someQueryParam=1234');
+      await expectBrowserUrl('/books/1/overview?someQueryParam=1234');
+    },
+  );
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
@@ -62,7 +72,8 @@ class _HomeRoute extends PageRouteInfo<void> {
 }
 
 class _BookShellRoute extends PageRouteInfo<void> {
-  const _BookShellRoute({List<PageRouteInfo>? children}) : super(pageName, initialChildren: children);
+  const _BookShellRoute({List<PageRouteInfo>? children})
+    : super(pageName, initialChildren: children);
 
   static const String pageName = 'BookShellRoute';
   static PageInfo page = PageInfo(pageName, builder: (_) => const AutoRouter());
@@ -70,14 +81,20 @@ class _BookShellRoute extends PageRouteInfo<void> {
 
 class _BookRoute extends PageRouteInfo<void> {
   _BookRoute({required int id, int? someQueryParam})
-    : super(pageName, rawPathParams: {'id': id}, rawQueryParams: {'someQueryParam': someQueryParam});
+    : super(
+        pageName,
+        rawPathParams: {'id': id},
+        rawQueryParams: {'someQueryParam': someQueryParam},
+      );
 
   static const String pageName = 'BookRoute';
   static PageInfo page = PageInfo(
     pageName,
     builder: (data) => Column(
       children: [
-        Text('Book ${data.inheritedPathParams.getInt('id')}, query ${data.queryParams.optInt('someQueryParam')}'),
+        Text(
+          'Book ${data.inheritedPathParams.getInt('id')}, query ${data.queryParams.optInt('someQueryParam')}',
+        ),
         const Expanded(child: AutoRouter()),
       ],
     ),
@@ -85,5 +102,6 @@ class _BookRoute extends PageRouteInfo<void> {
 }
 
 class _BookTabRoute {
-  static PageInfo pageFor(String name) => .new(name, builder: (_) => Text(name));
+  static PageInfo pageFor(String name) =>
+      .new(name, builder: (_) => Text(name));
 }

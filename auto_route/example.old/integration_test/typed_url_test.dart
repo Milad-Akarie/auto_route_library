@@ -17,11 +17,17 @@ void main() {
     router = RootStackRouter.build(
       routes: [
         AutoRoute(
-          page: PageInfo('HomeRoute', builder: (_) => const Scaffold(body: Text('HomeRoute'))),
+          page: PageInfo(
+            'HomeRoute',
+            builder: (_) => const Scaffold(body: Text('HomeRoute')),
+          ),
           path: '/',
         ),
         AutoRoute(
-          page: PageInfo('TestRoute', builder: (data) => Text('Test ${data.params.getString('id')}')),
+          page: PageInfo(
+            'TestRoute',
+            builder: (data) => Text('Test ${data.params.getString('id')}'),
+          ),
           path: '/test/:id',
         ),
       ],
@@ -30,7 +36,9 @@ void main() {
 
   // Steps: open the app, type '/test/42' into the address bar.
   // Should: the page for '/test/:id' shows with id 42.
-  testWidgets('A path typed into the address bar opens its page', (tester) async {
+  testWidgets('A path typed into the address bar opens its page', (
+    tester,
+  ) async {
     await pumpRouterAppWithConfig(tester, router);
 
     typeBrowserUrl('/test/42');
@@ -46,7 +54,10 @@ void main() {
   testWidgets('The app opens on the path it is given', (tester) async {
     await pumpRouterConfigApp(
       tester,
-      router.config(deepLinkBuilder: (link) => link.initial ? const DeepLink.path('/test/7') : link),
+      router.config(
+        deepLinkBuilder: (link) =>
+            link.initial ? const DeepLink.path('/test/7') : link,
+      ),
     );
     expect(router.topRoute.name, 'TestRoute');
     expect(find.text('Test 7'), findsOneWidget);

@@ -28,14 +28,20 @@ void main() {
   // Steps: push RecordRoute and FormRoute over MenuRoute, then call
   // replaceAll([LoginRoute()]) from FormRoute.
   // Should: LoginRoute is the only page, not a blank screen.
-  testWidgets('replaceAll from the third page leaves only the new page', (tester) async {
+  testWidgets('replaceAll from the third page leaves only the new page', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     unawaited(router.push(const PageRouteInfo('RecordRoute')));
     await tester.pumpAndSettle();
     unawaited(router.push(const PageRouteInfo('FormRoute')));
     await tester.pumpAndSettle();
 
-    unawaited(tester.element(find.text('FormRoute')).router.replaceAll([const PageRouteInfo('LoginRoute')]));
+    unawaited(
+      tester.element(find.text('FormRoute')).router.replaceAll([
+        const PageRouteInfo('LoginRoute'),
+      ]),
+    );
     await tester.pumpAndSettle();
     expect(router.stack.map((p) => p.name), ['LoginRoute']);
     expectCurrentPage(router, 'LoginRoute');

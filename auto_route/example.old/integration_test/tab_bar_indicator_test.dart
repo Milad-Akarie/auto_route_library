@@ -16,66 +16,88 @@ void main() {
   // first, then swipe to the second.
   // Should: the TabController's animation moves one way only and ends on the
   // tapped tab.
-  testWidgets('the tab indicator moves one way to the tapped tab in a NestedScrollView', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          page: _HomeRoute.page,
-          path: '/',
-          initial: true,
-          children: [
-            AutoRoute(page: _AllNotesTabRoute.page, path: 'all'),
-            AutoRoute(page: _PinnedTabRoute.page, path: 'pinned'),
-            AutoRoute(page: _FoldersTabRoute.page, path: 'folders'),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterConfigApp(tester, router.config(deepLinkBuilder: (_) => DeepLink.defaultPath));
-    final tabController = tester.widget<TabBar>(find.byType(TabBar)).controller!;
+  testWidgets(
+    'the tab indicator moves one way to the tapped tab in a NestedScrollView',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            page: _HomeRoute.page,
+            path: '/',
+            initial: true,
+            children: [
+              AutoRoute(page: _AllNotesTabRoute.page, path: 'all'),
+              AutoRoute(page: _PinnedTabRoute.page, path: 'pinned'),
+              AutoRoute(page: _FoldersTabRoute.page, path: 'folders'),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterConfigApp(
+        tester,
+        router.config(deepLinkBuilder: (_) => DeepLink.defaultPath),
+      );
+      final tabController = tester
+          .widget<TabBar>(find.byType(TabBar))
+          .controller!;
 
-    Future<List<double>> framesUntilSettled() async {
+      Future<List<double>> framesUntilSettled() async {
+        final values = <double>[tabController.animation!.value];
+        for (var i = 0; i < 40; i++) {
+          await tester.pump(const Duration(milliseconds: 16));
+          values.add(tabController.animation!.value);
+        }
+        await tester.pumpAndSettle();
+        return values;
+      }
+
+      // A swipe can leave the offset a hair short of the page, as Flutter's own TabBarView does.
+      void expectOneWay(
+        List<double> values,
+        double end, {
+        double tolerance = 1e-6,
+      }) {
+        final rising = end > values.first;
+        for (var i = 1; i < values.length; i++) {
+          final step = values[i] - values[i - 1];
+          expect(
+            rising ? step >= -1e-9 : step <= 1e-9,
+            isTrue,
+            reason: 'frame $i of $values',
+          );
+        }
+        expect(values.last, closeTo(end, tolerance));
+      }
+
+      await tester.tap(find.byType(Tab).at(2));
+      expectOneWay(await framesUntilSettled(), 2);
+      expect(find.text('${_FoldersTabRoute.name} 0'), findsOneWidget);
+
+      await tester.tap(find.byType(Tab).at(0));
+      expectOneWay(await framesUntilSettled(), 0);
+      expect(find.text('${_AllNotesTabRoute.name} 0'), findsOneWidget);
+
+      final swipe = await tester.startGesture(
+        tester.getCenter(find.text('${_AllNotesTabRoute.name} 3')),
+      );
       final values = <double>[tabController.animation!.value];
-      for (var i = 0; i < 40; i++) {
+      // Drags 60% of the screen width, so the page settles on the next tab.
+      final step =
+          tester.view.physicalSize.width /
+          tester.view.devicePixelRatio *
+          0.6 /
+          30;
+      for (var i = 0; i < 30; i++) {
+        await swipe.moveBy(Offset(-step, 0));
         await tester.pump(const Duration(milliseconds: 16));
         values.add(tabController.animation!.value);
       }
-      await tester.pumpAndSettle();
-      return values;
-    }
-
-    // A swipe can leave the offset a hair short of the page, as Flutter's own TabBarView does.
-    void expectOneWay(List<double> values, double end, {double tolerance = 1e-6}) {
-      final rising = end > values.first;
-      for (var i = 1; i < values.length; i++) {
-        final step = values[i] - values[i - 1];
-        expect(rising ? step >= -1e-9 : step <= 1e-9, isTrue, reason: 'frame $i of $values');
-      }
-      expect(values.last, closeTo(end, tolerance));
-    }
-
-    await tester.tap(find.byType(Tab).at(2));
-    expectOneWay(await framesUntilSettled(), 2);
-    expect(find.text('${_FoldersTabRoute.name} 0'), findsOneWidget);
-
-    await tester.tap(find.byType(Tab).at(0));
-    expectOneWay(await framesUntilSettled(), 0);
-    expect(find.text('${_AllNotesTabRoute.name} 0'), findsOneWidget);
-
-    final swipe = await tester.startGesture(tester.getCenter(find.text('${_AllNotesTabRoute.name} 3')));
-    final values = <double>[tabController.animation!.value];
-    // Drags 60% of the screen width, so the page settles on the next tab.
-    final step = tester.view.physicalSize.width / tester.view.devicePixelRatio * 0.6 / 30;
-    for (var i = 0; i < 30; i++) {
-      await swipe.moveBy(Offset(-step, 0));
-      await tester.pump(const Duration(milliseconds: 16));
-      values.add(tabController.animation!.value);
-    }
-    await swipe.up();
-    values.addAll((await framesUntilSettled()).skip(1));
-    expectOneWay(values, 1, tolerance: 0.01);
-    expect(tabController.index, 1);
-  });
+      await swipe.up();
+      values.addAll((await framesUntilSettled()).skip(1));
+      expectOneWay(values, 1, tolerance: 0.01);
+      expect(tabController.index, 1);
+    },
+  );
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
@@ -85,7 +107,11 @@ class _HomeRoute extends PageRouteInfo<void> {
   static PageInfo page = PageInfo(
     name,
     builder: (_) => AutoTabsRouter.tabBar(
-      routes: const [_AllNotesTabRoute(), _PinnedTabRoute(), _FoldersTabRoute()],
+      routes: const [
+        _AllNotesTabRoute(),
+        _PinnedTabRoute(),
+        _FoldersTabRoute(),
+      ],
       builder: (context, child, tabController) => Scaffold(
         body: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => [

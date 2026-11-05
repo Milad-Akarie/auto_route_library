@@ -17,7 +17,9 @@ void main() {
   // Steps (#2024): a page with a Hero at its bottom left pushes an empty
   // router page whose first page has the same Hero at its top right.
   // Should: the Hero flies there; its child leaves the first page.
-  testWidgets('A Hero flies from a page to the first page of a nested router', (tester) async {
+  testWidgets('A Hero flies from a page to the first page of a nested router', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(page: _FromRoute.page, path: '/'),
@@ -42,33 +44,36 @@ void main() {
   // the comments advise) shows a page with a Hero, which pushes an account
   // shell route whose first page has the same Hero.
   // Should: the Hero flies to the account page.
-  testWidgets('A Hero flies from a nested router page to the first page of a shell route', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          page: _HeroShellRoute.page,
-          path: '/',
-          children: [
-            AutoRoute(page: _FromRoute.page, path: '', initial: true),
-            AutoRoute(
-              page: _ShellRoute.page,
-              path: 'account',
-              children: [
-                AutoRoute(page: _ToRoute.page, path: '', initial: true),
-              ],
-            ),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterAppWithConfig(tester, router);
-    expect(find.text('from'), findsOneWidget);
-    unawaited(router.push(const _ShellRoute()));
-    await _pumpIntoFlight(tester);
-    _expectHeroInFlight();
-    await tester.pumpAndSettle();
-    expect(find.text('to'), findsOneWidget);
-  });
+  testWidgets(
+    'A Hero flies from a nested router page to the first page of a shell route',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            page: _HeroShellRoute.page,
+            path: '/',
+            children: [
+              AutoRoute(page: _FromRoute.page, path: '', initial: true),
+              AutoRoute(
+                page: _ShellRoute.page,
+                path: 'account',
+                children: [
+                  AutoRoute(page: _ToRoute.page, path: '', initial: true),
+                ],
+              ),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterAppWithConfig(tester, router);
+      expect(find.text('from'), findsOneWidget);
+      unawaited(router.push(const _ShellRoute()));
+      await _pumpIntoFlight(tester);
+      _expectHeroInFlight();
+      await tester.pumpAndSettle();
+      expect(find.text('to'), findsOneWidget);
+    },
+  );
 }
 
 Future<void> _pumpIntoFlight(WidgetTester tester) async {
@@ -80,7 +85,11 @@ Future<void> _pumpIntoFlight(WidgetTester tester) async {
 // While the Hero flies, the overlay shows its child and the first page does
 // not. The runner's clock is real, so the check leaves out where the Hero is.
 void _expectHeroInFlight() {
-  expect(find.text('from'), findsNothing, reason: 'the source Hero should have left its page');
+  expect(
+    find.text('from'),
+    findsNothing,
+    reason: 'the source Hero should have left its page',
+  );
   expect(find.text('to'), findsOneWidget);
 }
 
@@ -100,14 +109,20 @@ class _FromRoute extends PageRouteInfo<void> {
   const _FromRoute() : super(name);
 
   static const String name = 'FromRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => _heroPage('from', .bottomLeft));
+  static PageInfo page = PageInfo(
+    name,
+    builder: (_) => _heroPage('from', .bottomLeft),
+  );
 }
 
 class _ToRoute extends PageRouteInfo<void> {
   const _ToRoute() : super(name);
 
   static const String name = 'ToRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => _heroPage('to', .topRight));
+  static PageInfo page = PageInfo(
+    name,
+    builder: (_) => _heroPage('to', .topRight),
+  );
 }
 
 class _ShellRoute extends PageRouteInfo<void> {
@@ -142,6 +157,9 @@ class _HeroShellState extends State<_HeroShell> {
 
   @override
   Widget build(BuildContext context) {
-    return HeroControllerScope(controller: _controller, child: const AutoRouter());
+    return HeroControllerScope(
+      controller: _controller,
+      child: const AutoRouter(),
+    );
   }
 }

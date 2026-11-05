@@ -30,11 +30,15 @@ void main() {
         CustomRoute(
           page: PageInfo(
             'Details',
-            builder: (_) => const Scaffold(body: SafeArea(child: Text('Details'))),
+            builder: (_) =>
+                const Scaffold(body: SafeArea(child: Text('Details'))),
           ),
           path: '/details',
-          customRouteBuilder: <T>(context, child, page) =>
-              _ResultRoute<T>(settings: page, result: 'picked' as T, builder: (_) => child),
+          customRouteBuilder: <T>(context, child, page) => _ResultRoute<T>(
+            settings: page,
+            result: 'picked' as T,
+            builder: (_) => child,
+          ),
         ),
       ],
     );
@@ -47,10 +51,16 @@ void main() {
   // back by the iOS swipe or system back.
   // Should: the push completes with 'picked', as Navigator.push does.
   for (final MapEntry(key: name, value: back) in backs.entries) {
-    testWidgets("$name completes the push with the route's currentResult", (tester) async {
+    testWidgets("$name completes the push with the route's currentResult", (
+      tester,
+    ) async {
       await pumpRouterApp(tester, router);
       Object? result = 'unset';
-      unawaited(router.push<String>(const PageRouteInfo('Details')).then((value) => result = value));
+      unawaited(
+        router
+            .push<String>(const PageRouteInfo('Details'))
+            .then((value) => result = value),
+      );
       await tester.pumpAndSettle();
 
       await back(tester);
@@ -62,7 +72,11 @@ void main() {
 }
 
 class _ResultRoute<T> extends CupertinoPageRoute<T> {
-  _ResultRoute({required super.builder, required super.settings, required this.result});
+  _ResultRoute({
+    required super.builder,
+    required super.settings,
+    required this.result,
+  });
 
   final T result;
 

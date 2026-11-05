@@ -24,11 +24,17 @@ void main() {
         AutoRoute(
           page: _AccountRoute.page,
           path: '/account',
-          children: [AutoRoute(page: _ConsentManagementRoute.page, path: 'consentManagement')],
+          children: [
+            AutoRoute(
+              page: _ConsentManagementRoute.page,
+              path: 'consentManagement',
+            ),
+          ],
         ),
       ],
     );
-    binding.platformDispatcher.defaultRouteNameTestValue = '/account/consentManagement';
+    binding.platformDispatcher.defaultRouteNameTestValue =
+        '/account/consentManagement';
     await pumpRouterConfigApp(tester, router.config());
     expect(tester.takeException(), isNull);
     expect(find.text('Consent management'), findsOneWidget);
@@ -48,5 +54,8 @@ class _ConsentManagementRoute extends PageRouteInfo<void> {
   const _ConsentManagementRoute() : super(pageName);
 
   static const String pageName = 'AccountConsentManagementScreenRoute';
-  static PageInfo page = PageInfo(pageName, builder: (_) => const Text('Consent management'));
+  static PageInfo page = PageInfo(
+    pageName,
+    builder: (_) => const Text('Consent management'),
+  );
 }

@@ -65,7 +65,12 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  Future<void> pushInTab(WidgetTester tester, TabsRouter tabs, int index, String name) async {
+  Future<void> pushInTab(
+    WidgetTester tester,
+    TabsRouter tabs,
+    int index,
+    String name,
+  ) async {
     unawaited(tabs.stackRouterOfIndex(index)!.push(_Route(name)));
     await tester.pumpAndSettle();
   }
@@ -74,31 +79,39 @@ void main() {
     for (final page in tabs.stackRouterOfIndex(index)!.stack) page.name,
   ];
 
-  testWidgets('system back in a tab with a pushed page pops it after a tab switch', (tester) async {
-    final tabs = await pumpApp(tester);
-    await pushInTab(tester, tabs, 0, 'BookDetailsRoute');
-    await showTab(tester, tabs, 1);
-    await showTab(tester, tabs, 0);
+  testWidgets(
+    'system back in a tab with a pushed page pops it after a tab switch',
+    (tester) async {
+      final tabs = await pumpApp(tester);
+      await pushInTab(tester, tabs, 0, 'BookDetailsRoute');
+      await showTab(tester, tabs, 1);
+      await showTab(tester, tabs, 0);
 
-    await systemBack(tester);
+      await systemBack(tester);
 
-    expect(stackOf(tabs, 0), ['BookListRoute']);
-  });
+      expect(stackOf(tabs, 0), ['BookListRoute']);
+    },
+  );
 
   // Pressing back here would leave the app, so this checks what Android
   // would do instead.
-  testWidgets("on a tab at its first page, Android leaves the app instead of popping the other tab's page", (
+  testWidgets(
+    "on a tab at its first page, Android leaves the app instead of popping the other tab's page",
+    (
+      tester,
+    ) async {
+      final tabs = await pumpApp(tester);
+      await pushInTab(tester, tabs, 0, 'BookDetailsRoute');
+      await showTab(tester, tabs, 1);
+
+      expect(await androidSendsBackToFlutter(), anyOf(isNull, isFalse));
+      expect(stackOf(tabs, 0), ['BookListRoute', 'BookDetailsRoute']);
+    },
+  );
+
+  testWidgets('the iOS back swipe pops only the page of the tab on screen', (
     tester,
   ) async {
-    final tabs = await pumpApp(tester);
-    await pushInTab(tester, tabs, 0, 'BookDetailsRoute');
-    await showTab(tester, tabs, 1);
-
-    expect(await androidSendsBackToFlutter(), anyOf(isNull, isFalse));
-    expect(stackOf(tabs, 0), ['BookListRoute', 'BookDetailsRoute']);
-  });
-
-  testWidgets('the iOS back swipe pops only the page of the tab on screen', (tester) async {
     final tabs = await pumpApp(tester, theme: ThemeData(platform: .iOS));
     await pushInTab(tester, tabs, 0, 'BookDetailsRoute');
     await showTab(tester, tabs, 1);
@@ -110,24 +123,29 @@ void main() {
     expect(stackOf(tabs, 0), ['BookListRoute', 'BookDetailsRoute']);
   });
 
-  testWidgets('system back pops a page pushed in a tab while it was hidden, once it shows', (tester) async {
-    final tabs = await pumpApp(tester);
-    await showTab(tester, tabs, 1);
-    await pushInTab(tester, tabs, 0, 'BookDetailsRoute');
-    await showTab(tester, tabs, 0);
+  testWidgets(
+    'system back pops a page pushed in a tab while it was hidden, once it shows',
+    (tester) async {
+      final tabs = await pumpApp(tester);
+      await showTab(tester, tabs, 1);
+      await pushInTab(tester, tabs, 0, 'BookDetailsRoute');
+      await showTab(tester, tabs, 0);
 
-    await systemBack(tester);
+      await systemBack(tester);
 
-    expect(stackOf(tabs, 0), ['BookListRoute']);
-  });
+      expect(stackOf(tabs, 0), ['BookListRoute']);
+    },
+  );
 }
 
 final _homePage = PageInfo(
   'HomeRoute',
-  builder: (_) => const AutoTabsRouter(routes: [_Route('BooksTab'), _Route('ProfileTab')]),
+  builder: (_) =>
+      const AutoTabsRouter(routes: [_Route('BooksTab'), _Route('ProfileTab')]),
 );
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
   const _Route(super.name);

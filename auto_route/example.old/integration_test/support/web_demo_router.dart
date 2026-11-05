@@ -109,7 +109,11 @@ class MainWebPage extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () async {
                   await context.pushRoute(
-                    UserRoute(id: 2, query: const ['value1', 'value2'], fragment: 'frag'),
+                    UserRoute(
+                      id: 2,
+                      query: const ['value1', 'value2'],
+                      fragment: 'frag',
+                    ),
                   );
                 },
                 child: const Text('Navigate to user/2'),
@@ -167,7 +171,9 @@ class UserPage extends StatelessWidget {
         leading: const AutoLeadingButton(),
         title: Builder(
           builder: (context) {
-            return Text('${context.topRouteMatch.name} $id query: $query, fragment: $fragment');
+            return Text(
+              '${context.topRouteMatch.name} $id query: $query, fragment: $fragment',
+            );
           },
         ),
       ),
@@ -194,7 +200,10 @@ class UserProfilePage extends StatelessWidget {
           mainAxisSize: .min,
           spacing: 16,
           children: [
-            Text('User Profile : $userId  likes: $likes', style: const TextStyle(fontSize: 30)),
+            Text(
+              'User Profile : $userId  likes: $likes',
+              style: const TextStyle(fontSize: 30),
+            ),
             MaterialButton(
               color: Colors.red,
               onPressed: () {
@@ -211,7 +220,10 @@ class UserProfilePage extends StatelessWidget {
 
 @RoutePage()
 class UserPostsPage extends StatelessWidget {
-  const UserPostsPage({super.key, @PathParam.inherit('userID') required this.id});
+  const UserPostsPage({
+    super.key,
+    @PathParam.inherit('userID') required this.id,
+  });
   final int id;
 
   @override

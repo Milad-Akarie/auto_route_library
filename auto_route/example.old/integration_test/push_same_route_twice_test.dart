@@ -36,7 +36,9 @@ void main() {
 
   // Steps: push Second, push Second again, then call back().
   // Should: the first Second, not First.
-  testWidgets('back() returns to the same route pushed with equal arguments', (tester) async {
+  testWidgets('back() returns to the same route pushed with equal arguments', (
+    tester,
+  ) async {
     await pushSecondTwice(tester);
     final secondEntry = browserEntryIndex();
 
@@ -52,16 +54,20 @@ void main() {
   // Steps: the same, going back with the browser's back button.
   // Should: the first Second, not First.
   // Web only: elsewhere, system back pops the page, which already worked.
-  testWidgets('The browser back button returns to the same route pushed with equal arguments', (tester) async {
-    await pushSecondTwice(tester);
-    final secondEntry = browserEntryIndex()!;
+  testWidgets(
+    'The browser back button returns to the same route pushed with equal arguments',
+    (tester) async {
+      await pushSecondTwice(tester);
+      final secondEntry = browserEntryIndex()!;
 
-    pressBrowserBack();
-    await expectBrowserEntry(secondEntry - 1);
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(router.current.name, SecondRoute.name);
-    expect(router.stack.length, 2);
-    await expectBrowserUrl('/second');
-  }, skip: !kIsWeb);
+      pressBrowserBack();
+      await expectBrowserEntry(secondEntry - 1);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(router.current.name, SecondRoute.name);
+      expect(router.stack.length, 2);
+      await expectBrowserUrl('/second');
+    },
+    skip: !kIsWeb,
+  );
 }

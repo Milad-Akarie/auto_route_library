@@ -196,7 +196,10 @@ class ResultScreen extends StatelessWidget {
               Text('Name: ${profile.name}'),
               Text('Age: ${profile.age}'),
               const SizedBox(height: 16),
-              ElevatedButton(onPressed: onReset, child: const Text('Reset State')),
+              ElevatedButton(
+                onPressed: onReset,
+                child: const Text('Reset State'),
+              ),
             ],
           ),
         ),

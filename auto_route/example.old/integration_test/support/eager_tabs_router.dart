@@ -33,11 +33,17 @@ RootStackRouter buildEagerTabsRouter(EagerTabsKind kind) {
           eagerTabsName,
           builder: (_) => switch (kind) {
             .tabBar => AutoTabsRouter.tabBar(routes: routes, lazyLoad: false),
-            .pageView => AutoTabsRouter.pageView(routes: routes, lazyLoad: false),
+            .pageView => AutoTabsRouter.pageView(
+              routes: routes,
+              lazyLoad: false,
+            ),
           },
         ),
         path: '/',
-        children: [for (final name in eagerTabNames) AutoRoute(page: _page(name), path: name)],
+        children: [
+          for (final name in eagerTabNames)
+            AutoRoute(page: _page(name), path: name),
+        ],
       ),
     ],
   );

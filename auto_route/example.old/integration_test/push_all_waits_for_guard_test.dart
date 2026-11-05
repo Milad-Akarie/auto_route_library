@@ -28,13 +28,23 @@ void main() {
           'HomeRoute',
           action: Row(
             children: [
-              TextButton(onPressed: () => decision.complete(true), child: const Text('Allow')),
-              TextButton(onPressed: () => decision.complete(false), child: const Text('Deny')),
+              TextButton(
+                onPressed: () => decision.complete(true),
+                child: const Text('Allow'),
+              ),
+              TextButton(
+                onPressed: () => decision.complete(false),
+                child: const Text('Deny'),
+              ),
             ],
           ),
         ),
       ),
-      NamedRouteDef(name: 'ListRoute', path: '/list', builder: (_, _) => page('ListRoute')),
+      NamedRouteDef(
+        name: 'ListRoute',
+        path: '/list',
+        builder: (_, _) => page('ListRoute'),
+      ),
       NamedRouteDef(
         name: 'CheckoutRoute',
         path: '/checkout',
@@ -58,22 +68,33 @@ void main() {
   // Should: the future is still pending before the tap, and completes after
   // it, with CheckoutRoute shown when allowed and not when denied.
   for (final allow in [true, false]) {
-    testWidgets('pushAll completes once the guard ${allow ? 'allows' : 'denies'} the routes', (tester) async {
-      decision = Completer<bool>();
-      final router = buildRouter();
-      await pumpRouterApp(tester, router);
-      var completed = false;
-      unawaited(
-        router.pushAll(const [NamedRoute('ListRoute'), NamedRoute('CheckoutRoute')]).then((_) => completed = true),
-      );
-      await tester.pumpAndSettle();
-      expect(completed, isFalse);
+    testWidgets(
+      'pushAll completes once the guard ${allow ? 'allows' : 'denies'} the routes',
+      (tester) async {
+        decision = Completer<bool>();
+        final router = buildRouter();
+        await pumpRouterApp(tester, router);
+        var completed = false;
+        unawaited(
+          router
+              .pushAll(const [
+                NamedRoute('ListRoute'),
+                NamedRoute('CheckoutRoute'),
+              ])
+              .then((_) => completed = true),
+        );
+        await tester.pumpAndSettle();
+        expect(completed, isFalse);
 
-      expect(find.text('HomeRoute'), findsOneWidget);
-      await tester.tap(find.text(allow ? 'Allow' : 'Deny'));
-      await tester.pumpAndSettle();
-      expect(completed, isTrue);
-      expect(find.text('CheckoutRoute'), allow ? findsOneWidget : findsNothing);
-    });
+        expect(find.text('HomeRoute'), findsOneWidget);
+        await tester.tap(find.text(allow ? 'Allow' : 'Deny'));
+        await tester.pumpAndSettle();
+        expect(completed, isTrue);
+        expect(
+          find.text('CheckoutRoute'),
+          allow ? findsOneWidget : findsNothing,
+        );
+      },
+    );
   }
 }

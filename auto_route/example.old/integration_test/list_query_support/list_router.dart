@@ -6,7 +6,10 @@ part 'list_router.gr.dart';
 
 enum Sort { asc, desc }
 
-@AutoRouterConfig(replaceInRouteName: 'View,Route', generateForDir: ['integration_test/list_query_support'])
+@AutoRouterConfig(
+  replaceInRouteName: 'View,Route',
+  generateForDir: ['integration_test/list_query_support'],
+)
 class ListRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
@@ -54,13 +57,21 @@ class ItemsView extends StatelessWidget {
 // flutter/flutter#108437.
 @RoutePage()
 class TagsView extends StatelessWidget {
-  const TagsView({super.key, @QueryParam() this.tags = const {}, @QueryParam() this.ids, @QueryParam() this.sorts});
+  const TagsView({
+    super.key,
+    @QueryParam() this.tags = const {},
+    @QueryParam() this.ids,
+    @QueryParam() this.sorts,
+  });
 
   final Set<String> tags;
   final Iterable<int>? ids;
   final Set<Sort>? sorts;
 
   @override
-  Widget build(BuildContext context) =>
-      Scaffold(body: Text('tags $tags ids ${ids?.toList()} sorts ${sorts?.map((s) => s.name).toList()}'));
+  Widget build(BuildContext context) => Scaffold(
+    body: Text(
+      'tags $tags ids ${ids?.toList()} sorts ${sorts?.map((s) => s.name).toList()}',
+    ),
+  );
 }

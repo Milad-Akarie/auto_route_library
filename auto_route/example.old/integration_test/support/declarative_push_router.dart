@@ -8,7 +8,8 @@ RootStackRouter buildDeclarativePushRouter() => .build(
     NamedRouteDef(
       name: 'HostRoute',
       path: '/',
-      builder: (_, _) => AutoRouter.declarative(routes: (_) => [const NamedRoute('ARoute')]),
+      builder: (_, _) =>
+          AutoRouter.declarative(routes: (_) => [const NamedRoute('ARoute')]),
       children: [
         NamedRouteDef(name: 'ARoute', path: '', builder: (_, _) => _page('A')),
         NamedRouteDef(name: 'BRoute', path: 'b', builder: (_, _) => _page('B')),

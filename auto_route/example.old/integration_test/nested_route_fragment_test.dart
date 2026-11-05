@@ -16,7 +16,9 @@ void main() {
 
   // Steps: push BooksRoute with its child BookListRoute and the fragment top.
   // Should: the page shows, and the url is /books#top.
-  testWidgets('a pushed route with children keeps its fragment in the url', (tester) async {
+  testWidgets('a pushed route with children keeps its fragment in the url', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(
@@ -31,7 +33,9 @@ void main() {
               path: '',
               page: PageInfo(
                 'BookListRoute',
-                builder: (_) => const Scaffold(body: SafeArea(child: Text('BookListRoute'))),
+                builder: (_) => const Scaffold(
+                  body: SafeArea(child: Text('BookListRoute')),
+                ),
               ),
             ),
           ],
@@ -40,7 +44,13 @@ void main() {
     );
     await pumpRouterApp(tester, router);
     unawaited(
-      router.push(const NamedRoute('BooksRoute', children: [NamedRoute('BookListRoute')], fragment: 'top')),
+      router.push(
+        const NamedRoute(
+          'BooksRoute',
+          children: [NamedRoute('BookListRoute')],
+          fragment: 'top',
+        ),
+      ),
     );
     await tester.pumpAndSettle();
     expect(find.text('BookListRoute'), findsOneWidget);

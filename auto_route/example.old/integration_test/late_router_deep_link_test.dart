@@ -20,9 +20,12 @@ void main() {
   );
 
   final apps = <String, Widget Function(RootStackRouter router)>{
-    'router.config()': (router) => MaterialApp.router(routerConfig: router.config()),
-    'routerDelegate and routeInformationParser': (router) =>
-        MaterialApp.router(routeInformationParser: router.defaultRouteParser(), routerDelegate: router.delegate()),
+    'router.config()': (router) =>
+        MaterialApp.router(routerConfig: router.config()),
+    'routerDelegate and routeInformationParser': (router) => MaterialApp.router(
+      routeInformationParser: router.defaultRouteParser(),
+      routerDelegate: router.delegate(),
+    ),
   };
 
   // Steps: open the app at '/second'; it shows a splash for its first frame,
@@ -30,17 +33,24 @@ void main() {
   // Should: the second page opens at '/second', and on web the browser holds
   // the link in the same history entry, not two more.
   for (final MapEntry(key: name, value: buildApp) in apps.entries) {
-    testWidgets('A deep link to a router built after the first frame adds no history entry, with $name', (
-      tester,
-    ) async {
-      final entryBefore = browserEntryIndex() ?? 0;
-      final router = buildRouter();
-      await pumpAppAtDeepLink(tester, '/second', _Splash(builder: () => buildApp(router)));
-      expect(find.text('SecondRoute'), findsOneWidget);
-      expect(router.urlState.url, '/second');
-      await expectBrowserUrl('/second');
-      await expectAppWroteDeepLinkEntry(entryBefore);
-    });
+    testWidgets(
+      'A deep link to a router built after the first frame adds no history entry, with $name',
+      (
+        tester,
+      ) async {
+        final entryBefore = browserEntryIndex() ?? 0;
+        final router = buildRouter();
+        await pumpAppAtDeepLink(
+          tester,
+          '/second',
+          _Splash(builder: () => buildApp(router)),
+        );
+        expect(find.text('SecondRoute'), findsOneWidget);
+        expect(router.urlState.url, '/second');
+        await expectBrowserUrl('/second');
+        await expectAppWroteDeepLinkEntry(entryBefore);
+      },
+    );
   }
 }
 
@@ -60,9 +70,12 @@ class _SplashState extends State<_Splash> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() => _ready = true));
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => setState(() => _ready = true),
+    );
   }
 
   @override
-  Widget build(BuildContext context) => _ready ? widget.builder() : const SizedBox();
+  Widget build(BuildContext context) =>
+      _ready ? widget.builder() : const SizedBox();
 }

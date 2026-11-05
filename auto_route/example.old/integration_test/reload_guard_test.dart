@@ -14,32 +14,39 @@ void main() {
   // Steps: open the app on '/dashboard', as a reload does on web; its guard
   // waits for a stored user, then calls resolver.next(true).
   // Should: the dashboard shows and the url stays '/dashboard'.
-  testWidgets('Opening a page whose guard awaits, then calls next(true), shows that page', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: _page('HomeRoute'), path: '/', initial: true),
-        AutoRoute(
-          page: _page('DashboardRoute'),
-          path: '/dashboard',
-          guards: [
-            AutoRouteGuard.simple((resolver, _) async {
-              await Future<void>.delayed(const Duration(milliseconds: 100));
-              resolver.next();
-            }),
-          ],
+  testWidgets(
+    'Opening a page whose guard awaits, then calls next(true), shows that page',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: _page('HomeRoute'), path: '/', initial: true),
+          AutoRoute(
+            page: _page('DashboardRoute'),
+            path: '/dashboard',
+            guards: [
+              AutoRouteGuard.simple((resolver, _) async {
+                await Future<void>.delayed(const Duration(milliseconds: 100));
+                resolver.next();
+              }),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterConfigApp(
+        tester,
+        router.config(
+          deepLinkBuilder: (link) =>
+              link.initial ? const DeepLink.path('/dashboard') : link,
         ),
-      ],
-    );
-    await pumpRouterConfigApp(
-      tester,
-      router.config(deepLinkBuilder: (link) => link.initial ? const DeepLink.path('/dashboard') : link),
-    );
-    await tester.pump(const Duration(milliseconds: 200));
-    await tester.pumpAndSettle();
+      );
+      await tester.pump(const Duration(milliseconds: 200));
+      await tester.pumpAndSettle();
 
-    expectTopPage(router, 'DashboardRoute');
-    await expectBrowserUrl('/dashboard');
-  });
+      expectTopPage(router, 'DashboardRoute');
+      await expectBrowserUrl('/dashboard');
+    },
+  );
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));

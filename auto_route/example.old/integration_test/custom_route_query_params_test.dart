@@ -16,36 +16,56 @@ void main() {
   // Steps: ProductsRoute is a CustomRoute whose customRouteBuilder wraps the
   // child in a SelectionArea. Push it with page=1, then replace() it with page=2.
   // Should: the page shows page 2.
-  testWidgets('a customRouteBuilder page shows the new query params after replace()', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('HomeRoute', builder: (_) => const Text('HomeRoute')),
-        ),
-        CustomRoute(
-          path: '/products',
-          page: PageInfo(
-            'ProductsRoute',
-            builder: (data) =>
-                Scaffold(body: SafeArea(child: Text('Products page ${data.queryParams.optString('page')}'))),
+  testWidgets(
+    'a customRouteBuilder page shows the new query params after replace()',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => const Text('HomeRoute'),
+            ),
           ),
-          customRouteBuilder: <T>(context, child, page) => PageRouteBuilder<T>(
-            settings: page,
-            pageBuilder: (_, _, _) => SelectionArea(child: child),
-            transitionsBuilder: TransitionsBuilders.fadeIn,
+          CustomRoute(
+            path: '/products',
+            page: PageInfo(
+              'ProductsRoute',
+              builder: (data) => Scaffold(
+                body: SafeArea(
+                  child: Text(
+                    'Products page ${data.queryParams.optString('page')}',
+                  ),
+                ),
+              ),
+            ),
+            customRouteBuilder: <T>(context, child, page) =>
+                PageRouteBuilder<T>(
+                  settings: page,
+                  pageBuilder: (_, _, _) => SelectionArea(child: child),
+                  transitionsBuilder: TransitionsBuilders.fadeIn,
+                ),
           ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      unawaited(
+        router.push(
+          const NamedRoute('ProductsRoute', queryParams: {'page': '1'}),
         ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(const NamedRoute('ProductsRoute', queryParams: {'page': '1'})));
-    await tester.pumpAndSettle();
-    expect(find.text('Products page 1'), findsOneWidget);
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Products page 1'), findsOneWidget);
 
-    unawaited(router.replace(const NamedRoute('ProductsRoute', queryParams: {'page': '2'})));
-    await tester.pumpAndSettle();
-    expect(find.text('Products page 2'), findsOneWidget);
-    await expectBrowserUrl('/products?page=2');
-  });
+      unawaited(
+        router.replace(
+          const NamedRoute('ProductsRoute', queryParams: {'page': '2'}),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Products page 2'), findsOneWidget);
+      await expectBrowserUrl('/products?page=2');
+    },
+  );
 }

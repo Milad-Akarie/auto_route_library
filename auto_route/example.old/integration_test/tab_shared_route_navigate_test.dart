@@ -41,7 +41,8 @@ void main() {
     final tabsRouter = router.innerRouterOf<TabsRouter>(_DashboardRoute.name)!;
     return [
       for (var i = 0; i < tabsRouter.pageCount; i++)
-        tabsRouter.stackRouterOfIndex(i)?.stack.map((p) => p.name).join(', ') ?? '-',
+        tabsRouter.stackRouterOfIndex(i)?.stack.map((p) => p.name).join(', ') ??
+            '-',
     ];
   }
 
@@ -51,53 +52,59 @@ void main() {
   // Test2Route, tap 'Third' again and navigate to Test1Route.
   // Should: each navigate opens the tab of its route, and the other tab keeps
   // its one page.
-  testWidgets('navigate() opens the tab of its route when two tabs share a route', (tester) async {
-    final router = buildRouter();
-    await pumpRouterApp(tester, router);
-    for (final label in ['First', 'Second', 'Third']) {
-      await tester.tap(find.text(label));
+  testWidgets(
+    'navigate() opens the tab of its route when two tabs share a route',
+    (tester) async {
+      final router = buildRouter();
+      await pumpRouterApp(tester, router);
+      for (final label in ['First', 'Second', 'Third']) {
+        await tester.tap(find.text(label));
+        await tester.pumpAndSettle();
+      }
+
+      router.navigate(const _Test2Route()).ignore();
       await tester.pumpAndSettle();
-    }
+      expect(find.text(_Test2Route.name), findsOneWidget);
+      expect(router.urlState.url, '/dashboard/tests/test2');
+      await expectBrowserUrl('/dashboard/tests/test2');
+      expect(tabStacks(router), [_Test1Route.name, _Test2Route.name, '-']);
 
-    router.navigate(const _Test2Route()).ignore();
-    await tester.pumpAndSettle();
-    expect(find.text(_Test2Route.name), findsOneWidget);
-    expect(router.urlState.url, '/dashboard/tests/test2');
-    await expectBrowserUrl('/dashboard/tests/test2');
-    expect(tabStacks(router), [_Test1Route.name, _Test2Route.name, '-']);
-
-    await tester.tap(find.text('Third'));
-    await tester.pumpAndSettle();
-    router.navigate(const _Test1Route()).ignore();
-    await tester.pumpAndSettle();
-    expect(find.text(_Test1Route.name), findsOneWidget);
-    expect(router.urlState.url, '/dashboard/tests/test1');
-    await expectBrowserUrl('/dashboard/tests/test1');
-    expect(tabStacks(router), [_Test1Route.name, _Test2Route.name, '-']);
-  });
+      await tester.tap(find.text('Third'));
+      await tester.pumpAndSettle();
+      router.navigate(const _Test1Route()).ignore();
+      await tester.pumpAndSettle();
+      expect(find.text(_Test1Route.name), findsOneWidget);
+      expect(router.urlState.url, '/dashboard/tests/test1');
+      await expectBrowserUrl('/dashboard/tests/test1');
+      expect(tabStacks(router), [_Test1Route.name, _Test2Route.name, '-']);
+    },
+  );
 
   // Steps: tap 'Second', then 'First', then go back: the browser's back
   // button on web, router.back() elsewhere.
   // Should: the second tab shows again, at /dashboard/tests/test2.
-  testWidgets('going back to the second of two tabs sharing a route opens that tab', (tester) async {
-    final router = buildRouter();
-    await pumpRouterAppWithConfig(tester, router);
-    for (final label in ['Second', 'First']) {
-      await tester.tap(find.text(label));
-      await tester.pumpAndSettle();
-    }
+  testWidgets(
+    'going back to the second of two tabs sharing a route opens that tab',
+    (tester) async {
+      final router = buildRouter();
+      await pumpRouterAppWithConfig(tester, router);
+      for (final label in ['Second', 'First']) {
+        await tester.tap(find.text(label));
+        await tester.pumpAndSettle();
+      }
 
-    if (kIsWeb) {
-      pressBrowserBack();
-      await expectBrowserUrl('/dashboard/tests/test2');
-    } else {
-      router.back();
-    }
-    await tester.pumpAndSettle();
-    expect(find.text(_Test2Route.name), findsOneWidget);
-    expect(router.urlState.url, '/dashboard/tests/test2');
-    expect(tabStacks(router), [_Test1Route.name, _Test2Route.name, '-']);
-  });
+      if (kIsWeb) {
+        pressBrowserBack();
+        await expectBrowserUrl('/dashboard/tests/test2');
+      } else {
+        router.back();
+      }
+      await tester.pumpAndSettle();
+      expect(find.text(_Test2Route.name), findsOneWidget);
+      expect(router.urlState.url, '/dashboard/tests/test2');
+      expect(tabStacks(router), [_Test1Route.name, _Test2Route.name, '-']);
+    },
+  );
 }
 
 class _DashboardRoute extends PageRouteInfo<void> {
@@ -116,8 +123,15 @@ class _DashboardRoute extends PageRouteInfo<void> {
               children: [
                 Row(
                   children: [
-                    for (final (index, label) in ['First', 'Second', 'Third'].indexed)
-                      TextButton(onPressed: () => tabsRouter.setActiveIndex(index), child: Text(label)),
+                    for (final (index, label) in [
+                      'First',
+                      'Second',
+                      'Third',
+                    ].indexed)
+                      TextButton(
+                        onPressed: () => tabsRouter.setActiveIndex(index),
+                        child: Text(label),
+                      ),
                   ],
                 ),
                 Expanded(child: child),

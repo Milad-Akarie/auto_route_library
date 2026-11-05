@@ -17,26 +17,36 @@ void main() {
   // Steps: ProductsRoute shows `queryParams.optString('tag')`. Open
   // /products?tag=red&tag=blue.
   // Should: the page builds and shows the last value, blue.
-  testWidgets('a page reading optString builds from a deep link that repeats the key', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('HomeRoute', builder: (_) => const Text('HomeRoute')),
-        ),
-        AutoRoute(
-          path: '/products',
-          page: PageInfo(
-            'ProductsRoute',
-            builder: (data) => Scaffold(body: SafeArea(child: Text('Tag ${data.queryParams.optString('tag')}'))),
+  testWidgets(
+    'a page reading optString builds from a deep link that repeats the key',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => const Text('HomeRoute'),
+            ),
           ),
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    unawaited(router.navigatePath('/products?tag=red&tag=blue'));
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(find.text('Tag blue'), findsOneWidget);
-  });
+          AutoRoute(
+            path: '/products',
+            page: PageInfo(
+              'ProductsRoute',
+              builder: (data) => Scaffold(
+                body: SafeArea(
+                  child: Text('Tag ${data.queryParams.optString('tag')}'),
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      unawaited(router.navigatePath('/products?tag=red&tag=blue'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Tag blue'), findsOneWidget);
+    },
+  );
 }

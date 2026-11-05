@@ -17,7 +17,9 @@ void main() {
 
   final flagPage = PageInfo(
     'FlagRoute',
-    builder: (data) => Scaffold(body: Center(child: Text('Flag ${data.queryParams.optBool('f')}'))),
+    builder: (data) => Scaffold(
+      body: Center(child: Text('Flag ${data.queryParams.optBool('f')}')),
+    ),
   );
 
   RootStackRouter buildRouter() => .build(
@@ -31,10 +33,14 @@ void main() {
   // builder reads data.queryParams.optBool('f').
   // Should: the page shows the flag, without NoSuchMethodError on
   // toLowerCase, and the url carries f=true.
-  testWidgets('a page pushed with a bool query param reads it with optBool', (tester) async {
+  testWidgets('a page pushed with a bool query param reads it with optBool', (
+    tester,
+  ) async {
     final router = buildRouter();
     await pumpRouterApp(tester, router);
-    unawaited(router.push(const NamedRoute('FlagRoute', queryParams: {'f': true})));
+    unawaited(
+      router.push(const NamedRoute('FlagRoute', queryParams: {'f': true})),
+    );
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(find.text('Flag true'), findsOneWidget);
@@ -53,9 +59,15 @@ void main() {
 
   // Steps: push the page with f: true, then restore the app.
   // Should: the restored page shows the flag true.
-  testWidgets('a restored page reads its saved bool query param', (tester) async {
+  testWidgets('a restored page reads its saved bool query param', (
+    tester,
+  ) async {
     await pumpRestorableApp(tester, buildRouter);
-    unawaited(RestorableRouterApp.router.push(const NamedRoute('FlagRoute', queryParams: {'f': true})));
+    unawaited(
+      RestorableRouterApp.router.push(
+        const NamedRoute('FlagRoute', queryParams: {'f': true}),
+      ),
+    );
     await tester.pumpAndSettle();
     expect(find.text('Flag true'), findsOneWidget);
 

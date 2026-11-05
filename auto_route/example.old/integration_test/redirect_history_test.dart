@@ -21,13 +21,18 @@ void main() {
         initial: true,
         guards: [
           AutoRouteGuard.simple((resolver, _) {
-            unawaited(resolver.redirectUntil(NamedRoute('RouteARedirected', args: resolver.next)));
+            unawaited(
+              resolver.redirectUntil(
+                NamedRoute('RouteARedirected', args: resolver.next),
+              ),
+            );
           }),
         ],
         builder: (context, _) => Scaffold(
           body: Center(
             child: ElevatedButton(
-              onPressed: () => context.router.replace(const NamedRoute('RouteC')),
+              onPressed: () =>
+                  context.router.replace(const NamedRoute('RouteC')),
               child: const Text('Go to Page C (replace)'),
             ),
           ),
@@ -46,7 +51,12 @@ void main() {
         guards: [
           AutoRouteGuard.simple((resolver, _) {
             unawaited(
-              resolver.redirectUntil(NamedRoute('RouteCRedirected', args: () => resolver.reject(goBack: true))),
+              resolver.redirectUntil(
+                NamedRoute(
+                  'RouteCRedirected',
+                  args: () => resolver.reject(goBack: true),
+                ),
+              ),
             );
           }),
         ],
@@ -56,7 +66,10 @@ void main() {
         name: 'RouteCRedirected',
         builder: (_, data) => Scaffold(
           body: Center(
-            child: ElevatedButton(onPressed: data.args! as VoidCallback, child: const Text('Go back')),
+            child: ElevatedButton(
+              onPressed: data.args! as VoidCallback,
+              child: const Text('Go back'),
+            ),
           ),
         ),
       ),

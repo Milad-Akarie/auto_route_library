@@ -42,24 +42,37 @@ void main() {
   // then tap UserRoute's back button.
   // Should: both routes open in one 'UsersSellRoute' shell, UserRoute on top
   // with a back button, and back shows UsersRoute.
-  testWidgets('replaceAll with two routes of a nested router opens both in one nested router', (tester) async {
-    await pumpRouterApp(tester, router);
-    unawaited(router.replaceAll([const _DashboardRoute()]));
-    await tester.pumpAndSettle();
-    final dashboard = router.innerRouterOf<StackRouter>(_DashboardRoute.name)!;
+  testWidgets(
+    'replaceAll with two routes of a nested router opens both in one nested router',
+    (tester) async {
+      await pumpRouterApp(tester, router);
+      unawaited(router.replaceAll([const _DashboardRoute()]));
+      await tester.pumpAndSettle();
+      final dashboard = router.innerRouterOf<StackRouter>(
+        _DashboardRoute.name,
+      )!;
 
-    unawaited(dashboard.replaceAll([const _UsersRoute(), const _UserRoute(userId: 1)]));
-    await tester.pumpAndSettle();
-    expect(dashboard.stack.map((p) => p.name), [_usersShell]);
-    final shell = dashboard.innerRouterOf<StackRouter>(_usersShell)!;
-    expect(shell.stack.map((p) => p.name), [_UsersRoute.name, _UserRoute.name]);
-    expectTopPage(router, _UserRoute.name);
-    await expectBrowserUrl('/dashboard/users/user');
+      unawaited(
+        dashboard.replaceAll([
+          const _UsersRoute(),
+          const _UserRoute(userId: 1),
+        ]),
+      );
+      await tester.pumpAndSettle();
+      expect(dashboard.stack.map((p) => p.name), [_usersShell]);
+      final shell = dashboard.innerRouterOf<StackRouter>(_usersShell)!;
+      expect(shell.stack.map((p) => p.name), [
+        _UsersRoute.name,
+        _UserRoute.name,
+      ]);
+      expectTopPage(router, _UserRoute.name);
+      await expectBrowserUrl('/dashboard/users/user');
 
-    await tester.tap(find.byType(BackButton));
-    await tester.pumpAndSettle();
-    expectTopPage(router, _UsersRoute.name);
-  });
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      expectTopPage(router, _UsersRoute.name);
+    },
+  );
 }
 
 const _usersShell = 'UsersSellRoute';
@@ -78,7 +91,10 @@ class _DashboardRoute extends PageRouteInfo<void> {
   const _DashboardRoute() : super(name);
 
   static const String name = 'DashboardRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: AutoRouter()));
+  static PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: AutoRouter()),
+  );
 }
 
 class _MetricsRoute extends PageRouteInfo<void> {

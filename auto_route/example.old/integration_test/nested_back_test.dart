@@ -60,7 +60,9 @@ void main() {
       return nested;
     }
 
-    testWidgets('system back pops only the sub-route, then the host route', (tester) async {
+    testWidgets('system back pops only the sub-route, then the host route', (
+      tester,
+    ) async {
       await pumpRouterApp(tester, router);
       final nested = await pushSubRoute(tester);
 
@@ -76,7 +78,9 @@ void main() {
       expectTopPage(router, FirstRoute.name);
     });
 
-    testWidgets('iOS back swipe pops only the sub-route, then the host route', (tester) async {
+    testWidgets('iOS back swipe pops only the sub-route, then the host route', (
+      tester,
+    ) async {
       await pumpRouterApp(tester, router, theme: iosTheme);
       final nested = await pushSubRoute(tester);
 
@@ -103,12 +107,19 @@ void main() {
       final nested = router.innerRouterOf<StackRouter>(SecondHostRoute.name)!;
       unawaited(nested.push(const Tab2Route()));
       await tester.pumpAndSettle();
-      unawaited(nested.innerRouterOf<StackRouter>(Tab2Route.name)!.push(const Tab2Nested2Route()));
+      unawaited(
+        nested
+            .innerRouterOf<StackRouter>(Tab2Route.name)!
+            .push(const Tab2Nested2Route()),
+      );
       await tester.pumpAndSettle();
       expectTopPage(router, Tab2Nested2Route.name);
     }
 
-    Future<void> expectBackSteps(WidgetTester tester, Future<void> Function(WidgetTester) back) async {
+    Future<void> expectBackSteps(
+      WidgetTester tester,
+      Future<void> Function(WidgetTester) back,
+    ) async {
       await back(tester);
       expectTopPage(router, Tab2Nested1Route.name);
       await back(tester);

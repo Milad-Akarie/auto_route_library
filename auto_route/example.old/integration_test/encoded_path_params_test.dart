@@ -26,29 +26,34 @@ void main() {
   // again at the url it shows.
   // Should: the url, and on web the address bar, is '/files/reports%2F2024',
   // and the reopened page reads 'reports/2024'.
-  testWidgets('A "/" in a path param is encoded in the url and reads back whole', (tester) async {
-    final router = buildRouter();
-    await pumpRouterAppWithConfig(tester, router);
-    unawaited(router.push(_FileRoute(name: 'reports/2024')));
-    await tester.pumpAndSettle();
-    expect(find.text('File reports/2024'), findsOneWidget);
-    const encoded = '/files/reports%2F2024';
-    expect(router.urlState.uri.toString(), encoded);
-    await expectBrowserUrl(encoded);
+  testWidgets(
+    'A "/" in a path param is encoded in the url and reads back whole',
+    (tester) async {
+      final router = buildRouter();
+      await pumpRouterAppWithConfig(tester, router);
+      unawaited(router.push(_FileRoute(name: 'reports/2024')));
+      await tester.pumpAndSettle();
+      expect(find.text('File reports/2024'), findsOneWidget);
+      const encoded = '/files/reports%2F2024';
+      expect(router.urlState.uri.toString(), encoded);
+      await expectBrowserUrl(encoded);
 
-    await tester.pumpWidget(const SizedBox());
-    await pumpRouterApp(tester, buildRouter(), initialLink: encoded);
-    expect(tester.takeException(), isNull);
-    expect(find.text('File reports/2024'), findsOneWidget);
-  });
+      await tester.pumpWidget(const SizedBox());
+      await pumpRouterApp(tester, buildRouter(), initialLink: encoded);
+      expect(tester.takeException(), isNull);
+      expect(find.text('File reports/2024'), findsOneWidget);
+    },
+  );
 }
 
 class _FileRoute extends PageRouteInfo<void> {
-  _FileRoute({required String name}) : super(pageName, rawPathParams: {'name': name});
+  _FileRoute({required String name})
+    : super(pageName, rawPathParams: {'name': name});
 
   static const String pageName = 'FileRoute';
   static PageInfo page = PageInfo(
     pageName,
-    builder: (data) => Text('File ${data.inheritedPathParams.getString('name')}'),
+    builder: (data) =>
+        Text('File ${data.inheritedPathParams.getString('name')}'),
   );
 }

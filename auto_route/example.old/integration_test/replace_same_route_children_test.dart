@@ -17,8 +17,13 @@ void main() {
   // pushAndPopUntil down to HomeRoute. Then go back.
   // Should: the shell shows OtherRoute alone and the url is '/app/other', in
   // the browser's address bar too on web, and back leaves the shell.
-  for (final (how, replace) in [('replace()', true), ('pushAndPopUntil()', false)]) {
-    testWidgets('$how with the same parent route shows only its new children', (tester) async {
+  for (final (how, replace) in [
+    ('replace()', true),
+    ('pushAndPopUntil()', false),
+  ]) {
+    testWidgets('$how with the same parent route shows only its new children', (
+      tester,
+    ) async {
       final router = _buildRouter(replace: replace);
       await pumpRouterApp(tester, router);
       await tester.tap(find.text('Open users'));
@@ -52,7 +57,11 @@ RootStackRouter _buildRouter({required bool replace}) => .build(
   routes: [
     AutoRoute(
       path: '/',
-      page: _page('HomeRoute', label: 'Open users', onPressed: (router) => router.push(_users)),
+      page: _page(
+        'HomeRoute',
+        label: 'Open users',
+        onPressed: (router) => router.push(_users),
+      ),
     ),
     AutoRoute(
       path: '/app',
@@ -65,7 +74,10 @@ RootStackRouter _buildRouter({required bool replace}) => .build(
             label: 'Show other',
             onPressed: (router) => replace
                 ? router.replace(_other)
-                : router.pushAndPopUntil(_other, predicate: (route) => route.settings.name == 'HomeRoute'),
+                : router.pushAndPopUntil(
+                    _other,
+                    predicate: (route) => route.settings.name == 'HomeRoute',
+                  ),
           ),
         ),
         AutoRoute(path: 'other', page: _page('OtherRoute')),
@@ -76,19 +88,27 @@ RootStackRouter _buildRouter({required bool replace}) => .build(
 
 // A page that shows its name and, given a [label], a button that calls
 // [onPressed] with the root router.
-PageInfo _page(String name, {String? label, void Function(StackRouter router)? onPressed}) => .new(
+PageInfo _page(
+  String name, {
+  String? label,
+  void Function(StackRouter router)? onPressed,
+}) => .new(
   name,
   builder: (context) => Scaffold(
     body: Column(
       children: [
         Text(name),
         if (label != null && onPressed != null)
-          ElevatedButton(onPressed: () => onPressed(context.router.root), child: Text(label)),
+          ElevatedButton(
+            onPressed: () => onPressed(context.router.root),
+            child: Text(label),
+          ),
       ],
     ),
   ),
 );
 
 class _Route extends PageRouteInfo<void> {
-  const _Route(super.name, {List<PageRouteInfo>? children}) : super(initialChildren: children);
+  const _Route(super.name, {List<PageRouteInfo>? children})
+    : super(initialChildren: children);
 }

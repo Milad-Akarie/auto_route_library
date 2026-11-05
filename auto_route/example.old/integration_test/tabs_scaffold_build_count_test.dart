@@ -14,30 +14,36 @@ void main() {
   // Steps: an AutoTabsScaffold with two routes counts the calls of its
   // bottomNavigationBuilder while the app opens, then tap 'Posts'.
   // Should: one call to open the page, one more for the tab change.
-  testWidgets('AutoTabsScaffold builds its bottom navigation once when it opens', (tester) async {
-    _bottomNavigationBuilds = 0;
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          page: _NavigationRoute.page,
-          path: '/',
-          initial: true,
-          children: [
-            AutoRoute(page: _UsersRoute.page, path: 'users'),
-            AutoRoute(page: _PostsRoute.page, path: 'posts'),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterConfigApp(tester, router.config(deepLinkBuilder: (_) => DeepLink.defaultPath));
-    expect(find.text(_UsersRoute.name), findsOneWidget);
-    expect(_bottomNavigationBuilds, 1);
+  testWidgets(
+    'AutoTabsScaffold builds its bottom navigation once when it opens',
+    (tester) async {
+      _bottomNavigationBuilds = 0;
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            page: _NavigationRoute.page,
+            path: '/',
+            initial: true,
+            children: [
+              AutoRoute(page: _UsersRoute.page, path: 'users'),
+              AutoRoute(page: _PostsRoute.page, path: 'posts'),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterConfigApp(
+        tester,
+        router.config(deepLinkBuilder: (_) => DeepLink.defaultPath),
+      );
+      expect(find.text(_UsersRoute.name), findsOneWidget);
+      expect(_bottomNavigationBuilds, 1);
 
-    await tester.tap(find.text('Posts'));
-    await tester.pumpAndSettle();
-    expect(find.text(_PostsRoute.name), findsOneWidget);
-    expect(_bottomNavigationBuilds, 2);
-  });
+      await tester.tap(find.text('Posts'));
+      await tester.pumpAndSettle();
+      expect(find.text(_PostsRoute.name), findsOneWidget);
+      expect(_bottomNavigationBuilds, 2);
+    },
+  );
 }
 
 var _bottomNavigationBuilds = 0;
@@ -70,12 +76,18 @@ class _UsersRoute extends PageRouteInfo<void> {
   const _UsersRoute() : super(name);
 
   static const String name = '_UsersRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const SafeArea(child: Text(name)));
+  static PageInfo page = PageInfo(
+    name,
+    builder: (_) => const SafeArea(child: Text(name)),
+  );
 }
 
 class _PostsRoute extends PageRouteInfo<void> {
   const _PostsRoute() : super(name);
 
   static const String name = '_PostsRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const SafeArea(child: Text(name)));
+  static PageInfo page = PageInfo(
+    name,
+    builder: (_) => const SafeArea(child: Text(name)),
+  );
 }

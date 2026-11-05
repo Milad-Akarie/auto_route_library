@@ -19,17 +19,20 @@ void main() {
   setUp(eagerTabBuilds.clear);
 
   for (final kind in EagerTabsKind.values) {
-    testWidgets('${kind.name} with lazyLoad: false builds every tab before the first switch', (tester) async {
-      final router = buildEagerTabsRouter(kind);
-      await pumpRouterApp(tester, router);
+    testWidgets(
+      '${kind.name} with lazyLoad: false builds every tab before the first switch',
+      (tester) async {
+        final router = buildEagerTabsRouter(kind);
+        await pumpRouterApp(tester, router);
 
-      expect(eagerTabBuilds, {for (final name in eagerTabNames) name: 1});
+        expect(eagerTabBuilds, {for (final name in eagerTabNames) name: 1});
 
-      router.innerRouterOf<TabsRouter>(eagerTabsName)!.setActiveIndex(2);
-      await tester.pumpAndSettle();
+        router.innerRouterOf<TabsRouter>(eagerTabsName)!.setActiveIndex(2);
+        await tester.pumpAndSettle();
 
-      expect(find.text(eagerTabNames[2]), findsOneWidget);
-      expect(eagerTabBuilds, {for (final name in eagerTabNames) name: 1});
-    });
+        expect(find.text(eagerTabNames[2]), findsOneWidget);
+        expect(eagerTabBuilds, {for (final name in eagerTabNames) name: 1});
+      },
+    );
   }
 }

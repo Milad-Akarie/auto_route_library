@@ -16,23 +16,33 @@ void main() {
   // Steps: push HostRoute, whose page holds an AutoRouter.declarative, then
   // go back, three times.
   // Should: each visit's HeroController is disposed when the host leaves.
-  testWidgets('leaving a declarative router disposes its HeroController', (tester) async {
+  testWidgets('leaving a declarative router disposes its HeroController', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(
           path: '/',
-          page: PageInfo('HomeRoute', builder: (_) => const _TextPage('HomeRoute')),
+          page: PageInfo(
+            'HomeRoute',
+            builder: (_) => const _TextPage('HomeRoute'),
+          ),
         ),
         AutoRoute(
           path: '/host',
           page: PageInfo(
             'HostRoute',
-            builder: (_) => AutoRouter.declarative(routes: (_) => [const NamedRoute('ChildRoute')]),
+            builder: (_) => AutoRouter.declarative(
+              routes: (_) => [const NamedRoute('ChildRoute')],
+            ),
           ),
           children: [
             AutoRoute(
               path: '',
-              page: PageInfo('ChildRoute', builder: (_) => const _TextPage('ChildRoute')),
+              page: PageInfo(
+                'ChildRoute',
+                builder: (_) => const _TextPage('ChildRoute'),
+              ),
             ),
           ],
         ),
@@ -62,5 +72,6 @@ class _TextPage extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) => Scaffold(body: SafeArea(child: Text(text)));
+  Widget build(BuildContext context) =>
+      Scaffold(body: SafeArea(child: Text(text)));
 }

@@ -19,10 +19,18 @@ void main() {
   // Should: the url is the detail page's path, in the browser's address bar
   // too on web, then the sales page's path again after the pop.
   for (final (how, push) in [
-    ("pushPath('/reports/sales/detail')", (StackRouter router) => router.pushPath('/reports/sales/detail')),
-    ('push(SalesDetailRoute())', (StackRouter router) => router.push(const _Route('SalesDetailRoute'))),
+    (
+      "pushPath('/reports/sales/detail')",
+      (StackRouter router) => router.pushPath('/reports/sales/detail'),
+    ),
+    (
+      'push(SalesDetailRoute())',
+      (StackRouter router) => router.push(const _Route('SalesDetailRoute')),
+    ),
   ]) {
-    testWidgets('Pushing in a shell with $how updates the browser url', (tester) async {
+    testWidgets('Pushing in a shell with $how updates the browser url', (
+      tester,
+    ) async {
       final router = RootStackRouter.build(
         routes: [
           AutoRoute(
@@ -32,7 +40,10 @@ void main() {
               AutoRoute(path: '', page: _page('HomeRoute')),
               AutoRoute(path: 'reports', page: _page('ReportsRoute')),
               AutoRoute(path: 'reports/sales', page: _page('SalesRoute')),
-              AutoRoute(path: 'reports/sales/detail', page: _page('SalesDetailRoute')),
+              AutoRoute(
+                path: 'reports/sales/detail',
+                page: _page('SalesDetailRoute'),
+              ),
             ],
           ),
         ],
@@ -57,7 +68,8 @@ void main() {
   }
 }
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
   const _Route(super.name);

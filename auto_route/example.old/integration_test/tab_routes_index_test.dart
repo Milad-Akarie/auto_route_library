@@ -16,39 +16,46 @@ void main() {
     // Steps: tabs are [first, second] and an AutoRouterObserver listens. Open
     // the second tab, then tap 'Remove second tab' so the routes are [first].
     // Should: the first tab shows.
-    testWidgets('${kind.name}: removing the active second tab shows the first tab', (tester) async {
-      addTearDown(() => _secondRemovedNotifier.value = false);
-      _tabsKind = kind;
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            page: _TabsHostRoute.page,
-            path: '/',
-            initial: true,
-            children: [
-              AutoRoute(page: _FirstTabRoute.page, path: 'first', initial: true),
-              AutoRoute(page: _SecondTabRoute.page, path: 'second'),
-            ],
+    testWidgets(
+      '${kind.name}: removing the active second tab shows the first tab',
+      (tester) async {
+        addTearDown(() => _secondRemovedNotifier.value = false);
+        _tabsKind = kind;
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              page: _TabsHostRoute.page,
+              path: '/',
+              initial: true,
+              children: [
+                AutoRoute(
+                  page: _FirstTabRoute.page,
+                  path: 'first',
+                  initial: true,
+                ),
+                AutoRoute(page: _SecondTabRoute.page, path: 'second'),
+              ],
+            ),
+          ],
+        );
+        await pumpRouterConfigApp(
+          tester,
+          router.config(
+            deepLinkBuilder: (_) => DeepLink.defaultPath,
+            navigatorObservers: () => [AutoRouterObserver()],
           ),
-        ],
-      );
-      await pumpRouterConfigApp(
-        tester,
-        router.config(
-          deepLinkBuilder: (_) => DeepLink.defaultPath,
-          navigatorObservers: () => [AutoRouterObserver()],
-        ),
-      );
+        );
 
-      await tester.tap(find.text('Go to second tab'));
-      await tester.pumpAndSettle();
-      expect(find.text(_SecondTabRoute.name), findsOneWidget);
+        await tester.tap(find.text('Go to second tab'));
+        await tester.pumpAndSettle();
+        expect(find.text(_SecondTabRoute.name), findsOneWidget);
 
-      await tester.tap(find.text('Remove second tab'));
-      await tester.pumpAndSettle();
-      expect(find.text(_FirstTabRoute.name), findsOneWidget);
-      expect(find.text(_SecondTabRoute.name), findsNothing);
-    });
+        await tester.tap(find.text('Remove second tab'));
+        await tester.pumpAndSettle();
+        expect(find.text(_FirstTabRoute.name), findsOneWidget);
+        expect(find.text(_SecondTabRoute.name), findsNothing);
+      },
+    );
   }
 }
 
@@ -67,14 +74,18 @@ class _TabsHostRoute extends PageRouteInfo<void> {
     builder: (_) => ValueListenableBuilder<bool>(
       valueListenable: _secondRemovedNotifier,
       builder: (context, secondRemoved, _) {
-        final routes = [const _FirstTabRoute(), if (!secondRemoved) const _SecondTabRoute()];
+        final routes = [
+          const _FirstTabRoute(),
+          if (!secondRemoved) const _SecondTabRoute(),
+        ];
         return switch (_tabsKind) {
           .indexedStack => AutoTabsRouter(routes: routes),
           .pageView => AutoTabsRouter.pageView(routes: routes),
           .tabBar => AutoTabsRouter.tabBar(routes: routes),
           .builder => AutoTabsRouter.builder(
             routes: routes,
-            builder: (context, children, tabsRouter) => IndexedStack(index: tabsRouter.activeIndex, children: children),
+            builder: (context, children, tabsRouter) =>
+                IndexedStack(index: tabsRouter.activeIndex, children: children),
           ),
         };
       },
@@ -117,7 +128,10 @@ class _SecondTabRoute extends PageRouteInfo<void> {
         child: Column(
           children: [
             const Text(name),
-            TextButton(onPressed: () => _secondRemovedNotifier.value = true, child: const Text('Remove second tab')),
+            TextButton(
+              onPressed: () => _secondRemovedNotifier.value = true,
+              child: const Text('Remove second tab'),
+            ),
           ],
         ),
       ),

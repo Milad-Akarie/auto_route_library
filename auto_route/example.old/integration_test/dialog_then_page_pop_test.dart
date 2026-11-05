@@ -27,19 +27,22 @@ void main() {
   // context.router.maybePop(true). Once the dialog returns true, the page
   // starts an async call without awaiting it and calls context.router.maybePop(true).
   // Should: the dialog and then the page close, with no assertion.
-  testWidgets('maybePop on the page after popping a dialog with maybePop closes the page', (tester) async {
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(const _FormRoute()));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'maybePop on the page after popping a dialog with maybePop closes the page',
+    (tester) async {
+      await pumpRouterApp(tester, router);
+      unawaited(router.push(const _FormRoute()));
+      await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Close form'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Confirm'));
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(router.stack.map((p) => p.name), [_HomeRoute.name]);
-    expectCurrentPage(router, _HomeRoute.name);
-  });
+      await tester.tap(find.text('Close form'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(router.stack.map((p) => p.name), [_HomeRoute.name]);
+      expectCurrentPage(router, _HomeRoute.name);
+    },
+  );
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
@@ -63,7 +66,8 @@ class _FormPage extends StatelessWidget {
   const _FormPage();
 
   // Stands for the reporter's cubit call that takes a while.
-  Future<void> _callAsyncCubitMethod() => Future<void>.delayed(const Duration(milliseconds: 500));
+  Future<void> _callAsyncCubitMethod() =>
+      Future<void>.delayed(const Duration(milliseconds: 500));
 
   @override
   Widget build(BuildContext context) {

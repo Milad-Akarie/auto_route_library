@@ -26,7 +26,9 @@ void main() {
               page: _ListDetailRoute.page,
               initial: true,
               path: ':id',
-              children: [AutoRoute(page: _CreateListItemsRoute.page, path: ':familyId')],
+              children: [
+                AutoRoute(page: _CreateListItemsRoute.page, path: ':familyId'),
+              ],
             ),
           ],
         ),
@@ -38,19 +40,26 @@ void main() {
   // CreateListItemsRoute(familyId: 'f-1') from it.
   // Should: the page reads the inherited id 'l-1', and the url, and on web the
   // address bar, is '/details/l-1/f-1'.
-  testWidgets('A child route reads the id it inherits when pushed from its parent', (tester) async {
-    await pumpRouterAppWithConfig(tester, router);
-    unawaited(router.navigate(_ListDetailRouter(children: [_ListDetailRoute(id: 'l-1')])));
-    await tester.pumpAndSettle();
-    final detail = tester.element(find.text('List l-1'));
+  testWidgets(
+    'A child route reads the id it inherits when pushed from its parent',
+    (tester) async {
+      await pumpRouterAppWithConfig(tester, router);
+      unawaited(
+        router.navigate(
+          _ListDetailRouter(children: [_ListDetailRoute(id: 'l-1')]),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final detail = tester.element(find.text('List l-1'));
 
-    unawaited(detail.router.push(_CreateListItemsRoute(familyId: 'f-1')));
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(find.text('Create f-1 in l-1'), findsOneWidget);
-    expect(router.urlState.url, '/details/l-1/f-1');
-    await expectBrowserUrl('/details/l-1/f-1');
-  });
+      unawaited(detail.router.push(_CreateListItemsRoute(familyId: 'f-1')));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Create f-1 in l-1'), findsOneWidget);
+      expect(router.urlState.url, '/details/l-1/f-1');
+      await expectBrowserUrl('/details/l-1/f-1');
+    },
+  );
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
@@ -61,7 +70,8 @@ class _HomeRoute extends PageRouteInfo<void> {
 }
 
 class _ListDetailRouter extends PageRouteInfo<void> {
-  const _ListDetailRouter({List<PageRouteInfo>? children}) : super(pageName, initialChildren: children);
+  const _ListDetailRouter({List<PageRouteInfo>? children})
+    : super(pageName, initialChildren: children);
 
   static const String pageName = 'ListDetailRouter';
   static PageInfo page = PageInfo(pageName, builder: (_) => const AutoRouter());
@@ -84,14 +94,17 @@ class _ListDetailRoute extends PageRouteInfo<void> {
 }
 
 class _CreateListItemsRoute extends PageRouteInfo<void> {
-  _CreateListItemsRoute({required String familyId}) : super(pageName, rawPathParams: {'familyId': familyId});
+  _CreateListItemsRoute({required String familyId})
+    : super(pageName, rawPathParams: {'familyId': familyId});
 
   static const String pageName = 'CreateListItemsRoute';
   static PageInfo page = PageInfo(
     pageName,
     builder: (data) {
       final pathParams = data.inheritedPathParams;
-      return Text('Create ${pathParams.getString('familyId')} in ${pathParams.getString('id')}');
+      return Text(
+        'Create ${pathParams.getString('familyId')} in ${pathParams.getString('id')}',
+      );
     },
   );
 }

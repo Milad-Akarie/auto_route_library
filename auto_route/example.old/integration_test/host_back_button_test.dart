@@ -43,27 +43,34 @@ void main() {
   Future<void> pushSubRoute(WidgetTester tester) async {
     unawaited(router.push(const _ButtonsHostRoute()));
     await tester.pumpAndSettle();
-    unawaited(router.innerRouterOf<StackRouter>(_ButtonsHostRoute.name)!.push(const SecondNested3Route()));
+    unawaited(
+      router
+          .innerRouterOf<StackRouter>(_ButtonsHostRoute.name)!
+          .push(const SecondNested3Route()),
+    );
     await tester.pumpAndSettle();
     expectTopPage(router, SecondNested3Route.name);
   }
 
   for (final button in [BackButton, CloseButton]) {
-    testWidgets('$button on the host page pops the nested page, then the host page', (tester) async {
-      await pumpRouterApp(tester, router);
-      await pushSubRoute(tester);
+    testWidgets(
+      '$button on the host page pops the nested page, then the host page',
+      (tester) async {
+        await pumpRouterApp(tester, router);
+        await pushSubRoute(tester);
 
-      await tester.tap(find.byType(button));
-      await tester.pumpAndSettle();
+        await tester.tap(find.byType(button));
+        await tester.pumpAndSettle();
 
-      expect(router.current.name, _ButtonsHostRoute.name);
-      expectTopPage(router, SecondNested1Route.name);
+        expect(router.current.name, _ButtonsHostRoute.name);
+        expectTopPage(router, SecondNested1Route.name);
 
-      await tester.tap(find.byType(button));
-      await tester.pumpAndSettle();
+        await tester.tap(find.byType(button));
+        await tester.pumpAndSettle();
 
-      expectTopPage(router, FirstRoute.name);
-    });
+        expectTopPage(router, FirstRoute.name);
+      },
+    );
   }
 }
 

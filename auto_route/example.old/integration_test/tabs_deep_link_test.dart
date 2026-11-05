@@ -19,7 +19,9 @@ void main() {
   // reevaluate the guard.
   // Should: the account page stays, and the url, and on web the address bar,
   // keeps '/profile/account', not '/profile'.
-  testWidgets('A deep link into a tab opens the nested page and keeps it', (tester) async {
+  testWidgets('A deep link into a tab opens the nested page and keeps it', (
+    tester,
+  ) async {
     final reevaluate = ValueNotifier(0);
     binding.platformDispatcher.defaultRouteNameTestValue = '/profile/account';
     final router = RootStackRouter.build(
@@ -40,7 +42,9 @@ void main() {
                 AutoRoute(
                   page: _shellPage('AccountRoute'),
                   path: 'account',
-                  children: [AutoRoute(page: _page('AccountContentRoute'), path: '')],
+                  children: [
+                    AutoRoute(page: _page('AccountContentRoute'), path: ''),
+                  ],
                 ),
               ],
             ),
@@ -48,7 +52,10 @@ void main() {
         ),
       ],
     );
-    await pumpRouterConfigApp(tester, router.config(reevaluateListenable: reevaluate));
+    await pumpRouterConfigApp(
+      tester,
+      router.config(reevaluateListenable: reevaluate),
+    );
     expect(find.text('AccountContentRoute'), findsOneWidget);
     await expectBrowserUrl('/profile/account');
 
@@ -62,7 +69,8 @@ void main() {
 
 PageInfo _page(String name) => .new(name, builder: (_) => Text(name));
 
-PageInfo _shellPage(String name) => .new(name, builder: (_) => const AutoRouter());
+PageInfo _shellPage(String name) =>
+    .new(name, builder: (_) => const AutoRouter());
 
 final _tabsPage = PageInfo(
   'AuthenticatedAppRoute',
@@ -75,6 +83,11 @@ final _tabsPage = PageInfo(
 class _LateGuard extends AutoRouteGuard {
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
-    unawaited(Future<void>.delayed(const Duration(milliseconds: 20), () => resolver.next()));
+    unawaited(
+      Future<void>.delayed(
+        const Duration(milliseconds: 20),
+        () => resolver.next(),
+      ),
+    );
   }
 }

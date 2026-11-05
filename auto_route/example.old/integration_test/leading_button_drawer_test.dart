@@ -17,61 +17,77 @@ import 'package:material_ui/material_ui.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('AutoLeadingButton keeps the drawer icon when the MaterialApp rebuilds', (tester) async {
-    final router = RootStackRouter.build(
-      defaultRouteType: const RouteType.adaptive(),
-      routes: [
-        AutoRoute(
-          page: _emptyRouter('HomeEmptyRoute'),
-          path: '/',
-          children: [
-            AutoRoute(
-              page: _emptyRouter('FeedEmptyRoute'),
-              path: '',
-              initial: true,
-              children: [
-                AutoRoute(page: _feedListing, path: '', initial: true),
-                AutoRoute(page: _text('FeedDetailsRoute'), path: 'details'),
-              ],
-            ),
-            AutoRoute(page: _text('CommentsRoute'), path: 'comments', fullscreenDialog: true),
-          ],
-        ),
-      ],
-    );
-
-    Future<void> pumpApp({Key? key, Brightness brightness = .light, Locale? locale}) async {
-      await tester.pumpWidget(
-        MaterialApp.router(
-          key: key,
-          theme: ThemeData(brightness: brightness),
-          locale: locale,
-          routerConfig: router.config(deepLinkBuilder: (link) => link.initial ? DeepLink.defaultPath : link),
-        ),
+  testWidgets(
+    'AutoLeadingButton keeps the drawer icon when the MaterialApp rebuilds',
+    (tester) async {
+      final router = RootStackRouter.build(
+        defaultRouteType: const RouteType.adaptive(),
+        routes: [
+          AutoRoute(
+            page: _emptyRouter('HomeEmptyRoute'),
+            path: '/',
+            children: [
+              AutoRoute(
+                page: _emptyRouter('FeedEmptyRoute'),
+                path: '',
+                initial: true,
+                children: [
+                  AutoRoute(page: _feedListing, path: '', initial: true),
+                  AutoRoute(page: _text('FeedDetailsRoute'), path: 'details'),
+                ],
+              ),
+              AutoRoute(
+                page: _text('CommentsRoute'),
+                path: 'comments',
+                fullscreenDialog: true,
+              ),
+            ],
+          ),
+        ],
       );
-      await tester.pumpAndSettle();
-    }
 
-    void expectDrawerIcon() {
-      expect(find.text('FeedListingRoute'), findsOneWidget);
-      expect(find.byIcon(Icons.menu), findsOneWidget);
-      expect(find.byType(BackButton), findsNothing);
-    }
+      Future<void> pumpApp({
+        Key? key,
+        Brightness brightness = .light,
+        Locale? locale,
+      }) async {
+        await tester.pumpWidget(
+          MaterialApp.router(
+            key: key,
+            theme: ThemeData(brightness: brightness),
+            locale: locale,
+            routerConfig: router.config(
+              deepLinkBuilder: (link) =>
+                  link.initial ? DeepLink.defaultPath : link,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+      }
 
-    await pumpApp();
-    expectDrawerIcon();
-    await pumpApp(brightness: .dark);
-    expectDrawerIcon();
-    await pumpApp(brightness: .dark, locale: const Locale('fr'));
-    expectDrawerIcon();
-    await pumpApp(key: const ValueKey('fr'), locale: const Locale('fr'));
-    expectDrawerIcon();
-  });
+      void expectDrawerIcon() {
+        expect(find.text('FeedListingRoute'), findsOneWidget);
+        expect(find.byIcon(Icons.menu), findsOneWidget);
+        expect(find.byType(BackButton), findsNothing);
+      }
+
+      await pumpApp();
+      expectDrawerIcon();
+      await pumpApp(brightness: .dark);
+      expectDrawerIcon();
+      await pumpApp(brightness: .dark, locale: const Locale('fr'));
+      expectDrawerIcon();
+      await pumpApp(key: const ValueKey('fr'), locale: const Locale('fr'));
+      expectDrawerIcon();
+    },
+  );
 }
 
-PageInfo _emptyRouter(String name) => .new(name, builder: (_) => const AutoRouter());
+PageInfo _emptyRouter(String name) =>
+    .new(name, builder: (_) => const AutoRouter());
 
-PageInfo _text(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _text(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 final _feedListing = PageInfo(
   'FeedListingRoute',

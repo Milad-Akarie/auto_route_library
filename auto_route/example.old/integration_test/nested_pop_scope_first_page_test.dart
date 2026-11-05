@@ -29,7 +29,8 @@ void main() {
 
   final routers = <String, Widget Function()>{
     'AutoRouter': () => const AutoRouter(),
-    'AutoRouter.declarative': () => AutoRouter.declarative(routes: (_) => [const _GuardedRoute()]),
+    'AutoRouter.declarative': () =>
+        AutoRouter.declarative(routes: (_) => [const _GuardedRoute()]),
   };
 
   for (final MapEntry(key: kind, value: nestedRouter) in routers.entries) {
@@ -58,7 +59,10 @@ void main() {
       }
 
       void expectHostStays() {
-        expect(router.stack.map((page) => page.name), [FirstRoute.name, _HostRoute.name]);
+        expect(router.stack.map((page) => page.name), [
+          FirstRoute.name,
+          _HostRoute.name,
+        ]);
         expectTopPage(router, _GuardedRoute.name);
       }
 
@@ -73,7 +77,9 @@ void main() {
       };
 
       for (final MapEntry(key: name, value: back) in backs.entries) {
-        testWidgets('$name keeps the host when its page has a PopScope', (tester) async {
+        testWidgets('$name keeps the host when its page has a PopScope', (
+          tester,
+        ) async {
           await openHost(tester);
 
           await back(tester);
@@ -86,34 +92,40 @@ void main() {
         });
       }
 
-      testWidgets('the iOS back swipe keeps the host when its page has a PopScope', (tester) async {
-        await openHost(tester, theme: ThemeData(platform: .iOS));
+      testWidgets(
+        'the iOS back swipe keeps the host when its page has a PopScope',
+        (tester) async {
+          await openHost(tester, theme: ThemeData(platform: .iOS));
 
-        await swipeBack(tester);
+          await swipeBack(tester);
 
-        expectHostStays();
-      });
+          expectHostStays();
+        },
+      );
 
-      testWidgets('system back on the first page keeps the app open and the page', (tester) async {
-        router = RootStackRouter.build(
-          routes: [
-            AutoRoute(
-              page: _HostRoute.page,
-              path: '/',
-              children: [AutoRoute(page: _GuardedRoute.page, path: '')],
-            ),
-          ],
-        );
-        await pumpRouterApp(tester, router);
-        expectTopPage(router, _GuardedRoute.name);
-
-        // Twice, as a comment on the issue reports the second back closing the app.
-        for (var attempt = 1; attempt <= 2; attempt++) {
-          await systemBack(tester);
+      testWidgets(
+        'system back on the first page keeps the app open and the page',
+        (tester) async {
+          router = RootStackRouter.build(
+            routes: [
+              AutoRoute(
+                page: _HostRoute.page,
+                path: '/',
+                children: [AutoRoute(page: _GuardedRoute.page, path: '')],
+              ),
+            ],
+          );
+          await pumpRouterApp(tester, router);
           expectTopPage(router, _GuardedRoute.name);
-          expect(_popAttempts, attempt);
-        }
-      });
+
+          // Twice, as a comment on the issue reports the second back closing the app.
+          for (var attempt = 1; attempt <= 2; attempt++) {
+            await systemBack(tester);
+            expectTopPage(router, _GuardedRoute.name);
+            expect(_popAttempts, attempt);
+          }
+        },
+      );
     });
   }
 }

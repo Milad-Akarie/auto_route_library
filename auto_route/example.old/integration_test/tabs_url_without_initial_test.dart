@@ -62,7 +62,10 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Tab 1'), findsOneWidget);
       expect(router.currentUrl, '/tabs/tab-1');
-      expect(router.stack.map((p) => p.name), [_HomeRoute.name, _TabsRoute.name]);
+      expect(router.stack.map((p) => p.name), [
+        _HomeRoute.name,
+        _TabsRoute.name,
+      ]);
     });
   }
 }
@@ -71,7 +74,10 @@ class _HomeRoute extends PageRouteInfo<void> {
   const _HomeRoute() : super(name);
 
   static const String name = 'HomeRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
+  static PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text('Home')),
+  );
 }
 
 class _TabsRoute extends PageRouteInfo<void> {
@@ -85,7 +91,10 @@ class _TabsRoute extends PageRouteInfo<void> {
         routes: const [_Tab1Route(), _Tab2Route()],
         builder: (context, child) => Column(
           children: [
-            TextButton(onPressed: () => context.tabsRouter.setActiveIndex(1), child: const Text('Show tab 2')),
+            TextButton(
+              onPressed: () => context.tabsRouter.setActiveIndex(1),
+              child: const Text('Show tab 2'),
+            ),
             Expanded(child: child),
           ],
         ),

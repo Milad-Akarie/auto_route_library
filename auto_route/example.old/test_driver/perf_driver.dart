@@ -14,21 +14,28 @@ Future<void> main() => integrationDriver(responseDataCallback: _summarize);
 
 Future<void> _summarize(Map<String, dynamic>? data) async {
   if (data == null) throw StateError('The benchmark reported nothing.');
-  final syncMicros = (data.remove('sync_micros') as Map<String, dynamic>?) ?? const {};
+  final syncMicros =
+      (data.remove('sync_micros') as Map<String, dynamic>?) ?? const {};
   final summary = <String, Map<String, num>>{};
   for (final MapEntry(:key, :value) in data.entries) {
-    final timeline = TimelineSummary.summarize(Timeline.fromJson(value as Map<String, dynamic>)).summaryJson;
-    final buildTimes = (timeline['frame_build_times'] as List<dynamic>).cast<int>();
-    final rasterTimes = (timeline['frame_rasterizer_times'] as List<dynamic>).cast<int>();
+    final timeline = TimelineSummary.summarize(
+      Timeline.fromJson(value as Map<String, dynamic>),
+    ).summaryJson;
+    final buildTimes = (timeline['frame_build_times'] as List<dynamic>)
+        .cast<int>();
+    final rasterTimes = (timeline['frame_rasterizer_times'] as List<dynamic>)
+        .cast<int>();
     summary[key] = {
       'frames': timeline['frame_count'] as int,
       'build_total_ms': _sum(buildTimes) / 1000,
       'build_avg_ms': timeline['average_frame_build_time_millis'] as num,
-      'build_p90_ms': timeline['90th_percentile_frame_build_time_millis'] as num,
+      'build_p90_ms':
+          timeline['90th_percentile_frame_build_time_millis'] as num,
       'build_worst_ms': timeline['worst_frame_build_time_millis'] as num,
       'raster_total_ms': _sum(rasterTimes) / 1000,
       'raster_avg_ms': timeline['average_frame_rasterizer_time_millis'] as num,
-      'raster_p90_ms': timeline['90th_percentile_frame_rasterizer_time_millis'] as num,
+      'raster_p90_ms':
+          timeline['90th_percentile_frame_rasterizer_time_millis'] as num,
       'call_median_us': syncMicros[key] as num? ?? double.nan,
     };
   }

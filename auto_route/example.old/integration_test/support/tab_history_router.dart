@@ -5,7 +5,12 @@ import 'package:material_ui/material_ui.dart';
 // (AutoTabsRouter.backThroughHistory), for tab_history_back_test.dart.
 
 /// The tabs' route names, each page showing its name.
-const tabHistoryTabNames = ['NewsRoute', 'FeedRoute', 'RankingRoute', 'ProfileRoute'];
+const tabHistoryTabNames = [
+  'NewsRoute',
+  'FeedRoute',
+  'RankingRoute',
+  'ProfileRoute',
+];
 
 /// The route name of the page under the tabs, when there is one.
 const tabHistoryFirstPageName = 'FirstRoute';
@@ -18,11 +23,15 @@ const tabHistoryTabsName = 'TabsRoute';
 RootStackRouter buildTabHistoryRouter({bool overFirstPage = false}) {
   return RootStackRouter.build(
     routes: [
-      if (overFirstPage) AutoRoute(page: _page(tabHistoryFirstPageName), path: '/'),
+      if (overFirstPage)
+        AutoRoute(page: _page(tabHistoryFirstPageName), path: '/'),
       AutoRoute(
         page: _tabsPage,
         path: overFirstPage ? '/tabs' : '/',
-        children: [for (final name in tabHistoryTabNames) AutoRoute(page: _page(name), path: name)],
+        children: [
+          for (final name in tabHistoryTabNames)
+            AutoRoute(page: _page(name), path: name),
+        ],
       ),
     ],
   );

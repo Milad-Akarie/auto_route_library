@@ -17,48 +17,62 @@ void main() {
   // button, which calls context.maybePop().
   // Should: the list page shows and the url goes back to '/patients', both the
   // router's and, on web, the browser's address bar.
-  testWidgets('Popping a shell route with path params inside AutoTabsRouter reverts the url', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          page: _TabsHostRoute.page,
-          path: '/',
-          initial: true,
-          children: [
-            AutoRoute(
-              page: _PatientsShellRoute.page,
-              path: 'patients',
-              children: [
-                AutoRoute(page: _PatientsListRoute.page, path: '', initial: true),
-                AutoRoute(
-                  page: _PatientShellRoute.page,
-                  path: 'patient/:patientId',
-                  children: [
-                    AutoRoute(page: _PatientInfoRoute.page, path: '', initial: true),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterConfigApp(tester, router.config(deepLinkBuilder: (_) => DeepLink.defaultPath));
-    expect(router.urlState.url, '/patients');
-    await expectBrowserUrl('/patients');
+  testWidgets(
+    'Popping a shell route with path params inside AutoTabsRouter reverts the url',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            page: _TabsHostRoute.page,
+            path: '/',
+            initial: true,
+            children: [
+              AutoRoute(
+                page: _PatientsShellRoute.page,
+                path: 'patients',
+                children: [
+                  AutoRoute(
+                    page: _PatientsListRoute.page,
+                    path: '',
+                    initial: true,
+                  ),
+                  AutoRoute(
+                    page: _PatientShellRoute.page,
+                    path: 'patient/:patientId',
+                    children: [
+                      AutoRoute(
+                        page: _PatientInfoRoute.page,
+                        path: '',
+                        initial: true,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterConfigApp(
+        tester,
+        router.config(deepLinkBuilder: (_) => DeepLink.defaultPath),
+      );
+      expect(router.urlState.url, '/patients');
+      await expectBrowserUrl('/patients');
 
-    await tester.tap(find.text('Push patient'));
-    await tester.pumpAndSettle();
-    expect(find.text(_PatientInfoRoute.name), findsOneWidget);
-    expect(router.urlState.url, '/patients/patient/p-123');
-    await expectBrowserUrl('/patients/patient/p-123');
+      await tester.tap(find.text('Push patient'));
+      await tester.pumpAndSettle();
+      expect(find.text(_PatientInfoRoute.name), findsOneWidget);
+      expect(router.urlState.url, '/patients/patient/p-123');
+      await expectBrowserUrl('/patients/patient/p-123');
 
-    await tester.tap(find.byType(BackButton));
-    await tester.pumpAndSettle();
-    expect(find.text(_PatientsListRoute.name), findsOneWidget);
-    expect(router.urlState.url, '/patients');
-    await expectBrowserUrl('/patients');
-  });
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      expect(find.text(_PatientsListRoute.name), findsOneWidget);
+      expect(router.urlState.url, '/patients');
+      await expectBrowserUrl('/patients');
+    },
+  );
 }
 
 class _TabsHostRoute extends PageRouteInfo<void> {
@@ -80,7 +94,11 @@ class _PatientsShellRoute extends PageRouteInfo<void> {
 
 class _PatientShellRoute extends PageRouteInfo<void> {
   _PatientShellRoute({required String patientId})
-    : super(name, rawPathParams: {'patientId': patientId}, rawQueryParams: {'source': null});
+    : super(
+        name,
+        rawPathParams: {'patientId': patientId},
+        rawQueryParams: {'source': null},
+      );
 
   static const String name = '_PatientShellRoute';
   static PageInfo page = const PageInfo.emptyShell(name);
@@ -99,7 +117,8 @@ class _PatientsListRoute extends PageRouteInfo<void> {
             children: [
               const Text(name),
               TextButton(
-                onPressed: () => context.pushRoute(_PatientShellRoute(patientId: 'p-123')),
+                onPressed: () =>
+                    context.pushRoute(_PatientShellRoute(patientId: 'p-123')),
                 child: const Text('Push patient'),
               ),
             ],
@@ -118,7 +137,9 @@ class _PatientInfoRoute extends PageRouteInfo<void> {
     name,
     builder: (_) => Builder(
       builder: (context) => Scaffold(
-        appBar: AppBar(leading: BackButton(onPressed: () => context.maybePop())),
+        appBar: AppBar(
+          leading: BackButton(onPressed: () => context.maybePop()),
+        ),
         body: const Text(name),
       ),
     ),

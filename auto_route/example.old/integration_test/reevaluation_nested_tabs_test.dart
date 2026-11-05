@@ -20,38 +20,44 @@ void main() {
   // then open that tab.
   // Should: the tab opens on its first nested page, with no "Cannot clear an
   // unmodifiable list" crash.
-  testWidgets('Opening a nested tabs page after reevaluation does not crash (#2318)', (tester) async {
-    const innerTabsName = 'InnerTabsRoute';
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          initial: true,
-          page: TabsHostRoute.page,
-          children: [
-            AutoRoute(page: Tab1Route.page),
-            AutoRoute(
-              page: PageInfo(innerTabsName, builder: (_) => const AutoTabsRouter()),
-              children: [
-                AutoRoute(page: Tab2Nested1Route.page),
-                AutoRoute(page: Tab2Nested2Route.page),
-              ],
-            ),
-          ],
+  testWidgets(
+    'Opening a nested tabs page after reevaluation does not crash (#2318)',
+    (tester) async {
+      const innerTabsName = 'InnerTabsRoute';
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            initial: true,
+            page: TabsHostRoute.page,
+            children: [
+              AutoRoute(page: Tab1Route.page),
+              AutoRoute(
+                page: PageInfo(
+                  innerTabsName,
+                  builder: (_) => const AutoTabsRouter(),
+                ),
+                children: [
+                  AutoRoute(page: Tab2Nested1Route.page),
+                  AutoRoute(page: Tab2Nested2Route.page),
+                ],
+              ),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterConfigApp(
+        tester,
+        router.config(
+          reevaluateListenable: reevaluationNotifier,
+          deepLinkBuilder: (_) => DeepLink.single(const TabsHostRoute()),
         ),
-      ],
-    );
-    await pumpRouterConfigApp(
-      tester,
-      router.config(
-        reevaluateListenable: reevaluationNotifier,
-        deepLinkBuilder: (_) => DeepLink.single(const TabsHostRoute()),
-      ),
-    );
-    expectTopPage(router, Tab1Route.name);
-    reevaluationNotifier.value = true;
-    await tester.pumpAndSettle();
-    router.innerRouterOf<TabsRouter>(TabsHostRoute.name)!.setActiveIndex(1);
-    await tester.pumpAndSettle();
-    expectTopPage(router, Tab2Nested1Route.name);
-  });
+      );
+      expectTopPage(router, Tab1Route.name);
+      reevaluationNotifier.value = true;
+      await tester.pumpAndSettle();
+      router.innerRouterOf<TabsRouter>(TabsHostRoute.name)!.setActiveIndex(1);
+      await tester.pumpAndSettle();
+      expectTopPage(router, Tab2Nested1Route.name);
+    },
+  );
 }

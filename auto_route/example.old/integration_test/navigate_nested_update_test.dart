@@ -16,7 +16,9 @@ void main() {
   // Steps: navigate to SecondHostRoute, push SecondNested3Route in its nested
   // router, then navigate to SecondHostRoute with children [SecondNested1Route].
   // Should: SecondNested1Route shows right away, not once the host is popped.
-  testWidgets('navigate() to an open host route updates its nested router', (tester) async {
+  testWidgets('navigate() to an open host route updates its nested router', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(path: '/', page: FirstRoute.page),
@@ -33,11 +35,17 @@ void main() {
     await pumpRouterApp(tester, router);
     unawaited(router.navigate(const SecondHostRoute()));
     await tester.pumpAndSettle();
-    unawaited(router.innerRouterOf<StackRouter>(SecondHostRoute.name)!.push(const SecondNested3Route()));
+    unawaited(
+      router
+          .innerRouterOf<StackRouter>(SecondHostRoute.name)!
+          .push(const SecondNested3Route()),
+    );
     await tester.pumpAndSettle();
     expectTopPage(router, SecondNested3Route.name);
 
-    unawaited(router.navigate(const SecondHostRoute(children: [SecondNested1Route()])));
+    unawaited(
+      router.navigate(const SecondHostRoute(children: [SecondNested1Route()])),
+    );
     await tester.pumpAndSettle();
     expectTopPage(router, SecondNested1Route.name);
   });

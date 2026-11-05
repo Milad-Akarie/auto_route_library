@@ -21,40 +21,43 @@ void main() {
   // reevaluateGuards three times before the first guard check finishes.
   // Should: no "Future already completed" crash; the guard runs once per
   // reevaluation, and the page shows once the guard passes.
-  testWidgets('Overlapping reevaluations wait for a running guard without crashing (#2341)', (tester) async {
-    var calls = 0;
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: FirstRoute.page, initial: true),
-        AutoRoute(
-          page: SecondRoute.page,
-          guards: [
-            AutoRouteGuard.simple((resolver, router) async {
-              calls++;
-              await Future<void>.delayed(const Duration(milliseconds: 50));
-              if (reevaluationNotifier.value) resolver.next();
-            }),
-          ],
-        ),
-      ],
-    )..ignorePopCompleters = true;
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(const SecondRoute()));
-    await tester.pumpAndSettle();
-    await tester.pump(const Duration(milliseconds: 200));
-    expect(calls, 1);
+  testWidgets(
+    'Overlapping reevaluations wait for a running guard without crashing (#2341)',
+    (tester) async {
+      var calls = 0;
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: FirstRoute.page, initial: true),
+          AutoRoute(
+            page: SecondRoute.page,
+            guards: [
+              AutoRouteGuard.simple((resolver, router) async {
+                calls++;
+                await Future<void>.delayed(const Duration(milliseconds: 50));
+                if (reevaluationNotifier.value) resolver.next();
+              }),
+            ],
+          ),
+        ],
+      )..ignorePopCompleters = true;
+      await pumpRouterApp(tester, router);
+      unawaited(router.push(const SecondRoute()));
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(calls, 1);
 
-    // Three passes reach the same pending resolver while the first one's guard runs.
-    unawaited(router.reevaluateGuards());
-    unawaited(router.reevaluateGuards());
-    unawaited(router.reevaluateGuards());
-    await tester.pump(const Duration(milliseconds: 500));
-    expect(calls, 4);
+      // Three passes reach the same pending resolver while the first one's guard runs.
+      unawaited(router.reevaluateGuards());
+      unawaited(router.reevaluateGuards());
+      unawaited(router.reevaluateGuards());
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(calls, 4);
 
-    reevaluationNotifier.value = true;
-    unawaited(router.reevaluateGuards());
-    await tester.pump(const Duration(milliseconds: 200));
-    await tester.pumpAndSettle();
-    expectTopPage(router, SecondRoute.name);
-  });
+      reevaluationNotifier.value = true;
+      unawaited(router.reevaluateGuards());
+      await tester.pump(const Duration(milliseconds: 200));
+      await tester.pumpAndSettle();
+      expectTopPage(router, SecondRoute.name);
+    },
+  );
 }

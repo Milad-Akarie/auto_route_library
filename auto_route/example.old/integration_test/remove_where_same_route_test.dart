@@ -28,23 +28,35 @@ void main() {
   // push a success InfoRoute over it, then removeWhere the InfoRoute holding
   // the loader's key.
   // Should: only the loading page goes; the success page stays on screen.
-  testWidgets('removeWhere removes the matching page, not the top page of the same route', (tester) async {
-    const loaderKey = ValueKey('loader');
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(const _FormRoute()));
-    await tester.pumpAndSettle();
-    unawaited(router.replace(_InfoRoute(key: loaderKey, title: 'Processing')));
-    await tester.pumpAndSettle();
-    unawaited(router.push(_InfoRoute(title: 'Success')));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'removeWhere removes the matching page, not the top page of the same route',
+    (tester) async {
+      const loaderKey = ValueKey('loader');
+      await pumpRouterApp(tester, router);
+      unawaited(router.push(const _FormRoute()));
+      await tester.pumpAndSettle();
+      unawaited(
+        router.replace(_InfoRoute(key: loaderKey, title: 'Processing')),
+      );
+      await tester.pumpAndSettle();
+      unawaited(router.push(_InfoRoute(title: 'Success')));
+      await tester.pumpAndSettle();
 
-    router.removeWhere((route) => route.args is _InfoRouteArgs && (route.args! as _InfoRouteArgs).key == loaderKey);
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(router.stack.map((p) => p.name), [_HomeRoute.name, _InfoRoute.name]);
-    expect(find.text('Success'), findsOneWidget);
-    expect(find.text('Processing'), findsNothing);
-  });
+      router.removeWhere(
+        (route) =>
+            route.args is _InfoRouteArgs &&
+            (route.args! as _InfoRouteArgs).key == loaderKey,
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(router.stack.map((p) => p.name), [
+        _HomeRoute.name,
+        _InfoRoute.name,
+      ]);
+      expect(find.text('Success'), findsOneWidget);
+      expect(find.text('Processing'), findsNothing);
+    },
+  );
 }
 
 class _HomeRoute extends PageRouteInfo<void> {

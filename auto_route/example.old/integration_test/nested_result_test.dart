@@ -21,7 +21,9 @@ void main() {
           path: '/home',
           page: _HomeRoute.page,
           initial: true,
-          children: [AutoRoute(path: 'content/:index', page: _ContentRoute.page)],
+          children: [
+            AutoRoute(path: 'content/:index', page: _ContentRoute.page),
+          ],
         ),
       ],
     );
@@ -31,19 +33,24 @@ void main() {
   // awaiting a bool.
   // Should: the content page shows, without the "AutoRoutePage<dynamic> is
   // not a subtype of AutoRoutePage<bool>" type error.
-  testWidgets('Pushing a nested route by its full path awaiting a bool shows it', (tester) async {
-    await pumpRouterAppWithConfig(tester, router);
-    unawaited(router.pushPath<bool>('/home/content/1'));
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(find.text('Content 1'), findsOneWidget);
-    await expectBrowserUrl('/home/content/1');
-  });
+  testWidgets(
+    'Pushing a nested route by its full path awaiting a bool shows it',
+    (tester) async {
+      await pumpRouterAppWithConfig(tester, router);
+      unawaited(router.pushPath<bool>('/home/content/1'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Content 1'), findsOneWidget);
+      await expectBrowserUrl('/home/content/1');
+    },
+  );
 
   // Steps: push the content route into the home's stack awaiting a bool,
   // then tap its back icon, which pops it with true.
   // Should: the push completes with true and the home page shows.
-  testWidgets('A nested route returns its bool result when it pops itself', (tester) async {
+  testWidgets('A nested route returns its bool result when it pops itself', (
+    tester,
+  ) async {
     await pumpRouterAppWithConfig(tester, router);
     bool? result;
     var completed = false;
@@ -94,7 +101,10 @@ class _ContentRoute extends PageRouteInfo<void> {
     builder: (data) => Builder(
       builder: (context) => Scaffold(
         appBar: AppBar(
-          leading: GestureDetector(child: const Icon(Icons.arrow_back), onTap: () => context.router.pop<bool>(true)),
+          leading: GestureDetector(
+            child: const Icon(Icons.arrow_back),
+            onTap: () => context.router.pop<bool>(true),
+          ),
         ),
         body: Text('Content ${data.inheritedPathParams.getString('index')}'),
       ),

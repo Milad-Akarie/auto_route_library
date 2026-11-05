@@ -37,7 +37,9 @@ void main() {
   // Steps: open the editor, refuse pops, press system back; allow pops,
   // press system back again.
   // Should: the refused back reports nothing, the second reports popped.
-  testWidgets('system back reports popped, unless the PopScope refuses it', (tester) async {
+  testWidgets('system back reports popped, unless the PopScope refuses it', (
+    tester,
+  ) async {
     await openEditor(tester);
     editorCanPop.value = false;
     await tester.pump();
@@ -55,7 +57,9 @@ void main() {
   // Steps: open the editor, push the preview, then pop it and replace the
   // editor with the preview.
   // Should: covered, then replaced.
-  testWidgets('a push over the page reports covered, a replace replaced', (tester) async {
+  testWidgets('a push over the page reports covered, a replace replaced', (
+    tester,
+  ) async {
     await openEditor(tester);
     unawaited(router.pushPath('/preview'));
     await tester.pumpAndSettle();

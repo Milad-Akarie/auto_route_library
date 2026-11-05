@@ -20,7 +20,9 @@ void main() {
   // Steps: navigate to SecondHostRoute, push SecondNested3Route in its nested
   // router, then press the browser's back button.
   // Should: the url and the screen both go back to SecondNested1Route.
-  testWidgets('The browser back button pops a page pushed in a nested router', (tester) async {
+  testWidgets('The browser back button pops a page pushed in a nested router', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(path: '/', page: FirstRoute.page),
@@ -37,7 +39,11 @@ void main() {
     await pumpRouterAppWithConfig(tester, router);
     unawaited(router.navigate(const SecondHostRoute()));
     await tester.pumpAndSettle();
-    unawaited(router.innerRouterOf<StackRouter>(SecondHostRoute.name)!.push(const SecondNested3Route()));
+    unawaited(
+      router
+          .innerRouterOf<StackRouter>(SecondHostRoute.name)!
+          .push(const SecondNested3Route()),
+    );
     await tester.pumpAndSettle();
     await expectBrowserUrl('/second/nested3');
 

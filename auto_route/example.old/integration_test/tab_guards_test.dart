@@ -25,7 +25,9 @@ void main() {
 
   setUp(() => _signedIn = false);
 
-  testWidgets('tapping a tab whose guard rejects keeps the current tab', (tester) async {
+  testWidgets('tapping a tab whose guard rejects keeps the current tab', (
+    tester,
+  ) async {
     final router = _buildRouter(.indexedStack, _rejectingGuard);
     await pumpRouterApp(tester, router);
 
@@ -36,64 +38,80 @@ void main() {
     await expectBrowserUrl('/feed');
   });
 
-  testWidgets('a guard that redirects to a login page shows the tab after the login', (tester) async {
-    final router = _buildRouter(.indexedStack, _loginGuard);
-    await pumpRouterApp(tester, router);
-
-    await tester.tap(find.byIcon(Icons.person));
-    await tester.pumpAndSettle();
-    expectTopPage(router, 'LoginRoute');
-    await expectBrowserUrl('/login');
-
-    await tester.tap(find.text('Sign in'));
-    await tester.pumpAndSettle();
-
-    expect(router.stack.map((page) => page.routeData.name), ['HomeRoute']);
-    _expectTab(router, 'ProfileRoute');
-    await expectBrowserUrl('/profile');
-  });
-
-  testWidgets('opening the url of a tab whose guard rejects shows the first tab', (tester) async {
-    final router = _buildRouter(.indexedStack, _rejectingGuard);
-    await pumpRouterApp(tester, router, initialLink: '/profile');
-
-    _expectTab(router, 'FeedRoute');
-    await expectBrowserUrl('/feed');
-  });
-
-  testWidgets('typing the url of a tab whose guard rejects keeps the current tab', (tester) async {
-    final router = _buildRouter(.indexedStack, _rejectingGuard);
-    await pumpRouterAppWithConfig(tester, router);
-
-    typeBrowserUrl('/profile');
-    await Future<void>.delayed(const Duration(milliseconds: 300));
-    await tester.pumpAndSettle();
-
-    _expectTab(router, 'FeedRoute');
-    await expectBrowserUrl('/feed');
-  }, skip: !kIsWeb);
-
-  for (final kind in [_Tabs.pageView, _Tabs.tabBar]) {
-    testWidgets('swiping to a tab whose guard rejects in a ${kind.name} returns to the current tab', (tester) async {
-      final router = _buildRouter(kind, _rejectingGuard);
+  testWidgets(
+    'a guard that redirects to a login page shows the tab after the login',
+    (tester) async {
+      final router = _buildRouter(.indexedStack, _loginGuard);
       await pumpRouterApp(tester, router);
 
-      await _swipeToProfile(tester);
+      await tester.tap(find.byIcon(Icons.person));
+      await tester.pumpAndSettle();
+      expectTopPage(router, 'LoginRoute');
+      await expectBrowserUrl('/login');
+
+      await tester.tap(find.text('Sign in'));
+      await tester.pumpAndSettle();
+
+      expect(router.stack.map((page) => page.routeData.name), ['HomeRoute']);
+      _expectTab(router, 'ProfileRoute');
+      await expectBrowserUrl('/profile');
+    },
+  );
+
+  testWidgets(
+    'opening the url of a tab whose guard rejects shows the first tab',
+    (tester) async {
+      final router = _buildRouter(.indexedStack, _rejectingGuard);
+      await pumpRouterApp(tester, router, initialLink: '/profile');
 
       _expectTab(router, 'FeedRoute');
       await expectBrowserUrl('/feed');
-    });
+    },
+  );
 
-    testWidgets('swiping to a tab whose guard lets it in in a ${kind.name} shows it', (tester) async {
-      _signedIn = true;
-      final router = _buildRouter(kind, _rejectingGuard);
-      await pumpRouterApp(tester, router);
+  testWidgets(
+    'typing the url of a tab whose guard rejects keeps the current tab',
+    (tester) async {
+      final router = _buildRouter(.indexedStack, _rejectingGuard);
+      await pumpRouterAppWithConfig(tester, router);
 
-      await _swipeToProfile(tester);
+      typeBrowserUrl('/profile');
+      await Future<void>.delayed(const Duration(milliseconds: 300));
+      await tester.pumpAndSettle();
 
-      _expectTab(router, 'ProfileRoute');
-      await expectBrowserUrl('/profile');
-    });
+      _expectTab(router, 'FeedRoute');
+      await expectBrowserUrl('/feed');
+    },
+    skip: !kIsWeb,
+  );
+
+  for (final kind in [_Tabs.pageView, _Tabs.tabBar]) {
+    testWidgets(
+      'swiping to a tab whose guard rejects in a ${kind.name} returns to the current tab',
+      (tester) async {
+        final router = _buildRouter(kind, _rejectingGuard);
+        await pumpRouterApp(tester, router);
+
+        await _swipeToProfile(tester);
+
+        _expectTab(router, 'FeedRoute');
+        await expectBrowserUrl('/feed');
+      },
+    );
+
+    testWidgets(
+      'swiping to a tab whose guard lets it in in a ${kind.name} shows it',
+      (tester) async {
+        _signedIn = true;
+        final router = _buildRouter(kind, _rejectingGuard);
+        await pumpRouterApp(tester, router);
+
+        await _swipeToProfile(tester);
+
+        _expectTab(router, 'ProfileRoute');
+        await expectBrowserUrl('/profile');
+      },
+    );
   }
 }
 
@@ -101,7 +119,9 @@ enum _Tabs { indexedStack, pageView, tabBar }
 
 var _signedIn = false;
 
-final _rejectingGuard = AutoRouteGuard.simple((resolver, _) => _signedIn ? resolver.next() : resolver.reject());
+final _rejectingGuard = AutoRouteGuard.simple(
+  (resolver, _) => _signedIn ? resolver.next() : resolver.reject(),
+);
 
 final _loginGuard = AutoRouteGuard.simple((resolver, _) {
   if (_signedIn) {
@@ -121,12 +141,20 @@ RootStackRouter _buildRouter(_Tabs kind, AutoRouteGuard guard) {
       BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
     ],
   );
-  Widget scaffold(BuildContext context, Widget child) =>
-      Scaffold(body: child, bottomNavigationBar: bottomBar(AutoTabsRouter.of(context)));
+  Widget scaffold(BuildContext context, Widget child) => Scaffold(
+    body: child,
+    bottomNavigationBar: bottomBar(AutoTabsRouter.of(context)),
+  );
   final host = switch (kind) {
     .indexedStack => AutoTabsRouter(routes: routes, builder: scaffold),
-    .pageView => AutoTabsRouter.pageView(routes: routes, builder: (context, child, _) => scaffold(context, child)),
-    .tabBar => AutoTabsRouter.tabBar(routes: routes, builder: (context, child, _) => scaffold(context, child)),
+    .pageView => AutoTabsRouter.pageView(
+      routes: routes,
+      builder: (context, child, _) => scaffold(context, child),
+    ),
+    .tabBar => AutoTabsRouter.tabBar(
+      routes: routes,
+      builder: (context, child, _) => scaffold(context, child),
+    ),
   };
   Widget page(String name) => Center(child: Text(name));
   return RootStackRouter.build(
@@ -140,7 +168,10 @@ RootStackRouter _buildRouter(_Tabs kind, AutoRouteGuard guard) {
             path: 'feed',
           ),
           AutoRoute(
-            page: PageInfo('ProfileRoute', builder: (_) => page('ProfileRoute')),
+            page: PageInfo(
+              'ProfileRoute',
+              builder: (_) => page('ProfileRoute'),
+            ),
             path: 'profile',
             guards: [guard],
           ),
@@ -187,6 +218,10 @@ void _expectTab(RootStackRouter router, String name) {
   final tabs = router.innerRouterOf<TabsRouter>('HomeRoute')!;
   expect(tabs.current.name, name);
   for (final tab in ['FeedRoute', 'ProfileRoute']) {
-    expect(find.text(tab), tab == name ? findsOneWidget : findsNothing, reason: tab);
+    expect(
+      find.text(tab),
+      tab == name ? findsOneWidget : findsNothing,
+      reason: tab,
+    );
   }
 }

@@ -37,29 +37,35 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('the leading button on the user page goes back to the home page', (tester) async {
-    await pumpRouterApp(tester, router, reevaluationNotifier: authService);
-    expect(find.text('HomePage'), findsOneWidget);
-    await openUserPage(tester);
+  testWidgets(
+    'the leading button on the user page goes back to the home page',
+    (tester) async {
+      await pumpRouterApp(tester, router, reevaluationNotifier: authService);
+      expect(find.text('HomePage'), findsOneWidget);
+      await openUserPage(tester);
 
-    await tapBack(tester);
-    expect(find.text('HomePage'), findsOneWidget);
-    expect(router.stack.map((p) => p.name), [MainWebRoute.name]);
-  });
+      await tapBack(tester);
+      expect(find.text('HomePage'), findsOneWidget);
+      expect(router.stack.map((p) => p.name), [MainWebRoute.name]);
+    },
+  );
 
-  testWidgets('back from the verify page, then the leading button, goes back to the home page', (tester) async {
-    await pumpRouterApp(tester, router, reevaluationNotifier: authService);
-    await openUserPage(tester);
+  testWidgets(
+    'back from the verify page, then the leading button, goes back to the home page',
+    (tester) async {
+      await pumpRouterApp(tester, router, reevaluationNotifier: authService);
+      await openUserPage(tester);
 
-    await tester.tap(find.text('Posts -> '));
-    await tester.pumpAndSettle();
-    expect(router.current.name, WebVerifyRoute.name);
+      await tester.tap(find.text('Posts -> '));
+      await tester.pumpAndSettle();
+      expect(router.current.name, WebVerifyRoute.name);
 
-    await tapBack(tester);
-    expect(find.textContaining('User Profile : 2'), findsOneWidget);
+      await tapBack(tester);
+      expect(find.textContaining('User Profile : 2'), findsOneWidget);
 
-    await tapBack(tester);
-    expect(find.text('HomePage'), findsOneWidget);
-    expect(router.stack.map((p) => p.name), [MainWebRoute.name]);
-  });
+      await tapBack(tester);
+      expect(find.text('HomePage'), findsOneWidget);
+      expect(router.stack.map((p) => p.name), [MainWebRoute.name]);
+    },
+  );
 }

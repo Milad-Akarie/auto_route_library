@@ -25,7 +25,11 @@ void main() {
     await pumpRouterAppWithConfig(tester, router);
     unawaited(router.push(const SecondRoute()));
     await tester.pumpAndSettle();
-    unawaited(router.navigate(const NamedRoute('SecondRoute', queryParams: {'p': 'true'})));
+    unawaited(
+      router.navigate(
+        const NamedRoute('SecondRoute', queryParams: {'p': 'true'}),
+      ),
+    );
     await tester.pumpAndSettle();
     expect(router.currentUrl, '/second-route?p=true');
     await expectBrowserUrl('/second-route?p=true');

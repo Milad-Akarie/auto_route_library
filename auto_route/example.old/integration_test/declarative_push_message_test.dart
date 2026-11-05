@@ -15,23 +15,30 @@ void main() {
   // Steps: HostRoute '/' builds AutoRouter.declarative with ARoute; push
   // BRoute, one of its routes, from the root router.
   // Should: the assert names "the router of HostRoute" and the fix.
-  testWidgets('pushing a route of a declarative router names the router and the fix', (tester) async {
-    final router = buildDeclarativePushRouter();
-    await pumpRouterApp(tester, router);
-    expect(find.text('A'), findsOneWidget);
+  testWidgets(
+    'pushing a route of a declarative router names the router and the fix',
+    (tester) async {
+      final router = buildDeclarativePushRouter();
+      await pumpRouterApp(tester, router);
+      expect(find.text('A'), findsOneWidget);
 
-    await expectLater(
-      router.push(const NamedRoute('BRoute')),
-      throwsA(
-        isA<AssertionError>().having(
-          (e) => e.message,
-          'message',
-          allOf(contains('router of HostRoute'), contains('routes callback'), contains('AutoRouter()')),
+      await expectLater(
+        router.push(const NamedRoute('BRoute')),
+        throwsA(
+          isA<AssertionError>().having(
+            (e) => e.message,
+            'message',
+            allOf(
+              contains('router of HostRoute'),
+              contains('routes callback'),
+              contains('AutoRouter()'),
+            ),
+          ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(find.text('A'), findsOneWidget);
-    expect(find.text('B'), findsNothing);
-  });
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('A'), findsOneWidget);
+      expect(find.text('B'), findsNothing);
+    },
+  );
 }

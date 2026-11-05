@@ -20,45 +20,48 @@ void main() {
   // web, system back elsewhere.
   // Should: each step shows the item before, with its param whole, and the
   // last one the first page.
-  testWidgets('Going back walks back through one route pushed with different params (flutter/flutter#186052)', (
-    tester,
-  ) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: FirstRoute.page, path: '/'),
-        AutoRoute(page: _ItemRoute.page, path: '/items/:id'),
-      ],
-    );
-    await pumpRouterAppWithConfig(tester, router);
-    final start = browserEntryIndex();
-    const ids = ['some:information:blabla', 'a@b', 'a+b c'];
-    for (final id in ids) {
-      unawaited(router.push(_ItemRoute(id)));
-      await pumpUntilFound(tester, find.text('Item $id'));
-    }
-    await expectBrowserUrl('/items/a+b%20c');
-
-    Future<void> goBack(int entry) async {
-      if (kIsWeb) {
-        pressBrowserBack();
-        await expectBrowserEntry(entry);
-        await tester.pumpAndSettle();
-      } else {
-        await systemBack(tester);
+  testWidgets(
+    'Going back walks back through one route pushed with different params (flutter/flutter#186052)',
+    (
+      tester,
+    ) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: FirstRoute.page, path: '/'),
+          AutoRoute(page: _ItemRoute.page, path: '/items/:id'),
+        ],
+      );
+      await pumpRouterAppWithConfig(tester, router);
+      final start = browserEntryIndex();
+      const ids = ['some:information:blabla', 'a@b', 'a+b c'];
+      for (final id in ids) {
+        unawaited(router.push(_ItemRoute(id)));
+        await pumpUntilFound(tester, find.text('Item $id'));
       }
-    }
+      await expectBrowserUrl('/items/a+b%20c');
 
-    for (final (i, id) in ids.reversed.skip(1).indexed) {
-      await goBack((start ?? 0) + ids.length - 1 - i);
-      expect(find.text('Item $id'), findsOneWidget);
-      expect(router.stack, hasLength(ids.length - i));
-    }
-    await goBack(start ?? 0);
-    expectCurrentPage(router, FirstRoute.name);
-    expect(router.stack, hasLength(1));
-    await expectBrowserUrl('/');
-    expect(tester.takeException(), isNull);
-  });
+      Future<void> goBack(int entry) async {
+        if (kIsWeb) {
+          pressBrowserBack();
+          await expectBrowserEntry(entry);
+          await tester.pumpAndSettle();
+        } else {
+          await systemBack(tester);
+        }
+      }
+
+      for (final (i, id) in ids.reversed.skip(1).indexed) {
+        await goBack((start ?? 0) + ids.length - 1 - i);
+        expect(find.text('Item $id'), findsOneWidget);
+        expect(router.stack, hasLength(ids.length - i));
+      }
+      await goBack(start ?? 0);
+      expectCurrentPage(router, FirstRoute.name);
+      expect(router.stack, hasLength(1));
+      await expectBrowserUrl('/');
+      expect(tester.takeException(), isNull);
+    },
+  );
 }
 
 class _ItemRoute extends PageRouteInfo<void> {
@@ -67,6 +70,10 @@ class _ItemRoute extends PageRouteInfo<void> {
   static const String name = 'ItemRoute';
   static PageInfo page = PageInfo(
     name,
-    builder: (data) => Scaffold(body: SafeArea(child: Text('Item ${data.inheritedPathParams.getString('id')}'))),
+    builder: (data) => Scaffold(
+      body: SafeArea(
+        child: Text('Item ${data.inheritedPathParams.getString('id')}'),
+      ),
+    ),
   );
 }

@@ -18,35 +18,51 @@ void main() {
   // page.
   // Should: the proof page opens under order 'o-1' and reads its inherited
   // 'orderId', not fail to parse it from null.
-  testWidgets('navigateTo() a child of an open order keeps its inherited orderId', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          page: _OrdersWrapperRoute.page,
-          path: '/orders',
-          initial: true,
-          children: [
-            AutoRoute(page: _OrdersRoute.page, path: '', initial: true),
-            AutoRoute(
-              page: _OrderRoute.page,
-              path: ':orderId',
-              children: [AutoRoute(page: _OrderPaymentProofRoute.page, path: 'payment-proof')],
-            ),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router, initialLink: '/orders');
-    unawaited(tester.element(find.text('Orders')).navigateTo(_OrderRoute(orderId: 'o-1')));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'navigateTo() a child of an open order keeps its inherited orderId',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            page: _OrdersWrapperRoute.page,
+            path: '/orders',
+            initial: true,
+            children: [
+              AutoRoute(page: _OrdersRoute.page, path: '', initial: true),
+              AutoRoute(
+                page: _OrderRoute.page,
+                path: ':orderId',
+                children: [
+                  AutoRoute(
+                    page: _OrderPaymentProofRoute.page,
+                    path: 'payment-proof',
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router, initialLink: '/orders');
+      unawaited(
+        tester
+            .element(find.text('Orders'))
+            .navigateTo(_OrderRoute(orderId: 'o-1')),
+      );
+      await tester.pumpAndSettle();
 
-    unawaited(tester.element(find.text('Order o-1')).navigateTo(const _OrderPaymentProofRoute()));
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(find.text('Payment proof of o-1'), findsOneWidget);
-    expect(router.urlState.url, '/orders/o-1/payment-proof');
-    await expectBrowserUrl('/orders/o-1/payment-proof');
-  });
+      unawaited(
+        tester
+            .element(find.text('Order o-1'))
+            .navigateTo(const _OrderPaymentProofRoute()),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Payment proof of o-1'), findsOneWidget);
+      expect(router.urlState.url, '/orders/o-1/payment-proof');
+      await expectBrowserUrl('/orders/o-1/payment-proof');
+    },
+  );
 }
 
 class _OrdersWrapperRoute extends PageRouteInfo<void> {
@@ -60,11 +76,15 @@ class _OrdersRoute extends PageRouteInfo<void> {
   const _OrdersRoute() : super(pageName);
 
   static const String pageName = 'OrdersRoute';
-  static PageInfo page = PageInfo(pageName, builder: (_) => const Text('Orders'));
+  static PageInfo page = PageInfo(
+    pageName,
+    builder: (_) => const Text('Orders'),
+  );
 }
 
 class _OrderRoute extends PageRouteInfo<void> {
-  _OrderRoute({required String orderId}) : super(pageName, rawPathParams: {'orderId': orderId});
+  _OrderRoute({required String orderId})
+    : super(pageName, rawPathParams: {'orderId': orderId});
 
   static const String pageName = 'OrderRoute';
   static PageInfo page = PageInfo(
@@ -86,6 +106,8 @@ class _OrderPaymentProofRoute extends PageRouteInfo<void> {
   static PageInfo page = PageInfo(
     pageName,
     // As generated for a constructor parameter marked @PathParam.inherit().
-    builder: (data) => Text('Payment proof of ${data.inheritedPathParams.getString('orderId')}'),
+    builder: (data) => Text(
+      'Payment proof of ${data.inheritedPathParams.getString('orderId')}',
+    ),
   );
 }

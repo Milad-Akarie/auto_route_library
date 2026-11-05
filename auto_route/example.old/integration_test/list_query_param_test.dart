@@ -18,7 +18,11 @@ void main() {
   // Steps: open the app at the deep link /items?ids=1&ids=2&ids=3.
   // Should: the page shows ids [1, 2, 3], as ints.
   testWidgets('A deep link reads a list of ints', (tester) async {
-    await pumpRouterApp(tester, ListRouter(), initialLink: '/items?ids=1&ids=2&ids=3');
+    await pumpRouterApp(
+      tester,
+      ListRouter(),
+      initialLink: '/items?ids=1&ids=2&ids=3',
+    );
     expect(tester.takeException(), isNull);
     expect(find.textContaining('ids [1, 2, 3] '), findsOneWidget);
   });
@@ -26,14 +30,21 @@ void main() {
   // Steps: open /items with lists of doubles, bools and enum names, one of
   // them not a name of the enum.
   // Should: each list holds its own type; the unknown name is left out.
-  testWidgets('A deep link reads lists of doubles, bools and enums by name', (tester) async {
+  testWidgets('A deep link reads lists of doubles, bools and enums by name', (
+    tester,
+  ) async {
     await pumpRouterApp(
       tester,
       ListRouter(),
       initialLink: '/items?prices=1.5&prices=2.5&flags=true&flags=FALSE&sorts=desc&sorts=asc&sorts=nope',
     );
     expect(tester.takeException(), isNull);
-    expect(find.textContaining('prices [1.5, 2.5] flags [true, false] sorts [desc, asc] '), findsOneWidget);
+    expect(
+      find.textContaining(
+        'prices [1.5, 2.5] flags [true, false] sorts [desc, asc] ',
+      ),
+      findsOneWidget,
+    );
   });
 
   // Steps: push the items route with lists.
@@ -55,8 +66,16 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
-    expect(find.text('ids [4, 5] prices [1.5] flags [true] sorts [desc] picked [9]'), findsOneWidget);
-    expect(router.urlState.url, '/items?ids=4&ids=5&prices=1.5&flags=true&sorts=desc&picked=9');
-    await expectBrowserUrl('/items?ids=4&ids=5&prices=1.5&flags=true&sorts=desc&picked=9');
+    expect(
+      find.text('ids [4, 5] prices [1.5] flags [true] sorts [desc] picked [9]'),
+      findsOneWidget,
+    );
+    expect(
+      router.urlState.url,
+      '/items?ids=4&ids=5&prices=1.5&flags=true&sorts=desc&picked=9',
+    );
+    await expectBrowserUrl(
+      '/items?ids=4&ids=5&prices=1.5&flags=true&sorts=desc&picked=9',
+    );
   });
 }

@@ -42,7 +42,9 @@ void main() {
   // ExternalRoute twice, then restore the app and go back.
   // Should: all three ExternalRoute pages come back; back returns to the
   // second, then the first, and the sign-up page is gone.
-  testWidgets('a stack of the same page comes back after restoration', (tester) async {
+  testWidgets('a stack of the same page comes back after restoration', (
+    tester,
+  ) async {
     await pumpRestorableApp(tester, buildRouter);
     var router = RestorableRouterApp.router;
     unawaited(router.replace(const NamedRoute('ExternalRoute')));
@@ -57,10 +59,17 @@ void main() {
     await tester.pumpAndSettle();
     router = RestorableRouterApp.router;
     expect(tester.takeException(), isNull);
-    expect(router.stack.map((page) => page.name), ['ExternalRoute', 'ExternalRoute', 'ExternalRoute']);
+    expect(router.stack.map((page) => page.name), [
+      'ExternalRoute',
+      'ExternalRoute',
+      'ExternalRoute',
+    ]);
 
     await systemBack(tester);
-    expect(router.stack.map((page) => page.name), ['ExternalRoute', 'ExternalRoute']);
+    expect(router.stack.map((page) => page.name), [
+      'ExternalRoute',
+      'ExternalRoute',
+    ]);
     await systemBack(tester);
     expect(router.stack.map((page) => page.name), ['ExternalRoute']);
     expect(find.text('SignUpRoute'), findsNothing);
@@ -70,7 +79,9 @@ void main() {
   // shelf's nested router, then restore the app and go back four times.
   // Should: item 8 shows at '/shelf/item/8', then back shows item 7, the
   // shelf list, the settings page and the sign-up page.
-  testWidgets('every page of the stacks comes back after restoration', (tester) async {
+  testWidgets('every page of the stacks comes back after restoration', (
+    tester,
+  ) async {
     await pumpRestorableApp(tester, buildRouter);
     var router = RestorableRouterApp.router;
     unawaited(router.push(const NamedRoute('SettingsRoute')));
@@ -90,7 +101,12 @@ void main() {
     expect(router.currentPath, '/shelf/item/8');
     await expectBrowserUrl('/shelf/item/8');
 
-    for (final expected in ['Item 7', 'ShelfListRoute', 'SettingsRoute', 'SignUpRoute']) {
+    for (final expected in [
+      'Item 7',
+      'ShelfListRoute',
+      'SettingsRoute',
+      'SignUpRoute',
+    ]) {
       await systemBack(tester);
       expect(find.text(expected), findsOneWidget);
     }
@@ -99,5 +115,9 @@ void main() {
 
 final _itemPage = PageInfo(
   'ItemRoute',
-  builder: (data) => Scaffold(body: Center(child: Text('Item ${data.inheritedPathParams.getString('id')}'))),
+  builder: (data) => Scaffold(
+    body: Center(
+      child: Text('Item ${data.inheritedPathParams.getString('id')}'),
+    ),
+  ),
 );

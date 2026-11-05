@@ -11,7 +11,11 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  const tabs = [NamedRoute('Tab1Route'), NamedRoute('Tab2Route'), NamedRoute('Tab3Route')];
+  const tabs = [
+    NamedRoute('Tab1Route'),
+    NamedRoute('Tab2Route'),
+    NamedRoute('Tab3Route'),
+  ];
 
   RootStackRouter buildRouter(Widget Function() tabsRouter) => .build(
     routes: [
@@ -33,13 +37,23 @@ void main() {
   // opened, then back to the first, then forward to the second again.
   // Should: the first swipe to Tab2Route fires didInitTabRoute; the next two
   // fire didChangeTabRoute.
-  Future<void> expectSwipesInitNewTabs(WidgetTester tester, RootStackRouter router) async {
+  Future<void> expectSwipesInitNewTabs(
+    WidgetTester tester,
+    RootStackRouter router,
+  ) async {
     final tabEvents = <String>[];
-    await pumpRouterApp(tester, router, navigatorObservers: () => [_TabEventObserver(tabEvents)]);
+    await pumpRouterApp(
+      tester,
+      router,
+      navigatorObservers: () => [_TabEventObserver(tabEvents)],
+    );
     final tabsRouter = router.innerRouterOf<TabsRouter>('TabsRoute')!;
     expect(tabEvents, ['init Tab1Route from null']);
     // Most of the screen's width, so each swipe turns a page on a wide screen too.
-    final swipe = Offset(tester.view.physicalSize.width / tester.view.devicePixelRatio * 0.8, 0);
+    final swipe = Offset(
+      tester.view.physicalSize.width / tester.view.devicePixelRatio * 0.8,
+      0,
+    );
 
     await tester.fling(find.text('Tab1Route'), -swipe, 1000);
     await tester.pumpAndSettle();
@@ -57,14 +71,27 @@ void main() {
     expect(tabEvents.last, 'change Tab2Route from Tab1Route');
   }
 
-  testWidgets('swiping a page view to a tab never opened fires didInitTabRoute', (tester) async {
-    await expectSwipesInitNewTabs(tester, buildRouter(() => const AutoTabsRouter.pageView(routes: tabs)));
-  });
+  testWidgets(
+    'swiping a page view to a tab never opened fires didInitTabRoute',
+    (tester) async {
+      await expectSwipesInitNewTabs(
+        tester,
+        buildRouter(() => const AutoTabsRouter.pageView(routes: tabs)),
+      );
+    },
+  );
 
-  testWidgets('swiping a tab bar to a tab never opened fires didInitTabRoute', (tester) async {
+  testWidgets('swiping a tab bar to a tab never opened fires didInitTabRoute', (
+    tester,
+  ) async {
     await expectSwipesInitNewTabs(
       tester,
-      buildRouter(() => AutoTabsRouter.tabBar(routes: tabs, builder: (context, child, controller) => child)),
+      buildRouter(
+        () => AutoTabsRouter.tabBar(
+          routes: tabs,
+          builder: (context, child, controller) => child,
+        ),
+      ),
     );
   });
 }

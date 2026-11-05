@@ -16,38 +16,49 @@ void main() {
   // feed is not built yet, tap 'Reevaluate', which fires the router's
   // reevaluateListenable, then tap 'Feed'.
   // Should: feed shows its first tab, forYou.
-  testWidgets('a nested tab bar opened after a reevaluation shows its first tab', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: _SplashRoute.page, path: '/', initial: true),
-        AutoRoute(
-          page: _HomeWrapperRoute.page,
-          path: '/home',
-          children: [
-            AutoRoute(
-              page: _FeedRoute.page,
-              path: 'feed',
-              children: [
-                AutoRoute(page: _ForYouFeedRoute.page, path: 'for-you', initial: true),
-                AutoRoute(page: _FollowingFeedRoute.page, path: 'following'),
-              ],
-            ),
-            AutoRoute(page: _MyProfileRoute.page, path: 'profile'),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router, reevaluationNotifier: _reevaluateNotifier);
+  testWidgets(
+    'a nested tab bar opened after a reevaluation shows its first tab',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: _SplashRoute.page, path: '/', initial: true),
+          AutoRoute(
+            page: _HomeWrapperRoute.page,
+            path: '/home',
+            children: [
+              AutoRoute(
+                page: _FeedRoute.page,
+                path: 'feed',
+                children: [
+                  AutoRoute(
+                    page: _ForYouFeedRoute.page,
+                    path: 'for-you',
+                    initial: true,
+                  ),
+                  AutoRoute(page: _FollowingFeedRoute.page, path: 'following'),
+                ],
+              ),
+              AutoRoute(page: _MyProfileRoute.page, path: 'profile'),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterApp(
+        tester,
+        router,
+        reevaluationNotifier: _reevaluateNotifier,
+      );
 
-    await tester.tap(find.text('Open profile'));
-    await tester.pumpAndSettle();
-    expect(find.text(_MyProfileRoute.name), findsOneWidget);
-    await tester.tap(find.text('Reevaluate'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Feed'));
-    await tester.pumpAndSettle();
-    expect(find.text(_ForYouFeedRoute.name), findsOneWidget);
-  });
+      await tester.tap(find.text('Open profile'));
+      await tester.pumpAndSettle();
+      expect(find.text(_MyProfileRoute.name), findsOneWidget);
+      await tester.tap(find.text('Reevaluate'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Feed'));
+      await tester.pumpAndSettle();
+      expect(find.text(_ForYouFeedRoute.name), findsOneWidget);
+    },
+  );
 }
 
 final ValueNotifier<int> _reevaluateNotifier = ValueNotifier(0);
@@ -62,7 +73,9 @@ class _SplashRoute extends PageRouteInfo<void> {
       body: SafeArea(
         child: Builder(
           builder: (context) => TextButton(
-            onPressed: () => context.router.replace(const _HomeWrapperRoute(children: [_MyProfileRoute()])),
+            onPressed: () => context.router.replace(
+              const _HomeWrapperRoute(children: [_MyProfileRoute()]),
+            ),
             child: const Text('Open profile'),
           ),
         ),
@@ -72,7 +85,8 @@ class _SplashRoute extends PageRouteInfo<void> {
 }
 
 class _HomeWrapperRoute extends PageRouteInfo<void> {
-  const _HomeWrapperRoute({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
+  const _HomeWrapperRoute({List<PageRouteInfo>? children})
+    : super(name, initialChildren: children);
 
   static const String name = '_HomeWrapperRoute';
   static PageInfo page = PageInfo(
@@ -85,8 +99,15 @@ class _HomeWrapperRoute extends PageRouteInfo<void> {
             children: [
               Row(
                 children: [
-                  TextButton(onPressed: () => AutoTabsRouter.of(context).setActiveIndex(0), child: const Text('Feed')),
-                  TextButton(onPressed: () => _reevaluateNotifier.value++, child: const Text('Reevaluate')),
+                  TextButton(
+                    onPressed: () =>
+                        AutoTabsRouter.of(context).setActiveIndex(0),
+                    child: const Text('Feed'),
+                  ),
+                  TextButton(
+                    onPressed: () => _reevaluateNotifier.value++,
+                    child: const Text('Reevaluate'),
+                  ),
                 ],
               ),
               Expanded(child: child),
@@ -140,5 +161,8 @@ class _MyProfileRoute extends PageRouteInfo<void> {
   const _MyProfileRoute() : super(name);
 
   static const String name = '_MyProfileRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text(name)),
+  );
 }

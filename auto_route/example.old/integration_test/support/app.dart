@@ -4,7 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
-import 'browser_url.dart' if (dart.library.js_interop) 'browser_url_web.dart' as browser;
+import 'browser_url.dart'
+    if (dart.library.js_interop) 'browser_url_web.dart'
+    as browser;
 
 export 'browser_url.dart' if (dart.library.js_interop) 'browser_url_web.dart';
 
@@ -20,7 +22,8 @@ Future<void> pumpRouterApp(
   String initialLink = '/',
   Listenable? reevaluationNotifier,
   ThemeData? theme,
-  NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+  NavigatorObserversBuilder navigatorObservers =
+      AutoRouterDelegate.defaultNavigatorObserversBuilder,
 }) async {
   _bringAppToForeground(tester);
   await tester.pumpWidget(
@@ -42,15 +45,23 @@ Future<void> pumpRouterApp(
 ///
 /// Opens at '/' like [pumpRouterApp], but hands later links, such as the
 /// browser's back steps on web, to the router unchanged.
-Future<void> pumpRouterAppWithConfig(WidgetTester tester, RootStackRouter router) {
+Future<void> pumpRouterAppWithConfig(
+  WidgetTester tester,
+  RootStackRouter router,
+) {
   return pumpRouterConfigApp(
     tester,
-    router.config(deepLinkBuilder: (link) => link.initial ? DeepLink.defaultPath : link),
+    router.config(
+      deepLinkBuilder: (link) => link.initial ? DeepLink.defaultPath : link,
+    ),
   );
 }
 
 /// Shows [config] in a [MaterialApp] and waits for its first page.
-Future<void> pumpRouterConfigApp(WidgetTester tester, RouterConfig<UrlState> config) async {
+Future<void> pumpRouterConfigApp(
+  WidgetTester tester,
+  RouterConfig<UrlState> config,
+) async {
   _bringAppToForeground(tester);
   await tester.pumpWidget(MaterialApp.router(routerConfig: config));
   await tester.pumpAndSettle();
@@ -65,7 +76,11 @@ Future<void> pumpRouterConfigApp(WidgetTester tester, RouterConfig<UrlState> con
 /// browser's current entry holds [link], as when the browser opens it, and
 /// keeps its `browserEntryIndex`. [link] is the app's initial route until the
 /// test ends.
-Future<void> pumpAppAtDeepLink(WidgetTester tester, String link, Widget app) async {
+Future<void> pumpAppAtDeepLink(
+  WidgetTester tester,
+  String link,
+  Widget app,
+) async {
   final dispatcher = tester.binding.platformDispatcher;
   addTearDown(dispatcher.clearDefaultRouteNameTestValue);
   dispatcher.defaultRouteNameTestValue = link;
@@ -85,8 +100,16 @@ Future<void> expectAppWroteDeepLinkEntry(int index) async {
   if (!kIsWeb) return;
   // The engine answers once it has written every route reported before.
   await SystemNavigator.selectMultiEntryHistory();
-  expect(browser.browserEntryIndex(), index, reason: 'the browser history entry');
-  expect(browser.appWroteBrowserEntry(), isTrue, reason: 'the app reported its route');
+  expect(
+    browser.browserEntryIndex(),
+    index,
+    reason: 'the browser history entry',
+  );
+  expect(
+    browser.appWroteBrowserEntry(),
+    isTrue,
+    reason: 'the app reported its route',
+  );
 }
 
 // The test binding forgets the app's lifecycle state after each test, and
@@ -138,7 +161,8 @@ void expectTopPage(StackRouter router, String name) {
 Future<void> systemBack(WidgetTester tester) async {
   if (!kIsWeb && defaultTargetPlatform == .android) {
     try {
-      await const MethodChannel('auto_route_example/system_back').invokeMethod<void>('pressBack');
+      await const MethodChannel('auto_route_example/system_back')
+          .invokeMethod<void>('pressBack');
     } on PlatformException catch (error) {
       if (error.code != 'appWouldClose') rethrow;
       fail('Android would close the app on back: ${error.message}');
@@ -162,13 +186,17 @@ Future<bool?> androidSendsBackToFlutter() async {
   if (kIsWeb || defaultTargetPlatform != .android) return null;
   // Flutter tells Android through a separate platform message; give it time to arrive.
   await Future<void>.delayed(const Duration(milliseconds: 300));
-  return const MethodChannel('auto_route_example/system_back').invokeMethod<bool>('sendsBackToFlutter');
+  return const MethodChannel('auto_route_example/system_back')
+      .invokeMethod<bool>('sendsBackToFlutter');
 }
 
 /// Swipes from the left edge of the screen, the iOS back gesture.
 Future<void> swipeBack(WidgetTester tester) async {
   final size = tester.view.physicalSize / tester.view.devicePixelRatio;
-  await tester.dragFrom(Offset(2, size.height / 2), Offset(size.width * 0.8, 0));
+  await tester.dragFrom(
+    Offset(2, size.height / 2),
+    Offset(size.width * 0.8, 0),
+  );
   await tester.pumpAndSettle();
 }
 
@@ -194,5 +222,9 @@ Future<void> expectBrowserEntry(int expected) async {
   for (var i = 0; i < 20 && browser.browserEntryIndex() != expected; i++) {
     await Future<void>.delayed(const Duration(milliseconds: 100));
   }
-  expect(browser.browserEntryIndex(), expected, reason: 'the browser history entry');
+  expect(
+    browser.browserEntryIndex(),
+    expected,
+    reason: 'the browser history entry',
+  );
 }

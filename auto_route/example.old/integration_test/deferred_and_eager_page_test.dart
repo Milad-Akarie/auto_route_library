@@ -15,7 +15,9 @@ void main() {
   // Steps: open the app on the deferred first page of
   // lib/deferred/pages.dart, then push the second page of that
   // file. Should: each page loads and shows; the app compiled at all.
-  testWidgets('a deferred page and an eager page from one file both open', (tester) async {
+  testWidgets('a deferred page and an eager page from one file both open', (
+    tester,
+  ) async {
     final router = DeferredRouter();
     await pumpRouterApp(tester, router);
     await pumpUntilFound(tester, find.text('First page'));

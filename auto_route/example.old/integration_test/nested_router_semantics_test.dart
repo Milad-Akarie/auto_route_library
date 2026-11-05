@@ -15,7 +15,9 @@ void main() {
   // Text('Left 2'), a nested AutoRouter showing Text('Center'), and
   // Text('Right').
   // Should: a screen reader finds every Text.
-  testWidgets('widgets before a nested router stay in the semantics tree', (tester) async {
+  testWidgets('widgets before a nested router stay in the semantics tree', (
+    tester,
+  ) async {
     final semantics = tester.ensureSemantics();
     final router = RootStackRouter.build(
       routes: [
@@ -41,7 +43,10 @@ void main() {
           children: [
             AutoRoute(
               path: '',
-              page: PageInfo('ChildRoute', builder: (_) => const Text('Center')),
+              page: PageInfo(
+                'ChildRoute',
+                builder: (_) => const Text('Center'),
+              ),
             ),
           ],
         ),

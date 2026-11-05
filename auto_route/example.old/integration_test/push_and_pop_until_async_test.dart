@@ -43,7 +43,8 @@ void main() {
     );
   });
 
-  List<String> names() => router.stack.map((page) => page.routeData.name).toList();
+  List<String> names() =>
+      router.stack.map((page) => page.routeData.name).toList();
 
   // Opens HomeRoute, ARoute and BRoute, then calls pushAndPopUntil(CRoute)
   // keeping HomeRoute, keeps its future in [pushedC] and waits while CRoute's
@@ -70,34 +71,40 @@ void main() {
   // guard accept.
   // Should: nothing moves while the guard decides; then HomeRoute and CRoute
   // are left, and back goes to HomeRoute.
-  testWidgets('pushAndPopUntil waits for a slow guard, then removes the routes left', (tester) async {
-    await pushCWhileGuardDecides(tester);
-    unawaited(router.maybePop());
-    await tester.pumpAndSettle();
-    expect(names(), ['HomeRoute', 'ARoute']);
+  testWidgets(
+    'pushAndPopUntil waits for a slow guard, then removes the routes left',
+    (tester) async {
+      await pushCWhileGuardDecides(tester);
+      unawaited(router.maybePop());
+      await tester.pumpAndSettle();
+      expect(names(), ['HomeRoute', 'ARoute']);
 
-    decision.complete(true);
-    await tester.pumpAndSettle();
-    expect(names(), ['HomeRoute', 'CRoute']);
-    expectCurrentPage(router, 'CRoute');
+      decision.complete(true);
+      await tester.pumpAndSettle();
+      expect(names(), ['HomeRoute', 'CRoute']);
+      expectCurrentPage(router, 'CRoute');
 
-    unawaited(router.maybePop());
-    await tester.pumpAndSettle();
-    expectCurrentPage(router, 'HomeRoute');
-  });
+      unawaited(router.maybePop());
+      await tester.pumpAndSettle();
+      expectCurrentPage(router, 'HomeRoute');
+    },
+  );
 
   // Steps: open HomeRoute, ARoute and BRoute, call pushAndPopUntil(CRoute)
   // keeping HomeRoute, then let CRoute's guard reject.
   // Should: the stack stays as it was and the push completes with null.
-  testWidgets('pushAndPopUntil rejected by a slow guard leaves the stack as it was', (tester) async {
-    await pushCWhileGuardDecides(tester);
+  testWidgets(
+    'pushAndPopUntil rejected by a slow guard leaves the stack as it was',
+    (tester) async {
+      await pushCWhileGuardDecides(tester);
 
-    decision.complete(false);
-    expect(await pushedC, isNull);
-    await tester.pumpAndSettle();
-    expect(names(), ['HomeRoute', 'ARoute', 'BRoute']);
-    expectCurrentPage(router, 'BRoute');
-  });
+      decision.complete(false);
+      expect(await pushedC, isNull);
+      await tester.pumpAndSettle();
+      expect(names(), ['HomeRoute', 'ARoute', 'BRoute']);
+      expectCurrentPage(router, 'BRoute');
+    },
+  );
 
   group('from a nested router', () {
     late RootStackRouter router;
@@ -122,14 +129,22 @@ void main() {
       );
     });
 
-    List<String> namesOf(StackRouter router) => router.stack.map((page) => page.routeData.name).toList();
+    List<String> namesOf(StackRouter router) =>
+        router.stack.map((page) => page.routeData.name).toList();
 
     // Opens HomeRoute, then ShellRoute with S1Route and S2Route, calls
     // pushAndPopUntil(DoneRoute, scopedPopUntil: false) from the nested router
     // keeping the route named [kept], and returns the pages on screen in each
     // frame while DoneRoute slides in.
-    Future<List<String>> pushDoneKeeping(WidgetTester tester, String kept) async {
-      await pumpRouterApp(tester, router, navigatorObservers: () => [_NamesObserver(observed)]);
+    Future<List<String>> pushDoneKeeping(
+      WidgetTester tester,
+      String kept,
+    ) async {
+      await pumpRouterApp(
+        tester,
+        router,
+        navigatorObservers: () => [_NamesObserver(observed)],
+      );
       unawaited(router.push(const PageRouteInfo('ShellRoute')));
       await tester.pumpAndSettle();
       final nested = router.innerRouterOf<StackRouter>('ShellRoute')!;
@@ -164,24 +179,39 @@ void main() {
     // from the nested router call pushAndPopUntil(DoneRoute) keeping HomeRoute.
     // Should: S2Route stays under DoneRoute while it slides in, never a blank
     // shell; HomeRoute and DoneRoute are left, and back goes to HomeRoute.
-    testWidgets('keeping a root page removes the shell, with its page under the new one', (tester) async {
-      final frames = await pushDoneKeeping(tester, 'HomeRoute');
-      expect(frames.where((frame) => !frame.startsWith('S2Route') && frame != 'DoneRoute'), isEmpty, reason: '$frames');
-      expect(observed, ['push DoneRoute', 'remove ShellRoute']);
-      expect(namesOf(router), ['HomeRoute', 'DoneRoute']);
+    testWidgets(
+      'keeping a root page removes the shell, with its page under the new one',
+      (tester) async {
+        final frames = await pushDoneKeeping(tester, 'HomeRoute');
+        expect(
+          frames.where(
+            (frame) => !frame.startsWith('S2Route') && frame != 'DoneRoute',
+          ),
+          isEmpty,
+          reason: '$frames',
+        );
+        expect(observed, ['push DoneRoute', 'remove ShellRoute']);
+        expect(namesOf(router), ['HomeRoute', 'DoneRoute']);
 
-      unawaited(router.maybePop());
-      await tester.pumpAndSettle();
-      expectCurrentPage(router, 'HomeRoute');
-    });
+        unawaited(router.maybePop());
+        await tester.pumpAndSettle();
+        expectCurrentPage(router, 'HomeRoute');
+      },
+    );
 
     // Steps: open HomeRoute, then ShellRoute with S1Route and S2Route, and
     // from the nested router call pushAndPopUntil(DoneRoute) keeping S1Route.
     // Should: S2Route is removed, not animated out; back from DoneRoute shows
     // S1Route in the shell, then HomeRoute.
-    testWidgets('keeping a nested page removes the nested pages above it', (tester) async {
+    testWidgets('keeping a nested page removes the nested pages above it', (
+      tester,
+    ) async {
       final frames = await pushDoneKeeping(tester, 'S1Route');
-      expect(frames.where((frame) => frame.contains('S2Route')), isEmpty, reason: '$frames');
+      expect(
+        frames.where((frame) => frame.contains('S2Route')),
+        isEmpty,
+        reason: '$frames',
+      );
       expect(observed, containsAll(['push DoneRoute', 'remove S2Route']));
       expect(observed.where((event) => event.startsWith('pop')), isEmpty);
       expect(namesOf(router), ['HomeRoute', 'ShellRoute', 'DoneRoute']);
@@ -208,11 +238,14 @@ class _NamesObserver extends AutoRouterObserver {
   final List<String> events;
 
   @override
-  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) => events.add('push ${route.settings.name}');
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) =>
+      events.add('push ${route.settings.name}');
 
   @override
-  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) => events.add('pop ${route.settings.name}');
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) =>
+      events.add('pop ${route.settings.name}');
 
   @override
-  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) => events.add('remove ${route.settings.name}');
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) =>
+      events.add('remove ${route.settings.name}');
 }

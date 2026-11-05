@@ -12,7 +12,9 @@ class DisposalTracker<T extends Object> {
   /// Starts listening to Flutter's object events.
   DisposalTracker() {
     FlutterMemoryAllocations.instance.addListener(_onEvent);
-    addTearDown(() => FlutterMemoryAllocations.instance.removeListener(_onEvent));
+    addTearDown(
+      () => FlutterMemoryAllocations.instance.removeListener(_onEvent),
+    );
   }
 
   final _live = Set<T>.identity();

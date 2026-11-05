@@ -15,24 +15,31 @@ void main() {
   // Steps: navigate to SecondRoute and await it, then pop SecondRoute with 'done'.
   // Should: the navigate() future stays open while SecondRoute shows, then
   // completes with 'done'.
-  testWidgets('navigate() completes with the result the opened page is popped with', (tester) async {
-    final router = buildSimpleRouter();
-    await pumpRouterApp(tester, router);
-    var completed = false;
-    Object? result;
-    unawaited(
-      router.navigate(const SecondRoute()).then((value) {
-        completed = true;
-        result = value;
-      }),
-    );
-    await tester.pumpAndSettle();
-    expectCurrentPage(router, SecondRoute.name);
-    expect(completed, isFalse, reason: 'navigate() completed before the page was popped');
+  testWidgets(
+    'navigate() completes with the result the opened page is popped with',
+    (tester) async {
+      final router = buildSimpleRouter();
+      await pumpRouterApp(tester, router);
+      var completed = false;
+      Object? result;
+      unawaited(
+        router.navigate(const SecondRoute()).then((value) {
+          completed = true;
+          result = value;
+        }),
+      );
+      await tester.pumpAndSettle();
+      expectCurrentPage(router, SecondRoute.name);
+      expect(
+        completed,
+        isFalse,
+        reason: 'navigate() completed before the page was popped',
+      );
 
-    router.pop('done');
-    await tester.pumpAndSettle();
-    expect(completed, isTrue);
-    expect(result, 'done');
-  });
+      router.pop('done');
+      await tester.pumpAndSettle();
+      expect(completed, isTrue);
+      expect(result, 'done');
+    },
+  );
 }

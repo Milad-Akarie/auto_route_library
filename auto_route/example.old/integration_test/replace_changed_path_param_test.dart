@@ -17,41 +17,49 @@ void main() {
   // Steps: open /quiz/1, whose page holds a nested router, then replace the
   // route with the same one holding quiz 2.
   // Should: quiz 2 shows, in the page and in the url.
-  testWidgets('replace with another path param in a nested route shows the new page (#1112)', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        NamedRouteDef(
-          name: 'QuizHostRoute',
-          path: '/quiz',
-          builder: (_, _) => const AutoRouter(),
-          children: [
-            NamedRouteDef(
-              name: 'QuizRoute',
-              path: ':id',
-              builder: (context, data) =>
-                  Scaffold(body: SafeArea(child: Text('Quiz ${data.inheritedPathParams.getString('id')}'))),
-            ),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router, initialLink: '/quiz/1');
-    expect(find.text('Quiz 1'), findsOneWidget);
+  testWidgets(
+    'replace with another path param in a nested route shows the new page (#1112)',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          NamedRouteDef(
+            name: 'QuizHostRoute',
+            path: '/quiz',
+            builder: (_, _) => const AutoRouter(),
+            children: [
+              NamedRouteDef(
+                name: 'QuizRoute',
+                path: ':id',
+                builder: (context, data) => Scaffold(
+                  body: SafeArea(
+                    child: Text(
+                      'Quiz ${data.inheritedPathParams.getString('id')}',
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router, initialLink: '/quiz/1');
+      expect(find.text('Quiz 1'), findsOneWidget);
 
-    unawaited(
-      router.replace(
-        const NamedRoute(
-          'QuizHostRoute',
-          children: [
-            NamedRoute('QuizRoute', params: {'id': '2'}),
-          ],
+      unawaited(
+        router.replace(
+          const NamedRoute(
+            'QuizHostRoute',
+            children: [
+              NamedRoute('QuizRoute', params: {'id': '2'}),
+            ],
+          ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
 
-    expect(find.text('Quiz 2'), findsOneWidget);
-    expect(find.text('Quiz 1'), findsNothing);
-    expect(router.currentUrl, '/quiz/2');
-  });
+      expect(find.text('Quiz 2'), findsOneWidget);
+      expect(find.text('Quiz 1'), findsNothing);
+      expect(router.currentUrl, '/quiz/2');
+    },
+  );
 }

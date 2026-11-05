@@ -16,36 +16,46 @@ void main() {
   // Tap the third tab, tap 'Add tab' while the tab bar moves, then tap
   // 'Close tabs' before it stops.
   // Should: the tabs close without an error.
-  testWidgets('closing the tabs while the tab bar animates after a routes change throws nothing', (tester) async {
-    addTearDown(() {
-      _fourthAddedNotifier.value = false;
-      _showTabsNotifier.value = true;
-    });
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          page: _TabsHostRoute.page,
-          path: '/',
-          initial: true,
-          children: [
-            AutoRoute(page: _FirstTabRoute.page, path: 'first', initial: true),
-            AutoRoute(page: _SecondTabRoute.page, path: 'second'),
-            AutoRoute(page: _ThirdTabRoute.page, path: 'third'),
-            AutoRoute(page: _FourthTabRoute.page, path: 'fourth'),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterConfigApp(tester, router.config(deepLinkBuilder: (_) => DeepLink.defaultPath));
+  testWidgets(
+    'closing the tabs while the tab bar animates after a routes change throws nothing',
+    (tester) async {
+      addTearDown(() {
+        _fourthAddedNotifier.value = false;
+        _showTabsNotifier.value = true;
+      });
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            page: _TabsHostRoute.page,
+            path: '/',
+            initial: true,
+            children: [
+              AutoRoute(
+                page: _FirstTabRoute.page,
+                path: 'first',
+                initial: true,
+              ),
+              AutoRoute(page: _SecondTabRoute.page, path: 'second'),
+              AutoRoute(page: _ThirdTabRoute.page, path: 'third'),
+              AutoRoute(page: _FourthTabRoute.page, path: 'fourth'),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterConfigApp(
+        tester,
+        router.config(deepLinkBuilder: (_) => DeepLink.defaultPath),
+      );
 
-    await tester.tap(find.text('Third'));
-    await tester.pump(const Duration(milliseconds: 100));
-    await tester.tap(find.text('Add tab'));
-    await tester.pump(const Duration(milliseconds: 100));
-    await tester.tap(find.text('Close tabs'));
-    await tester.pumpAndSettle();
-    expect(find.text('No tabs'), findsOneWidget);
-  });
+      await tester.tap(find.text('Third'));
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.tap(find.text('Add tab'));
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.tap(find.text('Close tabs'));
+      await tester.pumpAndSettle();
+      expect(find.text('No tabs'), findsOneWidget);
+    },
+  );
 }
 
 final _fourthAddedNotifier = ValueNotifier<bool>(false);
@@ -61,8 +71,14 @@ class _TabsHostRoute extends PageRouteInfo<void> {
     builder: (_) => ListenableBuilder(
       listenable: Listenable.merge([_fourthAddedNotifier, _showTabsNotifier]),
       builder: (context, _) {
-        if (!_showTabsNotifier.value) return const Scaffold(body: SafeArea(child: Text('No tabs')));
-        final labels = ['First', 'Second', 'Third', if (_fourthAddedNotifier.value) 'Fourth'];
+        if (!_showTabsNotifier.value)
+          return const Scaffold(body: SafeArea(child: Text('No tabs')));
+        final labels = [
+          'First',
+          'Second',
+          'Third',
+          if (_fourthAddedNotifier.value) 'Fourth',
+        ];
         return AutoTabsRouter.tabBar(
           duration: const Duration(seconds: 2),
           routes: [
@@ -74,8 +90,14 @@ class _TabsHostRoute extends PageRouteInfo<void> {
           builder: (context, child, tabController) => Scaffold(
             appBar: AppBar(
               actions: [
-                TextButton(onPressed: () => _fourthAddedNotifier.value = true, child: const Text('Add tab')),
-                TextButton(onPressed: () => _showTabsNotifier.value = false, child: const Text('Close tabs')),
+                TextButton(
+                  onPressed: () => _fourthAddedNotifier.value = true,
+                  child: const Text('Add tab'),
+                ),
+                TextButton(
+                  onPressed: () => _showTabsNotifier.value = false,
+                  child: const Text('Close tabs'),
+                ),
               ],
               bottom: TabBar(
                 controller: tabController,

@@ -18,51 +18,61 @@ void main() {
     // route changes.
     // Should: the first tab still shows 2 taps, the second still shows 1, and
     // the third tab shows the account page.
-    testWidgets("${kind.name}: signing in swaps the third tab and keeps the other tabs' state", (tester) async {
-      addTearDown(() => _signedInNotifier.value = false);
-      _tabsKind = kind;
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            page: _TabsHostRoute.page,
-            path: '/',
-            initial: true,
-            children: [
-              AutoRoute(page: _FirstTabRoute.page, path: 'first', initial: true),
-              AutoRoute(page: _SecondTabRoute.page, path: 'second'),
-              AutoRoute(page: _SignInTabRoute.page, path: 'sign-in'),
-              AutoRoute(page: _AccountTabRoute.page, path: 'account'),
-            ],
-          ),
-        ],
-      );
-      await pumpRouterConfigApp(tester, router.config(deepLinkBuilder: (_) => DeepLink.defaultPath));
+    testWidgets(
+      "${kind.name}: signing in swaps the third tab and keeps the other tabs' state",
+      (tester) async {
+        addTearDown(() => _signedInNotifier.value = false);
+        _tabsKind = kind;
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              page: _TabsHostRoute.page,
+              path: '/',
+              initial: true,
+              children: [
+                AutoRoute(
+                  page: _FirstTabRoute.page,
+                  path: 'first',
+                  initial: true,
+                ),
+                AutoRoute(page: _SecondTabRoute.page, path: 'second'),
+                AutoRoute(page: _SignInTabRoute.page, path: 'sign-in'),
+                AutoRoute(page: _AccountTabRoute.page, path: 'account'),
+              ],
+            ),
+          ],
+        );
+        await pumpRouterConfigApp(
+          tester,
+          router.config(deepLinkBuilder: (_) => DeepLink.defaultPath),
+        );
 
-      await tester.tap(find.text('First: add one'));
-      await tester.tap(find.text('First: add one'));
-      await tester.pumpAndSettle();
-      expect(find.text('First taps: 2'), findsOneWidget);
+        await tester.tap(find.text('First: add one'));
+        await tester.tap(find.text('First: add one'));
+        await tester.pumpAndSettle();
+        expect(find.text('First taps: 2'), findsOneWidget);
 
-      await tester.tap(find.text('Go to second tab'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Second: add one'));
-      await tester.pumpAndSettle();
-      expect(find.text('Second taps: 1'), findsOneWidget);
-      await tester.tap(find.text('Go to first tab'));
-      await tester.pumpAndSettle();
+        await tester.tap(find.text('Go to second tab'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Second: add one'));
+        await tester.pumpAndSettle();
+        expect(find.text('Second taps: 1'), findsOneWidget);
+        await tester.tap(find.text('Go to first tab'));
+        await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Sign in'));
-      await tester.pumpAndSettle();
-      expect(find.text('First taps: 2'), findsOneWidget);
+        await tester.tap(find.text('Sign in'));
+        await tester.pumpAndSettle();
+        expect(find.text('First taps: 2'), findsOneWidget);
 
-      await tester.tap(find.text('Go to second tab'));
-      await tester.pumpAndSettle();
-      expect(find.text('Second taps: 1'), findsOneWidget);
+        await tester.tap(find.text('Go to second tab'));
+        await tester.pumpAndSettle();
+        expect(find.text('Second taps: 1'), findsOneWidget);
 
-      await tester.tap(find.text('Go to third tab'));
-      await tester.pumpAndSettle();
-      expect(find.text(_AccountTabRoute.name), findsOneWidget);
-    });
+        await tester.tap(find.text('Go to third tab'));
+        await tester.pumpAndSettle();
+        expect(find.text(_AccountTabRoute.name), findsOneWidget);
+      },
+    );
   }
 }
 
@@ -92,7 +102,8 @@ class _TabsHostRoute extends PageRouteInfo<void> {
           .tabBar => AutoTabsRouter.tabBar(routes: routes),
           .builder => AutoTabsRouter.builder(
             routes: routes,
-            builder: (context, children, tabsRouter) => IndexedStack(index: tabsRouter.activeIndex, children: children),
+            builder: (context, children, tabsRouter) =>
+                IndexedStack(index: tabsRouter.activeIndex, children: children),
           ),
         };
       },
@@ -110,7 +121,10 @@ class _FirstTabRoute extends PageRouteInfo<void> {
       label: 'First',
       actions: [
         const _TabButton('Go to second tab', index: 1),
-        TextButton(onPressed: () => _signedInNotifier.value = true, child: const Text('Sign in')),
+        TextButton(
+          onPressed: () => _signedInNotifier.value = true,
+          child: const Text('Sign in'),
+        ),
       ],
     ),
   );
@@ -173,7 +187,10 @@ class _CounterPageState extends State<_CounterPage> {
         child: Column(
           children: [
             Text('${widget.label} taps: $_taps'),
-            TextButton(onPressed: () => setState(() => _taps++), child: Text('${widget.label}: add one')),
+            TextButton(
+              onPressed: () => setState(() => _taps++),
+              child: Text('${widget.label}: add one'),
+            ),
             ...widget.actions,
           ],
         ),
@@ -190,6 +207,9 @@ class _TabButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(onPressed: () => context.tabsRouter.setActiveIndex(index), child: Text(label));
+    return TextButton(
+      onPressed: () => context.tabsRouter.setActiveIndex(index),
+      child: Text(label),
+    );
   }
 }

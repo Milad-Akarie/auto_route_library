@@ -17,14 +17,25 @@ void main() {
 
   RootStackRouter buildRouter() => .build(
     routes: [
-      NamedRouteDef(name: 'InitialRoute', path: '/', builder: (_, _) => page('InitialRoute')),
-      NamedRouteDef(name: 'FooRoute', path: '/foo', builder: (_, _) => page('FooRoute')),
+      NamedRouteDef(
+        name: 'InitialRoute',
+        path: '/',
+        builder: (_, _) => page('InitialRoute'),
+      ),
+      NamedRouteDef(
+        name: 'FooRoute',
+        path: '/foo',
+        builder: (_, _) => page('FooRoute'),
+      ),
       NamedRouteDef(
         name: 'LoginRoute',
         path: '/login',
         builder: (_, data) => Scaffold(
           body: SafeArea(
-            child: TextButton(onPressed: data.args! as VoidCallback, child: const Text('Cancel login')),
+            child: TextButton(
+              onPressed: data.args! as VoidCallback,
+              child: const Text('Cancel login'),
+            ),
           ),
         ),
       ),
@@ -33,7 +44,9 @@ void main() {
         path: '/protected',
         guards: [
           AutoRouteGuard.simple(
-            (resolver, _) => resolver.redirectUntil(NamedRoute('LoginRoute', args: () => resolver.reject())),
+            (resolver, _) => resolver.redirectUntil(
+              NamedRoute('LoginRoute', args: () => resolver.reject()),
+            ),
           ),
         ],
         builder: (_, _) => page('ProtectedRoute'),
@@ -50,7 +63,9 @@ void main() {
   // Steps, the reporter's: push FooRoute, then replaceAll([ForbiddenRoute()]),
   // whose guard calls resolver.reject().
   // Should: the stack is still [InitialRoute, FooRoute], on screen and in the url.
-  testWidgets('A replaceAll rejected by a guard keeps the stack (#2299)', (tester) async {
+  testWidgets('A replaceAll rejected by a guard keeps the stack (#2299)', (
+    tester,
+  ) async {
     final router = buildRouter();
     await pumpRouterAppWithConfig(tester, router);
     unawaited(router.push(const NamedRoute('FooRoute')));
@@ -59,7 +74,10 @@ void main() {
     unawaited(router.replaceAll([const NamedRoute('ForbiddenRoute')]));
     await tester.pumpAndSettle();
 
-    expect(router.stack.map((e) => e.routeData.name), ['InitialRoute', 'FooRoute']);
+    expect(router.stack.map((e) => e.routeData.name), [
+      'InitialRoute',
+      'FooRoute',
+    ]);
     expectTopPage(router, 'FooRoute');
     await expectBrowserUrl('/foo');
   });
@@ -67,19 +85,25 @@ void main() {
   // Steps: push FooRoute, replaceAll([ProtectedRoute()]), whose guard
   // redirects to LoginRoute, then tap 'Cancel login', which calls reject().
   // Should: the stack is [InitialRoute, FooRoute] again.
-  testWidgets('Canceling the redirect of a replaceAll restores the stack (#2299)', (tester) async {
-    final router = buildRouter();
-    await pumpRouterAppWithConfig(tester, router);
-    unawaited(router.push(const NamedRoute('FooRoute')));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'Canceling the redirect of a replaceAll restores the stack (#2299)',
+    (tester) async {
+      final router = buildRouter();
+      await pumpRouterAppWithConfig(tester, router);
+      unawaited(router.push(const NamedRoute('FooRoute')));
+      await tester.pumpAndSettle();
 
-    unawaited(router.replaceAll([const NamedRoute('ProtectedRoute')]));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Cancel login'));
-    await tester.pumpAndSettle();
+      unawaited(router.replaceAll([const NamedRoute('ProtectedRoute')]));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Cancel login'));
+      await tester.pumpAndSettle();
 
-    expect(router.stack.map((e) => e.routeData.name), ['InitialRoute', 'FooRoute']);
-    expectTopPage(router, 'FooRoute');
-    await expectBrowserUrl('/foo');
-  });
+      expect(router.stack.map((e) => e.routeData.name), [
+        'InitialRoute',
+        'FooRoute',
+      ]);
+      expectTopPage(router, 'FooRoute');
+      await expectBrowserUrl('/foo');
+    },
+  );
 }

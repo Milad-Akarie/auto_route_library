@@ -20,14 +20,20 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  Future<TabsRouter> pumpApp(WidgetTester tester, {required int homeIndex}) async {
+  Future<TabsRouter> pumpApp(
+    WidgetTester tester, {
+    required int homeIndex,
+  }) async {
     _homeIndex = homeIndex;
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(
           page: _tabsPage,
           path: '/',
-          children: [for (final name in _tabNames) AutoRoute(page: _page(name), path: name)],
+          children: [
+            for (final name in _tabNames)
+              AutoRoute(page: _page(name), path: name),
+          ],
         ),
       ],
     );
@@ -47,15 +53,18 @@ void main() {
     expect(await androidSendsBackToFlutter(), anyOf(isNull, isFalse));
   });
 
-  testWidgets('system back on the first tab shows the home tab when homeIndex is another', (tester) async {
-    final tabs = await pumpApp(tester, homeIndex: 1);
-    expect(tabs.activeIndex, 0);
+  testWidgets(
+    'system back on the first tab shows the home tab when homeIndex is another',
+    (tester) async {
+      final tabs = await pumpApp(tester, homeIndex: 1);
+      expect(tabs.activeIndex, 0);
 
-    await systemBack(tester);
+      await systemBack(tester);
 
-    expect(tabs.activeIndex, 1);
-    expect(find.text(_tabNames[1]), findsOneWidget);
-  });
+      expect(tabs.activeIndex, 1);
+      expect(find.text(_tabNames[1]), findsOneWidget);
+    },
+  );
 }
 
 const _tabNames = ['NewsRoute', 'FeedRoute', 'RankingRoute', 'ProfileRoute'];

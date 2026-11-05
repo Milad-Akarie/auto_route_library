@@ -40,7 +40,9 @@ void main() {
   // 'some-id-2', then call back().
   // Should: the first Book, 'some-id', not Home. On web the second Book has a
   // browser entry of its own, and back() steps back from it.
-  testWidgets('back() returns to a page with the same url as the current one', (tester) async {
+  testWidgets('back() returns to a page with the same url as the current one', (
+    tester,
+  ) async {
     await pushTwoBooks(tester);
     final secondBookEntry = browserEntryIndex();
 
@@ -56,43 +58,50 @@ void main() {
   // Steps: the same, going back with the browser's back button on web,
   // system back elsewhere.
   // Should: the first Book, 'some-id', not Home.
-  testWidgets('Going back returns to a page with the same url as the current one', (tester) async {
-    await pushTwoBooks(tester);
-    final secondBookEntry = browserEntryIndex();
+  testWidgets(
+    'Going back returns to a page with the same url as the current one',
+    (tester) async {
+      await pushTwoBooks(tester);
+      final secondBookEntry = browserEntryIndex();
 
-    if (kIsWeb) {
-      pressBrowserBack();
-      await expectBrowserEntry(secondBookEntry! - 1);
-      await tester.pumpAndSettle();
-    } else {
-      await systemBack(tester);
-    }
-    expect(tester.takeException(), isNull);
-    expect(router.current.name, _BookRoute.name);
-    expect(find.text('Book some-id'), findsOneWidget);
-    await expectBrowserUrl('/book');
-  });
+      if (kIsWeb) {
+        pressBrowserBack();
+        await expectBrowserEntry(secondBookEntry! - 1);
+        await tester.pumpAndSettle();
+      } else {
+        await systemBack(tester);
+      }
+      expect(tester.takeException(), isNull);
+      expect(router.current.name, _BookRoute.name);
+      expect(find.text('Book some-id'), findsOneWidget);
+      await expectBrowserUrl('/book');
+    },
+  );
 
   // Steps: push Book with bookId 'some-id', push Book again with bookId
   // 'some-id-2', press the browser's back button, then its forward button.
   // Should: the second Book, 'some-id-2', back on top of the first.
   // Web only: only the browser has a forward button.
-  testWidgets('The browser forward button returns to a page pushed over one with the same url', (tester) async {
-    await pushTwoBooks(tester);
-    final secondBookEntry = browserEntryIndex()!;
-    pressBrowserBack();
-    await expectBrowserEntry(secondBookEntry - 1);
-    await tester.pumpAndSettle();
-    expect(find.text('Book some-id'), findsOneWidget);
+  testWidgets(
+    'The browser forward button returns to a page pushed over one with the same url',
+    (tester) async {
+      await pushTwoBooks(tester);
+      final secondBookEntry = browserEntryIndex()!;
+      pressBrowserBack();
+      await expectBrowserEntry(secondBookEntry - 1);
+      await tester.pumpAndSettle();
+      expect(find.text('Book some-id'), findsOneWidget);
 
-    pressBrowserForward();
-    await expectBrowserEntry(secondBookEntry);
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(find.text('Book some-id-2'), findsOneWidget);
-    expect(router.stack.length, 3);
-    await expectBrowserUrl('/book');
-  }, skip: !kIsWeb);
+      pressBrowserForward();
+      await expectBrowserEntry(secondBookEntry);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Book some-id-2'), findsOneWidget);
+      expect(router.stack.length, 3);
+      await expectBrowserUrl('/book');
+    },
+    skip: !kIsWeb,
+  );
 }
 
 class _BookArgs {
@@ -107,6 +116,10 @@ class _BookRoute extends PageRouteInfo<_BookArgs> {
   static const String name = 'BookRoute';
   static PageInfo page = PageInfo(
     name,
-    builder: (data) => Scaffold(body: Text('Book ${data.argsAs<_BookArgs>(orElse: () => const _BookArgs()).bookId}')),
+    builder: (data) => Scaffold(
+      body: Text(
+        'Book ${data.argsAs<_BookArgs>(orElse: () => const _BookArgs()).bookId}',
+      ),
+    ),
   );
 }

@@ -5,7 +5,10 @@ part 'cart_router.gr.dart';
 
 enum MfUserCartTypes { rm, mf }
 
-@AutoRouterConfig(replaceInRouteName: 'View,Route', generateForDir: ['integration_test/support/cart_router'])
+@AutoRouterConfig(
+  replaceInRouteName: 'View,Route',
+  generateForDir: ['integration_test/support/cart_router'],
+)
 class CartRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
@@ -24,10 +27,14 @@ class CartHomeView extends StatelessWidget {
 
 @RoutePage()
 class MfUserCartView extends StatelessWidget {
-  const MfUserCartView({super.key, @QueryParam('type') required this.userCartType});
+  const MfUserCartView({
+    super.key,
+    @QueryParam('type') required this.userCartType,
+  });
 
   final MfUserCartTypes? userCartType;
 
   @override
-  Widget build(BuildContext context) => Scaffold(body: Text('Cart ${userCartType?.name}'));
+  Widget build(BuildContext context) =>
+      Scaffold(body: Text('Cart ${userCartType?.name}'));
 }

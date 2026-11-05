@@ -19,27 +19,43 @@ void main() {
   // AutoRouteAwareStateMixin. Open the settings tab, push BottomSheetRoute on
   // the root router, then go back.
   // Should: SomethingRoute gets didPushNext, then didPopNext.
-  testWidgets('a page in a tab hears a root bottom sheet open and close', (tester) async {
+  testWidgets('a page in a tab hears a root bottom sheet open and close', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(
           path: '/',
           page: PageInfo(
             'AppRoute',
-            builder: (_) => const AutoTabsRouter(routes: [NamedRoute('DashboardRoute'), NamedRoute('SettingsRoute')]),
+            builder: (_) => const AutoTabsRouter(
+              routes: [
+                NamedRoute('DashboardRoute'),
+                NamedRoute('SettingsRoute'),
+              ],
+            ),
           ),
           children: [
             AutoRoute(
               path: 'dashboard',
-              page: PageInfo('DashboardRoute', builder: (_) => const RouteAwarePage()),
+              page: PageInfo(
+                'DashboardRoute',
+                builder: (_) => const RouteAwarePage(),
+              ),
             ),
             AutoRoute(
               path: 'settings',
-              page: PageInfo('SettingsRoute', builder: (_) => const AutoRouter()),
+              page: PageInfo(
+                'SettingsRoute',
+                builder: (_) => const AutoRouter(),
+              ),
               children: [
                 AutoRoute(
                   path: '',
-                  page: PageInfo('SomethingRoute', builder: (_) => const RouteAwarePage()),
+                  page: PageInfo(
+                    'SomethingRoute',
+                    builder: (_) => const RouteAwarePage(),
+                  ),
                 ),
               ],
             ),
@@ -47,13 +63,24 @@ void main() {
         ),
         CustomRoute(
           path: '/bottom-sheet',
-          page: PageInfo('BottomSheetRoute', builder: (_) => const Text('BottomSheetRoute')),
+          page: PageInfo(
+            'BottomSheetRoute',
+            builder: (_) => const Text('BottomSheetRoute'),
+          ),
           customRouteBuilder: <T>(context, child, page) =>
-              ModalBottomSheetRoute<T>(settings: page, isScrollControlled: true, builder: (_) => child),
+              ModalBottomSheetRoute<T>(
+                settings: page,
+                isScrollControlled: true,
+                builder: (_) => child,
+              ),
         ),
       ],
     );
-    await pumpRouterApp(tester, router, navigatorObservers: () => [AutoRouteObserver()]);
+    await pumpRouterApp(
+      tester,
+      router,
+      navigatorObservers: () => [AutoRouteObserver()],
+    );
     router.innerRouterOf<TabsRouter>('AppRoute')!.setActiveIndex(1);
     await tester.pumpAndSettle();
     expectTopPage(router, 'SomethingRoute');

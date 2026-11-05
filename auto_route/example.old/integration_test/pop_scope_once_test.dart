@@ -43,12 +43,20 @@ void main() {
     );
   });
 
-  Future<void> openCountedPage(WidgetTester tester, {required bool nested, ThemeData? theme}) async {
+  Future<void> openCountedPage(
+    WidgetTester tester, {
+    required bool nested,
+    ThemeData? theme,
+  }) async {
     await pumpRouterApp(tester, router, theme: theme);
     if (nested) {
       unawaited(router.push(const _HostRoute()));
       await tester.pumpAndSettle();
-      unawaited(router.innerRouterOf<StackRouter>(_HostRoute.name)!.push(const _CountedRoute()));
+      unawaited(
+        router
+            .innerRouterOf<StackRouter>(_HostRoute.name)!
+            .push(const _CountedRoute()),
+      );
     } else {
       unawaited(router.push(const _CountedRoute()));
     }
@@ -76,28 +84,33 @@ void main() {
 
   // The reporter's own reproduction: routes with no paths, the home page
   // initial, and a 'Next page' button that pushes the second page.
-  testWidgets("the report's 'Go back' button calls onPopInvokedWithResult once", (tester) async {
-    final reportRouter = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: _ReportHomeRoute.page, initial: true),
-        AutoRoute(page: _CountedRoute.page),
-      ],
-    );
-    await pumpRouterConfigApp(tester, reportRouter.config());
-    await tester.tap(find.text('Next page'));
-    await tester.pumpAndSettle();
-    expect(find.text(_CountedRoute.name), findsOneWidget);
+  testWidgets(
+    "the report's 'Go back' button calls onPopInvokedWithResult once",
+    (tester) async {
+      final reportRouter = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: _ReportHomeRoute.page, initial: true),
+          AutoRoute(page: _CountedRoute.page),
+        ],
+      );
+      await pumpRouterConfigApp(tester, reportRouter.config());
+      await tester.tap(find.text('Next page'));
+      await tester.pumpAndSettle();
+      expect(find.text(_CountedRoute.name), findsOneWidget);
 
-    await tapMaybePop(tester);
+      await tapMaybePop(tester);
 
-    expect(find.text('Page One'), findsOneWidget);
-    expect(_heard, [true]);
-  });
+      expect(find.text('Page One'), findsOneWidget);
+      expect(_heard, [true]);
+    },
+  );
 
   for (final nested in [false, true]) {
     final where = nested ? 'in a nested router' : 'in a flat route';
     for (final MapEntry(key: name, value: (back, theme)) in backs.entries) {
-      testWidgets('$name $where calls onPopInvokedWithResult once', (tester) async {
+      testWidgets('$name $where calls onPopInvokedWithResult once', (
+        tester,
+      ) async {
         await openCountedPage(tester, nested: nested, theme: theme);
 
         await back(tester);
@@ -109,17 +122,20 @@ void main() {
       // The iOS swipe doesn't start while PopScope blocks the page.
       if (back == swipeBack) continue;
 
-      testWidgets('$name $where with PopScope(canPop: false) calls it once per back', (tester) async {
-        _canPop = false;
-        await openCountedPage(tester, nested: nested, theme: theme);
+      testWidgets(
+        '$name $where with PopScope(canPop: false) calls it once per back',
+        (tester) async {
+          _canPop = false;
+          await openCountedPage(tester, nested: nested, theme: theme);
 
-        await back(tester);
-        expect(_heard, [false]);
-        await back(tester);
-        expect(_heard, [false, false]);
+          await back(tester);
+          expect(_heard, [false]);
+          await back(tester);
+          expect(_heard, [false, false]);
 
-        expect(router.topRoute.name, _CountedRoute.name);
-      });
+          expect(router.topRoute.name, _CountedRoute.name);
+        },
+      );
     }
   }
 }

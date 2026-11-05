@@ -16,12 +16,17 @@ void main() {
   // Steps: push TabsHostRoute, whose page holds an AutoTabsRouter.tabBar
   // showing an AutoTabView, tap the second tab, then go back, three times.
   // Should: each visit's PageController is disposed when the host leaves.
-  testWidgets('leaving an AutoTabView disposes its PageController', (tester) async {
+  testWidgets('leaving an AutoTabView disposes its PageController', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(
           path: '/',
-          page: PageInfo('HomeRoute', builder: (_) => const _TextPage('HomeRoute')),
+          page: PageInfo(
+            'HomeRoute',
+            builder: (_) => const _TextPage('HomeRoute'),
+          ),
         ),
         AutoRoute(
           path: '/tabs',
@@ -29,11 +34,17 @@ void main() {
           children: [
             AutoRoute(
               path: 'tab1',
-              page: PageInfo('Tab1Route', builder: (_) => const _TextPage('Tab1Route')),
+              page: PageInfo(
+                'Tab1Route',
+                builder: (_) => const _TextPage('Tab1Route'),
+              ),
             ),
             AutoRoute(
               path: 'tab2',
-              page: PageInfo('Tab2Route', builder: (_) => const _TextPage('Tab2Route')),
+              page: PageInfo(
+                'Tab2Route',
+                builder: (_) => const _TextPage('Tab2Route'),
+              ),
             ),
           ],
         ),
@@ -88,5 +99,6 @@ class _TextPage extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) => Scaffold(body: SafeArea(child: Text(text)));
+  Widget build(BuildContext context) =>
+      Scaffold(body: SafeArea(child: Text(text)));
 }

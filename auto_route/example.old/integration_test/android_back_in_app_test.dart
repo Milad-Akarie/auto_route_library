@@ -45,24 +45,31 @@ void main() {
     );
   });
 
-  testWidgets('system back pops the page on top, flat or nested, and keeps the app open', (tester) async {
-    await pumpRouterApp(tester, router);
+  testWidgets(
+    'system back pops the page on top, flat or nested, and keeps the app open',
+    (tester) async {
+      await pumpRouterApp(tester, router);
 
-    unawaited(router.push(const _Route('LoginRoute')));
-    await tester.pumpAndSettle();
-    await systemBack(tester);
-    expectTopPage(router, 'WelcomeRoute');
+      unawaited(router.push(const _Route('LoginRoute')));
+      await tester.pumpAndSettle();
+      await systemBack(tester);
+      expectTopPage(router, 'WelcomeRoute');
 
-    unawaited(router.replaceAll([const _Route('AuthorizedRoute')]));
-    await tester.pumpAndSettle();
-    expectTopPage(router, 'HomeRoute');
-    unawaited(router.innerRouterOf<StackRouter>('AuthorizedRoute')!.push(const _Route('ActivityRoute')));
-    await tester.pumpAndSettle();
+      unawaited(router.replaceAll([const _Route('AuthorizedRoute')]));
+      await tester.pumpAndSettle();
+      expectTopPage(router, 'HomeRoute');
+      unawaited(
+        router
+            .innerRouterOf<StackRouter>('AuthorizedRoute')!
+            .push(const _Route('ActivityRoute')),
+      );
+      await tester.pumpAndSettle();
 
-    await systemBack(tester);
-    expectTopPage(router, 'HomeRoute');
-    expect(await androidSendsBackToFlutter(), anyOf(isNull, isFalse));
-  });
+      await systemBack(tester);
+      expectTopPage(router, 'HomeRoute');
+      expect(await androidSendsBackToFlutter(), anyOf(isNull, isFalse));
+    },
+  );
 }
 
 CustomRoute _fade(PageInfo page, String path, {bool initial = false}) => .new(
@@ -73,7 +80,8 @@ CustomRoute _fade(PageInfo page, String path, {bool initial = false}) => .new(
   duration: const Duration(milliseconds: 200),
 );
 
-PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) =>
+    .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
   const _Route(super.name);

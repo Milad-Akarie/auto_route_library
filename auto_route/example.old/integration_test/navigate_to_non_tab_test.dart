@@ -18,20 +18,37 @@ void main() {
   // OtherExternalPageRoute; its AutoTabsRouter shows the first two. From the
   // first tab, navigate to OtherExternalPageRoute with onFailure.
   // Should: onFailure gets a RouteNotFoundFailure and the tab stays on screen.
-  testWidgets('navigate to a child route that is not a tab reports a failure', (tester) async {
+  testWidgets('navigate to a child route that is not a tab reports a failure', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         NamedRouteDef(
           name: 'SectionRoute',
           path: '/',
           builder: (_, _) => AutoTabsRouter(
-            routes: const [NamedRoute('PagerPage1Route'), NamedRoute('PagerPage2Route')],
+            routes: const [
+              NamedRoute('PagerPage1Route'),
+              NamedRoute('PagerPage2Route'),
+            ],
             builder: (_, child) => child,
           ),
           children: [
-            NamedRouteDef(name: 'PagerPage1Route', path: 'page1', builder: (_, _) => _page('Pager 1')),
-            NamedRouteDef(name: 'PagerPage2Route', path: 'page2', builder: (_, _) => _page('Pager 2')),
-            NamedRouteDef(name: 'OtherExternalPageRoute', path: 'other', builder: (_, _) => _page('Other')),
+            NamedRouteDef(
+              name: 'PagerPage1Route',
+              path: 'page1',
+              builder: (_, _) => _page('Pager 1'),
+            ),
+            NamedRouteDef(
+              name: 'PagerPage2Route',
+              path: 'page2',
+              builder: (_, _) => _page('Pager 2'),
+            ),
+            NamedRouteDef(
+              name: 'OtherExternalPageRoute',
+              path: 'other',
+              builder: (_, _) => _page('Other'),
+            ),
           ],
         ),
       ],
@@ -40,7 +57,12 @@ void main() {
     final tabs = tester.element(find.text('Pager 1')).router;
     final failures = <NavigationFailure>[];
 
-    unawaited(tabs.navigate(const NamedRoute('OtherExternalPageRoute'), onFailure: failures.add));
+    unawaited(
+      tabs.navigate(
+        const NamedRoute('OtherExternalPageRoute'),
+        onFailure: failures.add,
+      ),
+    );
     await tester.pumpAndSettle();
 
     expect(failures.single, isA<RouteNotFoundFailure>());

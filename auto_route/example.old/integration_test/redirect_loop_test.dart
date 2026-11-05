@@ -28,8 +28,16 @@ void main() {
   Widget page(String name) => Scaffold(body: SafeArea(child: Text(name)));
 
   final routes = [
-    NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => page('HomeRoute')),
-    NamedRouteDef(name: 'LoginRoute', path: '/login', builder: (_, _) => page('LoginRoute')),
+    NamedRouteDef(
+      name: 'HomeRoute',
+      path: '/',
+      builder: (_, _) => page('HomeRoute'),
+    ),
+    NamedRouteDef(
+      name: 'LoginRoute',
+      path: '/login',
+      builder: (_, _) => page('LoginRoute'),
+    ),
   ];
 
   // Steps: open an app whose global guard always calls
@@ -37,27 +45,37 @@ void main() {
   // router's guards.
   // Should: the guard runs twice, for HomeRoute and for LoginRoute, and the
   // second redirect reports an error that names LoginRoute and the fix.
-  testWidgets('A global guard redirecting to a route it guards reports the loop (#2213)', (tester) async {
-    var guardCalls = 0;
-    final router = _AppRouter(
-      routes: routes,
-      guards: [
-        AutoRouteGuard.simple((resolver, _) {
-          // past a few calls the guard stops answering, so the test still ends where the loop ran forever
-          if (++guardCalls > 20) return;
-          unawaited(resolver.redirectUntil(NamedRoute('LoginRoute', args: resolver.next)));
-        }),
-      ],
-    );
-    FlutterErrorDetails? reported;
-    final onError = FlutterError.onError;
-    FlutterError.onError = (details) => reported ??= details;
-    addTearDown(() => FlutterError.onError = onError);
+  testWidgets(
+    'A global guard redirecting to a route it guards reports the loop (#2213)',
+    (tester) async {
+      var guardCalls = 0;
+      final router = _AppRouter(
+        routes: routes,
+        guards: [
+          AutoRouteGuard.simple((resolver, _) {
+            // past a few calls the guard stops answering, so the test still ends where the loop ran forever
+            if (++guardCalls > 20) return;
+            unawaited(
+              resolver.redirectUntil(
+                NamedRoute('LoginRoute', args: resolver.next),
+              ),
+            );
+          }),
+        ],
+      );
+      FlutterErrorDetails? reported;
+      final onError = FlutterError.onError;
+      FlutterError.onError = (details) => reported ??= details;
+      addTearDown(() => FlutterError.onError = onError);
 
-    await pumpRouterAppWithConfig(tester, router);
-    FlutterError.onError = onError;
+      await pumpRouterAppWithConfig(tester, router);
+      FlutterError.onError = onError;
 
-    expect(reported?.exception.toString(), contains('A guard redirected LoginRoute to itself.'));
-    expect(guardCalls, 2);
-  });
+      expect(
+        reported?.exception.toString(),
+        contains('A guard redirected LoginRoute to itself.'),
+      );
+      expect(guardCalls, 2);
+    },
+  );
 }

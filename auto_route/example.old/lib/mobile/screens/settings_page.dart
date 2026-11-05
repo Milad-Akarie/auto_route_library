@@ -21,7 +21,8 @@ class SettingsPage extends StatefulWidget {
   State<SettingsPage> createState() => _SettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> with AutoRouteAwareStateMixin<SettingsPage> {
+class _SettingsPageState extends State<SettingsPage>
+    with AutoRouteAwareStateMixin<SettingsPage> {
   int queryUpdateCont = 0;
 
   @override

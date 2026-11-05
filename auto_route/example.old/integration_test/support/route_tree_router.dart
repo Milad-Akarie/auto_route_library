@@ -5,13 +5,25 @@ import 'package:material_ui/material_ui.dart';
 /// unknown path fails.
 RootStackRouter buildRouteTreeRouter() => .build(
   routes: [
-    NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => _page('Home')),
+    NamedRouteDef(
+      name: 'HomeRoute',
+      path: '/',
+      builder: (_, _) => _page('Home'),
+    ),
     NamedRouteDef.shell(
       name: 'ShopRoute',
       path: '/shop',
       children: [
-        NamedRouteDef(name: 'ProductsRoute', path: '', builder: (_, _) => _page('Products')),
-        NamedRouteDef(name: 'ProductRoute', path: ':id', builder: (_, _) => _page('Product')),
+        NamedRouteDef(
+          name: 'ProductsRoute',
+          path: '',
+          builder: (_, _) => _page('Products'),
+        ),
+        NamedRouteDef(
+          name: 'ProductRoute',
+          path: ':id',
+          builder: (_, _) => _page('Product'),
+        ),
       ],
     ),
     RedirectRoute(path: '/old-shop', redirectTo: '/shop'),

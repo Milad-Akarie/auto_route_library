@@ -38,20 +38,42 @@ void main() {
   // at once, then pushAndPopUntil(MainRoute) while VerifyRoute animates in.
   // Should: no error; the stack is [VerifyRoute], then [MainRoute]. The second
   // call removes SignInRoute too, though it has not shown yet (#1797).
-  testWidgets('pushAndPopUntil twice in a row, then again while animating', (tester) async {
+  testWidgets('pushAndPopUntil twice in a row, then again while animating', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     unawaited(router.push(const PageRouteInfo('ShoppingCartRoute')));
     await tester.pumpAndSettle();
 
-    unawaited(router.pushAndPopUntil(const PageRouteInfo('SignInRoute'), predicate: (_) => false));
-    unawaited(router.pushAndPopUntil(const PageRouteInfo('VerifyRoute'), predicate: (_) => false));
+    unawaited(
+      router.pushAndPopUntil(
+        const PageRouteInfo('SignInRoute'),
+        predicate: (_) => false,
+      ),
+    );
+    unawaited(
+      router.pushAndPopUntil(
+        const PageRouteInfo('VerifyRoute'),
+        predicate: (_) => false,
+      ),
+    );
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(stackNames(), ['VerifyRoute']);
 
-    unawaited(router.pushAndPopUntil(const PageRouteInfo('ShoppingCartRoute'), predicate: (_) => false));
+    unawaited(
+      router.pushAndPopUntil(
+        const PageRouteInfo('ShoppingCartRoute'),
+        predicate: (_) => false,
+      ),
+    );
     await tester.pump(const Duration(milliseconds: 50));
-    unawaited(router.pushAndPopUntil(const PageRouteInfo('MainRoute'), predicate: (_) => false));
+    unawaited(
+      router.pushAndPopUntil(
+        const PageRouteInfo('MainRoute'),
+        predicate: (_) => false,
+      ),
+    );
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(stackNames(), ['MainRoute']);
@@ -61,39 +83,49 @@ void main() {
   // popUntilRouteWithName(MainRoute) again before the push settles; then
   // push two pages and call popUntilRoot twice at once.
   // Should: no error, and MainRoute is the only page each time.
-  testWidgets('popUntilRouteWithName and popUntilRoot again before the stack settles', (tester) async {
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(const PageRouteInfo('ShoppingCartRoute')));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'popUntilRouteWithName and popUntilRoot again before the stack settles',
+    (tester) async {
+      await pumpRouterApp(tester, router);
+      unawaited(router.push(const PageRouteInfo('ShoppingCartRoute')));
+      await tester.pumpAndSettle();
 
-    router.popUntilRouteWithName('MainRoute');
-    unawaited(router.push(const PageRouteInfo('MyDeliveriesRoute')));
-    await tester.pump(const Duration(milliseconds: 50));
-    router.popUntilRouteWithName('MainRoute');
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(stackNames(), ['MainRoute']);
+      router.popUntilRouteWithName('MainRoute');
+      unawaited(router.push(const PageRouteInfo('MyDeliveriesRoute')));
+      await tester.pump(const Duration(milliseconds: 50));
+      router.popUntilRouteWithName('MainRoute');
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(stackNames(), ['MainRoute']);
 
-    unawaited(router.push(const PageRouteInfo('ShoppingCartRoute')));
-    unawaited(router.push(const PageRouteInfo('MyDeliveriesRoute')));
-    await tester.pump();
-    router.popUntilRoot();
-    router.popUntilRoot();
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(stackNames(), ['MainRoute']);
-  });
+      unawaited(router.push(const PageRouteInfo('ShoppingCartRoute')));
+      unawaited(router.push(const PageRouteInfo('MyDeliveriesRoute')));
+      await tester.pump();
+      router.popUntilRoot();
+      router.popUntilRoot();
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(stackNames(), ['MainRoute']);
+    },
+  );
 
   // Steps: push a page that, 150ms later while still animating in, calls
   // popAndPushAll([FirstRoute(), SecondRoute()]), as the linked demo app does.
   // Should: no error; the stack is [MainRoute, FirstRoute, SecondRoute].
-  testWidgets('popAndPushAll while the page it pops animates in', (tester) async {
+  testWidgets('popAndPushAll while the page it pops animates in', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     unawaited(router.push(const PageRouteInfo('ShoppingCartRoute')));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 150));
 
-    unawaited(router.popAndPushAll(const [PageRouteInfo('FirstRoute'), PageRouteInfo('SecondRoute')]));
+    unawaited(
+      router.popAndPushAll(const [
+        PageRouteInfo('FirstRoute'),
+        PageRouteInfo('SecondRoute'),
+      ]),
+    );
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(stackNames(), ['MainRoute', 'FirstRoute', 'SecondRoute']);

@@ -20,12 +20,20 @@ void main() {
 
   RootStackRouter buildRouter({bool maintainParentState = true}) => .build(
     routes: [
-      AutoRoute(path: '/', page: _countedPage('ParentRoute', builds), maintainState: maintainParentState),
+      AutoRoute(
+        path: '/',
+        page: _countedPage('ParentRoute', builds),
+        maintainState: maintainParentState,
+      ),
       AutoRoute(path: '/:id', page: _countedPage('ChildRoute', builds)),
     ],
   );
 
-  Future<void> openAt(WidgetTester tester, RootStackRouter router, {required bool includePrefixMatches}) async {
+  Future<void> openAt(
+    WidgetTester tester,
+    RootStackRouter router, {
+    required bool includePrefixMatches,
+  }) async {
     // The config reads the platform's initial route when it is first made,
     // so it is made inside the app, after pumpAppAtDeepLink sets the link,
     // as runApp would find it.
@@ -33,7 +41,11 @@ void main() {
       tester,
       '/1',
       Builder(
-        builder: (_) => MaterialApp.router(routerConfig: router.config(includePrefixMatches: includePrefixMatches)),
+        builder: (_) => MaterialApp.router(
+          routerConfig: router.config(
+            includePrefixMatches: includePrefixMatches,
+          ),
+        ),
       ),
     );
     expect(find.text('ChildRoute'), findsOneWidget);
@@ -42,7 +54,9 @@ void main() {
 
   // Steps: open the app at '/1' without prefix matches, the default on web.
   // Should: only the child is matched and built, once.
-  testWidgets('A deep link to a sibling route builds only that page', (tester) async {
+  testWidgets('A deep link to a sibling route builds only that page', (
+    tester,
+  ) async {
     final router = buildRouter();
     await openAt(tester, router, includePrefixMatches: false);
     expect(router.stack.map((page) => page.name), ['ChildRoute']);
@@ -54,31 +68,43 @@ void main() {
   // Should: '/' is stacked under the child and Flutter builds it once,
   // offstage, since its route keeps its state; back shows it without building
   // it again.
-  testWidgets('With prefix matches, a deep link builds the covered parent once', (tester) async {
-    final router = buildRouter();
-    await openAt(tester, router, includePrefixMatches: true);
-    expect(router.stack.map((page) => page.name), ['ParentRoute', 'ChildRoute']);
-    expect(builds, {'ParentRoute': 1, 'ChildRoute': 1});
+  testWidgets(
+    'With prefix matches, a deep link builds the covered parent once',
+    (tester) async {
+      final router = buildRouter();
+      await openAt(tester, router, includePrefixMatches: true);
+      expect(router.stack.map((page) => page.name), [
+        'ParentRoute',
+        'ChildRoute',
+      ]);
+      expect(builds, {'ParentRoute': 1, 'ChildRoute': 1});
 
-    router.pop();
-    await tester.pumpAndSettle();
-    expect(find.text('ParentRoute'), findsOneWidget);
-    expect(builds, {'ParentRoute': 1, 'ChildRoute': 1});
-  });
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(find.text('ParentRoute'), findsOneWidget);
+      expect(builds, {'ParentRoute': 1, 'ChildRoute': 1});
+    },
+  );
 
   // Steps: as above, with maintainState: false on the parent.
   // Should: the parent does not build until back shows it.
-  testWidgets('With prefix matches, a parent with maintainState false builds only on back', (tester) async {
-    final router = buildRouter(maintainParentState: false);
-    await openAt(tester, router, includePrefixMatches: true);
-    expect(router.stack.map((page) => page.name), ['ParentRoute', 'ChildRoute']);
-    expect(builds, {'ChildRoute': 1});
+  testWidgets(
+    'With prefix matches, a parent with maintainState false builds only on back',
+    (tester) async {
+      final router = buildRouter(maintainParentState: false);
+      await openAt(tester, router, includePrefixMatches: true);
+      expect(router.stack.map((page) => page.name), [
+        'ParentRoute',
+        'ChildRoute',
+      ]);
+      expect(builds, {'ChildRoute': 1});
 
-    router.pop();
-    await tester.pumpAndSettle();
-    expect(find.text('ParentRoute'), findsOneWidget);
-    expect(builds, {'ChildRoute': 1, 'ParentRoute': 1});
-  });
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(find.text('ParentRoute'), findsOneWidget);
+      expect(builds, {'ChildRoute': 1, 'ParentRoute': 1});
+    },
+  );
 }
 
 PageInfo _countedPage(String name, Map<String, int> builds) => .new(

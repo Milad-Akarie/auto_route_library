@@ -10,7 +10,11 @@ RootStackRouter buildRouteLeaveRouter({
   required ValueNotifier<bool> editorCanPop,
 }) => .build(
   routes: [
-    NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => _page('Home')),
+    NamedRouteDef(
+      name: 'HomeRoute',
+      path: '/',
+      builder: (_, _) => _page('Home'),
+    ),
     NamedRouteDef(
       name: 'EditorRoute',
       path: '/editor',
@@ -18,11 +22,18 @@ RootStackRouter buildRouteLeaveRouter({
         valueListenable: editorCanPop,
         builder: (_, canPop, _) => PopScope(
           canPop: canPop,
-          child: AutoRouteLeaveListener(onLeave: leaves.add, child: _page('Editor')),
+          child: AutoRouteLeaveListener(
+            onLeave: leaves.add,
+            child: _page('Editor'),
+          ),
         ),
       ),
     ),
-    NamedRouteDef(name: 'PreviewRoute', path: '/preview', builder: (_, _) => _page('Preview')),
+    NamedRouteDef(
+      name: 'PreviewRoute',
+      path: '/preview',
+      builder: (_, _) => _page('Preview'),
+    ),
   ],
 );
 

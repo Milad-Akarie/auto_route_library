@@ -15,27 +15,30 @@ void main() {
   // Navigator.push(context, MaterialPageRoute(...)) for a page the router
   // doesn't know, then go back.
   // Should: HomeRoute isn't built again.
-  testWidgets('Navigator.push of a page outside the router does not rebuild the page underneath', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('HomeRoute', builder: (_) => const _HomePage()),
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    _HomePageState.builds = 0;
+  testWidgets(
+    'Navigator.push of a page outside the router does not rebuild the page underneath',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo('HomeRoute', builder: (_) => const _HomePage()),
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      _HomePageState.builds = 0;
 
-    await tester.tap(find.text('Open'));
-    await tester.pumpAndSettle();
-    expect(find.text('Not registered'), findsOneWidget);
-    expect(_HomePageState.builds, 0);
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+      expect(find.text('Not registered'), findsOneWidget);
+      expect(_HomePageState.builds, 0);
 
-    await systemBack(tester);
-    expect(find.text('Open'), findsOneWidget);
-    expect(_HomePageState.builds, 0);
-  });
+      await systemBack(tester);
+      expect(find.text('Open'), findsOneWidget);
+      expect(_HomePageState.builds, 0);
+    },
+  );
 }
 
 class _HomePage extends StatefulWidget {
@@ -57,7 +60,8 @@ class _HomePageState extends State<_HomePage> {
           onPressed: () => Navigator.push(
             context,
             MaterialPageRoute<void>(
-              builder: (_) => const Scaffold(body: SafeArea(child: Text('Not registered'))),
+              builder: (_) =>
+                  const Scaffold(body: SafeArea(child: Text('Not registered'))),
             ),
           ),
           child: const Text('Open'),

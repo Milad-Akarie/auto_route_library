@@ -29,7 +29,10 @@ void main() {
 
   // Times [steps] runs of [step] in a timeline under [key], and the median
   // time of the router call [step] makes before it awaits.
-  Future<void> measure(String key, Future<void> Function(int index, Stopwatch call) step) async {
+  Future<void> measure(
+    String key,
+    Future<void> Function(int index, Stopwatch call) step,
+  ) async {
     final calls = <int>[];
     await binding.traceAction(() async {
       for (var index = 0; index < _steps; index++) {
@@ -49,7 +52,10 @@ void main() {
     // Run every case once untimed, so the timed runs find their code compiled
     // and their images cached.
     for (final warmUp in [true, false]) {
-      Future<void> run(String key, Future<void> Function(int index, Stopwatch call) step) async {
+      Future<void> run(
+        String key,
+        Future<void> Function(int index, Stopwatch call) step,
+      ) async {
         if (!warmUp) return measure(key, step);
         for (var index = 0; index < 3; index++) {
           await step(index, Stopwatch());
@@ -121,11 +127,14 @@ enum _Tabs {
 double _median(List<int> values) {
   final sorted = [...values]..sort();
   final middle = sorted.length ~/ 2;
-  return sorted.length.isOdd ? sorted[middle].toDouble() : (sorted[middle - 1] + sorted[middle]) / 2;
+  return sorted.length.isOdd
+      ? sorted[middle].toDouble()
+      : (sorted[middle - 1] + sorted[middle]) / 2;
 }
 
 // '/level0/7/level1/7/...', a different id each step so every step changes the stack.
-String _deepLink(int index) => '/${[for (var depth = 0; depth < _depth; depth++) 'level$depth/$index'].join('/')}';
+String _deepLink(int index) =>
+    '/${[for (var depth = 0; depth < _depth; depth++) 'level$depth/$index'].join('/')}';
 
 final _alwaysLetIn = AutoRouteGuard.simple((resolver, _) => resolver.next());
 
@@ -143,19 +152,33 @@ RootStackRouter _buildRouter() {
       for (var i = 0; i < 30; i++) _route('OtherRoute$i', path: '/other$i'),
       _route('HomeRoute', path: '/'),
       _route('DetailsRoute', path: '/details'),
-      _route('GuardedRoute', path: '/guarded', guards: [_alwaysLetIn, _alwaysLetIn, _alwaysLetIn]),
+      _route(
+        'GuardedRoute',
+        path: '/guarded',
+        guards: [_alwaysLetIn, _alwaysLetIn, _alwaysLetIn],
+      ),
       _level(0),
       for (final kind in _Tabs.values)
         AutoRoute(
-          page: PageInfo('${kind.parent}Route', builder: (_) => _TabsHost(kind)),
+          page: PageInfo(
+            '${kind.parent}Route',
+            builder: (_) => _TabsHost(kind),
+          ),
           path: '/${kind.name}',
-          children: [for (var i = 0; i < _tabCount; i++) _route('${kind.parent}Tab$i', path: 'tab$i')],
+          children: [
+            for (var i = 0; i < _tabCount; i++)
+              _route('${kind.parent}Tab$i', path: 'tab$i'),
+          ],
         ),
     ],
   );
 }
 
-AutoRoute _route(String name, {required String path, List<AutoRouteGuard> guards = const []}) {
+AutoRoute _route(
+  String name, {
+  required String path,
+  List<AutoRouteGuard> guards = const [],
+}) {
   return AutoRoute(
     page: PageInfo(name, builder: (_) => const _BenchmarkPage()),
     path: path,
@@ -200,7 +223,9 @@ class _TabsHost extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final routes = [for (var i = 0; i < _tabCount; i++) NamedRoute('${kind.parent}Tab$i')];
+    final routes = [
+      for (var i = 0; i < _tabCount; i++) NamedRoute('${kind.parent}Tab$i'),
+    ];
     return switch (kind) {
       .indexedStack => AutoTabsRouter(
         routes: routes,
@@ -233,7 +258,11 @@ class _TabsScaffold extends StatelessWidget {
         onTap: tabs.setActiveIndex,
         type: .fixed,
         items: [
-          for (var i = 0; i < _tabCount; i++) BottomNavigationBarItem(icon: const Icon(Icons.circle), label: 'Tab $i'),
+          for (var i = 0; i < _tabCount; i++)
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.circle),
+              label: 'Tab $i',
+            ),
         ],
       ),
     );

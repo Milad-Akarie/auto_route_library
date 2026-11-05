@@ -26,17 +26,28 @@ void main() {
     // A, then lift the finger on B, at once or once A has opened.
     // Should: SecondRoute (A) opens; ThirdRoute (B) does not open over it.
     testWidgets('Two buttons pressed at once open one page '
-        '(${holdB ? 'B held while A opens' : 'lifted together'})', (tester) async {
+        '(${holdB ? 'B held while A opens' : 'lifted together'})', (
+      tester,
+    ) async {
       final router = buildRouter();
       await pumpRouterApp(tester, router);
-      final a = await tester.startGesture(tester.getCenter(find.text('Open A')), pointer: 1);
-      final b = await tester.startGesture(tester.getCenter(find.text('Open B')), pointer: 2);
+      final a = await tester.startGesture(
+        tester.getCenter(find.text('Open A')),
+        pointer: 1,
+      );
+      final b = await tester.startGesture(
+        tester.getCenter(find.text('Open B')),
+        pointer: 2,
+      );
       await a.up();
       if (holdB) await tester.pumpAndSettle();
       await b.up();
       await tester.pumpAndSettle();
 
-      expect(router.stack.map((p) => p.name), [_HomeRoute.pageName, SecondRoute.name]);
+      expect(router.stack.map((p) => p.name), [
+        _HomeRoute.pageName,
+        SecondRoute.name,
+      ]);
       expectTopPage(router, SecondRoute.name);
     });
   }
@@ -52,8 +63,14 @@ class _HomeRoute extends PageRouteInfo<void> {
       builder: (context) => Scaffold(
         body: Column(
           children: [
-            ElevatedButton(onPressed: () => context.router.push(const SecondRoute()), child: const Text('Open A')),
-            ElevatedButton(onPressed: () => context.router.push(const ThirdRoute()), child: const Text('Open B')),
+            ElevatedButton(
+              onPressed: () => context.router.push(const SecondRoute()),
+              child: const Text('Open A'),
+            ),
+            ElevatedButton(
+              onPressed: () => context.router.push(const ThirdRoute()),
+              child: const Text('Open B'),
+            ),
           ],
         ),
       ),

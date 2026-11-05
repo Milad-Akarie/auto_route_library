@@ -21,7 +21,8 @@ class RestorableRouterApp extends StatefulWidget {
 class _RestorableRouterAppState extends State<RestorableRouterApp> {
   // Shared across a restart, so the restored app finds the same router.
   // ignore: dispose-fields
-  late final RootStackRouter router = RestorableRouterApp.router = widget.buildRouter();
+  late final RootStackRouter router = RestorableRouterApp.router = widget
+      .buildRouter();
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +30,9 @@ class _RestorableRouterAppState extends State<RestorableRouterApp> {
       restorationScopeId: 'app',
       // The app opens at '/': on web the browser's url would otherwise carry
       // over from the previous test.
-      routerConfig: router.config(deepLinkBuilder: (link) => link.initial ? DeepLink.defaultPath : link),
+      routerConfig: router.config(
+        deepLinkBuilder: (link) => link.initial ? DeepLink.defaultPath : link,
+      ),
     );
   }
 }
@@ -41,7 +44,10 @@ class _RestorableRouterAppState extends State<RestorableRouterApp> {
 /// foreground: the test binding forgets the app's lifecycle state after
 /// each test, and while it's unknown Flutter stops telling Android whether
 /// it handles back.
-Future<void> pumpRestorableApp(WidgetTester tester, RootStackRouter Function() buildRouter) async {
+Future<void> pumpRestorableApp(
+  WidgetTester tester,
+  RootStackRouter Function() buildRouter,
+) async {
   tester.binding.handleAppLifecycleStateChanged(.resumed);
   await tester.pumpWidget(RestorableRouterApp(buildRouter));
   await tester.pumpAndSettle();

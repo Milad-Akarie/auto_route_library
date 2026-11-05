@@ -26,7 +26,9 @@ void main() {
 
   // Steps: push a page whose path is '/café', then pop it.
   // Should: the url, and on web the address bar, is '/caf%C3%A9', then '/'.
-  testWidgets('A url with a letter outside ASCII follows the pages', (tester) async {
+  testWidgets('A url with a letter outside ASCII follows the pages', (
+    tester,
+  ) async {
     await pumpRouterAppWithConfig(tester, router);
     unawaited(router.push(const _CafeRoute()));
     await tester.pumpAndSettle();

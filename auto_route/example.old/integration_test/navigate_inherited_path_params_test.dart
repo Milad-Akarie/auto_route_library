@@ -32,7 +32,10 @@ void main() {
                   page: _EditVendorRoute.page,
                   path: ':vendor-id',
                   children: [
-                    AutoRoute(page: _VendorBranchesRoute.page, path: 'branches'),
+                    AutoRoute(
+                      page: _VendorBranchesRoute.page,
+                      path: 'branches',
+                    ),
                   ],
                 ),
               ],
@@ -48,42 +51,47 @@ void main() {
   // the root router over it, then call navigate(VendorBranchesRoute()).
   // Should: the branches page opens under vendor 'v-42' at
   // '/vendors/v-42/branches', not fail to parse 'vendor-id' from null.
-  testWidgets('navigate() from outside the nested router keeps the inherited path params', (tester) async {
-    await pumpRouterAppWithConfig(tester, router);
-    unawaited(
-      router.navigate(
-        _DashboardRoute(
-          children: [
-            _VendorsRoute(children: [_EditVendorRoute(vendorId: 'v-42')]),
-          ],
+  testWidgets(
+    'navigate() from outside the nested router keeps the inherited path params',
+    (tester) async {
+      await pumpRouterAppWithConfig(tester, router);
+      unawaited(
+        router.navigate(
+          _DashboardRoute(
+            children: [
+              _VendorsRoute(children: [_EditVendorRoute(vendorId: 'v-42')]),
+            ],
+          ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(find.text('Vendor v-42'), findsOneWidget);
-    await expectBrowserUrl('/vendors/v-42');
-    unawaited(router.push(const _SettingsRoute()));
-    await tester.pumpAndSettle();
-    expect(find.text('Settings'), findsOneWidget);
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Vendor v-42'), findsOneWidget);
+      await expectBrowserUrl('/vendors/v-42');
+      unawaited(router.push(const _SettingsRoute()));
+      await tester.pumpAndSettle();
+      expect(find.text('Settings'), findsOneWidget);
 
-    unawaited(router.navigate(const _VendorBranchesRoute()));
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(find.text('Branches of v-42'), findsOneWidget);
-    expect(router.urlState.url, '/vendors/v-42/branches');
-    await expectBrowserUrl('/vendors/v-42/branches');
-  });
+      unawaited(router.navigate(const _VendorBranchesRoute()));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Branches of v-42'), findsOneWidget);
+      expect(router.urlState.url, '/vendors/v-42/branches');
+      await expectBrowserUrl('/vendors/v-42/branches');
+    },
+  );
 }
 
 class _DashboardRoute extends PageRouteInfo<void> {
-  const _DashboardRoute({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
+  const _DashboardRoute({List<PageRouteInfo>? children})
+    : super(name, initialChildren: children);
 
   static const String name = 'DashboardRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
 }
 
 class _VendorsRoute extends PageRouteInfo<void> {
-  const _VendorsRoute({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
+  const _VendorsRoute({List<PageRouteInfo>? children})
+    : super(name, initialChildren: children);
 
   static const String name = 'VendorsRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
@@ -93,12 +101,19 @@ class _VendorListRoute extends PageRouteInfo<void> {
   const _VendorListRoute() : super(name);
 
   static const String name = 'VendorListRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Vendors')));
+  static PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text('Vendors')),
+  );
 }
 
 class _EditVendorRoute extends PageRouteInfo<void> {
   _EditVendorRoute({required String vendorId, List<PageRouteInfo>? children})
-    : super(name, rawPathParams: {'vendor-id': vendorId}, initialChildren: children);
+    : super(
+        name,
+        rawPathParams: {'vendor-id': vendorId},
+        initialChildren: children,
+      );
 
   static const String name = 'EditVendorRoute';
   static PageInfo page = PageInfo(
@@ -125,7 +140,8 @@ class _VendorBranchesRoute extends PageRouteInfo<void> {
   static PageInfo page = PageInfo(
     name,
     // As generated for a constructor parameter marked @PathParam.inherit('vendor-id').
-    builder: (data) => Text('Branches of ${data.inheritedPathParams.getString('vendor-id')}'),
+    builder: (data) =>
+        Text('Branches of ${data.inheritedPathParams.getString('vendor-id')}'),
   );
 }
 
@@ -133,5 +149,8 @@ class _SettingsRoute extends PageRouteInfo<void> {
   const _SettingsRoute() : super(name);
 
   static const String name = 'SettingsRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Settings')));
+  static PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text('Settings')),
+  );
 }

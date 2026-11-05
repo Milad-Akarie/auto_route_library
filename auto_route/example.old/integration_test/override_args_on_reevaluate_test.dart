@@ -20,7 +20,9 @@ void main() {
   // 'u-1', then SettingsRoute over it, and fire the listenable; the guard's
   // re-check overrides ProfileRoute's args with 'guest'. Then pop SettingsRoute.
   // Should: the profile page shows 'guest' and was not created again.
-  testWidgets('a guard re-check overriding the args of a page shows them', (tester) async {
+  testWidgets('a guard re-check overriding the args of a page shows them', (
+    tester,
+  ) async {
     final auth = ValueNotifier(0);
     final router = RootStackRouter.build(
       routes: [
@@ -31,7 +33,9 @@ void main() {
           guards: [
             AutoRouteGuard.simple((resolver, _) {
               if (resolver.isReevaluating) {
-                resolver.overrideNext(args: const _ProfileArgs(userId: 'guest'));
+                resolver.overrideNext(
+                  args: const _ProfileArgs(userId: 'guest'),
+                );
               } else {
                 resolver.next();
               }
@@ -56,7 +60,11 @@ void main() {
     auth.value++;
     await tester.pumpAndSettle();
 
-    expect(router.stack.map((page) => page.name), [_HomeRoute.name, _ProfileRoute.name, _SettingsRoute.name]);
+    expect(router.stack.map((page) => page.name), [
+      _HomeRoute.name,
+      _ProfileRoute.name,
+      _SettingsRoute.name,
+    ]);
     expectTopPage(router, _SettingsRoute.name);
     router.pop();
     await tester.pumpAndSettle();
@@ -71,7 +79,10 @@ class _HomeRoute extends PageRouteInfo<void> {
   const _HomeRoute() : super(name);
 
   static const String name = '_HomeRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text(name)),
+  );
 }
 
 class _ProfileArgs {
@@ -81,7 +92,8 @@ class _ProfileArgs {
 }
 
 class _ProfileRoute extends PageRouteInfo<_ProfileArgs> {
-  _ProfileRoute({required String userId}) : super(name, args: _ProfileArgs(userId: userId));
+  _ProfileRoute({required String userId})
+    : super(name, args: _ProfileArgs(userId: userId));
 
   static const String name = '_ProfileRoute';
   static PageInfo page = PageInfo(
@@ -109,12 +121,16 @@ class _ProfileViewState extends State<_ProfileView> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(body: Text('Profile of ${widget.userId}'));
+  Widget build(BuildContext context) =>
+      Scaffold(body: Text('Profile of ${widget.userId}'));
 }
 
 class _SettingsRoute extends PageRouteInfo<void> {
   const _SettingsRoute() : super(name);
 
   static const String name = '_SettingsRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static PageInfo page = PageInfo(
+    name,
+    builder: (_) => const Scaffold(body: Text(name)),
+  );
 }

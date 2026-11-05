@@ -23,7 +23,11 @@ void main() {
           initial: true,
           children: [
             AutoRoute(path: '', page: _page('FeedRoute')),
-            AutoRoute(path: 'wallet', page: _page('WalletRoute'), guards: [_SlowGuard()]),
+            AutoRoute(
+              path: 'wallet',
+              page: _page('WalletRoute'),
+              guards: [_SlowGuard()],
+            ),
           ],
         ),
         AutoRoute(path: '/sign-in', page: _page('SignInRoute')),
@@ -33,7 +37,9 @@ void main() {
 
   // Waits in real time, so the slow guard resolves.
   Future<void> waitForTheGuard(WidgetTester tester) async {
-    await Future<void>.delayed(_SlowGuard.delay + const Duration(milliseconds: 500));
+    await Future<void>.delayed(
+      _SlowGuard.delay + const Duration(milliseconds: 500),
+    );
     await tester.pumpAndSettle();
   }
 
@@ -43,38 +49,44 @@ void main() {
   // wallet's guard is still running.
   // Should: the sign-in page shows, with no "A NestedStackRouter was used
   // after being disposed" error.
-  testWidgets('a reevaluation stops when its nested router is disposed meanwhile', (tester) async {
-    final reevaluate = ValueNotifier(0);
-    await pumpRouterApp(tester, router, reevaluationNotifier: reevaluate);
-    unawaited(router.push(const NamedRoute('WalletRoute')));
-    await waitForTheGuard(tester);
-    expect(find.text('WalletRoute'), findsOneWidget);
+  testWidgets(
+    'a reevaluation stops when its nested router is disposed meanwhile',
+    (tester) async {
+      final reevaluate = ValueNotifier(0);
+      await pumpRouterApp(tester, router, reevaluationNotifier: reevaluate);
+      unawaited(router.push(const NamedRoute('WalletRoute')));
+      await waitForTheGuard(tester);
+      expect(find.text('WalletRoute'), findsOneWidget);
 
-    reevaluate.value++;
-    await tester.pump(const Duration(milliseconds: 100));
-    unawaited(router.replaceAll([const NamedRoute('SignInRoute')]));
-    await tester.pumpAndSettle();
-    await waitForTheGuard(tester);
-    expect(tester.takeException(), isNull);
-    expect(find.text('SignInRoute'), findsOneWidget);
-    expect(router.currentPath, '/sign-in');
-    await expectBrowserUrl('/sign-in');
-  });
+      reevaluate.value++;
+      await tester.pump(const Duration(milliseconds: 100));
+      unawaited(router.replaceAll([const NamedRoute('SignInRoute')]));
+      await tester.pumpAndSettle();
+      await waitForTheGuard(tester);
+      expect(tester.takeException(), isNull);
+      expect(find.text('SignInRoute'), findsOneWidget);
+      expect(router.currentPath, '/sign-in');
+      await expectBrowserUrl('/sign-in');
+    },
+  );
 
   // Steps: push the wallet page and replace every page with the sign-in
   // page while the wallet's guard is still running.
   // Should: the sign-in page shows, with no error.
-  testWidgets('a push stops when its nested router is disposed while its guard runs', (tester) async {
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(const NamedRoute('WalletRoute')));
-    await tester.pump(const Duration(milliseconds: 100));
-    unawaited(router.replaceAll([const NamedRoute('SignInRoute')]));
-    await tester.pumpAndSettle();
-    await waitForTheGuard(tester);
-    expect(tester.takeException(), isNull);
-    expect(find.text('SignInRoute'), findsOneWidget);
-    expect(router.currentPath, '/sign-in');
-  });
+  testWidgets(
+    'a push stops when its nested router is disposed while its guard runs',
+    (tester) async {
+      await pumpRouterApp(tester, router);
+      unawaited(router.push(const NamedRoute('WalletRoute')));
+      await tester.pump(const Duration(milliseconds: 100));
+      unawaited(router.replaceAll([const NamedRoute('SignInRoute')]));
+      await tester.pumpAndSettle();
+      await waitForTheGuard(tester);
+      expect(tester.takeException(), isNull);
+      expect(find.text('SignInRoute'), findsOneWidget);
+      expect(router.currentPath, '/sign-in');
+    },
+  );
 }
 
 PageInfo _page(String name) => .new(
@@ -86,7 +98,10 @@ class _SlowGuard extends AutoRouteGuard {
   static const delay = Duration(seconds: 2);
 
   @override
-  Future<void> onNavigation(NavigationResolver resolver, StackRouter router) async {
+  Future<void> onNavigation(
+    NavigationResolver resolver,
+    StackRouter router,
+  ) async {
     await Future<void>.delayed(delay);
     resolver.next();
   }

@@ -25,46 +25,53 @@ void main() {
     );
   });
 
-  List<String> names() => router.stack.map((page) => page.routeData.name).toList();
+  List<String> names() =>
+      router.stack.map((page) => page.routeData.name).toList();
 
   // Steps: on Page1, tap a button that pushes Page2 with Navigator.push; on
   // Page2, tap a button that calls navigate(Page1).
   // Should: Page1 shows and Page2 is gone.
-  testWidgets("The reporter's steps: navigate back to the page under a Navigator.push route", (tester) async {
-    await pumpRouterApp(tester, router);
+  testWidgets(
+    "The reporter's steps: navigate back to the page under a Navigator.push route",
+    (tester) async {
+      await pumpRouterApp(tester, router);
 
-    await tester.tap(find.text('Navigator.push Page2'));
-    await tester.pumpAndSettle();
-    expect(find.text('Page2'), findsOneWidget);
-    await tester.tap(find.text('Go to Page1'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Navigator.push Page2'));
+      await tester.pumpAndSettle();
+      expect(find.text('Page2'), findsOneWidget);
+      await tester.tap(find.text('Go to Page1'));
+      await tester.pumpAndSettle();
 
-    expect(tester.takeException(), isNull);
-    expect(find.text('Page2'), findsNothing);
-    expect(names(), ['Page1']);
-    expectCurrentPage(router, 'Page1');
-  });
+      expect(tester.takeException(), isNull);
+      expect(find.text('Page2'), findsNothing);
+      expect(names(), ['Page1']);
+      expectCurrentPage(router, 'Page1');
+    },
+  );
 
   // Steps: push Page2 with Navigator.push over Page1, then Login and Password
   // with the router; call replaceAll([Page1]).
   // Should: Page1 shows alone.
-  testWidgets("The comment's steps: replaceAll from Password shows Page1 alone", (tester) async {
-    await pumpRouterApp(tester, router);
-    await tester.tap(find.text('Navigator.push Page2'));
-    await tester.pumpAndSettle();
-    unawaited(router.push(const PageRouteInfo('Login')));
-    await tester.pumpAndSettle();
-    unawaited(router.push(const PageRouteInfo('Password')));
-    await tester.pumpAndSettle();
+  testWidgets(
+    "The comment's steps: replaceAll from Password shows Page1 alone",
+    (tester) async {
+      await pumpRouterApp(tester, router);
+      await tester.tap(find.text('Navigator.push Page2'));
+      await tester.pumpAndSettle();
+      unawaited(router.push(const PageRouteInfo('Login')));
+      await tester.pumpAndSettle();
+      unawaited(router.push(const PageRouteInfo('Password')));
+      await tester.pumpAndSettle();
 
-    unawaited(router.replaceAll(const [PageRouteInfo('Page1')]));
-    await tester.pumpAndSettle();
+      unawaited(router.replaceAll(const [PageRouteInfo('Page1')]));
+      await tester.pumpAndSettle();
 
-    expect(tester.takeException(), isNull);
-    expect(find.text('Page2'), findsNothing);
-    expect(names(), ['Page1']);
-    expectCurrentPage(router, 'Page1');
-  });
+      expect(tester.takeException(), isNull);
+      expect(find.text('Page2'), findsNothing);
+      expect(names(), ['Page1']);
+      expectCurrentPage(router, 'Page1');
+    },
+  );
 }
 
 PageInfo _page(String name) => .new(
@@ -84,7 +91,9 @@ PageInfo _page(String name) => .new(
                         children: [
                           const Text('Page2'),
                           TextButton(
-                            onPressed: () => context.router.navigate(const PageRouteInfo('Page1')),
+                            onPressed: () => context.router.navigate(
+                              const PageRouteInfo('Page1'),
+                            ),
                             child: const Text('Go to Page1'),
                           ),
                         ],

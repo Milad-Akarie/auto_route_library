@@ -43,24 +43,27 @@ void main() {
   // 'Log In', which logs in and calls replaceAll([HomeRoute()]) right away.
   // Then tap 'Log Out' and 'Log In' again.
   // Should: each time one page is left: HomeRoute, then LoginRoute, then HomeRoute.
-  testWidgets('replaceAll right after the reevaluate listenable changes replaces the stack', (tester) async {
-    await pumpRouterApp(tester, router, reevaluationNotifier: authRepo);
-    expect(router.stack.map((p) => p.name), [_LoginRoute.name]);
+  testWidgets(
+    'replaceAll right after the reevaluate listenable changes replaces the stack',
+    (tester) async {
+      await pumpRouterApp(tester, router, reevaluationNotifier: authRepo);
+      expect(router.stack.map((p) => p.name), [_LoginRoute.name]);
 
-    await tester.tap(find.text('Log In'));
-    await tester.pumpAndSettle();
-    expect(router.stack.map((p) => p.name), [_HomeRoute.name]);
-    expect(find.text('Home Screen'), findsOneWidget);
-    await expectBrowserUrl('/');
+      await tester.tap(find.text('Log In'));
+      await tester.pumpAndSettle();
+      expect(router.stack.map((p) => p.name), [_HomeRoute.name]);
+      expect(find.text('Home Screen'), findsOneWidget);
+      await expectBrowserUrl('/');
 
-    await tester.tap(find.text('Log Out'));
-    await tester.pumpAndSettle();
-    expect(router.stack.map((p) => p.name), [_LoginRoute.name]);
+      await tester.tap(find.text('Log Out'));
+      await tester.pumpAndSettle();
+      expect(router.stack.map((p) => p.name), [_LoginRoute.name]);
 
-    await tester.tap(find.text('Log In'));
-    await tester.pumpAndSettle();
-    expect(router.stack.map((p) => p.name), [_HomeRoute.name]);
-  });
+      await tester.tap(find.text('Log In'));
+      await tester.pumpAndSettle();
+      expect(router.stack.map((p) => p.name), [_HomeRoute.name]);
+    },
+  );
 }
 
 class _AuthRepo with ChangeNotifier {
@@ -110,7 +113,10 @@ class _HomeRoute extends PageRouteInfo<void> {
         child: Column(
           children: [
             const Text('Home Screen'),
-            FilledButton(onPressed: authRepo.logOut, child: const Text('Log Out')),
+            FilledButton(
+              onPressed: authRepo.logOut,
+              child: const Text('Log Out'),
+            ),
           ],
         ),
       ),

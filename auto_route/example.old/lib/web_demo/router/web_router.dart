@@ -42,7 +42,9 @@ class WebAppRouter extends RootStackRouter {
           guards: [
             AutoRouteGuard.simple(
               (resolver, scope) {
-                debugPrint('Verify Guard: ${resolver.routeName}, isRev: ${resolver.isReevaluating}');
+                debugPrint(
+                  'Verify Guard: ${resolver.routeName}, isRev: ${resolver.isReevaluating}',
+                );
                 if (authService.isVerified) {
                   resolver.next();
                 } else {
@@ -197,7 +199,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
               onPressed:
                   widget.navigate ??
                   () {
-                    unawaited(context.pushRoute(const UserFavoritePostsRoute()));
+                    unawaited(
+                      context.pushRoute(const UserFavoritePostsRoute()),
+                    );
                   },
               child: const Text('Posts -> '),
             ),
@@ -233,7 +237,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
 // An example page, kept as written so the example shows the same code.
 // ignore: avoid-unnecessary-stateful-widgets
 class UserPostsPage extends StatefulWidget {
-  const UserPostsPage({super.key, @PathParam.inherit('userID') required this.id});
+  const UserPostsPage({
+    super.key,
+    @PathParam.inherit('userID') required this.id,
+  });
   final int id;
 
   @override
@@ -356,7 +363,9 @@ class UserAllPostsPage extends StatelessWidget {
               onPressed:
                   navigate ??
                   () {
-                    unawaited(context.pushRoute(const UserFavoritePostsRoute()));
+                    unawaited(
+                      context.pushRoute(const UserFavoritePostsRoute()),
+                    );
                   },
               child: const Text('Favorite'),
             ),

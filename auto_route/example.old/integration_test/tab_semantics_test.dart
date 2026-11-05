@@ -17,7 +17,9 @@ void main() {
     // the second tab, the third, then the first again.
     // Should: the open tab's title, text and button are in the semantics tree
     // and not hidden; the other tabs' are hidden or left out.
-    testWidgets('${kind.name}: a tab opened again is in the semantics tree', (tester) async {
+    testWidgets('${kind.name}: a tab opened again is in the semantics tree', (
+      tester,
+    ) async {
       final semantics = tester.ensureSemantics();
       _tabsKind = kind;
       final router = RootStackRouter.build(
@@ -34,7 +36,10 @@ void main() {
           ),
         ],
       );
-      await pumpRouterConfigApp(tester, router.config(deepLinkBuilder: (_) => DeepLink.defaultPath));
+      await pumpRouterConfigApp(
+        tester,
+        router.config(deepLinkBuilder: (_) => DeepLink.defaultPath),
+      );
       final tabsRouter = router.innerRouterOf<TabsRouter>(_TabsHostRoute.name)!;
 
       // The semantics nodes a screen reader gets whose label holds [text].
@@ -46,19 +51,35 @@ void main() {
           return true;
         }
 
-        visit(tester.binding.renderViews.first.owner!.semanticsOwner!.rootSemanticsNode!);
+        visit(
+          tester
+              .binding
+              .renderViews
+              .first
+              .owner!
+              .semanticsOwner!
+              .rootSemanticsNode!,
+        );
         return nodes;
       }
 
       void expectReadable(String label) {
         for (final text in ['$label title', '$label text', '$label button']) {
-          expect(nodesLabeled(text).where((node) => !node.flagsCollection.isHidden), hasLength(1), reason: text);
+          expect(
+            nodesLabeled(text).where((node) => !node.flagsCollection.isHidden),
+            hasLength(1),
+            reason: text,
+          );
         }
       }
 
       void expectNotReadable(String label) {
         for (final text in ['$label title', '$label text', '$label button']) {
-          expect(nodesLabeled(text).where((node) => !node.flagsCollection.isHidden), isEmpty, reason: text);
+          expect(
+            nodesLabeled(text).where((node) => !node.flagsCollection.isHidden),
+            isEmpty,
+            reason: text,
+          );
         }
       }
 

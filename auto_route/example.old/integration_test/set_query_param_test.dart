@@ -16,17 +16,27 @@ void main() {
   // Should: tags is a Set holding a repeated tag once, ids the ints, sorts
   // the enum values.
   testWidgets('a deep link reads a Set and an Iterable', (tester) async {
-    await pumpRouterApp(tester, ListRouter(), initialLink: '/tags?tags=a&tags=b&tags=a&ids=1&ids=2&sorts=desc');
+    await pumpRouterApp(
+      tester,
+      ListRouter(),
+      initialLink: '/tags?tags=a&tags=b&tags=a&ids=1&ids=2&sorts=desc',
+    );
     expect(tester.takeException(), isNull);
     expect(find.text('tags {a, b} ids [1, 2] sorts [desc]'), findsOneWidget);
   });
 
   // Steps: push the tags route with a Set, an Iterable and a Set of an enum.
   // Should: the url, in the router and the browser, carries each item.
-  testWidgets('pushing a Set and an Iterable writes their items in the url', (tester) async {
+  testWidgets('pushing a Set and an Iterable writes their items in the url', (
+    tester,
+  ) async {
     final router = ListRouter();
     await pumpRouterApp(tester, router);
-    unawaited(router.push(TagsRoute(tags: const {'x'}, ids: const [3], sorts: const {.asc})));
+    unawaited(
+      router.push(
+        TagsRoute(tags: const {'x'}, ids: const [3], sorts: const {.asc}),
+      ),
+    );
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(find.text('tags {x} ids [3] sorts [asc]'), findsOneWidget);

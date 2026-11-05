@@ -19,7 +19,9 @@ void main() {
   // of the screen.
   // Should: on iOS and macOS the swipe pops the page; elsewhere it does
   // nothing, as the option is for the iOS back swipe only.
-  testWidgets('A back swipe pops a custom-transition page that opts in', (tester) async {
+  testWidgets('A back swipe pops a custom-transition page that opts in', (
+    tester,
+  ) async {
     final router = pageKindsRouter(
       customTransitionsBuilder: TransitionsBuilders.fadeIn,
       customCupertinoBackGesture: true,
@@ -32,7 +34,11 @@ void main() {
     await swipeBack(tester);
 
     // In a browser, the platform is the computer's, so a Mac swipes too.
-    final swipes = defaultTargetPlatform == .iOS || defaultTargetPlatform == .macOS;
-    expect(router.stack.map((page) => page.name), swipes ? ['HomeRoute'] : ['HomeRoute', 'CustomKindRoute']);
+    final swipes =
+        defaultTargetPlatform == .iOS || defaultTargetPlatform == .macOS;
+    expect(
+      router.stack.map((page) => page.name),
+      swipes ? ['HomeRoute'] : ['HomeRoute', 'CustomKindRoute'],
+    );
   });
 }

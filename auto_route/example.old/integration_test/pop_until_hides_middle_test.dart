@@ -16,7 +16,9 @@ void main() {
   // Steps: a host page whose nested router has [A, B, C]; call popUntil for
   // A on the nested router and look at every frame of the pop.
   // Should: C animates out over A, B never shows, and B's push completes.
-  testWidgets('popUntil on a nested router never shows the pages in between', (tester) async {
+  testWidgets('popUntil on a nested router never shows the pages in between', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(

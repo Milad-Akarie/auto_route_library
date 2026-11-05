@@ -30,7 +30,8 @@ class RouteAwarePage extends StatefulWidget {
   State<RouteAwarePage> createState() => _RouteAwarePageState();
 }
 
-class _RouteAwarePageState extends State<RouteAwarePage> with AutoRouteAwareStateMixin<RouteAwarePage> {
+class _RouteAwarePageState extends State<RouteAwarePage>
+    with AutoRouteAwareStateMixin<RouteAwarePage> {
   late final String _name = context.routeData.name;
 
   @override
@@ -53,10 +54,12 @@ class _RouteAwarePageState extends State<RouteAwarePage> with AutoRouteAwareStat
   void didPopNext() => routeAwareEvents.add('$_name.didPopNext');
 
   @override
-  void didInitTabRoute(TabPageRoute? previousRoute) => routeAwareEvents.add('$_name.didInitTabRoute');
+  void didInitTabRoute(TabPageRoute? previousRoute) =>
+      routeAwareEvents.add('$_name.didInitTabRoute');
 
   @override
-  void didChangeTabRoute(TabPageRoute previousRoute) => routeAwareEvents.add('$_name.didChangeTabRoute');
+  void didChangeTabRoute(TabPageRoute previousRoute) =>
+      routeAwareEvents.add('$_name.didChangeTabRoute');
 }
 
 class FirstRoute extends PageRouteInfo<void> {
@@ -89,7 +92,8 @@ class FourthRoute extends PageRouteInfo<void> {
 
 /// Hosts a nested stack router under an app bar with a back button.
 class SecondHostRoute extends PageRouteInfo<void> {
-  const SecondHostRoute({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
+  const SecondHostRoute({List<PageRouteInfo>? children})
+    : super(name, initialChildren: children);
 
   static const String name = 'SecondHostRoute';
   static PageInfo page = PageInfo(
@@ -117,7 +121,8 @@ class SecondNested3Route extends PageRouteInfo<void> {
 
 /// Hosts the tabs given by its route's children.
 class TabsHostRoute extends PageRouteInfo<void> {
-  const TabsHostRoute({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
+  const TabsHostRoute({List<PageRouteInfo>? children})
+    : super(name, initialChildren: children);
 
   static const String name = 'TabsHostRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const AutoTabsRouter());
@@ -132,7 +137,8 @@ class Tab1Route extends PageRouteInfo<void> {
 
 /// Hosts a nested stack router with no chrome around it.
 class Tab2Route extends PageRouteInfo<void> {
-  const Tab2Route({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
+  const Tab2Route({List<PageRouteInfo>? children})
+    : super(name, initialChildren: children);
 
   static const String name = 'Tab2Route';
   static PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());

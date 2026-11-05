@@ -14,7 +14,9 @@ void main() {
   // Steps: open the app at '/old/1/2', which RedirectRoute(path: '/old/:pa/:path', redirectTo: '/cms/:path')
   // sends on.
   // Should: the page reads '2', and the url, and on web the address bar, is '/cms/2', not '/cms/1th'.
-  testWidgets('A redirect expands a param whose name starts another whole', (tester) async {
+  testWidgets('A redirect expands a param whose name starts another whole', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(page: FirstRoute.page, path: '/', initial: true),
@@ -35,6 +37,7 @@ class _CmsRoute extends PageRouteInfo<void> {
   static const String pageName = 'CmsRoute';
   static PageInfo page = PageInfo(
     pageName,
-    builder: (data) => Text('Cms ${data.inheritedPathParams.getString('path')}'),
+    builder: (data) =>
+        Text('Cms ${data.inheritedPathParams.getString('path')}'),
   );
 }

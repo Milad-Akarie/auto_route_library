@@ -29,20 +29,26 @@ void main() {
   // Steps: push SettingsRoute, then restore the app started at the link
   // /offer.
   // Should: OfferRoute shows, opened over the restored pages.
-  testWidgets('A link that starts a restored app opens its page (flutter/flutter#161858)', (tester) async {
-    await pumpRestorableApp(tester, buildRouter);
-    unawaited(RestorableRouterApp.router.push(const NamedRoute('SettingsRoute')));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'A link that starts a restored app opens its page (flutter/flutter#161858)',
+    (tester) async {
+      await pumpRestorableApp(tester, buildRouter);
+      unawaited(
+        RestorableRouterApp.router.push(const NamedRoute('SettingsRoute')),
+      );
+      await tester.pumpAndSettle();
 
-    final dispatcher = tester.binding.platformDispatcher;
-    addTearDown(dispatcher.clearDefaultRouteNameTestValue);
-    dispatcher.defaultRouteNameTestValue = '/offer';
-    await tester.restartAndRestore();
-    await tester.pumpAndSettle();
-    final router = RestorableRouterApp.router;
-    expect(tester.takeException(), isNull);
-    expect(router.topRoute.name, 'OfferRoute');
-    expect(find.text('OfferRoute'), findsOneWidget);
-    expect(router.currentUrl, '/offer');
-  }, skip: kIsWeb);
+      final dispatcher = tester.binding.platformDispatcher;
+      addTearDown(dispatcher.clearDefaultRouteNameTestValue);
+      dispatcher.defaultRouteNameTestValue = '/offer';
+      await tester.restartAndRestore();
+      await tester.pumpAndSettle();
+      final router = RestorableRouterApp.router;
+      expect(tester.takeException(), isNull);
+      expect(router.topRoute.name, 'OfferRoute');
+      expect(find.text('OfferRoute'), findsOneWidget);
+      expect(router.currentUrl, '/offer');
+    },
+    skip: kIsWeb,
+  );
 }

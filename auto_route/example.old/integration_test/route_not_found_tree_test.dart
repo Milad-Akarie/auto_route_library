@@ -17,7 +17,9 @@ void main() {
 
   // Steps: open '/shop/1/reviews', which no route matches, with onFailure.
   // Should: the failure names the path and lists the tree; the page stays.
-  testWidgets('an unknown path reports the path and the route tree', (tester) async {
+  testWidgets('an unknown path reports the path and the route tree', (
+    tester,
+  ) async {
     final router = buildRouteTreeRouter();
     await pumpRouterApp(tester, router);
     final failures = <NavigationFailure>[];
@@ -27,7 +29,10 @@ void main() {
 
     expect(
       failures.single.toString(),
-      allOf(contains('Can not navigate to /shop/1/reviews'), contains(routeTreeOfRouteTreeRouter)),
+      allOf(
+        contains('Can not navigate to /shop/1/reviews'),
+        contains(routeTreeOfRouteTreeRouter),
+      ),
     );
     expect(router.current.name, 'HomeRoute');
     expect(find.text('Home'), findsOneWidget);

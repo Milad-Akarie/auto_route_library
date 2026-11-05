@@ -36,7 +36,11 @@ void pressBrowserForward() => _history.forward();
 /// [appWroteBrowserEntry].
 void openBrowserAt(String path) {
   final serialCount = browserEntryIndex() ?? 0;
-  _history.replaceState({'serialCount': serialCount, 'state': null, _openedByBrowser: true}.jsify(), '', '#$path');
+  _history.replaceState(
+    {'serialCount': serialCount, 'state': null, _openedByBrowser: true}.jsify(),
+    '',
+    '#$path',
+  );
 }
 
 // Kept beside the engine's own keys: the app reads the engine's 'state' of
@@ -45,7 +49,11 @@ void openBrowserAt(String path) {
 /// keeps a state the app saved there, at serial number 0, as when the user
 /// comes back to the app's entry from another site.
 void saveBrowserEntryState(String path, Object state) {
-  _history.replaceState({'serialCount': 0, 'state': state}.jsify(), '', '#$path');
+  _history.replaceState(
+    {'serialCount': 0, 'state': state}.jsify(),
+    '',
+    '#$path',
+  );
 }
 
 const _openedByBrowser = 'openedByBrowser';

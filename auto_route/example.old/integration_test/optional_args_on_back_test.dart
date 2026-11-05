@@ -34,7 +34,9 @@ void main() {
   // 'some-id-2', then go back: the browser's back button on web, system back
   // elsewhere.
   // Should: Page1 shows 'some-id' again, not a null bookId.
-  testWidgets('Going back keeps the optional argument of the page underneath', (tester) async {
+  testWidgets('Going back keeps the optional argument of the page underneath', (
+    tester,
+  ) async {
     await pumpRouterAppWithConfig(tester, router);
     unawaited(router.push(_BookRoute(bookId: 'some-id')));
     await tester.pumpAndSettle();
@@ -58,7 +60,9 @@ void main() {
 
   // Steps: the same, going back with back().
   // Should: Page1 shows 'some-id' again.
-  testWidgets('back() keeps the optional argument of the page underneath', (tester) async {
+  testWidgets('back() keeps the optional argument of the page underneath', (
+    tester,
+  ) async {
     await pumpRouterAppWithConfig(tester, router);
     unawaited(router.push(_BookRoute(bookId: 'some-id')));
     await tester.pumpAndSettle();
@@ -87,17 +91,25 @@ class _BookRoute extends PageRouteInfo<_BookArgs> {
   static const String name = 'BookRoute';
   static PageInfo page = PageInfo(
     name,
-    builder: (data) => Scaffold(body: Text('Book ${data.argsAs<_BookArgs>(orElse: () => const _BookArgs()).bookId}')),
+    builder: (data) => Scaffold(
+      body: Text(
+        'Book ${data.argsAs<_BookArgs>(orElse: () => const _BookArgs()).bookId}',
+      ),
+    ),
   );
 }
 
 class _ChapterRoute extends PageRouteInfo<_BookArgs> {
-  _ChapterRoute({String? bookId}) : super(name, args: _BookArgs(bookId: bookId));
+  _ChapterRoute({String? bookId})
+    : super(name, args: _BookArgs(bookId: bookId));
 
   static const String name = 'ChapterRoute';
   static PageInfo page = PageInfo(
     name,
-    builder: (data) =>
-        Scaffold(body: Text('Chapter ${data.argsAs<_BookArgs>(orElse: () => const _BookArgs()).bookId}')),
+    builder: (data) => Scaffold(
+      body: Text(
+        'Chapter ${data.argsAs<_BookArgs>(orElse: () => const _BookArgs()).bookId}',
+      ),
+    ),
   );
 }

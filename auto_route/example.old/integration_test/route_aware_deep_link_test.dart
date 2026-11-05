@@ -15,7 +15,9 @@ void main() {
   // both pages have AutoRouteAwareStateMixin. Go back.
   // Should: HomeRoute hears didPush, then didPushNext, since SecondRoute
   // covers it; going back tells SecondRoute didPop and HomeRoute didPopNext.
-  testWidgets('a page built under a deep link hears didPushNext', (tester) async {
+  testWidgets('a page built under a deep link hears didPushNext', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(
@@ -29,10 +31,25 @@ void main() {
       ],
     );
     routeAwareEvents.clear();
-    await pumpRouterApp(tester, router, initialLink: '/second', navigatorObservers: () => [AutoRouteObserver()]);
+    await pumpRouterApp(
+      tester,
+      router,
+      initialLink: '/second',
+      navigatorObservers: () => [AutoRouteObserver()],
+    );
     expectTopPage(router, 'SecondRoute');
-    expect(routeAwareEvents, unorderedEquals(['HomeRoute.didPush', 'HomeRoute.didPushNext', 'SecondRoute.didPush']));
-    expect(routeAwareEvents.indexOf('HomeRoute.didPush'), lessThan(routeAwareEvents.indexOf('HomeRoute.didPushNext')));
+    expect(
+      routeAwareEvents,
+      unorderedEquals([
+        'HomeRoute.didPush',
+        'HomeRoute.didPushNext',
+        'SecondRoute.didPush',
+      ]),
+    );
+    expect(
+      routeAwareEvents.indexOf('HomeRoute.didPush'),
+      lessThan(routeAwareEvents.indexOf('HomeRoute.didPushNext')),
+    );
 
     routeAwareEvents.clear();
     await systemBack(tester);

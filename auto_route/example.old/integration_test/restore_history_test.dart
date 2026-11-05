@@ -26,9 +26,19 @@ void main() {
   // url alone can't bring the pages before ProductDetails back.
   RootStackRouter buildRouter() => .build(
     routes: [
-      AutoRoute(page: namedPage('HomeRoute'), restorationId: (match) => match.name, initial: true),
-      AutoRoute(page: namedPage('ProductsRoute'), restorationId: (match) => match.name),
-      AutoRoute(page: namedPage('ProductDetailsRoute'), restorationId: (match) => match.name),
+      AutoRoute(
+        page: namedPage('HomeRoute'),
+        restorationId: (match) => match.name,
+        initial: true,
+      ),
+      AutoRoute(
+        page: namedPage('ProductsRoute'),
+        restorationId: (match) => match.name,
+      ),
+      AutoRoute(
+        page: namedPage('ProductDetailsRoute'),
+        restorationId: (match) => match.name,
+      ),
     ],
   );
 
@@ -36,11 +46,17 @@ void main() {
   // twice.
   // Should: ProductDetails shows, back shows Products, then Home, and only
   // then would Android close the app.
-  testWidgets('back after restoration returns through the pages before it', (tester) async {
+  testWidgets('back after restoration returns through the pages before it', (
+    tester,
+  ) async {
     await pumpRestorableApp(tester, buildRouter);
-    unawaited(RestorableRouterApp.router.push(const NamedRoute('ProductsRoute')));
+    unawaited(
+      RestorableRouterApp.router.push(const NamedRoute('ProductsRoute')),
+    );
     await tester.pumpAndSettle();
-    unawaited(RestorableRouterApp.router.push(const NamedRoute('ProductDetailsRoute')));
+    unawaited(
+      RestorableRouterApp.router.push(const NamedRoute('ProductDetailsRoute')),
+    );
     await tester.pumpAndSettle();
 
     await tester.restartAndRestore();

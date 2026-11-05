@@ -17,7 +17,9 @@ void main() {
   // at '/seconds/1%232'.
   // Should: the page reads the whole '1#2', and on web the address bar holds
   // the link in the same history entry, not a second one.
-  testWidgets('A deep link to an encoded url adds no history entry', (tester) async {
+  testWidgets('A deep link to an encoded url adds no history entry', (
+    tester,
+  ) async {
     const link = '/seconds/1%232';
     final entryBefore = browserEntryIndex() ?? 0;
     final router = RootStackRouter.build(
@@ -30,7 +32,10 @@ void main() {
     await pumpAppAtDeepLink(
       tester,
       link,
-      MaterialApp.router(routeInformationParser: router.defaultRouteParser(), routerDelegate: router.delegate()),
+      MaterialApp.router(
+        routeInformationParser: router.defaultRouteParser(),
+        routerDelegate: router.delegate(),
+      ),
     );
     expect(find.text('id 1#2'), findsOneWidget);
     await expectBrowserUrl(link);

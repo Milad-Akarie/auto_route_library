@@ -16,11 +16,21 @@ void main() {
 
   // Steps: stack [Page1Route, Page2Route], then popUntilRouteWithName('Page3Route').
   // Should: Page1Route stays on screen.
-  testWidgets('popUntilRouteWithName for a missing page keeps the first page', (tester) async {
+  testWidgets('popUntilRouteWithName for a missing page keeps the first page', (
+    tester,
+  ) async {
     final router = RootStackRouter.build(
       routes: [
-        NamedRouteDef(name: 'Page1Route', path: '/', builder: (_, _) => _page('Page 1')),
-        NamedRouteDef(name: 'Page2Route', path: '/page2', builder: (_, _) => _page('Page 2')),
+        NamedRouteDef(
+          name: 'Page1Route',
+          path: '/',
+          builder: (_, _) => _page('Page 1'),
+        ),
+        NamedRouteDef(
+          name: 'Page2Route',
+          path: '/page2',
+          builder: (_, _) => _page('Page 2'),
+        ),
       ],
     );
     await pumpRouterApp(tester, router);

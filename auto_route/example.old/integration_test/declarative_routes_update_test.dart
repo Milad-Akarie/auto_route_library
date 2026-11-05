@@ -15,26 +15,29 @@ void main() {
   // AutoRouter.declarative(routes: (_) => [HomeRoute(id: id)]). Tap the
   // button that changes `id`.
   // Should: the home page shows the new id, updated in place.
-  testWidgets('changing a variable of the declarative routes rebuilds the page with it', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          page: _HostRoute.page,
-          initial: true,
-          children: [AutoRoute(page: _HomeRoute.page, initial: true)],
-        ),
-      ],
-    );
-    await pumpRouterAppWithConfig(tester, router);
-    expect(find.text('Home 1'), findsOneWidget);
-    final homeState = tester.state(find.byType(_HomePage));
+  testWidgets(
+    'changing a variable of the declarative routes rebuilds the page with it',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            page: _HostRoute.page,
+            initial: true,
+            children: [AutoRoute(page: _HomeRoute.page, initial: true)],
+          ),
+        ],
+      );
+      await pumpRouterAppWithConfig(tester, router);
+      expect(find.text('Home 1'), findsOneWidget);
+      final homeState = tester.state(find.byType(_HomePage));
 
-    await tester.tap(find.text('Next id'));
-    await tester.pumpAndSettle();
-    expect(find.text('Home 1'), findsNothing);
-    expect(find.text('Home 2'), findsOneWidget);
-    expect(tester.state(find.byType(_HomePage)), same(homeState));
-  });
+      await tester.tap(find.text('Next id'));
+      await tester.pumpAndSettle();
+      expect(find.text('Home 1'), findsNothing);
+      expect(find.text('Home 2'), findsOneWidget);
+      expect(tester.state(find.byType(_HomePage)), same(homeState));
+    },
+  );
 }
 
 class _HostRoute extends PageRouteInfo<void> {
@@ -59,7 +62,10 @@ class _HostPageState extends State<_HostPage> {
     return Scaffold(
       body: Column(
         children: [
-          TextButton(onPressed: () => setState(() => id++), child: const Text('Next id')),
+          TextButton(
+            onPressed: () => setState(() => id++),
+            child: const Text('Next id'),
+          ),
           Expanded(
             child: AutoRouter.declarative(routes: (_) => [_HomeRoute(id: id)]),
           ),
@@ -76,7 +82,8 @@ class _HomeRouteArgs {
   final int id;
 
   @override
-  bool operator ==(Object other) => identical(this, other) || other is _HomeRouteArgs && id == other.id;
+  bool operator ==(Object other) =>
+      identical(this, other) || other is _HomeRouteArgs && id == other.id;
 
   @override
   int get hashCode => id.hashCode;
@@ -86,7 +93,10 @@ class _HomeRoute extends PageRouteInfo<_HomeRouteArgs> {
   _HomeRoute({required int id}) : super(name, args: _HomeRouteArgs(id: id));
 
   static const name = 'HomeRoute';
-  static final page = PageInfo(name, builder: (data) => _HomePage(id: data.argsAs<_HomeRouteArgs>().id));
+  static final page = PageInfo(
+    name,
+    builder: (data) => _HomePage(id: data.argsAs<_HomeRouteArgs>().id),
+  );
 }
 
 class _HomePage extends StatefulWidget {

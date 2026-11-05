@@ -27,32 +27,48 @@ void main() {
   // the router told the browser the new route. The dialog still opened.
   // Should: the dialog opens with its argument, nothing is thrown, and the
   // browser shows the dialog's url.
-  testWidgets('A dialog route opened with an argument reports a state the platform encodes', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('HomeRoute', builder: (_) => const Text('HomeRoute')),
-        ),
-        CustomRoute(
-          path: '/profile',
-          page: PageInfo(
-            'ProfileDialogRoute',
-            builder: (data) =>
-                AlertDialog(content: Text('Profile ${data.args is _Profile ? (data.args! as _Profile).name : 'none'}')),
+  testWidgets(
+    'A dialog route opened with an argument reports a state the platform encodes',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => const Text('HomeRoute'),
+            ),
           ),
-          customRouteBuilder: <T>(context, child, page) =>
-              DialogRoute<T>(context: context, settings: page, builder: (_) => child),
+          CustomRoute(
+            path: '/profile',
+            page: PageInfo(
+              'ProfileDialogRoute',
+              builder: (data) => AlertDialog(
+                content: Text(
+                  'Profile ${data.args is _Profile ? (data.args! as _Profile).name : 'none'}',
+                ),
+              ),
+            ),
+            customRouteBuilder: <T>(context, child, page) => DialogRoute<T>(
+              context: context,
+              settings: page,
+              builder: (_) => child,
+            ),
+          ),
+        ],
+      );
+      await pumpRouterAppWithConfig(tester, router);
+
+      unawaited(
+        router.push(
+          const NamedRoute('ProfileDialogRoute', args: _Profile('Sam')),
         ),
-      ],
-    );
-    await pumpRouterAppWithConfig(tester, router);
+      );
+      await tester.pumpAndSettle();
 
-    unawaited(router.push(const NamedRoute('ProfileDialogRoute', args: _Profile('Sam'))));
-    await tester.pumpAndSettle();
-
-    expect(tester.takeException(), isNull);
-    expect(find.text('Profile Sam'), findsOneWidget);
-    await expectBrowserUrl('/profile');
-  });
+      expect(tester.takeException(), isNull);
+      expect(find.text('Profile Sam'), findsOneWidget);
+      await expectBrowserUrl('/profile');
+    },
+  );
 }

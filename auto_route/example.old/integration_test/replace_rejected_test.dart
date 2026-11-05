@@ -17,13 +17,30 @@ void main() {
 
   RootStackRouter buildRouter() => .build(
     routes: [
-      NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => page('HomeRoute')),
-      NamedRouteDef(name: 'DetailsRoute', path: '/details', builder: (_, _) => page('DetailsRoute')),
-      NamedRouteDef(name: 'LoginRoute', path: '/login', builder: (_, _) => page('LoginRoute')),
+      NamedRouteDef(
+        name: 'HomeRoute',
+        path: '/',
+        builder: (_, _) => page('HomeRoute'),
+      ),
+      NamedRouteDef(
+        name: 'DetailsRoute',
+        path: '/details',
+        builder: (_, _) => page('DetailsRoute'),
+      ),
+      NamedRouteDef(
+        name: 'LoginRoute',
+        path: '/login',
+        builder: (_, _) => page('LoginRoute'),
+      ),
       NamedRouteDef(
         name: 'ProtectedRoute',
         path: '/protected',
-        guards: [AutoRouteGuard.simple((resolver, _) => resolver.redirectUntil(const NamedRoute('LoginRoute')))],
+        guards: [
+          AutoRouteGuard.simple(
+            (resolver, _) =>
+                resolver.redirectUntil(const NamedRoute('LoginRoute')),
+          ),
+        ],
         builder: (_, _) => page('ProtectedRoute'),
       ),
       NamedRouteDef(
@@ -38,37 +55,53 @@ void main() {
   // Steps: push DetailsRoute, then replace it with ForbiddenRoute, whose guard
   // rejects the navigation.
   // Should: the stack is still [HomeRoute, DetailsRoute], on screen and in the url.
-  testWidgets('A replace rejected by a guard keeps the page it would replace (#2046)', (tester) async {
-    final router = buildRouter();
-    await pumpRouterAppWithConfig(tester, router);
-    unawaited(router.push(const NamedRoute('DetailsRoute')));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'A replace rejected by a guard keeps the page it would replace (#2046)',
+    (tester) async {
+      final router = buildRouter();
+      await pumpRouterAppWithConfig(tester, router);
+      unawaited(router.push(const NamedRoute('DetailsRoute')));
+      await tester.pumpAndSettle();
 
-    unawaited(router.replace(const NamedRoute('ForbiddenRoute')));
-    await tester.pumpAndSettle();
+      unawaited(router.replace(const NamedRoute('ForbiddenRoute')));
+      await tester.pumpAndSettle();
 
-    expect(router.stack.map((e) => e.routeData.name), ['HomeRoute', 'DetailsRoute']);
-    expectTopPage(router, 'DetailsRoute');
-    await expectBrowserUrl('/details');
-  });
+      expect(router.stack.map((e) => e.routeData.name), [
+        'HomeRoute',
+        'DetailsRoute',
+      ]);
+      expectTopPage(router, 'DetailsRoute');
+      await expectBrowserUrl('/details');
+    },
+  );
 
   // Steps: push DetailsRoute, replace it with ProtectedRoute, whose guard
   // redirects to LoginRoute, then go back from LoginRoute.
   // Should: LoginRoute opens over DetailsRoute, and going back rejects the
   // replace and shows DetailsRoute again.
-  testWidgets('Going back from the redirect of a replace keeps the page it would replace (#2046)', (tester) async {
-    final router = buildRouter();
-    await pumpRouterAppWithConfig(tester, router);
-    unawaited(router.push(const NamedRoute('DetailsRoute')));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'Going back from the redirect of a replace keeps the page it would replace (#2046)',
+    (tester) async {
+      final router = buildRouter();
+      await pumpRouterAppWithConfig(tester, router);
+      unawaited(router.push(const NamedRoute('DetailsRoute')));
+      await tester.pumpAndSettle();
 
-    unawaited(router.replace(const NamedRoute('ProtectedRoute')));
-    await tester.pumpAndSettle();
-    expect(router.stack.map((e) => e.routeData.name), ['HomeRoute', 'DetailsRoute', 'LoginRoute']);
+      unawaited(router.replace(const NamedRoute('ProtectedRoute')));
+      await tester.pumpAndSettle();
+      expect(router.stack.map((e) => e.routeData.name), [
+        'HomeRoute',
+        'DetailsRoute',
+        'LoginRoute',
+      ]);
 
-    await systemBack(tester);
-    expect(router.stack.map((e) => e.routeData.name), ['HomeRoute', 'DetailsRoute']);
-    expectTopPage(router, 'DetailsRoute');
-    await expectBrowserUrl('/details');
-  });
+      await systemBack(tester);
+      expect(router.stack.map((e) => e.routeData.name), [
+        'HomeRoute',
+        'DetailsRoute',
+      ]);
+      expectTopPage(router, 'DetailsRoute');
+      await expectBrowserUrl('/details');
+    },
+  );
 }

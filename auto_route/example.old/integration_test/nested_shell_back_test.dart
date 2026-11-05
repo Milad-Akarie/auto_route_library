@@ -38,34 +38,38 @@ void main() {
   // every Flutter Navigator does for its first route, and back returns to
   // the dashboard at '/dashboard'.
   for (final back in ['system back', 'back button']) {
-    testWidgets('$back from the first page of a nested shell returns to the dashboard', (tester) async {
-      final pushes = <String>[];
-      final router = buildRouter();
-      await pumpRouterConfigApp(
-        tester,
-        router.config(
-          deepLinkBuilder: (link) => link.initial ? const DeepLink.path('/dashboard') : link,
-          navigatorObservers: () => [_PushRecorder(pushes)],
-        ),
-      );
-      expect(find.text('DashboardRoute'), findsOneWidget);
+    testWidgets(
+      '$back from the first page of a nested shell returns to the dashboard',
+      (tester) async {
+        final pushes = <String>[];
+        final router = buildRouter();
+        await pumpRouterConfigApp(
+          tester,
+          router.config(
+            deepLinkBuilder: (link) =>
+                link.initial ? const DeepLink.path('/dashboard') : link,
+            navigatorObservers: () => [_PushRecorder(pushes)],
+          ),
+        );
+        expect(find.text('DashboardRoute'), findsOneWidget);
 
-      await tester.tap(find.text('Open cashless'));
-      await tester.pumpAndSettle();
-      expect(find.text('CashlessSchoolApplyRoute'), findsOneWidget);
-      expect(pushes.last, 'CashlessSchoolApplyRoute after null');
-      await expectBrowserUrl('/dashboard/cashless');
-
-      if (back == 'system back') {
-        await systemBack(tester);
-      } else {
-        await tester.tap(find.byType(BackButton));
+        await tester.tap(find.text('Open cashless'));
         await tester.pumpAndSettle();
-      }
-      expect(find.text('DashboardRoute'), findsOneWidget);
-      expect(router.currentPath, '/dashboard');
-      await expectBrowserUrl('/dashboard');
-    });
+        expect(find.text('CashlessSchoolApplyRoute'), findsOneWidget);
+        expect(pushes.last, 'CashlessSchoolApplyRoute after null');
+        await expectBrowserUrl('/dashboard/cashless');
+
+        if (back == 'system back') {
+          await systemBack(tester);
+        } else {
+          await tester.tap(find.byType(BackButton));
+          await tester.pumpAndSettle();
+        }
+        expect(find.text('DashboardRoute'), findsOneWidget);
+        expect(router.currentPath, '/dashboard');
+        await expectBrowserUrl('/dashboard');
+      },
+    );
   }
 }
 
@@ -77,7 +81,10 @@ PageInfo _page(String name) => .new(
   ),
 );
 
-final _dashboardPage = PageInfo('DashboardRoute', builder: (_) => const _DashboardPage());
+final _dashboardPage = PageInfo(
+  'DashboardRoute',
+  builder: (_) => const _DashboardPage(),
+);
 
 class _DashboardPage extends StatelessWidget {
   const _DashboardPage();
