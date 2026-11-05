@@ -131,8 +131,17 @@ class TypeResolver {
         typeArguments: _resolveTypeArguments(type),
         nameInRecord: nameInRecord,
       );
-    } else if (type.element is TypeParameterElement) {
-      return ResolvedType(name: 'dynamic', nameInRecord: nameInRecord);
+    } else if (type.element case final TypeParameterElement element) {
+      // A type parameter of the page class is one the route declares too;
+      // any other, such as a generic function's, has no name there.
+      if (element.enclosingElement is! InterfaceElement) {
+        return ResolvedType(name: 'dynamic', nameInRecord: nameInRecord);
+      }
+      return ResolvedType(
+        name: element.displayName,
+        isNullable: type.nullabilitySuffix == .question,
+        nameInRecord: nameInRecord,
+      );
     }
     return ResolvedType(
       name: type.element?.displayName ?? 'void',

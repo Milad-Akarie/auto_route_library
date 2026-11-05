@@ -19,21 +19,15 @@ class RouteConfigResolver {
     throwIf(element is! ClassElement, '${element.displayName} is not a class element', element: element);
 
     final classElement = element as ClassElement;
-    // A route builds its page from the route's name and args alone, with no
-    // type arguments to give it, so the generated route and args classes
-    // would carry the type parameters into names and fail to parse.
-    throwIf(
-      classElement.typeParameters.isNotEmpty,
-      '${classElement.displayName} has type parameters, and a @RoutePage class can not have any. '
-      'Give each type its own page class without them, one that builds the generic widget, as in '
-      '`@RoutePage() class ScaleDetailPage extends StatelessWidget` building '
-      '`${classElement.displayName}<Scale>(...)`.',
-      element: classElement,
-    );
     final page = classElement.thisType;
     final hasWrappedRoute = classElement.allSupertypes.any((e) => e.nameWithoutSuffix == 'AutoRouteWrapper');
     final pageType = _typeResolver.resolveType(page);
-    final className = page.nameWithoutSuffix;
+    // The name alone: the type's display name has the type parameters.
+    final className = classElement.displayName;
+    final typeParameters = [
+      for (final t in classElement.typeParameters)
+        RouteTypeParameter(name: t.displayName, bound: t.bound == null ? null : _typeResolver.resolveType(t.bound!)),
+    ];
 
     final name = routePage.peek('name')?.stringValue;
     final constructor = classElement.unnamedConstructor;
@@ -42,7 +36,11 @@ class RouteConfigResolver {
     final params = constructor!.formalParameters;
     final parameters = <ParamConfig>[];
     if (params.isNotEmpty) {
-      if (constructor.isConst && params.length == 1 && params.first.type.nameWithoutSuffix == 'Key') {
+      // A generic page is built by its args, which carry its type arguments.
+      if (constructor.isConst &&
+          typeParameters.isEmpty &&
+          params.length == 1 &&
+          params.first.type.nameWithoutSuffix == 'Key') {
         hasConstConstructor = true;
       } else {
         final paramResolver = RouteParameterResolver(_typeResolver);
@@ -104,6 +102,7 @@ class RouteConfigResolver {
       hasConstConstructor: hasConstConstructor,
       pageType: pageType,
       deferredLoading: isDeferred,
+      typeParameters: typeParameters,
     );
   }
 }

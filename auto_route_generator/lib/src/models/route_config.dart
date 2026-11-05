@@ -1,6 +1,7 @@
 import 'package:auto_route_generator/src/models/resolved_type.dart';
 import 'package:auto_route_generator/src/models/route_parameter_config.dart';
 import 'package:auto_route_generator/utils.dart';
+import 'package:code_builder/code_builder.dart' show TypeReference;
 
 /// holds the extracted route configs
 /// to be used in `RouterClassGenerator`
@@ -15,6 +16,7 @@ class RouteConfig {
     this.hasWrappedRoute,
     this.hasConstConstructor = false,
     this.deferredLoading,
+    this.typeParameters = const [],
   });
 
   /// Deserializes the route config from json
@@ -34,6 +36,10 @@ class RouteConfig {
     }
 
     return RouteConfig(
+      typeParameters: [
+        for (final p in map['typeParameters'] as List<dynamic>? ?? const [])
+          RouteTypeParameter.fromJson(p as Map<String, dynamic>),
+      ],
       name: map['name'] as String?,
       pathParams: pathParams,
       pageType: map['pageType'] == null ? null : ResolvedType.fromJson(map['pageType'] as Map<String, dynamic>),
@@ -68,6 +74,13 @@ class RouteConfig {
 
   /// whether the route is deferred
   final bool? deferredLoading;
+
+  /// The type parameters of the page class, which the route and its args
+  /// class take too; empty for a page that has none.
+  final List<RouteTypeParameter> typeParameters;
+
+  /// Whether the page class has type parameters.
+  bool get isGeneric => typeParameters.isNotEmpty;
 
   /// The class name for ArgumentsHolder
   String get argumentsHolderClassName {
@@ -121,8 +134,10 @@ class RouteConfig {
     bool? hasWrappedRoute,
     bool? hasConstConstructor,
     bool? deferredLoading,
+    List<RouteTypeParameter>? typeParameters,
   }) {
     return RouteConfig(
+      typeParameters: typeParameters ?? this.typeParameters,
       name: name ?? this.name,
       pathParams: pathParams ?? this.pathParams,
       pageType: pageType ?? this.pageType,
@@ -145,6 +160,39 @@ class RouteConfig {
       'hasWrappedRoute': hasWrappedRoute,
       'hasConstConstructor': hasConstConstructor,
       'deferredLoading': deferredLoading,
+      if (isGeneric) 'typeParameters': typeParameters.map((e) => e.toJson()).toList(),
     };
   }
+}
+
+/// A type parameter of a page class, such as `T extends Item` in
+/// `PickerPage<T extends Item>`.
+class RouteTypeParameter {
+  /// Default constructor
+  const RouteTypeParameter({required this.name, this.bound});
+
+  /// Deserializes the type parameter from json
+  factory RouteTypeParameter.fromJson(Map<String, dynamic> map) {
+    final bound = map['bound'];
+    return RouteTypeParameter(
+      name: map['name'] as String,
+      bound: bound == null ? null : ResolvedType.fromJson(bound as Map<String, dynamic>),
+    );
+  }
+
+  /// The name of the type parameter, such as `T`.
+  final String name;
+
+  /// The type after `extends`, or `null` when there is none.
+  final ResolvedType? bound;
+
+  /// The type parameter as it is declared, with its bound.
+  TypeReference get declaration => .new(
+    (b) => b
+      ..symbol = name
+      ..bound = bound?.refer,
+  );
+
+  /// Serializes the type parameter to json
+  Map<String, dynamic> toJson() => {'name': name, 'bound': ?bound?.toJson()};
 }

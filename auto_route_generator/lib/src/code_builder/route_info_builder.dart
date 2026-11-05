@@ -35,21 +35,34 @@ TypeReference _genericRef(String symbol, List<ResolvedType> args, String url) {
 /// Builds a route info class and args class for the given [RouteConfig]
 List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitter emitter) {
   final argsClassRefer = refer('${r.getName(router.replaceInRouteName)}Args');
+  // A generic route's args carry its type arguments, which build its page.
+  final typeArguments = r.typeParameters.map((t) => refer(t.name));
+  final typedArgsClassRefer = TypeReference(
+    (b) => b
+      ..symbol = argsClassRefer.symbol
+      ..types.addAll(typeArguments),
+  );
   final parameters = r.parameters;
   final fragmentParam = parameters.where((p) => p.isUrlFragment).firstOrNull;
   final nonInheritedParameters = parameters.where((p) => !p.isInheritedPathParam).toList();
   final equatableParams = nonInheritedParameters.where((p) => p is! FunctionParamConfig).toList();
+  final hasArgs = nonInheritedParameters.isNotEmpty || r.isGeneric;
+  // A constant can't name a type parameter, so a generic route's
+  // `const ListEquality<dynamic>()` and the like compare items as dynamic.
+  List<ResolvedType> equalityTypes(ParamConfig p) =>
+      r.isGeneric ? [for (final _ in p.type.typeArguments) const ResolvedType(name: 'dynamic')] : p.type.typeArguments;
   final pageInfoRefer = refer('PageInfo', autoRouteImport);
   return [
     Class(
       (b) => b
-        ..docs.addAll(['/// generated route for \n/// [${r.pageType?.refer.accept(emitter)}]'])
+        ..docs.addAll(['/// generated route for \n/// [${_pageClassRefer(r)?.accept(emitter)}]'])
         ..name = r.getName(router.replaceInRouteName)
+        ..types.addAll(r.typeParameters.map((t) => t.declaration))
         ..extend = TypeReference((b) {
           b
             ..symbol = 'PageRouteInfo'
             ..url = autoRouteImport
-            ..types.add((nonInheritedParameters.isNotEmpty) ? argsClassRefer : refer('void'));
+            ..types.add(hasArgs ? typedArgsClassRefer : refer('void'));
         })
         ..fields.addAll([
           Field(
@@ -71,7 +84,8 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
         ..constructors.addAll([
           Constructor((b) {
             b
-              ..constant = parameters.isEmpty
+              // A type argument can't be part of a constant.
+              ..constant = parameters.isEmpty && !r.isGeneric
               ..optionalParameters.addAll([
                 ...buildArgParams(nonInheritedParameters, emitter, toThis: false),
                 Parameter(
@@ -86,8 +100,8 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                     .call(
                       [refer(r.getName(router.replaceInRouteName)).property('name')],
                       {
-                        if (nonInheritedParameters.isNotEmpty)
-                          'args': argsClassRefer(
+                        if (hasArgs)
+                          'args': typedArgsClassRefer(
                             [],
                             Map.fromEntries(
                               nonInheritedParameters.map((p) => MapEntry(p.name, refer(p.getSafeName()))),
@@ -119,10 +133,11 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
           }),
         ]),
     ),
-    if (nonInheritedParameters.isNotEmpty)
+    if (hasArgs)
       Class(
         (b) => b
           ..name = argsClassRefer.symbol
+          ..types.addAll(r.typeParameters.map((t) => t.declaration))
           ..fields.addAll([
             ...nonInheritedParameters.map(
               (param) => Field(
@@ -141,6 +156,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
             ),
           )
           ..methods.addAll([
+            if (r.isGeneric) _buildPageMethod(r),
             Method(
               (b) => b
                 ..name = 'toString'
@@ -169,30 +185,33 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                     (b) => b
                       ..statements.addAll([
                         const Code('if (identical(this, other)) return true;'),
-                        Code('if (other is! ${argsClassRefer.symbol}) return false;'),
+                        Code('if (other is! ${typedArgsClassRefer.accept(emitter)}) return false;'),
                         const Code('return '),
+                        // Args with nothing to compare, such as a generic
+                        // route's without params, are equal.
+                        if (equatableParams.isEmpty) literalTrue.code,
                         ...[
                           for (final p in equatableParams)
                             if (p.type.isList)
-                              _genericRef('ListEquality', p.type.typeArguments, _collectionsImport)
+                              _genericRef('ListEquality', equalityTypes(p), _collectionsImport)
                                   .constInstance([])
                                   .property('equals')
                                   .call([refer(p.name), refer('other').property(p.name)])
                                   .code
                             else if (p.type.isSet)
-                              _genericRef('SetEquality', p.type.typeArguments, _collectionsImport)
+                              _genericRef('SetEquality', equalityTypes(p), _collectionsImport)
                                   .constInstance([])
                                   .property('equals')
                                   .call([refer(p.name), refer('other').property(p.name)])
                                   .code
                             else if (p.type.isMap)
-                              _genericRef('MapEquality', p.type.typeArguments, _collectionsImport)
+                              _genericRef('MapEquality', equalityTypes(p), _collectionsImport)
                                   .constInstance([])
                                   .property('equals')
                                   .call([refer(p.name), refer('other').property(p.name)])
                                   .code
                             else if (p.type.isIterable)
-                              _genericRef('IterableEquality', p.type.typeArguments, _collectionsImport)
+                              _genericRef('IterableEquality', equalityTypes(p), _collectionsImport)
                                   .constInstance([])
                                   .property('equals')
                                   .call([refer(p.name), refer('other').property(p.name)])
@@ -215,29 +234,30 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                   ..body = Block(
                     (b) => b.statements.addAll(
                       [
+                        if (equatableParams.isEmpty) literalNum(0).code,
                         for (final p in equatableParams)
                           if (p.type.isList)
                             _genericRef(
                               'ListEquality',
-                              p.type.typeArguments,
+                              equalityTypes(p),
                               _collectionsImport,
                             ).constInstance([]).property('hash').call([refer(p.name)]).code
                           else if (p.type.isSet)
                             _genericRef(
                               'SetEquality',
-                              p.type.typeArguments,
+                              equalityTypes(p),
                               _collectionsImport,
                             ).constInstance([]).property('hash').call([refer(p.name)]).code
                           else if (p.type.isMap)
                             _genericRef(
                               'MapEquality',
-                              p.type.typeArguments,
+                              equalityTypes(p),
                               _collectionsImport,
                             ).constInstance([]).property('hash').call([refer(p.name)]).code
                           else if (p.type.isIterable)
                             _genericRef(
                               'IterableEquality',
-                              p.type.typeArguments,
+                              equalityTypes(p),
                               _collectionsImport,
                             ).constInstance([]).property('hash').call([refer(p.name)]).code
                           else
@@ -318,7 +338,13 @@ Iterable<Parameter> buildArgParams(
 
 Expression _buildMethod(RouteConfig r, RouterConfig router) {
   final useConsConstructor = r.hasConstConstructor && !(r.deferredLoading ?? router.deferredLoading);
-  var constructedPage = useConsConstructor ? r.pageType!.refer.constInstance([]) : _getPageInstance(r);
+  var constructedPage = useConsConstructor
+      ? r.pageType!.refer.constInstance([])
+      : r.isGeneric
+      ? refer('args').property('buildPage').call([], {
+          for (final p in r.parameters.where((p) => p.isInheritedPathParam)) p.name: _getUrlPartAssignment(p),
+        })
+      : _getPageInstance(r, (p) => refer('args').property(p.name));
 
   if (r.hasWrappedRoute == true) {
     constructedPage = refer('WrappedRoute', autoRouteImport).newInstance([], {'child': constructedPage});
@@ -340,7 +366,7 @@ Expression _buildMethod(RouteConfig r, RouterConfig router) {
             declareFinal('pathParams').assign(refer('data').property('inheritedPathParams')).statement,
           if (!r.hasUnparsableRequiredArgs && r.parameters.any((p) => p.isQueryParam))
             declareFinal('queryParams').assign(refer('data').property('queryParams')).statement,
-          if (nonInheritedParameters.isNotEmpty)
+          if (nonInheritedParameters.isNotEmpty || r.isGeneric)
             declareFinal('args')
                 .assign(
                   refer('data')
@@ -391,16 +417,51 @@ Expression _getDeferredBuilder(RouteConfig r, Expression page) {
   ]);
 }
 
-Expression _getPageInstance(RouteConfig r) {
+/// The page built with each argument [arg] gives, and each inherited path
+/// param read from the url.
+Expression _getPageInstance(RouteConfig r, Expression Function(ParamConfig p) arg) {
   return r.pageType!.refer.newInstance(
-    r.positionalParams.map((p) {
-      return refer('args').property(p.name);
-    }),
+    r.positionalParams.map(arg),
     Map.fromEntries(
-      r.namedParams.map(
-        (p) => MapEntry(p.name, p.isInheritedPathParam ? _getUrlPartAssignment(p) : refer('args').property(p.name)),
-      ),
+      r.namedParams.map((p) => MapEntry(p.name, p.isInheritedPathParam ? _getUrlPartAssignment(p) : arg(p))),
     ),
+  );
+}
+
+/// The page class without type arguments, as a doc comment names it.
+Reference? _pageClassRefer(RouteConfig r) {
+  final pageType = r.pageType;
+  return pageType == null ? null : refer(pageType.name, pageType.import);
+}
+
+/// The args class method of a generic route that builds its page with the
+/// args' type arguments, which the route's static page builder can't name.
+/// An inherited path param, which isn't in the args, is passed to it.
+Method _buildPageMethod(RouteConfig r) {
+  final inherited = r.parameters.where((p) => p.isInheritedPathParam);
+  return Method(
+    (b) => b
+      ..docs.add("/// Builds the page with this route's type arguments.")
+      ..name = 'buildPage'
+      ..returns = r.pageType!.refer
+      ..optionalParameters.addAll(
+        inherited.map(
+          (p) => Parameter(
+            (b) => b
+              ..name = p.name
+              ..named = true
+              ..required = true
+              ..type = p.type.refer,
+          ),
+        ),
+      )
+      ..lambda = true
+      ..body = r.pageType!.refer
+          .newInstance(
+            r.positionalParams.map((p) => refer(p.name)),
+            Map.fromEntries(r.namedParams.map((p) => MapEntry(p.name, refer(p.name)))),
+          )
+          .code,
   );
 }
 

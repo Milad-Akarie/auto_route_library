@@ -371,6 +371,29 @@ If the page has to be reachable by link, make the link carry what the page needs
 
 When a page has both kinds of parameters, the generator prints `WARNING => Because [Page] has required parameters ... that can not be parsed from path`. It's a warning, not an error; it tells you the page can't be built from a link alone and generation goes on. It has no option to turn it off; it goes away once every required parameter is a path or query parameter, or the others are optional named parameters.
 
+#### Generic pages
+
+A page class can have type parameters. Its route and args class get the same ones, so the route you push decides the
+page's type:
+
+```dart
+@RoutePage()
+class PickerPage<T> extends StatelessWidget {
+  const PickerPage({super.key, required this.items});
+
+  final List<T> items;
+  ...
+  // Pops with the item tapped:
+  // onTap: () => context.router.maybePop<T>(item),
+}
+
+final int? picked = await router.push<int>(PickerRoute<int>(items: [1, 2, 3]));
+```
+
+The pushed route's args carry its type arguments, here `PickerRouteArgs<int>`, and build `PickerPage<int>` with them.
+A link holds no type, so a page opened from one gets each type parameter's bound, or `dynamic` when it has none:
+`PickerPage<dynamic>` here, or `EditingPage<EditingController>` for `EditingPage<T extends EditingController>`.
+
 ## Returning Results
 
 You can return results by either using the pop completer or by passing a callback function as an argument the same way you'd pass an object.

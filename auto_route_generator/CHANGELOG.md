@@ -3,6 +3,8 @@
   without one fails the build saying how to give one (#1794).
 - **FIX**: a `const` default from another library, such as `= const UserId('me')`, no longer gets its import
   prefix in front of `const` in the generated reader.
+- **FEAT**: a `@RoutePage` class with type parameters builds: its route and args class take the same type
+  parameters, and the args build the page with them. Before, the build failed (#2050, #1879, #1739).
 
 ## 11.0.0
 - **CHORE**: require Dart 3.13, the version Flutter 3.47 ships.
