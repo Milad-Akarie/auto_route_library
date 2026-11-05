@@ -7,15 +7,15 @@ part 'user_router.gr.dart';
 /// the url.
 @immutable
 class UserId {
-  const new(this.value);
+  const new(this._value);
 
-  final String value;
-
-  @override
-  bool operator ==(Object other) => other is UserId && other.value == value;
+  final String _value;
 
   @override
-  int get hashCode => value.hashCode;
+  bool operator ==(Object other) => other is UserId && other._value == _value;
+
+  @override
+  int get hashCode => _value.hashCode;
 }
 
 /// Reads a [UserId] from `u-` and its digits, and refuses any other text.
@@ -26,7 +26,7 @@ class _UserIdConverter extends ParamConverter<UserId> {
   UserId? fromParam(String value) => RegExp(r'^u-\d+$').hasMatch(value) ? .new(value.substring(2)) : null;
 
   @override
-  String toParam(UserId value) => 'u-${value.value}';
+  String toParam(UserId value) => 'u-${value._value}';
 }
 
 const _kUserIdConverter = _UserIdConverter();
@@ -60,5 +60,5 @@ class UserProfileView extends StatelessWidget {
   final UserId? by;
 
   @override
-  Widget build(BuildContext context) => Scaffold(body: Text('User ${id.value} by ${by?.value ?? 'null'}'));
+  Widget build(BuildContext context) => Scaffold(body: Text('User ${id._value} by ${by?._value ?? 'null'}'));
 }
