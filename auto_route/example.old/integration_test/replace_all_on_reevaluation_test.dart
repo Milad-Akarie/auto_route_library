@@ -9,7 +9,8 @@ import 'support/app.dart';
 
 // replaceAll right after the reevaluate listenable changes replaces the stack.
 // https://github.com/Milad-Akarie/auto_route_library/issues/2172
-// Headless test: auto_route/test/reevaluatable_router/replace_all_on_reevaluation_test.dart
+// Headless test:
+// auto_route/test/reevaluatable_router/replace_all_on_reevaluation_test.dart
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -42,9 +43,11 @@ void main() {
   // Steps: the guarded HomeRoute sends the logged-out user to LoginRoute. Tap
   // 'Log In', which logs in and calls replaceAll([HomeRoute()]) right away.
   // Then tap 'Log Out' and 'Log In' again.
-  // Should: each time one page is left: HomeRoute, then LoginRoute, then HomeRoute.
+  // Should: each time one page is left: HomeRoute, then LoginRoute, then
+  // HomeRoute.
   testWidgets(
-    'replaceAll right after the reevaluate listenable changes replaces the stack',
+    'replaceAll right after the reevaluate listenable changes replaces the '
+    'stack',
     (tester) async {
       await pumpRouterApp(tester, router, reevaluationNotifier: authRepo);
       expect(router.stack.map((p) => p.name), [_LoginRoute.name]);

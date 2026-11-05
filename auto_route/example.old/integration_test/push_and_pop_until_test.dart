@@ -8,7 +8,8 @@ import 'package:integration_test/integration_test.dart';
 import 'support/app.dart';
 import 'support/pages.dart';
 
-// pushAndPopUntil with a predicate that is always false leaves only the new page.
+// pushAndPopUntil with a predicate that is always false leaves only the new
+// page.
 // https://github.com/Milad-Akarie/auto_route_library/issues/2015
 // Headless test: auto_route/test/web/push_and_pop_until_web_test.dart (web).
 void main() {
@@ -41,9 +42,11 @@ void main() {
   );
 
   // Steps on web: the same, then press the browser's back button.
-  // Should: the address bar shows '/' and FirstRoute stays; no removed page returns.
+  // Should: the address bar shows '/' and FirstRoute stays; no removed page
+  // returns.
   testWidgets(
-    'On web, the browser back button after pushAndPopUntil does not bring a removed page back',
+    'On web, the browser back button after pushAndPopUntil does not bring a '
+    'removed page back',
     (
       tester,
     ) async {

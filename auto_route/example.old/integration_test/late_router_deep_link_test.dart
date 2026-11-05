@@ -34,7 +34,8 @@ void main() {
   // the link in the same history entry, not two more.
   for (final MapEntry(key: name, value: buildApp) in apps.entries) {
     testWidgets(
-      'A deep link to a router built after the first frame adds no history entry, with $name',
+      'A deep link to a router built after the first frame adds no history '
+      'entry, with $name',
       (
         tester,
       ) async {

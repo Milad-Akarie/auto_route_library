@@ -93,7 +93,8 @@ class _BookRoute extends PageRouteInfo<_BookArgs> {
     name,
     builder: (data) => Scaffold(
       body: Text(
-        'Book ${data.argsAs<_BookArgs>(orElse: () => const _BookArgs()).bookId}',
+        'Book '
+        '${data.argsAs<_BookArgs>(orElse: () => const _BookArgs()).bookId}',
       ),
     ),
   );
@@ -108,7 +109,8 @@ class _ChapterRoute extends PageRouteInfo<_BookArgs> {
     name,
     builder: (data) => Scaffold(
       body: Text(
-        'Chapter ${data.argsAs<_BookArgs>(orElse: () => const _BookArgs()).bookId}',
+        'Chapter '
+        '${data.argsAs<_BookArgs>(orElse: () => const _BookArgs()).bookId}',
       ),
     ),
   );

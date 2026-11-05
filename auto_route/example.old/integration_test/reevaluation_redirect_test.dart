@@ -10,7 +10,8 @@ import 'support/pages.dart';
 
 // A page reevaluated while its guard redirects is kept, with its state.
 // https://github.com/Milad-Akarie/auto_route_library/pull/2343
-// Headless test: auto_route/test/reevaluatable_router/reevaluation_listener_test.dart
+// Headless test:
+// auto_route/test/reevaluatable_router/reevaluation_listener_test.dart
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -23,7 +24,8 @@ void main() {
   // Should: the stack is [FirstRoute, SecondRoute], then [FirstRoute] with the
   // counter still at 1.
   testWidgets(
-    'Reevaluation with redirectUntil keeps the state of the reevaluated page (#2343)',
+    'Reevaluation with redirectUntil keeps the state of the reevaluated page '
+    '(#2343)',
     (tester) async {
       final isLoggedIn = ValueNotifier(true);
       final router = RootStackRouter.build(
@@ -66,7 +68,8 @@ void main() {
   // Should: the stack is [FirstRoute, SecondRoute, ThirdRoute], and popping
   // ThirdRoute without passing the guard also removes SecondRoute.
   testWidgets(
-    'Reevaluation with redirectUntil removes the reevaluated page when rejected (#2343)',
+    'Reevaluation with redirectUntil removes the reevaluated page when '
+    'rejected (#2343)',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [

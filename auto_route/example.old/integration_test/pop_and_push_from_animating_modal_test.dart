@@ -7,7 +7,8 @@ import 'support/app.dart';
 
 // popAndPush from a bottom sheet route while it slides in.
 // https://github.com/Milad-Akarie/auto_route_library/issues/1813
-// Headless test: auto_route/test/simple_router/pop_and_push_from_animating_modal_test.dart
+// Headless test:
+// auto_route/test/simple_router/pop_and_push_from_animating_modal_test.dart
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -40,7 +41,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     if (router.stack.length == 2 && router.current.name == _Modal1Route.name) {
-      // The sheet wasn't under the finger yet on this device; tap it once it's up.
+      // The sheet wasn't under the finger yet on this device; tap it once it's
+      // up.
       await tester.tap(find.text('Test'));
       await tester.pumpAndSettle();
     }

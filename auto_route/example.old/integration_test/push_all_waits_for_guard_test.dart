@@ -69,7 +69,8 @@ void main() {
   // it, with CheckoutRoute shown when allowed and not when denied.
   for (final allow in [true, false]) {
     testWidgets(
-      'pushAll completes once the guard ${allow ? 'allows' : 'denies'} the routes',
+      'pushAll completes once the guard ${allow ? 'allows' : 'denies'} the '
+      'routes',
       (tester) async {
         decision = Completer<bool>();
         final router = buildRouter();

@@ -8,7 +8,8 @@ import 'package:material_ui/material_ui.dart';
 import 'support/app.dart';
 import 'support/pages.dart';
 
-// navigateTo() back to a page right after closing a dialog tells that page didPopNext.
+// navigateTo() back to a page right after closing a dialog tells that page
+// didPopNext.
 // Regression of https://github.com/Milad-Akarie/auto_route_library/issues/1774
 // Headless test: auto_route/test/auto_route_observer_test.dart
 void main() {

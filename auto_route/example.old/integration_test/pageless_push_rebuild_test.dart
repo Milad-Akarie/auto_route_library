@@ -5,7 +5,8 @@ import 'package:material_ui/material_ui.dart';
 
 import 'support/app.dart';
 
-// Navigator.push of a page outside the router doesn't rebuild the page underneath.
+// Navigator.push of a page outside the router doesn't rebuild the page
+// underneath.
 // Guards https://github.com/Milad-Akarie/auto_route_library/issues/2211
 // Headless test: auto_route/test/simple_router/pageless_push_rebuild_test.dart
 void main() {
@@ -16,7 +17,8 @@ void main() {
   // doesn't know, then go back.
   // Should: HomeRoute isn't built again.
   testWidgets(
-    'Navigator.push of a page outside the router does not rebuild the page underneath',
+    'Navigator.push of a page outside the router does not rebuild the page '
+    'underneath',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [

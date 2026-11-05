@@ -25,7 +25,8 @@ void main() {
     );
   });
 
-  // Steps: open FirstRoute, which has keepHistory: false, then push SecondRoute.
+  // Steps: open FirstRoute, which has keepHistory: false, then push
+  // SecondRoute.
   // Should: FirstRoute leaves the stack, and on web SecondRoute takes its
   // browser entry instead of adding one.
   testWidgets('Pushing from a page without history replaces it', (

@@ -10,7 +10,8 @@ import 'support/tab_history_router.dart';
 // Back in a tabs screen goes to the tab the user came from, with
 // AutoTabsRouter(backThroughHistory: true).
 // https://github.com/Milad-Akarie/auto_route_library/issues/1789 (also #830)
-// Headless test: auto_route/test/nested_tabs_router/back_through_tab_history_test.dart
+// Headless test:
+// auto_route/test/nested_tabs_router/back_through_tab_history_test.dart
 //
 // Steps: show tab 0, then 2, then 1, and press system back. On Android that
 // goes through the activity, which Android calls only while Flutter says it
@@ -44,7 +45,8 @@ void main() {
   }
 
   testWidgets(
-    'system back after tabs 0, 2, 1 shows 2, then 0, then the page under the tabs',
+    'system back after tabs 0, 2, 1 shows 2, then 0, then the page under the '
+    'tabs',
     (tester) async {
       final tabs = await pumpApp(tester, overFirstPage: true);
 
@@ -59,7 +61,8 @@ void main() {
   );
 
   testWidgets(
-    'system back after tabs 0, 2, 1 on the first page shows 2, then 0, then lets the app close',
+    'system back after tabs 0, 2, 1 on the first page shows 2, then 0, then '
+    'lets the app close',
     (
       tester,
     ) async {

@@ -28,7 +28,8 @@ void main() {
   // Should: the dialog opens with its argument, nothing is thrown, and the
   // browser shows the dialog's url.
   testWidgets(
-    'A dialog route opened with an argument reports a state the platform encodes',
+    'A dialog route opened with an argument reports a state the platform '
+    'encodes',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [
@@ -43,11 +44,11 @@ void main() {
             path: '/profile',
             page: PageInfo(
               'ProfileDialogRoute',
-              builder: (data) => AlertDialog(
-                content: Text(
-                  'Profile ${data.args is _Profile ? (data.args! as _Profile).name : 'none'}',
-                ),
-              ),
+              builder: (data) {
+                final args = data.args;
+                final name = args is _Profile ? args.name : 'none';
+                return AlertDialog(content: Text('Profile $name'));
+              },
             ),
             customRouteBuilder: <T>(context, child, page) => DialogRoute<T>(
               context: context,

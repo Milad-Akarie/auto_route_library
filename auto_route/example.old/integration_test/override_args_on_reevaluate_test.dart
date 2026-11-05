@@ -18,7 +18,8 @@ void main() {
 
   // Steps: open the app with reevaluateListenable set, push ProfileRoute for
   // 'u-1', then SettingsRoute over it, and fire the listenable; the guard's
-  // re-check overrides ProfileRoute's args with 'guest'. Then pop SettingsRoute.
+  // re-check overrides ProfileRoute's args with 'guest'. Then pop
+  // SettingsRoute.
   // Should: the profile page shows 'guest' and was not created again.
   testWidgets('a guard re-check overriding the args of a page shows them', (
     tester,

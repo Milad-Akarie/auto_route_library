@@ -9,7 +9,8 @@ import 'support/app.dart';
 
 // navigate() to a nested route keeps the path params it inherits.
 // https://github.com/Milad-Akarie/auto_route_library/issues/1816
-// Headless test: auto_route/test/nested_router/navigate_inherited_path_params_test.dart
+// Headless test:
+// auto_route/test/nested_router/navigate_inherited_path_params_test.dart
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -119,7 +120,8 @@ class _EditVendorRoute extends PageRouteInfo<void> {
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      // As generated for a constructor parameter marked @PathParam('vendor-id').
+      // As generated for a constructor parameter marked
+      // @PathParam('vendor-id').
       final vendorId = data.inheritedPathParams.getString('vendor-id');
       return Scaffold(
         body: Column(
@@ -139,7 +141,8 @@ class _VendorBranchesRoute extends PageRouteInfo<void> {
   static const String name = 'VendorBranchesRoute';
   static PageInfo page = PageInfo(
     name,
-    // As generated for a constructor parameter marked @PathParam.inherit('vendor-id').
+    // As generated for a constructor parameter marked
+    // @PathParam.inherit('vendor-id').
     builder: (data) =>
         Text('Branches of ${data.inheritedPathParams.getString('vendor-id')}'),
   );

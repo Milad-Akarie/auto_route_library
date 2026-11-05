@@ -5,9 +5,11 @@ import 'package:material_ui/material_ui.dart';
 
 import 'support/app.dart';
 
-// The url follows the active tab when two AutoTabsRouter tabs share a parent route.
+// The url follows the active tab when two AutoTabsRouter tabs share a parent
+// route.
 // https://github.com/Milad-Akarie/auto_route_library/issues/1874
-// Headless test: auto_route/test/nested_tabs_router/tab_shared_parent_url_test.dart
+// Headless test:
+// auto_route/test/nested_tabs_router/tab_shared_parent_url_test.dart
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 

@@ -5,7 +5,8 @@ import 'package:material_ui/material_ui.dart';
 
 import 'support/app.dart';
 
-// Pushing a sibling route from a child widget keeps the wrapper of the host route.
+// Pushing a sibling route from a child widget keeps the wrapper of the host
+// route.
 // Guards https://github.com/Milad-Akarie/auto_route_library/issues/1713
 // Headless test: auto_route/test/auto_route_wrapper_test.dart
 void main() {

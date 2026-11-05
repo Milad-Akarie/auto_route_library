@@ -16,7 +16,8 @@ void main() {
   // from the left edge. Both pages hold a Hero with transitionOnUserGestures.
   // Should: Page1 shows, with no error.
   testWidgets(
-    'With includePrefixMatches, swiping back from a deep link animates a Hero without an error',
+    'With includePrefixMatches, swiping back from a deep link animates a Hero '
+    'without an error',
     (
       tester,
     ) async {

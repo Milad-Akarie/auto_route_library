@@ -93,7 +93,8 @@ class _BookRoute extends PageRouteInfo<void> {
     builder: (data) => Column(
       children: [
         Text(
-          'Book ${data.inheritedPathParams.getInt('id')}, query ${data.queryParams.optInt('someQueryParam')}',
+          'Book ${data.inheritedPathParams.getInt('id')}, query '
+          '${data.queryParams.optInt('someQueryParam')}',
         ),
         const Expanded(child: AutoRouter()),
       ],

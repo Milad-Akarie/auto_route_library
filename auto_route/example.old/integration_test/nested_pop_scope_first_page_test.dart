@@ -18,8 +18,8 @@ import 'support/pages.dart';
 // Steps: push the host, then go back: system back, the app bar's back
 // button, or the iOS edge swipe (run with the iOS page transitions on every
 // platform). Then show the host as the app's first page and press system
-// back twice; on Android that goes through the activity, which Android calls only
-// while Flutter says it handles back (see systemBack).
+// back twice; on Android that goes through the activity, which Android calls
+// only while Flutter says it handles back (see systemBack).
 // Happened with the declarative router: the swipe popped the host past the
 // PopScope, and on Android back closed the app.
 // Should: the host and its page stay, and PopScope hears of each back the
@@ -118,7 +118,8 @@ void main() {
           await pumpRouterApp(tester, router);
           expectTopPage(router, _GuardedRoute.name);
 
-          // Twice, as a comment on the issue reports the second back closing the app.
+          // Twice, as a comment on the issue reports the second back closing
+          // the app.
           for (var attempt = 1; attempt <= 2; attempt++) {
             await systemBack(tester);
             expectTopPage(router, _GuardedRoute.name);

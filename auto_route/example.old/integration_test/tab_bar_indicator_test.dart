@@ -5,7 +5,8 @@ import 'package:material_ui/material_ui.dart';
 
 import 'support/app.dart';
 
-// The tab indicator of AutoTabsRouter.tabBar in a NestedScrollView moves one way to the tapped tab.
+// The tab indicator of AutoTabsRouter.tabBar in a NestedScrollView moves one
+// way to the tapped tab.
 // https://github.com/Milad-Akarie/auto_route_library/issues/2012
 // Headless test: auto_route/test/nested_tabs_router/tab_bar_indicator_test.dart
 void main() {
@@ -51,7 +52,8 @@ void main() {
         return values;
       }
 
-      // A swipe can leave the offset a hair short of the page, as Flutter's own TabBarView does.
+      // A swipe can leave the offset a hair short of the page, as Flutter's own
+      // TabBarView does.
       void expectOneWay(
         List<double> values,
         double end, {

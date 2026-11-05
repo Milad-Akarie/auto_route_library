@@ -11,7 +11,8 @@ import 'support/pages.dart';
 // A push made in the same callback that fires reevaluateListenable is no
 // longer dropped.
 // https://github.com/Milad-Akarie/auto_route_library/issues/2327
-// Headless test: auto_route/test/reevaluatable_router/reevaluation_listener_test.dart
+// Headless test:
+// auto_route/test/reevaluatable_router/reevaluation_listener_test.dart
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -22,7 +23,8 @@ void main() {
   // and then fires reevaluateListenable in the same callback.
   // Should: SecondRoute is pushed and shown above FirstRoute.
   testWidgets(
-    'Push followed by reevaluation in the same callback should still push (#2327)',
+    'Push followed by reevaluation in the same callback should still push '
+    '(#2327)',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [

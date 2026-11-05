@@ -96,7 +96,8 @@ void main() {
   // Pressing back here would leave the app, so this checks what Android
   // would do instead.
   testWidgets(
-    "on a tab at its first page, Android leaves the app instead of popping the other tab's page",
+    "on a tab at its first page, Android leaves the app instead of popping the "
+    "other tab's page",
     (
       tester,
     ) async {
@@ -124,7 +125,8 @@ void main() {
   });
 
   testWidgets(
-    'system back pops a page pushed in a tab while it was hidden, once it shows',
+    'system back pops a page pushed in a tab while it was hidden, once it '
+    'shows',
     (tester) async {
       final tabs = await pumpApp(tester);
       await showTab(tester, tabs, 1);

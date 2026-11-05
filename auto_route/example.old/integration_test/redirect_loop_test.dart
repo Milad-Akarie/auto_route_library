@@ -53,7 +53,8 @@ void main() {
         routes: routes,
         guards: [
           AutoRouteGuard.simple((resolver, _) {
-            // past a few calls the guard stops answering, so the test still ends where the loop ran forever
+            // past a few calls the guard stops answering, so the test still
+            // ends where the loop ran forever
             if (++guardCalls > 20) return;
             unawaited(
               resolver.redirectUntil(

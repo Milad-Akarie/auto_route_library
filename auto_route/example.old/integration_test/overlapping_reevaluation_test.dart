@@ -10,7 +10,8 @@ import 'support/pages.dart';
 
 // Overlapping guard reevaluations no longer crash.
 // https://github.com/Milad-Akarie/auto_route_library/pull/2341
-// Headless test: auto_route/test/reevaluatable_router/reevaluation_listener_test.dart
+// Headless test:
+// auto_route/test/reevaluatable_router/reevaluation_listener_test.dart
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -22,7 +23,8 @@ void main() {
   // Should: no "Future already completed" crash; the guard runs once per
   // reevaluation, and the page shows once the guard passes.
   testWidgets(
-    'Overlapping reevaluations wait for a running guard without crashing (#2341)',
+    'Overlapping reevaluations wait for a running guard without crashing '
+    '(#2341)',
     (tester) async {
       var calls = 0;
       final router = RootStackRouter.build(
@@ -46,7 +48,8 @@ void main() {
       await tester.pump(const Duration(milliseconds: 200));
       expect(calls, 1);
 
-      // Three passes reach the same pending resolver while the first one's guard runs.
+      // Three passes reach the same pending resolver while the first one's
+      // guard runs.
       unawaited(router.reevaluateGuards());
       unawaited(router.reevaluateGuards());
       unawaited(router.reevaluateGuards());

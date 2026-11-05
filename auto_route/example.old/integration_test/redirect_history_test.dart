@@ -77,13 +77,15 @@ void main() {
   );
 
   // Steps, the reporter's: the app opens on RouteA, whose guard redirects to
-  // RouteARedirected until that page calls next(); tap 'Go to Page C (replace)',
-  // whose guard redirects to RouteCRedirected; tap 'Go back', which calls
-  // nextOrBack(false), written reject(goBack: true) here; then call back() once more.
+  // RouteARedirected until that page calls next(); tap 'Go to Page C
+  // (replace)', whose guard redirects to RouteCRedirected; tap 'Go back', which
+  // calls nextOrBack(false), written reject(goBack: true) here; then call
+  // back() once more.
   // Should: the app is back on RouteA, and back() has nothing to return to
   // instead of reopening RouteARedirected with a resolver already used.
   testWidgets(
-    'A resolved redirect leaves no history entry for back() to return to (#2331)',
+    'A resolved redirect leaves no history entry for back() to return to '
+    '(#2331)',
     (tester) async {
       final router = buildRouter();
       await pumpRouterAppWithConfig(tester, router);

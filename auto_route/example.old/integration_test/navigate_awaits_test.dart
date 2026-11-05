@@ -12,7 +12,8 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: navigate to SecondRoute and await it, then pop SecondRoute with 'done'.
+  // Steps: navigate to SecondRoute and await it, then pop SecondRoute with
+  // 'done'.
   // Should: the navigate() future stays open while SecondRoute shows, then
   // completes with 'done'.
   testWidgets(

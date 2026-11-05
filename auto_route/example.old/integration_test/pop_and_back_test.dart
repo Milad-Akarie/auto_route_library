@@ -116,7 +116,8 @@ void main() {
 
   // Steps on web (#2069): push SecondRoute, push ThirdRoute, maybePop from
   // ThirdRoute, then press the browser's back button.
-  // Should: the browser goes straight to FirstRoute, not through ThirdRoute again.
+  // Should: the browser goes straight to FirstRoute, not through ThirdRoute
+  // again.
   testWidgets(
     'On web, maybePop then the browser back button goes to the page before',
     (tester) async {

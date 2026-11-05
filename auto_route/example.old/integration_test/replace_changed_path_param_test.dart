@@ -18,7 +18,8 @@ void main() {
   // route with the same one holding quiz 2.
   // Should: quiz 2 shows, in the page and in the url.
   testWidgets(
-    'replace with another path param in a nested route shows the new page (#1112)',
+    'replace with another path param in a nested route shows the new page '
+    '(#1112)',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [

@@ -10,7 +10,8 @@ import 'support/app.dart';
 import 'support/pages.dart';
 
 // Going back returns to a page with the same url as the current one.
-// Found while guarding https://github.com/Milad-Akarie/auto_route_library/issues/1864
+// Found while guarding
+// https://github.com/Milad-Akarie/auto_route_library/issues/1864
 // Headless tests: auto_route/test/simple_router/back_same_url_test.dart
 // (native) and auto_route/test/web/back_same_url_web_test.dart (web).
 void main() {
@@ -83,7 +84,8 @@ void main() {
   // Should: the second Book, 'some-id-2', back on top of the first.
   // Web only: only the browser has a forward button.
   testWidgets(
-    'The browser forward button returns to a page pushed over one with the same url',
+    'The browser forward button returns to a page pushed over one with the '
+    'same url',
     (tester) async {
       await pushTwoBooks(tester);
       final secondBookEntry = browserEntryIndex()!;
@@ -118,7 +120,8 @@ class _BookRoute extends PageRouteInfo<_BookArgs> {
     name,
     builder: (data) => Scaffold(
       body: Text(
-        'Book ${data.argsAs<_BookArgs>(orElse: () => const _BookArgs()).bookId}',
+        'Book '
+        '${data.argsAs<_BookArgs>(orElse: () => const _BookArgs()).bookId}',
       ),
     ),
   );

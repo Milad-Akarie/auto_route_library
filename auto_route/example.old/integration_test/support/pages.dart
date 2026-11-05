@@ -18,7 +18,8 @@ class TestPage extends StatelessWidget {
 }
 
 /// Each call a [RouteAwarePage] gets from its [AutoRouteObserver], as
-/// `'<route name>.<call>'`, in order. Tests clear it before the steps they check.
+/// `'<route name>.<call>'`, in order. Tests clear it before the steps they
+/// check.
 final routeAwareEvents = <String>[];
 
 /// Shows the route's name like [TestPage], and records in [routeAwareEvents]
@@ -158,7 +159,8 @@ class Tab2Nested2Route extends PageRouteInfo<void> {
   static PageInfo page = PageInfo(name, builder: (_) => const TestPage());
 }
 
-/// First to fourth pages at the root, as in auto_route/test/simple_router/router.dart.
+/// First to fourth pages at the root, as in
+/// auto_route/test/simple_router/router.dart.
 /// FourthRoute's guard always rejects.
 RootStackRouter buildSimpleRouter() => .build(
   routes: [

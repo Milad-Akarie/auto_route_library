@@ -20,7 +20,8 @@ void main() {
 
   for (final kind in EagerTabsKind.values) {
     testWidgets(
-      '${kind.name} with lazyLoad: false builds every tab before the first switch',
+      '${kind.name} with lazyLoad: false builds every tab before the first '
+      'switch',
       (tester) async {
         final router = buildEagerTabsRouter(kind);
         await pumpRouterApp(tester, router);

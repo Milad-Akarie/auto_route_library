@@ -7,7 +7,8 @@ import 'package:material_ui/material_ui.dart';
 
 import 'support/app.dart';
 
-// maybePop on a page right after popping its dialog with maybePop closes the page.
+// maybePop on a page right after popping its dialog with maybePop closes the
+// page.
 // https://github.com/Milad-Akarie/auto_route_library/issues/2017
 // Headless test: auto_route/test/simple_router/dialog_then_page_pop_test.dart
 void main() {
@@ -25,7 +26,8 @@ void main() {
 
   // Steps: on a pushed page, open a dialog whose button calls
   // context.router.maybePop(true). Once the dialog returns true, the page
-  // starts an async call without awaiting it and calls context.router.maybePop(true).
+  // starts an async call without awaiting it and calls
+  // context.router.maybePop(true).
   // Should: the dialog and then the page close, with no assertion.
   testWidgets(
     'maybePop on the page after popping a dialog with maybePop closes the page',

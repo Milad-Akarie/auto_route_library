@@ -7,13 +7,15 @@ import 'support/app.dart';
 
 // Swiping AutoTabsRouter.pageView back to a lower tab fires didChangeTabRoute.
 // Guards https://github.com/Milad-Akarie/auto_route_library/issues/2044
-// Headless test: auto_route/test/nested_tabs_router/page_view_observer_test.dart
+// Headless test:
+// auto_route/test/nested_tabs_router/page_view_observer_test.dart
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   // Steps: AutoTabsRouter.pageView with three tabs and an observer. Swipe to
   // the second tab, then swipe back to the first one.
-  // Should: the swipe back fires didChangeTabRoute for Tab1Route, from Tab2Route.
+  // Should: the swipe back fires didChangeTabRoute for Tab1Route, from
+  // Tab2Route.
   testWidgets(
     'swiping a page view back to a lower tab fires didChangeTabRoute',
     (tester) async {

@@ -31,7 +31,8 @@ void main() {
   });
 
   // Steps: open the nested router 'app_router' over a splash page, then from
-  // its only page call innerRouterOf('app_router').popAndPushAll([TestRoute()]).
+  // its only page call
+  // innerRouterOf('app_router').popAndPushAll([TestRoute()]).
   // Should: TestRoute replaces the page inside the nested router, and the
   // page holding the nested router stays.
   testWidgets(

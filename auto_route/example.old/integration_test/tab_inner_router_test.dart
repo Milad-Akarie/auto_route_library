@@ -5,7 +5,8 @@ import 'package:material_ui/material_ui.dart';
 
 import 'support/app.dart';
 
-// innerRouterOf finds a tab's nested router after AutoTabsRouter's routes change.
+// innerRouterOf finds a tab's nested router after AutoTabsRouter's routes
+// change.
 // https://github.com/Milad-Akarie/auto_route_library/issues/2189
 // Headless test: auto_route/test/nested_tabs_router/tab_inner_router_test.dart
 void main() {
@@ -18,7 +19,8 @@ void main() {
     // with innerRouterOf to its first page.
     // Should: the nested first page shows.
     testWidgets(
-      '${kind.name}: re-tapping the active tab after the routes change pops its nested router',
+      '${kind.name}: re-tapping the active tab after the routes change pops '
+      'its nested router',
       (
         tester,
       ) async {

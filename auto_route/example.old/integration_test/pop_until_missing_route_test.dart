@@ -10,11 +10,13 @@ import 'support/app.dart';
 // popUntilRouteWithName for a page that isn't in the stack keeps the first
 // page instead of leaving a blank screen.
 // https://github.com/Milad-Akarie/auto_route_library/issues/1502
-// Headless test: auto_route/test/simple_router/pop_until_missing_route_test.dart
+// Headless test:
+// auto_route/test/simple_router/pop_until_missing_route_test.dart
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: stack [Page1Route, Page2Route], then popUntilRouteWithName('Page3Route').
+  // Steps: stack [Page1Route, Page2Route], then
+  // popUntilRouteWithName('Page3Route').
   // Should: Page1Route stays on screen.
   testWidgets('popUntilRouteWithName for a missing page keeps the first page', (
     tester,

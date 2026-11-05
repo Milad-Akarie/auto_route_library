@@ -5,7 +5,8 @@ import 'package:material_ui/material_ui.dart';
 
 import 'support/app.dart';
 
-// Removing the tab before the active tab keeps the active tab shown, with its state.
+// Removing the tab before the active tab keeps the active tab shown, with its
+// state.
 // https://github.com/Milad-Akarie/auto_route_library/issues/1786
 // Headless test: auto_route/test/nested_tabs_router/tab_removed_test.dart
 void main() {

@@ -61,7 +61,8 @@ void main() {
   for (final MapEntry(key: where, value: (tabs, :scopeAroundTabs, :pushInTab))
       in setups.entries) {
     testWidgets(
-      'system back twice with a PopScope $where keeps the app open and the page',
+      'system back twice with a PopScope $where keeps the app open and the '
+      'page',
       (tester) async {
         _popAttempts = 0;
         _scopeAroundTabs = scopeAroundTabs;

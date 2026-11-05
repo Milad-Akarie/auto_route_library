@@ -66,7 +66,8 @@ void main() {
 
 var _popAttempts = 0;
 
-// The browser reports the back step through an engine message; wait until the page hears of it.
+// The browser reports the back step through an engine message; wait until the
+// page hears of it.
 Future<void> _waitForPopAttempt(WidgetTester tester) async {
   for (var i = 0; i < 20 && _popAttempts == 0; i++) {
     await Future<void>.delayed(const Duration(milliseconds: 100));

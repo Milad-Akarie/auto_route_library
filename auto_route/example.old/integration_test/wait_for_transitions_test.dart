@@ -40,7 +40,8 @@ void main() {
   // Should: each wait completes with the page's route animation completed,
   // and after the pop, dismissed.
   testWidgets(
-    'waitForTransitions() completes once a push, a replace and a pop have ended',
+    'waitForTransitions() completes once a push, a replace and a pop have '
+    'ended',
     (tester) async {
       final router = pageKindsRouter(
         customTransitionsBuilder: TransitionsBuilders.fadeIn,

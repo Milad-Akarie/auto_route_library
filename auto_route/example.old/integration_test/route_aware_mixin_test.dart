@@ -18,7 +18,8 @@ void main() {
   // BookDetailsRoute, then go back.
   // Should: BookListRoute gets didPushNext, then didPopNext.
   testWidgets(
-    'AutoRouteAwareStateMixin hears push and pop with the observer given to config()',
+    'AutoRouteAwareStateMixin hears push and pop with the observer given to '
+    'config()',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [

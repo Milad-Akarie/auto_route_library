@@ -7,7 +7,8 @@ import 'support/app.dart';
 
 // Swiping a page view or tab bar to a tab never opened fires didInitTabRoute.
 // Found while settling the observer issues; no upstream report.
-// Headless test: auto_route/test/nested_tabs_router/swipe_init_tab_observer_test.dart
+// Headless test:
+// auto_route/test/nested_tabs_router/swipe_init_tab_observer_test.dart
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -49,7 +50,8 @@ void main() {
     );
     final tabsRouter = router.innerRouterOf<TabsRouter>('TabsRoute')!;
     expect(tabEvents, ['init Tab1Route from null']);
-    // Most of the screen's width, so each swipe turns a page on a wide screen too.
+    // Most of the screen's width, so each swipe turns a page on a wide screen
+    // too.
     final swipe = Offset(
       tester.view.physicalSize.width / tester.view.devicePixelRatio * 0.8,
       0,

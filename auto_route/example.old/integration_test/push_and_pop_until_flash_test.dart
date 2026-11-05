@@ -10,7 +10,8 @@ import 'support/app.dart';
 // pushAndPopUntil no longer shows the pages it removes while the new page
 // slides in.
 // https://github.com/Milad-Akarie/auto_route_library/issues/1797
-// Headless test: auto_route/test/simple_router/push_and_pop_until_flash_test.dart.
+// Headless test:
+// auto_route/test/simple_router/push_and_pop_until_flash_test.dart.
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -39,7 +40,8 @@ void main() {
   // Steps: open HomeRoute, BRoute and CRoute, then call pushAndPopUntil(DRoute)
   // with a predicate that keeps HomeRoute, and look at every frame while DRoute
   // slides in.
-  // Should: only CRoute shows under DRoute, then DRoute alone; back goes to HomeRoute.
+  // Should: only CRoute shows under DRoute, then DRoute alone; back goes to
+  // HomeRoute.
   testWidgets('pushAndPopUntil never shows the pages it removes', (
     tester,
   ) async {

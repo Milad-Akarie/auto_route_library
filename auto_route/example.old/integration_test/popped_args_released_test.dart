@@ -15,7 +15,8 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: push DetailRoute with args, go back, then force a garbage collection.
+  // Steps: push DetailRoute with args, go back, then force a garbage
+  // collection.
   // Should: nothing holds the args any more.
   testWidgets(
     'the args of a popped page are garbage collected',

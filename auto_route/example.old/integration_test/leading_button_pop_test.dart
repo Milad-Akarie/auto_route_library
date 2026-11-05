@@ -9,8 +9,9 @@ import 'support/web_demo_router.dart';
 // https://github.com/Milad-Akarie/auto_route_library/issues/1837
 // Headless test: auto_route/test/leading_button_pop_test.dart
 //
-// Drives a copy of the example's web demo router (support/web_demo_router.dart),
-// the app the reporter used, signed in from the start.
+// Drives a copy of the example's web demo router
+// (support/web_demo_router.dart), the app the reporter used, signed in from the
+// start.
 // Steps: tap 'Navigate to user/2', then the user page's leading button.
 // Then open the user page again, tap 'Posts -> ' (its guard opens the verify
 // page on the root router), and tap the back button twice.
@@ -51,7 +52,8 @@ void main() {
   );
 
   testWidgets(
-    'back from the verify page, then the leading button, goes back to the home page',
+    'back from the verify page, then the leading button, goes back to the home '
+    'page',
     (tester) async {
       await pumpRouterApp(tester, router, reevaluationNotifier: authService);
       await openUserPage(tester);

@@ -11,8 +11,9 @@ import 'support/app.dart';
 // A tabs host opened without a tab in its url names its first tab in the url,
 // and going back to that entry shows the first tab.
 // Found while settling the web issues; no upstream report.
-// Headless tests: auto_route/test/nested_tabs_router/tab_url_without_initial_test.dart
-// and auto_route/test/web/tabs_url_without_initial_web_test.dart
+// Headless tests:
+// auto_route/test/nested_tabs_router/tab_url_without_initial_test.dart and
+// auto_route/test/web/tabs_url_without_initial_web_test.dart
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -21,8 +22,10 @@ void main() {
   // browser's back button on web, router.back() elsewhere.
   // Should: the url is '/tabs/tab-1' on the first tab, and going back shows it.
   for (final includePrefixMatches in [false, true]) {
-    testWidgets('going back to a tabs host opened without a tab in its url shows its first tab, '
-        'includePrefixMatches: $includePrefixMatches', (tester) async {
+    testWidgets('going back to a tabs host opened without a tab in its url '
+        'shows its first tab, includePrefixMatches: $includePrefixMatches', (
+      tester,
+    ) async {
       final router = RootStackRouter.build(
         routes: [
           AutoRoute(page: _HomeRoute.page, path: '/'),

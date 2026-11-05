@@ -7,7 +7,8 @@ import 'package:material_ui/material_ui.dart';
 
 import 'support/app.dart';
 
-// replaceAll with routes of a nested router that isn't open opens them in one nested router.
+// replaceAll with routes of a nested router that isn't open opens them in one
+// nested router.
 // https://github.com/Milad-Akarie/auto_route_library/issues/2214
 // Headless test: auto_route/test/nested_router/push_all_nested_routes_test.dart
 void main() {
@@ -38,12 +39,13 @@ void main() {
   });
 
   // Steps: open the dashboard, which shows MetricsRoute, then call
-  // innerRouterOf(DashboardRoute).replaceAll([UsersRoute(), UserRoute(userId: 1)]),
-  // then tap UserRoute's back button.
+  // innerRouterOf(DashboardRoute).replaceAll([UsersRoute(), UserRoute(userId:
+  // 1)]), then tap UserRoute's back button.
   // Should: both routes open in one 'UsersSellRoute' shell, UserRoute on top
   // with a back button, and back shows UsersRoute.
   testWidgets(
-    'replaceAll with two routes of a nested router opens both in one nested router',
+    'replaceAll with two routes of a nested router opens both in one nested '
+    'router',
     (tester) async {
       await pumpRouterApp(tester, router);
       unawaited(router.replaceAll([const _DashboardRoute()]));

@@ -5,9 +5,11 @@ import 'package:material_ui/material_ui.dart';
 
 import 'support/app.dart';
 
-// A tab page switches tabs through the AutoTabsRouter builder's context it kept.
+// A tab page switches tabs through the AutoTabsRouter builder's context it
+// kept.
 // https://github.com/Milad-Akarie/auto_route_library/issues/2252
-// Headless test: auto_route/test/nested_tabs_router/tab_cached_context_test.dart
+// Headless test:
+// auto_route/test/nested_tabs_router/tab_cached_context_test.dart
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -17,7 +19,8 @@ void main() {
     // AutoTabsRouter.of(keptContext).setActiveIndex.
     // Should: each tab shows.
     testWidgets(
-      '${kind.name}: setActiveIndex through the kept builder context opens the tab',
+      '${kind.name}: setActiveIndex through the kept builder context opens the '
+      'tab',
       (tester) async {
         _tabsKind = kind;
         final router = RootStackRouter.build(

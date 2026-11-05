@@ -45,7 +45,8 @@ void main() {
   // Should: the guard runs twice, for HomeRoute and for LoginRoute, and the
   // second redirect reports an error that names LoginRoute.
   testWidgets(
-    'A global AutoRouteGuard.redirect that redirects its own target reports the loop',
+    'A global AutoRouteGuard.redirect that redirects its own target reports '
+    'the loop',
     (tester) async {
       var guardCalls = 0;
       final router = _AppRouter(
@@ -61,7 +62,8 @@ void main() {
             builder: (_, _) => page('LoginRoute'),
           ),
         ],
-        // past a few calls the guard stops redirecting, so the test still ends where the loop ran forever
+        // past a few calls the guard stops redirecting, so the test still ends
+        // where the loop ran forever
         guards: [
           AutoRouteGuard.redirect(
             (_) => ++guardCalls > 100 ? null : const NamedRoute('LoginRoute'),

@@ -89,7 +89,8 @@ void main() {
   // Steps: as above, with maintainState: false on the parent.
   // Should: the parent does not build until back shows it.
   testWidgets(
-    'With prefix matches, a parent with maintainState false builds only on back',
+    'With prefix matches, a parent with maintainState false builds only on '
+    'back',
     (tester) async {
       final router = buildRouter(maintainParentState: false);
       await openAt(tester, router, includePrefixMatches: true);

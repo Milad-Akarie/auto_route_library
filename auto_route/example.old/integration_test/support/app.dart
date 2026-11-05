@@ -10,7 +10,8 @@ import 'browser_url.dart'
 
 export 'browser_url.dart' if (dart.library.js_interop) 'browser_url_web.dart';
 
-// Helpers the integration tests share, after auto_route/test/router_test_utils.dart.
+// Helpers the integration tests share, after
+// auto_route/test/router_test_utils.dart.
 
 /// Shows [router] in a [MaterialApp] and waits for its first page.
 ///
@@ -167,7 +168,8 @@ Future<void> systemBack(WidgetTester tester) async {
       if (error.code != 'appWouldClose') rethrow;
       fail('Android would close the app on back: ${error.message}');
     }
-    // The back reaches Flutter as a separate platform message; give it time to arrive.
+    // The back reaches Flutter as a separate platform message; give it time to
+    // arrive.
     await Future<void>.delayed(const Duration(milliseconds: 300));
   } else {
     await tester.binding.handlePopRoute();
@@ -184,7 +186,8 @@ Future<void> systemBack(WidgetTester tester) async {
 /// [systemBack].
 Future<bool?> androidSendsBackToFlutter() async {
   if (kIsWeb || defaultTargetPlatform != .android) return null;
-  // Flutter tells Android through a separate platform message; give it time to arrive.
+  // Flutter tells Android through a separate platform message; give it time to
+  // arrive.
   await Future<void>.delayed(const Duration(milliseconds: 300));
   return const MethodChannel('auto_route_example/system_back')
       .invokeMethod<bool>('sendsBackToFlutter');

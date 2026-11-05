@@ -18,7 +18,8 @@ void main() {
   // Should: the list page shows and the url goes back to '/patients', both the
   // router's and, on web, the browser's address bar.
   testWidgets(
-    'Popping a shell route with path params inside AutoTabsRouter reverts the url',
+    'Popping a shell route with path params inside AutoTabsRouter reverts the '
+    'url',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [

@@ -99,7 +99,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   title: Text(context.topRoute.title(context)),
                   // bottom: TabBar(
                   //   controller: controller,
-                  //   tabs: [for (final d in destinations) Tab(child: Text(d.label))],
+                  //   tabs: [for (final d in destinations) Tab(child:
+                  // Text(d.label))],
                   // ),
                 ),
                 body: child,

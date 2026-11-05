@@ -8,7 +8,8 @@ import 'package:material_ui/material_ui.dart';
 
 import 'support/app.dart';
 
-// With includePrefixMatches, the browser's back and forward buttons switch tabs.
+// With includePrefixMatches, the browser's back and forward buttons switch
+// tabs.
 // https://github.com/Milad-Akarie/auto_route_library/issues/1669
 // Headless test: auto_route/test/web/prefix_matches_tabs_web_test.dart
 //
@@ -20,7 +21,8 @@ void main() {
   // the second tab, press the browser's back button, then its forward button.
   // Should: each button shows the tab its url names.
   testWidgets(
-    'With includePrefixMatches, the browser back and forward buttons switch tabs',
+    'With includePrefixMatches, the browser back and forward buttons switch '
+    'tabs',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [

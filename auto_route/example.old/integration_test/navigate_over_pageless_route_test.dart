@@ -10,7 +10,8 @@ import 'support/app.dart';
 // navigate or replaceAll to a page closes the routes pushed over it with
 // Navigator.push.
 // flutter/flutter#171962
-// Headless test: auto_route/test/simple_router/navigate_over_pageless_route_test.dart
+// Headless test:
+// auto_route/test/simple_router/navigate_over_pageless_route_test.dart
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -32,7 +33,8 @@ void main() {
   // Page2, tap a button that calls navigate(Page1).
   // Should: Page1 shows and Page2 is gone.
   testWidgets(
-    "The reporter's steps: navigate back to the page under a Navigator.push route",
+    "The reporter's steps: navigate back to the page under a Navigator.push "
+    "route",
     (tester) async {
       await pumpRouterApp(tester, router);
 

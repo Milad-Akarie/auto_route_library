@@ -10,7 +10,8 @@ import 'support/app.dart';
 // replace with the route already on top, given other nested children, opens
 // those children.
 // https://github.com/Milad-Akarie/auto_route_library/issues/1363
-// Headless test: auto_route/test/nested_router/replace_with_new_children_test.dart
+// Headless test:
+// auto_route/test/nested_router/replace_with_new_children_test.dart
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -18,7 +19,8 @@ void main() {
   // DashboardRoute(children: [ActivitiesRoute(children: [PendingRoute()])]).
   // Should: the nested router shows Pending, and the url follows.
   testWidgets(
-    'replace with the same route and other nested children opens those children',
+    'replace with the same route and other nested children opens those '
+    'children',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [

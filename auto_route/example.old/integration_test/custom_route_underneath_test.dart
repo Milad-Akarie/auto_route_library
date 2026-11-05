@@ -32,7 +32,8 @@ void main() {
       );
       await pumpRouterApp(tester, router);
       final restingX = tester.getTopLeft(find.text('Home')).dx;
-      // Offstage widgets count: once the Menu page covers Home, Home is offstage.
+      // Offstage widgets count: once the Menu page covers Home, Home is
+      // offstage.
       final home = find.text('Home', skipOffstage: false);
       final menu = find.text('Menu', skipOffstage: false);
 
@@ -52,7 +53,8 @@ void main() {
             return;
         }
         fail(
-          'The Menu page did not ${menuOpen ? 'open' : 'close'} within 300 frames.',
+          'The Menu page did not ${menuOpen ? 'open' : 'close'} within 300 '
+          'frames.',
         );
       }
 

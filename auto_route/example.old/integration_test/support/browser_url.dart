@@ -1,7 +1,8 @@
 /// The url in the browser's address bar, or null off the web.
 String? browserUrl() => null;
 
-/// The serial number the engine gives the browser's current history entry, or null off the web.
+/// The serial number the engine gives the browser's current history entry, or
+/// null off the web.
 int? browserEntryIndex() => null;
 
 /// Presses the browser's back button; only the web has one.
@@ -21,7 +22,8 @@ void typeBrowserUrl(String path) =>
 void openBrowserAt(String path) =>
     throw UnsupportedError('Only the web has an address bar.');
 
-/// Whether the app has written the browser's current entry since [openBrowserAt] made it;
+/// Whether the app has written the browser's current entry since
+/// [openBrowserAt] made it;
 /// only the web has one.
 bool appWroteBrowserEntry() =>
     throw UnsupportedError('Only the web has a browser history.');

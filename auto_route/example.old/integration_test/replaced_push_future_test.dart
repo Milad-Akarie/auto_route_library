@@ -20,7 +20,8 @@ void main() {
   // then pop ThirdRoute.
   // Should: the future of the first push completes once ThirdRoute is popped.
   testWidgets(
-    'Popping a route that replaced the pushed one completes the first push future (#2251)',
+    'Popping a route that replaced the pushed one completes the first push '
+    'future (#2251)',
     (tester) async {
       await pumpRouterApp(tester, router);
       var completed = false;

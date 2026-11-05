@@ -17,7 +17,8 @@ void main() {
   // 'Close tabs' before it stops.
   // Should: the tabs close without an error.
   testWidgets(
-    'closing the tabs while the tab bar animates after a routes change throws nothing',
+    'closing the tabs while the tab bar animates after a routes change throws '
+    'nothing',
     (tester) async {
       addTearDown(() {
         _fourthAddedNotifier.value = false;

@@ -7,7 +7,8 @@ import 'package:material_ui/material_ui.dart';
 
 // A guard whose redirect page was closed doesn't resume a later navigation.
 // https://github.com/Milad-Akarie/auto_route_library/issues/2178
-// Headless test: auto_route/test/reevaluatable_router/redirect_lifecycle_test.dart
+// Headless test:
+// auto_route/test/reevaluatable_router/redirect_lifecycle_test.dart
 /// The reporter's notifier of the login and subscription state.
 class GuardChangeNotifier extends ChangeNotifier {
   bool connected = false;
@@ -31,7 +32,8 @@ void main() {
   // log in.
   // Should: the paywall opens, not the profile.
   testWidgets(
-    'Logging in after leaving an earlier redirect opens the route that redirected last (#2178)',
+    'Logging in after leaving an earlier redirect opens the route that '
+    'redirected last (#2178)',
     (
       tester,
     ) async {
@@ -120,7 +122,8 @@ void main() {
         MaterialApp.router(
           routerConfig: router.config(
             reevaluateListenable: n,
-            // on web the browser's url would otherwise carry over from the previous test
+            // on web the browser's url would otherwise carry over from the
+            // previous test
             deepLinkBuilder: (link) =>
                 link.initial ? DeepLink.defaultPath : link,
           ),

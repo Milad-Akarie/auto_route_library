@@ -14,7 +14,8 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   // Steps: navigate to SecondHostRoute, push SecondNested3Route in its nested
-  // router, then navigate to SecondHostRoute with children [SecondNested1Route].
+  // router, then navigate to SecondHostRoute with children
+  // [SecondNested1Route].
   // Should: SecondNested1Route shows right away, not once the host is popped.
   testWidgets('navigate() to an open host route updates its nested router', (
     tester,

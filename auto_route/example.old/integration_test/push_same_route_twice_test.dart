@@ -55,7 +55,8 @@ void main() {
   // Should: the first Second, not First.
   // Web only: elsewhere, system back pops the page, which already worked.
   testWidgets(
-    'The browser back button returns to the same route pushed with equal arguments',
+    'The browser back button returns to the same route pushed with equal '
+    'arguments',
     (tester) async {
       await pushSecondTwice(tester);
       final secondEntry = browserEntryIndex()!;

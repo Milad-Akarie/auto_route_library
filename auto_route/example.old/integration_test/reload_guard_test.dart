@@ -5,7 +5,8 @@ import 'package:material_ui/material_ui.dart';
 
 import 'support/app.dart';
 
-// A reload on a page whose guard awaits, then calls next(true), shows that page.
+// A reload on a page whose guard awaits, then calls next(true), shows that
+// page.
 // https://github.com/Milad-Akarie/auto_route_library/issues/1755
 // Headless test: auto_route/test/web/reload_guard_web_test.dart
 void main() {

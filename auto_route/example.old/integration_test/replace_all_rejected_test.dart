@@ -62,7 +62,8 @@ void main() {
 
   // Steps, the reporter's: push FooRoute, then replaceAll([ForbiddenRoute()]),
   // whose guard calls resolver.reject().
-  // Should: the stack is still [InitialRoute, FooRoute], on screen and in the url.
+  // Should: the stack is still [InitialRoute, FooRoute], on screen and in the
+  // url.
   testWidgets('A replaceAll rejected by a guard keeps the stack (#2299)', (
     tester,
   ) async {

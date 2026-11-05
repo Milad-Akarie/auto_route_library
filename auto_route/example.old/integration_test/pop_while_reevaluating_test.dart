@@ -10,7 +10,8 @@ import 'support/app.dart';
 // A page popped while guards are reevaluated stays closed.
 // https://github.com/Milad-Akarie/auto_route_library/issues/1643
 // https://github.com/Milad-Akarie/auto_route_library/issues/1785
-// Headless test: auto_route/test/reevaluatable_router/pop_while_reevaluating_test.dart
+// Headless test:
+// auto_route/test/reevaluatable_router/pop_while_reevaluating_test.dart
 Widget _page(String name) => Scaffold(body: SafeArea(child: Text(name)));
 
 void main() {
@@ -20,12 +21,14 @@ void main() {
   // A dialog route sits behind a guard, and reevaluateListenable fires when the
   // user's information changes. The app updates the user, which starts the
   // reevaluation, then calls router.pop() at once to close the dialog.
-  // The dialog closed and opened again: the reevaluation had collected the stack
-  // before the pop and pushed the dialog back once its guard called next().
+  // The dialog closed and opened again: the reevaluation had collected the
+  // stack before the pop and pushed the dialog back once its guard called
+  // next().
   // A page popped while guards are reevaluated must stay closed.
   for (final guardDelay in [Duration.zero, const Duration(milliseconds: 50)]) {
     testWidgets(
-      'A dialog popped right after a reevaluation starts stays closed, guard delay $guardDelay (#1643)',
+      'A dialog popped right after a reevaluation starts stays closed, guard '
+      'delay $guardDelay (#1643)',
       (
         tester,
       ) async {
@@ -77,7 +80,8 @@ void main() {
   // settings pops AppGuardRoute.
   // The dialog closed and opened again at once, as in #1643.
   testWidgets(
-    'A dialog popped by a listener of the reevaluation stream stays closed (#1785)',
+    'A dialog popped by a listener of the reevaluation stream stays closed '
+    '(#1785)',
     (tester) async {
       var isAppGuarded = false;
       final settings = StreamController<bool>.broadcast();

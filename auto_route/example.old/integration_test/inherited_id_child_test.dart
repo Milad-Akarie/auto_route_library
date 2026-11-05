@@ -103,7 +103,8 @@ class _CreateListItemsRoute extends PageRouteInfo<void> {
     builder: (data) {
       final pathParams = data.inheritedPathParams;
       return Text(
-        'Create ${pathParams.getString('familyId')} in ${pathParams.getString('id')}',
+        'Create ${pathParams.getString('familyId')} in '
+        '${pathParams.getString('id')}',
       );
     },
   );

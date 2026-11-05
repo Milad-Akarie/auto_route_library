@@ -54,7 +54,8 @@ void main() {
 
   // Steps: push DetailsRoute, then replace it with ForbiddenRoute, whose guard
   // rejects the navigation.
-  // Should: the stack is still [HomeRoute, DetailsRoute], on screen and in the url.
+  // Should: the stack is still [HomeRoute, DetailsRoute], on screen and in the
+  // url.
   testWidgets(
     'A replace rejected by a guard keeps the page it would replace (#2046)',
     (tester) async {
@@ -80,7 +81,8 @@ void main() {
   // Should: LoginRoute opens over DetailsRoute, and going back rejects the
   // replace and shows DetailsRoute again.
   testWidgets(
-    'Going back from the redirect of a replace keeps the page it would replace (#2046)',
+    'Going back from the redirect of a replace keeps the page it would replace '
+    '(#2046)',
     (tester) async {
       final router = buildRouter();
       await pumpRouterAppWithConfig(tester, router);

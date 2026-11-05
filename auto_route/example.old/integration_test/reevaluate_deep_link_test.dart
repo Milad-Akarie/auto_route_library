@@ -8,8 +8,9 @@ import 'support/app.dart';
 // A url the platform sends, such as one typed in the browser's address bar,
 // opens its page while reevaluateListenable is set.
 // https://github.com/Milad-Akarie/auto_route_library/issues/2173
-// Headless tests: auto_route/test/reevaluatable_router/reevaluate_deep_link_test.dart
-// and auto_route/test/web/typed_url_reevaluate_web_test.dart
+// Headless tests:
+// auto_route/test/reevaluatable_router/reevaluate_deep_link_test.dart and
+// auto_route/test/web/typed_url_reevaluate_web_test.dart
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -17,7 +18,8 @@ void main() {
   // '/profile', a guarded route, then fire the listenable.
   // Should: ProfileRoute is on top and the url is '/profile', not '/'.
   testWidgets(
-    'A url the platform pushes opens its page with reevaluateListenable set (#2173)',
+    'A url the platform pushes opens its page with reevaluateListenable set '
+    '(#2173)',
     (tester) async {
       final auth = ValueNotifier(0);
       final router = RootStackRouter.build(
@@ -39,7 +41,8 @@ void main() {
         tester,
         router.config(
           reevaluateListenable: auth,
-          // on web the browser's url would otherwise carry over from the previous test
+          // on web the browser's url would otherwise carry over from the
+          // previous test
           deepLinkBuilder: (link) => link.initial ? DeepLink.defaultPath : link,
         ),
       );

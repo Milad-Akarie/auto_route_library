@@ -44,7 +44,8 @@ class HostScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Host Screen'),
 
-        /// This will automatically display a back button if the nested router can pop
+        /// This will automatically display a back button if the nested router
+        /// can pop
         leading: const AutoLeadingButton(),
       ),
       body: const AutoRouter(),

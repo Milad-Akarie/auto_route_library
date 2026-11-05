@@ -43,7 +43,8 @@ class WebAppRouter extends RootStackRouter {
             AutoRouteGuard.simple(
               (resolver, scope) {
                 debugPrint(
-                  'Verify Guard: ${resolver.routeName}, isRev: ${resolver.isReevaluating}',
+                  'Verify Guard: ${resolver.routeName}, isRev: '
+                  '${resolver.isReevaluating}',
                 );
                 if (authService.isVerified) {
                   resolver.next();
@@ -316,7 +317,8 @@ class UserPageState extends State<UserPage> {
         title: Builder(
           builder: (context) {
             return Text(
-              '${context.topRouteMatch.name} ${widget.id} query: ${widget.query}, fragment: ${widget.fragment}',
+              '${context.topRouteMatch.name} ${widget.id} query: '
+              '${widget.query}, fragment: ${widget.fragment}',
             );
           },
         ),

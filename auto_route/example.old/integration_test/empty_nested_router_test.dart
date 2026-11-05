@@ -16,7 +16,8 @@ void main() {
   // Steps: push SecondHostRoute (its nested router shows SecondNested1Route),
   // remove that last nested page, then call maybePop on the nested router, as
   // a back press does.
-  // Should: maybePop returns true, SecondHostRoute is popped and FirstRoute shows.
+  // Should: maybePop returns true, SecondHostRoute is popped and FirstRoute
+  // shows.
   testWidgets(
     'maybePop on a nested router with no pages left pops the parent router',
     (tester) async {

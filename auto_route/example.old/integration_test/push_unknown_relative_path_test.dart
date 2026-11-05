@@ -10,7 +10,8 @@ import 'support/app.dart';
 // pushPath of a relative path no route has reports a failure, even in a
 // nested router whose first page has the path ''.
 // https://github.com/Milad-Akarie/auto_route_library/issues/1648
-// Headless test: auto_route/test/nested_router/push_unknown_relative_path_test.dart
+// Headless test:
+// auto_route/test/nested_router/push_unknown_relative_path_test.dart
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -19,7 +20,8 @@ void main() {
   // home page call pushPath('nowhere') with onFailure.
   // Should: onFailure gets a RouteNotFoundFailure and the home stack stays.
   testWidgets(
-    'pushPath of an unknown relative path reports a failure instead of pushing the first page',
+    'pushPath of an unknown relative path reports a failure instead of pushing '
+    'the first page',
     (
       tester,
     ) async {
