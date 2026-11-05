@@ -74,7 +74,7 @@ void main() {
 
 /// Shows two tabs in an AutoTabsRouter, the indexed stack.
 class _IndexedStackPage extends StatelessWidget {
-  const _IndexedStackPage();
+  const new();
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +86,7 @@ class _IndexedStackPage extends StatelessWidget {
 
 /// Shows [text] on a plain page.
 class _TextPage extends StatelessWidget {
-  const _TextPage(this.text);
+  const new(this.text);
 
   final String text;
 

@@ -106,7 +106,7 @@ Widget _heroPage(String name, Alignment alignment) {
 }
 
 class _FromRoute extends PageRouteInfo<void> {
-  const _FromRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'FromRoute';
   static PageInfo page = PageInfo(
@@ -116,7 +116,7 @@ class _FromRoute extends PageRouteInfo<void> {
 }
 
 class _ToRoute extends PageRouteInfo<void> {
-  const _ToRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'ToRoute';
   static PageInfo page = PageInfo(
@@ -126,21 +126,21 @@ class _ToRoute extends PageRouteInfo<void> {
 }
 
 class _ShellRoute extends PageRouteInfo<void> {
-  const _ShellRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'ShellRoute';
   static PageInfo page = const PageInfo.emptyShell(name);
 }
 
 class _HeroShellRoute extends PageRouteInfo<void> {
-  const _HeroShellRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'HeroShellRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const _HeroShell());
 }
 
 class _HeroShell extends StatefulWidget {
-  const _HeroShell();
+  const new();
 
   @override
   State<_HeroShell> createState() => _HeroShellState();

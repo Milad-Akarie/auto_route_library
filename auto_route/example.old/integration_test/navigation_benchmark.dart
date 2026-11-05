@@ -122,7 +122,7 @@ enum _Tabs {
   pageView('PageView'),
   tabBar('TabBar');
 
-  _Tabs(this.parent);
+  new(this.parent);
 
   final String parent;
 }
@@ -203,7 +203,7 @@ AutoRoute _level(int depth) {
 
 /// A page with a list, so building it costs about what a real page does.
 class _BenchmarkPage extends StatelessWidget {
-  const _BenchmarkPage();
+  const new();
 
   @override
   Widget build(BuildContext context) {
@@ -220,7 +220,7 @@ class _BenchmarkPage extends StatelessWidget {
 
 /// Shows its routes as tabs of [kind], with a bottom bar to switch them.
 class _TabsHost extends StatelessWidget {
-  const _TabsHost(this.kind);
+  const new(this.kind);
 
   final _Tabs kind;
 
@@ -247,7 +247,7 @@ class _TabsHost extends StatelessWidget {
 }
 
 class _TabsScaffold extends StatelessWidget {
-  const _TabsScaffold({required this.child});
+  const new({required this.child});
 
   final Widget child;
 

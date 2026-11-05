@@ -13,7 +13,7 @@ import 'support/app.dart';
 // https://github.com/Milad-Akarie/auto_route_library/issues/1818
 // Headless test: auto_route/test/guards/redirect_loop_test.dart
 class _AppRouter extends RootStackRouter {
-  _AppRouter({required this.guards, required this.routes});
+  new({required this.guards, required this.routes});
 
   @override
   final List<AutoRouteGuard> guards;

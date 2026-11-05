@@ -44,7 +44,7 @@ void main() {
 }
 
 class _CafeRoute extends PageRouteInfo<void> {
-  const _CafeRoute() : super(pageName);
+  const new() : super(pageName);
 
   static const String pageName = 'CafeRoute';
   static PageInfo page = PageInfo(pageName, builder: (_) => const Text('Café'));

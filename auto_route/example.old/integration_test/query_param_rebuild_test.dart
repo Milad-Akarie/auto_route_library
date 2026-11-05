@@ -84,7 +84,7 @@ void main() {
 }
 
 class _ParamPage extends StatefulWidget {
-  const _ParamPage({required this.param});
+  const new({required this.param});
 
   final bool param;
 

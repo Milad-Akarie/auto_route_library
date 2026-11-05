@@ -66,7 +66,7 @@ _TabsKind _tabsKind = .indexedStack;
 final _secondRemovedNotifier = ValueNotifier<bool>(false);
 
 class _TabsHostRoute extends PageRouteInfo<void> {
-  const _TabsHostRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_TabsHostRoute';
   static PageInfo page = PageInfo(
@@ -94,7 +94,7 @@ class _TabsHostRoute extends PageRouteInfo<void> {
 }
 
 class _FirstTabRoute extends PageRouteInfo<void> {
-  const _FirstTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_FirstTabRoute';
   static PageInfo page = PageInfo(
@@ -118,7 +118,7 @@ class _FirstTabRoute extends PageRouteInfo<void> {
 }
 
 class _SecondTabRoute extends PageRouteInfo<void> {
-  const _SecondTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_SecondTabRoute';
   static PageInfo page = PageInfo(

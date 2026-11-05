@@ -82,7 +82,7 @@ void main() {
 
 /// Shows two tabs in an AutoTabsRouter.pageView.
 class _PageViewPage extends StatelessWidget {
-  const _PageViewPage();
+  const new();
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +94,7 @@ class _PageViewPage extends StatelessWidget {
 
 /// Shows [text] on a plain page.
 class _TextPage extends StatelessWidget {
-  const _TextPage(this.text);
+  const new(this.text);
 
   final String text;
 

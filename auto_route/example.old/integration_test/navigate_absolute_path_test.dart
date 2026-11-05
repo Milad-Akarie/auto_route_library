@@ -65,7 +65,7 @@ PageInfo _page(String name) => .new(
 final _homePage = PageInfo('HomeRoute', builder: (_) => const _HomePage());
 
 class _HomePage extends StatelessWidget {
-  const _HomePage();
+  const new();
 
   @override
   Widget build(BuildContext context) {

@@ -39,7 +39,7 @@ void main() {
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'HomeRoute';
   static PageInfo page = PageInfo(
@@ -66,7 +66,7 @@ class _HomeRoute extends PageRouteInfo<void> {
 }
 
 class _AwareText extends StatefulWidget {
-  const _AwareText();
+  const new();
 
   @override
   State<_AwareText> createState() => _AwareTextState();

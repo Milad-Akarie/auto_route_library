@@ -52,7 +52,7 @@ RootStackRouter buildEagerTabsRouter(EagerTabsKind kind) {
 PageInfo _page(String name) => .new(name, builder: (_) => _TabPage(name));
 
 class _TabPage extends StatefulWidget {
-  const _TabPage(this.name);
+  const new(this.name);
 
   final String name;
 
@@ -72,5 +72,5 @@ class _TabPageState extends State<_TabPage> {
 }
 
 class _Route extends PageRouteInfo<void> {
-  const _Route(super.name);
+  const new(super.name);
 }

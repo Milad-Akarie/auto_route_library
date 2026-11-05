@@ -57,7 +57,7 @@ void main() {
 
 // Shows nothing for the app's first frame, then the app.
 class _Splash extends StatefulWidget {
-  const _Splash({required this.builder});
+  const new({required this.builder});
 
   final Widget Function() builder;
 

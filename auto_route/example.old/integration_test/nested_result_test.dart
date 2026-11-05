@@ -76,7 +76,7 @@ void main() {
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'HomeRoute';
   static PageInfo page = PageInfo(
@@ -93,7 +93,7 @@ class _HomeRoute extends PageRouteInfo<void> {
 }
 
 class _ContentRoute extends PageRouteInfo<void> {
-  _ContentRoute(String index) : super(name, rawPathParams: {'index': index});
+  new(String index) : super(name, rawPathParams: {'index': index});
 
   static const String name = 'ContentRoute';
   static PageInfo page = PageInfo(

@@ -70,7 +70,7 @@ void main() {
 
 /// Shows two tabs in a tab bar above their AutoTabView.
 class _TabBarPage extends StatelessWidget {
-  const _TabBarPage();
+  const new();
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +94,7 @@ class _TabBarPage extends StatelessWidget {
 
 /// Shows [text] on a plain page.
 class _TextPage extends StatelessWidget {
-  const _TextPage(this.text);
+  const new(this.text);
 
   final String text;
 

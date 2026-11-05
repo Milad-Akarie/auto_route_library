@@ -47,8 +47,7 @@ void main() {
 }
 
 class _FileRoute extends PageRouteInfo<void> {
-  _FileRoute({required String name})
-    : super(pageName, rawPathParams: {'name': name});
+  new({required String name}) : super(pageName, rawPathParams: {'name': name});
 
   static const String pageName = 'FileRoute';
   static PageInfo page = PageInfo(

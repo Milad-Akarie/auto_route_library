@@ -81,7 +81,7 @@ void main() {
 
 /// Records each didChangeTabRoute as `'<tab> from <previous tab>'`.
 class _TabChangeObserver extends AutoRouterObserver {
-  _TabChangeObserver(this.tabChanges);
+  new(this.tabChanges);
 
   final List<String> tabChanges;
 

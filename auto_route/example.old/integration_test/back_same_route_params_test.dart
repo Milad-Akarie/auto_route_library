@@ -65,7 +65,7 @@ void main() {
 }
 
 class _ItemRoute extends PageRouteInfo<void> {
-  _ItemRoute(String id) : super(name, rawPathParams: {'id': id});
+  new(String id) : super(name, rawPathParams: {'id': id});
 
   static const String name = 'ItemRoute';
   static PageInfo page = PageInfo(

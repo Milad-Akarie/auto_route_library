@@ -109,6 +109,6 @@ PageInfo _page(
 );
 
 class _Route extends PageRouteInfo<void> {
-  const _Route(super.name, {List<PageRouteInfo>? children})
+  const new(super.name, {List<PageRouteInfo>? children})
     : super(initialChildren: children);
 }

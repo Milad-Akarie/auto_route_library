@@ -145,7 +145,7 @@ final _heard = <bool>[];
 var _canPop = true;
 
 class _ReportHomeRoute extends PageRouteInfo<void> {
-  const _ReportHomeRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'ReportHomeRoute';
   static PageInfo page = PageInfo(
@@ -167,14 +167,14 @@ class _ReportHomeRoute extends PageRouteInfo<void> {
 }
 
 class _HostRoute extends PageRouteInfo<void> {
-  const _HostRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'HostRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
 }
 
 class _CountedRoute extends PageRouteInfo<void> {
-  const _CountedRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'CountedRoute';
   static PageInfo page = PageInfo(

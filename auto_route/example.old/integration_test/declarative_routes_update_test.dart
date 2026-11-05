@@ -41,14 +41,14 @@ void main() {
 }
 
 class _HostRoute extends PageRouteInfo<void> {
-  const _HostRoute() : super(name);
+  const new() : super(name);
 
   static const name = 'HostRoute';
   static final page = PageInfo(name, builder: (_) => const _HostPage());
 }
 
 class _HostPage extends StatefulWidget {
-  const _HostPage();
+  const new();
 
   @override
   State<_HostPage> createState() => _HostPageState();
@@ -77,7 +77,7 @@ class _HostPageState extends State<_HostPage> {
 
 @immutable
 class _HomeRouteArgs {
-  const _HomeRouteArgs({required this.id});
+  const new({required this.id});
 
   final int id;
 
@@ -90,7 +90,7 @@ class _HomeRouteArgs {
 }
 
 class _HomeRoute extends PageRouteInfo<_HomeRouteArgs> {
-  _HomeRoute({required int id}) : super(name, args: _HomeRouteArgs(id: id));
+  new({required int id}) : super(name, args: _HomeRouteArgs(id: id));
 
   static const name = 'HomeRoute';
   static final page = PageInfo(
@@ -100,7 +100,7 @@ class _HomeRoute extends PageRouteInfo<_HomeRouteArgs> {
 }
 
 class _HomePage extends StatefulWidget {
-  const _HomePage({required this.id});
+  const new({required this.id});
 
   final int id;
 

@@ -44,14 +44,14 @@ void main() {
 }
 
 class _AccountRoute extends PageRouteInfo<void> {
-  const _AccountRoute() : super(pageName);
+  const new() : super(pageName);
 
   static const String pageName = 'AccountRoute';
   static PageInfo page = PageInfo(pageName, builder: (_) => const AutoRouter());
 }
 
 class _ConsentManagementRoute extends PageRouteInfo<void> {
-  const _ConsentManagementRoute() : super(pageName);
+  const new() : super(pageName);
 
   static const String pageName = 'AccountConsentManagementScreenRoute';
   static PageInfo page = PageInfo(

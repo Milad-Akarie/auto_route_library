@@ -84,7 +84,7 @@ _TabsKind _tabsKind = .indexedStack;
 final _signedInNotifier = ValueNotifier<bool>(false);
 
 class _TabsHostRoute extends PageRouteInfo<void> {
-  const _TabsHostRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_TabsHostRoute';
   static PageInfo page = PageInfo(
@@ -113,7 +113,7 @@ class _TabsHostRoute extends PageRouteInfo<void> {
 }
 
 class _FirstTabRoute extends PageRouteInfo<void> {
-  const _FirstTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_FirstTabRoute';
   static PageInfo page = PageInfo(
@@ -132,7 +132,7 @@ class _FirstTabRoute extends PageRouteInfo<void> {
 }
 
 class _SecondTabRoute extends PageRouteInfo<void> {
-  const _SecondTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_SecondTabRoute';
   static PageInfo page = PageInfo(
@@ -148,7 +148,7 @@ class _SecondTabRoute extends PageRouteInfo<void> {
 }
 
 class _SignInTabRoute extends PageRouteInfo<void> {
-  const _SignInTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_SignInTabRoute';
   static PageInfo page = PageInfo(
@@ -158,7 +158,7 @@ class _SignInTabRoute extends PageRouteInfo<void> {
 }
 
 class _AccountTabRoute extends PageRouteInfo<void> {
-  const _AccountTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_AccountTabRoute';
   static PageInfo page = PageInfo(
@@ -169,7 +169,7 @@ class _AccountTabRoute extends PageRouteInfo<void> {
 
 // A tab page with a tap counter, the state the tabs must keep.
 class _CounterPage extends StatefulWidget {
-  const _CounterPage({required this.label, required this.actions});
+  const new({required this.label, required this.actions});
 
   final String label;
   final List<Widget> actions;
@@ -201,7 +201,7 @@ class _CounterPageState extends State<_CounterPage> {
 }
 
 class _TabButton extends StatelessWidget {
-  const _TabButton(this.label, {required this.index});
+  const new(this.label, {required this.index});
 
   final String label;
   final int index;

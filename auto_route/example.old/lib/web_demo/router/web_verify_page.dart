@@ -4,7 +4,7 @@ import 'package:material_ui/material_ui.dart';
 
 @RoutePage()
 class WebVerifyPage extends StatelessWidget {
-  const WebVerifyPage({super.key, this.onResult});
+  const new({super.key, this.onResult});
   final ValueChanged<bool>? onResult;
 
   @override

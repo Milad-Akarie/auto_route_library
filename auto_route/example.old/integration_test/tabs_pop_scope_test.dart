@@ -122,5 +122,5 @@ PageInfo _guarded(String name) =>
     .new(name, builder: (_) => _popScope(Text(name)));
 
 class _Route extends PageRouteInfo<void> {
-  const _Route(super.name);
+  const new(super.name);
 }

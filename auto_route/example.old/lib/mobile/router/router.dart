@@ -11,7 +11,7 @@ import 'package:material_ui/material_ui.dart';
 // ignore_for_file: constant_identifier_names
 @AutoRouterConfig(generateForDir: ['lib/mobile'])
 class AppRouter extends RootStackRouter {
-  AppRouter(this.authService);
+  new(this.authService);
   final AuthService authService;
 
   @override
@@ -61,7 +61,7 @@ const BooksTab = EmptyShellRoute('BooksTab');
 const ProfileTab = EmptyShellRoute('ProfileTab');
 
 abstract class RouteDef {
-  RouteDef(this.name, {this.path});
+  new(this.name, {this.path});
   final String name;
   final String? path;
 

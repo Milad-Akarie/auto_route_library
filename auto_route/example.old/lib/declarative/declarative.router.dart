@@ -23,7 +23,7 @@ class DecRouter extends RootStackRouter {
 }
 
 class DeclarativeNavigationExampleApp extends StatelessWidget {
-  DeclarativeNavigationExampleApp({super.key});
+  new({super.key});
   final _router = DecRouter();
 
   @override
@@ -36,7 +36,7 @@ class DeclarativeNavigationExampleApp extends StatelessWidget {
 
 @RoutePage()
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  const new({super.key});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -91,7 +91,7 @@ class _MainScreenState extends State<MainScreen> {
 
 @RoutePage()
 class NameInputScreen extends StatefulWidget {
-  const NameInputScreen({super.key, required this.onNameSubmitted});
+  const new({super.key, required this.onNameSubmitted});
   final ValueChanged<String> onNameSubmitted;
 
   @override
@@ -136,7 +136,7 @@ class _NameInputScreenState extends State<NameInputScreen> {
 // age submit page
 @RoutePage()
 class AgeInputScreen extends StatefulWidget {
-  const AgeInputScreen({super.key, required this.onAgeSubmitted});
+  const new({super.key, required this.onAgeSubmitted});
   final ValueChanged<int> onAgeSubmitted;
 
   @override
@@ -180,7 +180,7 @@ class _AgeInputScreenState extends State<AgeInputScreen> {
 
 @RoutePage()
 class ResultScreen extends StatelessWidget {
-  const ResultScreen({super.key, required this.profile, required this.onReset});
+  const new({super.key, required this.profile, required this.onReset});
   final Profile profile;
   final VoidCallback onReset;
 
@@ -209,7 +209,7 @@ class ResultScreen extends StatelessWidget {
 }
 
 class Profile {
-  const Profile({this.name, this.age});
+  const new({this.name, this.age});
 
   final String? name;
   final int? age;

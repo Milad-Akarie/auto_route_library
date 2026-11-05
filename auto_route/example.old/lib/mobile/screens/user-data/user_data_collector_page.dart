@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 // An example page, kept as written so the example shows the same code.
 // ignore: avoid-unnecessary-stateful-widgets
 class UserDataCollectorPage extends StatefulWidget implements AutoRouteWrapper {
-  const UserDataCollectorPage({super.key, this.onResult});
+  const new({super.key, this.onResult});
   // The generated router copies this type into its args class.
   // ignore: inference_failure_on_function_return_type
   final Function(UserData data)? onResult;

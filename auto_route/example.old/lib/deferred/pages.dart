@@ -6,7 +6,7 @@ import 'package:material_ui/material_ui.dart';
 
 @RoutePage(deferredLoading: true)
 class DeferredFirstPage extends StatelessWidget {
-  const DeferredFirstPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) =>
@@ -15,7 +15,7 @@ class DeferredFirstPage extends StatelessWidget {
 
 @RoutePage()
 class DeferredSecondPage extends StatelessWidget {
-  const DeferredSecondPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) =>

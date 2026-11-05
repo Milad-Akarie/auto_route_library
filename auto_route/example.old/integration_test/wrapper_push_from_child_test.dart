@@ -59,7 +59,7 @@ void main() {
 }
 
 class _ParentPage extends AutoRouter implements AutoRouteWrapper {
-  const _ParentPage();
+  const new();
 
   @override
   Widget wrappedRoute(BuildContext context) => _Provided(child: this);
@@ -67,7 +67,7 @@ class _ParentPage extends AutoRouter implements AutoRouteWrapper {
 
 /// Stands for a BlocProvider: counts the states it creates.
 class _Provided extends StatefulWidget {
-  const _Provided({required this.child});
+  const new({required this.child});
 
   final Widget child;
 
@@ -89,7 +89,7 @@ class _ProvidedState extends State<_Provided> {
 }
 
 class _AChild extends StatelessWidget {
-  const _AChild();
+  const new();
 
   @override
   Widget build(BuildContext context) {

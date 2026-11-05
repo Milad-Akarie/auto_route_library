@@ -37,7 +37,7 @@ class AuthService extends ChangeNotifier {
 
 @AutoRouterConfig(generateForDir: ['integration_test/support/web_demo_router'])
 class WebAppRouter extends RootStackRouter {
-  WebAppRouter(this.authService);
+  new(this.authService);
   final AuthService authService;
 
   @override
@@ -93,7 +93,7 @@ class WebAppRouter extends RootStackRouter {
 
 @RoutePage()
 class MainWebPage extends StatelessWidget {
-  const MainWebPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +128,7 @@ class MainWebPage extends StatelessWidget {
 
 @RoutePage()
 class WebLoginPage extends StatelessWidget {
-  const WebLoginPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +141,7 @@ class WebLoginPage extends StatelessWidget {
 
 @RoutePage()
 class WebVerifyPage extends StatelessWidget {
-  const WebVerifyPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -154,7 +154,7 @@ class WebVerifyPage extends StatelessWidget {
 
 @RoutePage()
 class UserPage extends StatelessWidget {
-  const UserPage({
+  const new({
     super.key,
     @PathParam('userID') this.id = -1,
     @QueryParam() this.query,
@@ -185,7 +185,7 @@ class UserPage extends StatelessWidget {
 
 @RoutePage()
 class UserProfilePage extends StatelessWidget {
-  const UserProfilePage({
+  const new({
     super.key,
     @PathParam('userID') this.userId = -1,
     @queryParam this.likes = 0,
@@ -221,7 +221,7 @@ class UserProfilePage extends StatelessWidget {
 
 @RoutePage()
 class UserPostsPage extends StatelessWidget {
-  const UserPostsPage({
+  const new({
     super.key,
     @PathParam.inherit('userID') required this.id,
   });
@@ -242,7 +242,7 @@ class UserPostsPage extends StatelessWidget {
 
 @RoutePage()
 class UserAllPostsPage extends StatelessWidget {
-  const UserAllPostsPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -252,7 +252,7 @@ class UserAllPostsPage extends StatelessWidget {
 
 @RoutePage()
 class UserFavoritePostsPage extends StatelessWidget {
-  const UserFavoritePostsPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -262,7 +262,7 @@ class UserFavoritePostsPage extends StatelessWidget {
 
 @RoutePage()
 class NotFoundScreen extends StatelessWidget {
-  const NotFoundScreen({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

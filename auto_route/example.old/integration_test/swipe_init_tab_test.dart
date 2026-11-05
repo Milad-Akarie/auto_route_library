@@ -100,7 +100,7 @@ void main() {
 
 /// Records each tab event as `'<init|change> <tab> from <previous tab>'`.
 class _TabEventObserver extends AutoRouterObserver {
-  _TabEventObserver(this.tabEvents);
+  new(this.tabEvents);
 
   final List<String> tabEvents;
 

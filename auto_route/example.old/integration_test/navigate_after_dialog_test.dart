@@ -55,7 +55,7 @@ void main() {
 }
 
 class _DetailPage extends StatelessWidget {
-  const _DetailPage();
+  const new();
 
   @override
   Widget build(BuildContext context) {

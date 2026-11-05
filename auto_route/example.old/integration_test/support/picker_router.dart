@@ -18,7 +18,7 @@ class PickerRouter extends RootStackRouter {
 
 @RoutePage()
 class PickerHomeView extends StatelessWidget {
-  const PickerHomeView({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) => const Scaffold(body: Text('Home'));
@@ -28,7 +28,7 @@ class PickerHomeView extends StatelessWidget {
 /// kind of page #2050 asks to route to.
 @RoutePage()
 class PickerView<T> extends StatelessWidget {
-  const PickerView({
+  const new({
     super.key,
     this.items = const [],
     @QueryParam() this.title = 'Pick',

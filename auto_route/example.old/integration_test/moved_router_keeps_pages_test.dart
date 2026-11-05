@@ -72,7 +72,7 @@ void main() {
 bool _isWide(BuildContext context) => MediaQuery.widthOf(context) >= 600;
 
 class _MailPage extends StatelessWidget {
-  const _MailPage();
+  const new();
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +87,7 @@ class _MailPage extends StatelessWidget {
 }
 
 class _InboxPage extends StatelessWidget {
-  const _InboxPage();
+  const new();
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +100,7 @@ class _InboxPage extends StatelessWidget {
 }
 
 class _MessageList extends StatelessWidget {
-  const _MessageList();
+  const new();
 
   @override
   Widget build(BuildContext context) {

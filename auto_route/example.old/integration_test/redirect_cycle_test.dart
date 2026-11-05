@@ -12,7 +12,7 @@ import 'support/app.dart';
 // https://github.com/flutter/flutter/issues/118061
 // Headless test: auto_route/test/guards/redirect_cycle_test.dart
 class _AppRouter extends RootStackRouter {
-  _AppRouter({this.guards = const [], required this.routes});
+  new({this.guards = const [], required this.routes});
 
   @override
   final List<AutoRouteGuard> guards;

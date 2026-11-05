@@ -8,7 +8,7 @@ import 'package:material_ui/material_ui.dart';
 /// [WidgetTester.restartAndRestore] rebuilds it from scratch with the saved
 /// restoration data; [router] is the router of the last start.
 class RestorableRouterApp extends StatefulWidget {
-  const RestorableRouterApp(this.buildRouter, {super.key});
+  const new(this.buildRouter, {super.key});
 
   final RootStackRouter Function() buildRouter;
 

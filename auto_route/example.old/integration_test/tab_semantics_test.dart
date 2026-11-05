@@ -103,7 +103,7 @@ enum _TabsKind { indexedStack, pageView, tabBar }
 _TabsKind _tabsKind = .indexedStack;
 
 class _TabsHostRoute extends PageRouteInfo<void> {
-  const _TabsHostRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_TabsHostRoute';
   static PageInfo page = PageInfo(
@@ -130,21 +130,21 @@ Widget _tabPage(String label) => Scaffold(
 );
 
 class _FirstTabRoute extends PageRouteInfo<void> {
-  const _FirstTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_FirstTabRoute';
   static PageInfo page = PageInfo(name, builder: (_) => _tabPage('First'));
 }
 
 class _SecondTabRoute extends PageRouteInfo<void> {
-  const _SecondTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_SecondTabRoute';
   static PageInfo page = PageInfo(name, builder: (_) => _tabPage('Second'));
 }
 
 class _ThirdTabRoute extends PageRouteInfo<void> {
-  const _ThirdTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_ThirdTabRoute';
   static PageInfo page = PageInfo(name, builder: (_) => _tabPage('Third'));

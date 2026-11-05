@@ -56,7 +56,7 @@ void main() {
 
 /// Shows [text] on a plain page.
 class _TextPage extends StatelessWidget {
-  const _TextPage(this.text);
+  const new(this.text);
 
   final String text;
 

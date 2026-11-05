@@ -87,7 +87,7 @@ _TabsKind _tabsKind = .indexedStack;
 final _secondRemovedNotifier = ValueNotifier<bool>(false);
 
 class _TabsHostRoute extends PageRouteInfo<void> {
-  const _TabsHostRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_TabsHostRoute';
   static PageInfo page = PageInfo(
@@ -116,7 +116,7 @@ class _TabsHostRoute extends PageRouteInfo<void> {
 }
 
 class _FirstTabRoute extends PageRouteInfo<void> {
-  const _FirstTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_FirstTabRoute';
   static PageInfo page = PageInfo(
@@ -126,7 +126,7 @@ class _FirstTabRoute extends PageRouteInfo<void> {
 }
 
 class _SecondTabRoute extends PageRouteInfo<void> {
-  const _SecondTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_SecondTabRoute';
   static PageInfo page = PageInfo(
@@ -136,7 +136,7 @@ class _SecondTabRoute extends PageRouteInfo<void> {
 }
 
 class _ThirdTabRoute extends PageRouteInfo<void> {
-  const _ThirdTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_ThirdTabRoute';
   static PageInfo page = PageInfo(
@@ -156,7 +156,7 @@ class _ThirdTabRoute extends PageRouteInfo<void> {
 // A tab page with a tap counter, the state the tabs must keep, and buttons
 // to the tabs beside it.
 class _CounterPage extends StatefulWidget {
-  const _CounterPage({required this.label, this.actions = const []});
+  const new({required this.label, this.actions = const []});
 
   final String label;
   final List<Widget> actions;

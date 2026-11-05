@@ -56,7 +56,7 @@ void main() {
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'HomeRoute';
   static PageInfo page = PageInfo(
@@ -66,14 +66,14 @@ class _HomeRoute extends PageRouteInfo<void> {
 }
 
 class _EditorRoute extends PageRouteInfo<void> {
-  const _EditorRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'EditorRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const _EditorPage());
 }
 
 class _EditorPage extends StatelessWidget {
-  const _EditorPage();
+  const new();
 
   @override
   Widget build(BuildContext context) {

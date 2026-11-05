@@ -6,7 +6,7 @@ import 'package:example/web_demo/router/web_router.gr.dart';
 import 'package:example/web_demo/web_main.dart';
 
 class AuthGuard extends AutoRouteGuard {
-  AuthGuard(this.authService);
+  new(this.authService);
   final AuthService authService;
 
   @override

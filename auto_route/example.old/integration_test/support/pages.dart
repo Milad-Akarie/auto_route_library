@@ -7,7 +7,7 @@ import 'package:material_ui/material_ui.dart';
 
 /// Shows the route's name, so a test finds the page on screen by its name.
 class TestPage extends StatelessWidget {
-  const TestPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ final routeAwareEvents = <String>[];
 /// Shows the route's name like [TestPage], and records in [routeAwareEvents]
 /// each [AutoRouteAware] call it gets.
 class RouteAwarePage extends StatefulWidget {
-  const RouteAwarePage({super.key});
+  const new({super.key});
 
   @override
   State<RouteAwarePage> createState() => _RouteAwarePageState();
@@ -64,28 +64,28 @@ class _RouteAwarePageState extends State<RouteAwarePage>
 }
 
 class FirstRoute extends PageRouteInfo<void> {
-  const FirstRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'FirstRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const TestPage());
 }
 
 class SecondRoute extends PageRouteInfo<void> {
-  const SecondRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'SecondRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const TestPage());
 }
 
 class ThirdRoute extends PageRouteInfo<void> {
-  const ThirdRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'ThirdRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const TestPage());
 }
 
 class FourthRoute extends PageRouteInfo<void> {
-  const FourthRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'FourthRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const TestPage());
@@ -93,7 +93,7 @@ class FourthRoute extends PageRouteInfo<void> {
 
 /// Hosts a nested stack router under an app bar with a back button.
 class SecondHostRoute extends PageRouteInfo<void> {
-  const SecondHostRoute({List<PageRouteInfo>? children})
+  const new({List<PageRouteInfo>? children})
     : super(name, initialChildren: children);
 
   static const String name = 'SecondHostRoute';
@@ -107,14 +107,14 @@ class SecondHostRoute extends PageRouteInfo<void> {
 }
 
 class SecondNested1Route extends PageRouteInfo<void> {
-  const SecondNested1Route() : super(name);
+  const new() : super(name);
 
   static const String name = 'SecondNested1Route';
   static PageInfo page = PageInfo(name, builder: (_) => const TestPage());
 }
 
 class SecondNested3Route extends PageRouteInfo<void> {
-  const SecondNested3Route() : super(name);
+  const new() : super(name);
 
   static const String name = 'SecondNested3Route';
   static PageInfo page = PageInfo(name, builder: (_) => const TestPage());
@@ -122,7 +122,7 @@ class SecondNested3Route extends PageRouteInfo<void> {
 
 /// Hosts the tabs given by its route's children.
 class TabsHostRoute extends PageRouteInfo<void> {
-  const TabsHostRoute({List<PageRouteInfo>? children})
+  const new({List<PageRouteInfo>? children})
     : super(name, initialChildren: children);
 
   static const String name = 'TabsHostRoute';
@@ -130,7 +130,7 @@ class TabsHostRoute extends PageRouteInfo<void> {
 }
 
 class Tab1Route extends PageRouteInfo<void> {
-  const Tab1Route() : super(name);
+  const new() : super(name);
 
   static const String name = 'Tab1Route';
   static PageInfo page = PageInfo(name, builder: (_) => const TestPage());
@@ -138,7 +138,7 @@ class Tab1Route extends PageRouteInfo<void> {
 
 /// Hosts a nested stack router with no chrome around it.
 class Tab2Route extends PageRouteInfo<void> {
-  const Tab2Route({List<PageRouteInfo>? children})
+  const new({List<PageRouteInfo>? children})
     : super(name, initialChildren: children);
 
   static const String name = 'Tab2Route';
@@ -146,14 +146,14 @@ class Tab2Route extends PageRouteInfo<void> {
 }
 
 class Tab2Nested1Route extends PageRouteInfo<void> {
-  const Tab2Nested1Route() : super(name);
+  const new() : super(name);
 
   static const String name = 'Tab2Nested1Route';
   static PageInfo page = PageInfo(name, builder: (_) => const TestPage());
 }
 
 class Tab2Nested2Route extends PageRouteInfo<void> {
-  const Tab2Nested2Route() : super(name);
+  const new() : super(name);
 
   static const String name = 'Tab2Nested2Route';
   static PageInfo page = PageInfo(name, builder: (_) => const TestPage());

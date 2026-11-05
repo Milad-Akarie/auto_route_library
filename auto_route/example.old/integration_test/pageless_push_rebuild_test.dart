@@ -44,7 +44,7 @@ void main() {
 }
 
 class _HomePage extends StatefulWidget {
-  const _HomePage();
+  const new();
 
   @override
   State<_HomePage> createState() => _HomePageState();

@@ -8,7 +8,7 @@ import 'package:material_ui/material_ui.dart';
 
 @AutoRouterConfig(generateForDir: ['lib/web_demo'])
 class WebAppRouter extends RootStackRouter {
-  WebAppRouter(this.authService);
+  new(this.authService);
   AuthService authService;
 
   @override
@@ -70,7 +70,7 @@ class WebAppRouter extends RootStackRouter {
 // An example page, kept as written so the example shows the same code.
 // ignore: avoid-unnecessary-stateful-widgets
 class MainWebPage extends StatefulWidget {
-  const MainWebPage({
+  const new({
     super.key,
     this.navigate,
     this.showUserPosts,
@@ -144,7 +144,7 @@ class _MainWebPageState extends State<MainWebPage> {
 }
 
 class QueryPage extends StatelessWidget {
-  const QueryPage({
+  const new({
     super.key,
     @pathParam this.id = '-',
   });
@@ -162,7 +162,7 @@ class QueryPage extends StatelessWidget {
 
 @RoutePage()
 class UserProfilePage extends StatefulWidget {
-  const UserProfilePage({
+  const new({
     super.key,
     this.navigate,
     @PathParam('userID') this.userId = -1,
@@ -238,7 +238,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 // An example page, kept as written so the example shows the same code.
 // ignore: avoid-unnecessary-stateful-widgets
 class UserPostsPage extends StatefulWidget {
-  const UserPostsPage({
+  const new({
     super.key,
     @PathParam.inherit('userID') required this.id,
   });
@@ -293,7 +293,7 @@ class UserPostsPageState extends State<UserPostsPage> {
 // An example page, kept as written so the example shows the same code.
 // ignore: avoid-unnecessary-stateful-widgets
 class UserPage extends StatefulWidget {
-  const UserPage({
+  const new({
     super.key,
     @PathParam('userID') this.id = -1,
     @QueryParam() this.query,
@@ -330,7 +330,7 @@ class UserPageState extends State<UserPage> {
 
 @RoutePage()
 class NotFoundScreen extends StatelessWidget {
-  const NotFoundScreen({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -347,7 +347,7 @@ class NotFoundScreen extends StatelessWidget {
 
 @RoutePage()
 class UserAllPostsPage extends StatelessWidget {
-  const UserAllPostsPage({super.key, this.navigate});
+  const new({super.key, this.navigate});
   final VoidCallback? navigate;
 
   @override
@@ -385,7 +385,7 @@ class UserAllPostsPage extends StatelessWidget {
 
 @RoutePage()
 class UserFavoritePostsPage extends StatelessWidget {
-  const UserFavoritePostsPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

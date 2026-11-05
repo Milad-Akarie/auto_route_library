@@ -78,7 +78,7 @@ Future<void> _waitForPopAttempt(WidgetTester tester) async {
 }
 
 class _FormRoute extends PageRouteInfo<void> {
-  const _FormRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'FormRoute';
   static PageInfo page = PageInfo(
@@ -94,7 +94,7 @@ class _FormRoute extends PageRouteInfo<void> {
 }
 
 class _LegacyFormRoute extends PageRouteInfo<void> {
-  const _LegacyFormRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'LegacyFormRoute';
   static PageInfo page = PageInfo(

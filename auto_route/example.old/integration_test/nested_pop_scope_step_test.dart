@@ -119,7 +119,7 @@ const _backToChoice = 'Change ID type';
 var _popAttempts = 0;
 
 class _OnboardingRoute extends PageRouteInfo<void> {
-  const _OnboardingRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'OnboardingRoute';
   static PageInfo page = PageInfo(
@@ -132,21 +132,21 @@ class _OnboardingRoute extends PageRouteInfo<void> {
 }
 
 class _WelcomeStepRoute extends PageRouteInfo<void> {
-  const _WelcomeStepRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'WelcomeStepRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Text(name));
 }
 
 class _IdStepRoute extends PageRouteInfo<void> {
-  const _IdStepRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'IdStepRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const _IdStep());
 }
 
 class _IdStep extends StatefulWidget {
-  const _IdStep();
+  const new();
 
   @override
   State<_IdStep> createState() => _IdStepState();

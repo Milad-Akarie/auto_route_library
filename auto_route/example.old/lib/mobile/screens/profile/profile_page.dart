@@ -8,7 +8,7 @@ import 'package:material_ui/material_ui.dart';
 
 @RoutePage()
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  const new({super.key});
 
   @override
   ProfilePageState createState() => .new();

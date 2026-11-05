@@ -7,7 +7,7 @@ import 'package:material_ui/material_ui.dart';
 // An example page, kept as written so the example shows the same code.
 // ignore: avoid-unnecessary-stateful-widgets
 class BookListScreen extends StatefulWidget {
-  const BookListScreen({super.key});
+  const new({super.key});
 
   @override
   State<BookListScreen> createState() => _BookListScreenState();

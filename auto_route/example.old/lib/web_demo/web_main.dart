@@ -6,7 +6,7 @@ void main() {
 }
 
 class App extends StatefulWidget {
-  const App({super.key});
+  const new({super.key});
 
   @override
   AppState createState() => .new();
@@ -46,7 +46,7 @@ class AppState extends State<App> {
 }
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

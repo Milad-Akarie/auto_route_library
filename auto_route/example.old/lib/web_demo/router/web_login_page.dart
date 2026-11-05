@@ -4,7 +4,7 @@ import 'package:material_ui/material_ui.dart';
 
 @RoutePage()
 class WebLoginPage extends StatelessWidget {
-  const WebLoginPage({super.key, this.onResult});
+  const new({super.key, this.onResult});
   final ValueChanged<bool>? onResult;
 
   @override

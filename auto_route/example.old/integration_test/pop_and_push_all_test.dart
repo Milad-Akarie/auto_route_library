@@ -59,7 +59,7 @@ void main() {
 }
 
 class _SplashRoute extends PageRouteInfo<void> {
-  const _SplashRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'SplashRoute';
   static PageInfo page = PageInfo(
@@ -69,14 +69,14 @@ class _SplashRoute extends PageRouteInfo<void> {
 }
 
 class _AppRouterRoute extends PageRouteInfo<void> {
-  const _AppRouterRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'app_router';
   static PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'HomeRoute';
   static PageInfo page = PageInfo(
@@ -86,7 +86,7 @@ class _HomeRoute extends PageRouteInfo<void> {
 }
 
 class _TestRoute extends PageRouteInfo<void> {
-  const _TestRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'TestRoute';
   static PageInfo page = PageInfo(

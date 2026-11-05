@@ -80,7 +80,7 @@ void main() {
 const _usersShell = 'UsersSellRoute';
 
 class _BootRoute extends PageRouteInfo<void> {
-  const _BootRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'BootRoute';
   static PageInfo page = PageInfo(
@@ -90,7 +90,7 @@ class _BootRoute extends PageRouteInfo<void> {
 }
 
 class _DashboardRoute extends PageRouteInfo<void> {
-  const _DashboardRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'DashboardRoute';
   static PageInfo page = PageInfo(
@@ -100,7 +100,7 @@ class _DashboardRoute extends PageRouteInfo<void> {
 }
 
 class _MetricsRoute extends PageRouteInfo<void> {
-  const _MetricsRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'MetricsRoute';
   static PageInfo page = PageInfo(
@@ -110,7 +110,7 @@ class _MetricsRoute extends PageRouteInfo<void> {
 }
 
 class _UsersRoute extends PageRouteInfo<void> {
-  const _UsersRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'UsersRoute';
   static PageInfo page = PageInfo(
@@ -120,7 +120,7 @@ class _UsersRoute extends PageRouteInfo<void> {
 }
 
 class _UserRoute extends PageRouteInfo<int> {
-  const _UserRoute({required int userId}) : super(name, args: userId);
+  const new({required int userId}) : super(name, args: userId);
 
   static const String name = 'UserRoute';
   static PageInfo page = PageInfo(

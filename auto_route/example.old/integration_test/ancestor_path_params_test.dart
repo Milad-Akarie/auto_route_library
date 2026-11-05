@@ -65,14 +65,14 @@ void main() {
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(pageName);
+  const new() : super(pageName);
 
   static const String pageName = 'HomeRoute';
   static PageInfo page = PageInfo(pageName, builder: (_) => const Text('Home'));
 }
 
 class _BookShellRoute extends PageRouteInfo<void> {
-  const _BookShellRoute({List<PageRouteInfo>? children})
+  const new({List<PageRouteInfo>? children})
     : super(pageName, initialChildren: children);
 
   static const String pageName = 'BookShellRoute';
@@ -80,7 +80,7 @@ class _BookShellRoute extends PageRouteInfo<void> {
 }
 
 class _BookRoute extends PageRouteInfo<void> {
-  _BookRoute({required int id, int? someQueryParam})
+  new({required int id, int? someQueryParam})
     : super(
         pageName,
         rawPathParams: {'id': id},

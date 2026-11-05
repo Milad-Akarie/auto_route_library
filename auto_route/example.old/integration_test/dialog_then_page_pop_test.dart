@@ -48,7 +48,7 @@ void main() {
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'HomeRoute';
   static PageInfo page = PageInfo(
@@ -58,14 +58,14 @@ class _HomeRoute extends PageRouteInfo<void> {
 }
 
 class _FormRoute extends PageRouteInfo<void> {
-  const _FormRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'FormRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const _FormPage());
 }
 
 class _FormPage extends StatelessWidget {
-  const _FormPage();
+  const new();
 
   // Stands for the reporter's cubit call that takes a while.
   Future<void> _callAsyncCubitMethod() =>

@@ -77,7 +77,7 @@ void main() {
 }
 
 class _RedirectingRoute extends PageRouteInfo<void> {
-  _RedirectingRoute(super.name, {required String redirectTo})
+  new(super.name, {required String redirectTo})
     : super(rawQueryParams: {'redirectTo': redirectTo});
 
   static PageInfo pageFor(String name) => .new(

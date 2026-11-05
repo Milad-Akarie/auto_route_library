@@ -60,7 +60,7 @@ void main() {
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'HomeRoute';
   static PageInfo page = PageInfo(
@@ -70,7 +70,7 @@ class _HomeRoute extends PageRouteInfo<void> {
 }
 
 class _FormRoute extends PageRouteInfo<void> {
-  const _FormRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'FormRoute';
   static PageInfo page = PageInfo(
@@ -80,14 +80,14 @@ class _FormRoute extends PageRouteInfo<void> {
 }
 
 class _InfoRouteArgs {
-  const _InfoRouteArgs({this.key, required this.title});
+  const new({this.key, required this.title});
 
   final Key? key;
   final String title;
 }
 
 class _InfoRoute extends PageRouteInfo<_InfoRouteArgs> {
-  _InfoRoute({Key? key, required String title})
+  new({Key? key, required String title})
     : super(
         name,
         args: _InfoRouteArgs(key: key, title: title),

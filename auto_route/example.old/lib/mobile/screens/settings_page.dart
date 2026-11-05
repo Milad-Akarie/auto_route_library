@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 
 @RoutePage(name: 'SettingsTab')
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({
+  const new({
     super.key,
     @pathParam this.tab = 'none',
     @queryParam this.query = 'none',

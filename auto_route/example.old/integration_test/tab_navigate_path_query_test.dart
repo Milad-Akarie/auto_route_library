@@ -49,7 +49,7 @@ void main() {
 }
 
 class _DashboardRoute extends PageRouteInfo<void> {
-  const _DashboardRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_DashboardRoute';
   static PageInfo page = PageInfo(
@@ -60,7 +60,7 @@ class _DashboardRoute extends PageRouteInfo<void> {
 
 @immutable
 class _SettingsTabArgs {
-  const _SettingsTabArgs({this.query = 'none'});
+  const new({this.query = 'none'});
 
   final String query;
 
@@ -74,7 +74,7 @@ class _SettingsTabArgs {
 
 // What the generator makes for a page with `@queryParam String query = 'none'`.
 class _SettingsTab extends PageRouteInfo<_SettingsTabArgs> {
-  _SettingsTab({String query = 'none'})
+  new({String query = 'none'})
     : super(
         name,
         args: _SettingsTabArgs(query: query),
@@ -96,7 +96,7 @@ class _SettingsTab extends PageRouteInfo<_SettingsTabArgs> {
 }
 
 class _SettingsPage extends StatelessWidget {
-  const _SettingsPage({required this.query});
+  const new({required this.query});
 
   final String query;
 

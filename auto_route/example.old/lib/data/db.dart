@@ -1,7 +1,7 @@
 import 'package:cupertino_ui/cupertino_ui.dart';
 
 class Book {
-  const Book({
+  const new({
     required this.id,
     required this.name,
     required this.genre,
@@ -31,7 +31,7 @@ class BooksDB {
 }
 
 class BooksDBProvider extends InheritedWidget {
-  BooksDBProvider({super.key, required super.child});
+  new({super.key, required super.child});
   final booksDb = BooksDB();
 
   @override
@@ -79,7 +79,7 @@ class UsersDB {
 }
 
 class User {
-  User({
+  new({
     required this.id,
     required this.name,
     required this.email,
@@ -92,7 +92,7 @@ class User {
 }
 
 class UsersDBProvider extends InheritedWidget {
-  UsersDBProvider({super.key, required super.child});
+  new({super.key, required super.child});
   final usersDB = UsersDB();
 
   @override

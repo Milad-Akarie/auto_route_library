@@ -142,7 +142,7 @@ void main() {
 }
 
 class _DashboardRoute extends PageRouteInfo<void> {
-  const _DashboardRoute({List<PageRouteInfo>? children})
+  const new({List<PageRouteInfo>? children})
     : super(name, initialChildren: children);
 
   static const String name = '_DashboardRoute';
@@ -150,7 +150,7 @@ class _DashboardRoute extends PageRouteInfo<void> {
 }
 
 class _DashboardTabsRoute extends PageRouteInfo<void> {
-  const _DashboardTabsRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_DashboardTabsRoute';
   static PageInfo page = PageInfo(
@@ -161,7 +161,7 @@ class _DashboardTabsRoute extends PageRouteInfo<void> {
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_HomeRoute';
   static PageInfo page = PageInfo(
@@ -171,7 +171,7 @@ class _HomeRoute extends PageRouteInfo<void> {
 }
 
 class _ProfileRoute extends PageRouteInfo<void> {
-  const _ProfileRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_ProfileRoute';
   static PageInfo page = PageInfo(

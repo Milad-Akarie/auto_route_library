@@ -1,7 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 class SingleFieldPage extends StatefulWidget {
-  const SingleFieldPage({
+  const new({
     super.key,
     this.message = '',
     this.willPopMessage = '',

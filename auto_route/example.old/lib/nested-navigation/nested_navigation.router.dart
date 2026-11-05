@@ -7,7 +7,7 @@ void main() {
 }
 
 class NestedNavigationApp extends StatelessWidget {
-  NestedNavigationApp({super.key});
+  new({super.key});
 
   final nestedRouter = NestedRouter();
 
@@ -36,7 +36,7 @@ class NestedRouter extends RootStackRouter {
 
 @RoutePage()
 class HostScreen extends StatelessWidget {
-  const HostScreen({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +55,7 @@ class HostScreen extends StatelessWidget {
 
 @RoutePage()
 class FirstScreen extends StatelessWidget {
-  const FirstScreen({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +72,7 @@ class FirstScreen extends StatelessWidget {
 
 @RoutePage()
 class SecondScreen extends StatelessWidget {
-  const SecondScreen({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

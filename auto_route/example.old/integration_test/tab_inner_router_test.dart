@@ -78,7 +78,7 @@ _TabsKind _tabsKind = .indexedStack;
 final _extraNotifier = ValueNotifier<bool>(false);
 
 class _HostRoute extends PageRouteInfo<void> {
-  const _HostRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_HostRoute';
   static PageInfo page = PageInfo(
@@ -109,14 +109,14 @@ class _HostRoute extends PageRouteInfo<void> {
 }
 
 class _NestedHostRoute extends PageRouteInfo<void> {
-  const _NestedHostRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_NestedHostRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
 }
 
 class _NestedFirstRoute extends PageRouteInfo<void> {
-  const _NestedFirstRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_NestedFirstRoute';
   static PageInfo page = PageInfo(
@@ -141,7 +141,7 @@ class _NestedFirstRoute extends PageRouteInfo<void> {
 }
 
 class _NestedSecondRoute extends PageRouteInfo<void> {
-  const _NestedSecondRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_NestedSecondRoute';
   static PageInfo page = PageInfo(
@@ -178,7 +178,7 @@ class _NestedSecondRoute extends PageRouteInfo<void> {
 }
 
 class _ExtraRoute extends PageRouteInfo<void> {
-  const _ExtraRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_ExtraRoute';
   static PageInfo page = PageInfo(
@@ -188,7 +188,7 @@ class _ExtraRoute extends PageRouteInfo<void> {
 }
 
 class _SecondRoute extends PageRouteInfo<void> {
-  const _SecondRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_SecondRoute';
   static PageInfo page = PageInfo(

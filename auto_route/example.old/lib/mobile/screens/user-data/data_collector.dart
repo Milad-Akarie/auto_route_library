@@ -12,7 +12,7 @@ class SettingsState extends ChangeNotifier {
 }
 
 class UserData {
-  const UserData({
+  const new({
     this.name,
     this.favoriteBook,
   });

@@ -67,7 +67,7 @@ Route<T> _modalSheetBuilder<T>(
 }
 
 class _First1Route extends PageRouteInfo<void> {
-  const _First1Route() : super(name);
+  const new() : super(name);
 
   static const String name = 'First1Route';
   static PageInfo page = PageInfo(
@@ -86,7 +86,7 @@ class _First1Route extends PageRouteInfo<void> {
 }
 
 class _Modal1Route extends PageRouteInfo<void> {
-  const _Modal1Route() : super(name);
+  const new() : super(name);
 
   static const String name = 'Modal1Route';
   static PageInfo page = PageInfo(

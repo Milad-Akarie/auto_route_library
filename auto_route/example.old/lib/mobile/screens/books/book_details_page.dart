@@ -4,7 +4,7 @@ import 'package:material_ui/material_ui.dart';
 
 @RoutePage(name: 'BookDetailsRoute')
 class BookDetailsPage extends StatefulWidget {
-  const BookDetailsPage({
+  const new({
     super.key,
     @pathParam this.id = -1,
   });

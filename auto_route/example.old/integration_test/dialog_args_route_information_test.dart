@@ -9,7 +9,7 @@ import 'support/app.dart';
 
 /// An argument that, like the reporter's ProfileEntity, has no toJson.
 class _Profile {
-  const _Profile(this.name);
+  const new(this.name);
   final String name;
 }
 

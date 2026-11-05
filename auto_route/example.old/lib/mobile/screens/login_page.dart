@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 @RoutePage()
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key, this.showBackButton = true});
+  const new({super.key, this.showBackButton = true});
   final bool showBackButton;
 
   @override

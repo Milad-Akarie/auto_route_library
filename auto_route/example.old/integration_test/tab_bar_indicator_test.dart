@@ -103,7 +103,7 @@ void main() {
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_HomeRoute';
   static PageInfo page = PageInfo(
@@ -150,21 +150,21 @@ PageInfo _listPage(String name) => .new(
 );
 
 class _AllNotesTabRoute extends PageRouteInfo<void> {
-  const _AllNotesTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_AllNotesTabRoute';
   static PageInfo page = _listPage(name);
 }
 
 class _PinnedTabRoute extends PageRouteInfo<void> {
-  const _PinnedTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_PinnedTabRoute';
   static PageInfo page = _listPage(name);
 }
 
 class _FoldersTabRoute extends PageRouteInfo<void> {
-  const _FoldersTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_FoldersTabRoute';
   static PageInfo page = _listPage(name);

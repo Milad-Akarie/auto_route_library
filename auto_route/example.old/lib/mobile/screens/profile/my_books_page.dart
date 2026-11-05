@@ -6,7 +6,7 @@ import 'package:material_ui/material_ui.dart';
 
 @RoutePage()
 class MyBooksPage extends StatelessWidget {
-  const MyBooksPage({super.key, @queryParam this.filter = 'none2'});
+  const new({super.key, @queryParam this.filter = 'none2'});
   final String? filter;
 
   @override

@@ -75,7 +75,7 @@ PageInfo _page(String name) => .new(
 );
 
 class _ExperiencePage extends StatelessWidget {
-  const _ExperiencePage({required this.replace});
+  const new({required this.replace});
 
   final bool replace;
 

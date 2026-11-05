@@ -54,7 +54,7 @@ void main() {
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(pageName);
+  const new() : super(pageName);
 
   static const String pageName = 'HomeRoute';
   static PageInfo page = PageInfo(

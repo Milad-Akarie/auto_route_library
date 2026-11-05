@@ -87,7 +87,7 @@ final _dashboardPage = PageInfo(
 );
 
 class _DashboardPage extends StatelessWidget {
-  const _DashboardPage();
+  const new();
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +106,7 @@ class _DashboardPage extends StatelessWidget {
 }
 
 class _PushRecorder extends AutoRouterObserver {
-  _PushRecorder(this.pushes);
+  new(this.pushes);
 
   final List<String> pushes;
 

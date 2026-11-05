@@ -8,14 +8,14 @@ import 'package:material_ui/material_ui.dart';
 
 @RoutePage()
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const new({super.key});
 
   @override
   HomePageState createState() => .new();
 }
 
 class RouteDestination {
-  const RouteDestination({
+  const new({
     required this.route,
     required this.icon,
     required this.label,
@@ -143,7 +143,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
 @RoutePage()
 class WelcomeScreen extends StatelessWidget {
-  const WelcomeScreen({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

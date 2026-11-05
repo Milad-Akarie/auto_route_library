@@ -63,14 +63,14 @@ void main() {
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(pageName);
+  const new() : super(pageName);
 
   static const String pageName = 'HomeRoute';
   static PageInfo page = PageInfo(pageName, builder: (_) => const Text('Home'));
 }
 
 class _ListDetailRouter extends PageRouteInfo<void> {
-  const _ListDetailRouter({List<PageRouteInfo>? children})
+  const new({List<PageRouteInfo>? children})
     : super(pageName, initialChildren: children);
 
   static const String pageName = 'ListDetailRouter';
@@ -78,7 +78,7 @@ class _ListDetailRouter extends PageRouteInfo<void> {
 }
 
 class _ListDetailRoute extends PageRouteInfo<void> {
-  _ListDetailRoute({required String id, List<PageRouteInfo>? children})
+  new({required String id, List<PageRouteInfo>? children})
     : super(pageName, rawPathParams: {'id': id}, initialChildren: children);
 
   static const String pageName = 'ListDetailRoute';
@@ -94,7 +94,7 @@ class _ListDetailRoute extends PageRouteInfo<void> {
 }
 
 class _CreateListItemsRoute extends PageRouteInfo<void> {
-  _CreateListItemsRoute({required String familyId})
+  new({required String familyId})
     : super(pageName, rawPathParams: {'familyId': familyId});
 
   static const String pageName = 'CreateListItemsRoute';

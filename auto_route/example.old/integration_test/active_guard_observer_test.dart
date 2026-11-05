@@ -101,7 +101,7 @@ PageInfo _page(String name) => .new(name, builder: (_) => _TextPage(name));
 
 /// Shows [text] on a plain page.
 class _TextPage extends StatelessWidget {
-  const _TextPage(this.text);
+  const new(this.text);
 
   final String text;
 

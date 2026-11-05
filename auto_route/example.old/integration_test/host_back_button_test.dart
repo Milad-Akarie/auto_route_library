@@ -77,7 +77,7 @@ void main() {
 /// Hosts a nested stack router under a row with a BackButton and a
 /// CloseButton, as in the #2309 report.
 class _ButtonsHostRoute extends PageRouteInfo<void> {
-  const _ButtonsHostRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'ButtonsHostRoute';
   static PageInfo page = PageInfo(

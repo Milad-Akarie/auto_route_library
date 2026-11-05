@@ -6,7 +6,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 
 class UserDataPage extends StatelessWidget {
-  const UserDataPage({super.key, this.onResult});
+  const new({super.key, this.onResult});
   // The generated router copies this type into its args class.
   // ignore: inference_failure_on_function_return_type
   final Function(UserData data)? onResult;

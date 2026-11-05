@@ -68,14 +68,14 @@ void main() {
 }
 
 class _DetailArgs {
-  const _DetailArgs(this.counter);
+  const new(this.counter);
 
   final int counter;
 }
 
 /// Shows [text] on a plain page.
 class _TextPage extends StatelessWidget {
-  const _TextPage(this.text);
+  const new(this.text);
 
   final String text;
 

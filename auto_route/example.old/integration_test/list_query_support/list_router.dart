@@ -21,7 +21,7 @@ class ListRouter extends RootStackRouter {
 
 @RoutePage()
 class ListHomeView extends StatelessWidget {
-  const ListHomeView({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) => const Scaffold(body: Text('Home'));
@@ -30,7 +30,7 @@ class ListHomeView extends StatelessWidget {
 // A page whose query params are lists, as in upstream issue 2061.
 @RoutePage()
 class ItemsView extends StatelessWidget {
-  const ItemsView({
+  const new({
     super.key,
     @QueryParam() this.ids,
     @QueryParam() this.prices,
@@ -58,7 +58,7 @@ class ItemsView extends StatelessWidget {
 // flutter/flutter#108437.
 @RoutePage()
 class TagsView extends StatelessWidget {
-  const TagsView({
+  const new({
     super.key,
     @QueryParam() this.tags = const {},
     @QueryParam() this.ids,
