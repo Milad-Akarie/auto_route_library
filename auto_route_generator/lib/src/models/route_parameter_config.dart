@@ -174,7 +174,7 @@ class FunctionParamConfig extends ParamConfig {
   factory FunctionParamConfig.fromJson(Map<String, dynamic> map) {
     final params = <ParamConfig>[];
     if (map['params'] != null) {
-      for (final pJson in map['params'] as List<dynamic>) {
+      for (final pJson in map['params'] as List<Object?>) {
         params.add(ParamConfig.fromJson(pJson as Map<String, dynamic>));
       }
     }

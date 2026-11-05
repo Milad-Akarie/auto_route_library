@@ -21,7 +21,7 @@ class RouterConfig {
       usesPartBuilder: map['usesPartBuilder'] as bool,
       path: map['path'] as String,
       cacheHash: map['cacheHash'] as int?,
-      generateForDir: (map['generateForDir'] as List<dynamic>).cast<String>(),
+      generateForDir: (map['generateForDir'] as List<Object?>).cast(),
       argsEquality: map['argsEquality'] as bool,
     );
   }

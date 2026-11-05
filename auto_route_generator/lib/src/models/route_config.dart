@@ -23,21 +23,21 @@ class RouteConfig {
   factory RouteConfig.fromJson(Map<String, dynamic> map) {
     final pathParams = <PathParamConfig>[];
     if (map['pathParams'] != null) {
-      for (final arg in map['pathParams'] as List<dynamic>) {
+      for (final arg in map['pathParams'] as List<Object?>) {
         pathParams.add(PathParamConfig.fromJson(arg as Map<String, dynamic>));
       }
     }
 
     final parameters = <ParamConfig>[];
     if (map['parameters'] != null) {
-      for (final arg in map['parameters'] as List<dynamic>) {
+      for (final arg in map['parameters'] as List<Object?>) {
         parameters.add(ParamConfig.fromJson(arg as Map<String, dynamic>));
       }
     }
 
     return RouteConfig(
       typeParameters: [
-        for (final p in map['typeParameters'] as List<dynamic>? ?? const [])
+        for (final p in map['typeParameters'] as List<Object?>? ?? const [])
           RouteTypeParameter.fromJson(p as Map<String, dynamic>),
       ],
       name: map['name'] as String?,

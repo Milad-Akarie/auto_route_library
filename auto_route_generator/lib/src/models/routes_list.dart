@@ -9,7 +9,7 @@ class RoutesList {
   factory RoutesList.fromJson(Map<String, dynamic> map) {
     return RoutesList(
       routes: List.unmodifiable(
-        (map['routes'] as List<dynamic>).map((e) => RouteConfig.fromJson(e as Map<String, dynamic>)),
+        (map['routes'] as List<Object?>).map((e) => RouteConfig.fromJson(e as Map<String, dynamic>)),
       ),
       inputPath: map['inputPath'] as String,
       inputHash: map['inputHash'] as int?,
@@ -28,7 +28,7 @@ class RoutesList {
   /// Serializes this instance to a JSON object.
   Map<String, dynamic> toJson() {
     return {
-      'routes': List<dynamic>.unmodifiable(routes.map((e) => e.toJson())),
+      'routes': List<Object?>.unmodifiable(routes.map((e) => e.toJson())),
       'inputPath': inputPath,
       'inputHash': inputHash,
     };

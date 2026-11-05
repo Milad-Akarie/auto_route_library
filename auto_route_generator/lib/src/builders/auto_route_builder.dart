@@ -21,7 +21,7 @@ final routesCacheFile = File('.dart_tool/build/cache/auto_routes_cache.json');
 final _cacheResource = Resource<Map<String, RoutesList>>(() async {
   final cachedRes = <String, RoutesList>{};
   final jsonRes = jsonDecode(await routesCacheFile.readAsString());
-  for (final json in jsonRes as List<dynamic>) {
+  for (final json in jsonRes as List<Object?>) {
     final generated = RoutesList.fromJson(json as Map<String, dynamic>);
     cachedRes[generated.inputPath] = generated;
   }
