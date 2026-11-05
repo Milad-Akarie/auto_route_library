@@ -107,15 +107,15 @@ class MainWebPage extends StatelessWidget {
             Padding(
               padding: const .symmetric(vertical: 16),
               child: ElevatedButton(
-                onPressed: () async {
-                  await context.pushRoute(
+                onPressed: () => unawaited(
+                  context.pushRoute(
                     UserRoute(
                       id: 2,
                       query: const ['value1', 'value2'],
                       fragment: 'frag',
                     ),
-                  );
-                },
+                  ),
+                ),
                 child: const Text('Navigate to user/2'),
               ),
             ),

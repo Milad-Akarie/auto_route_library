@@ -69,7 +69,25 @@ class _FormPage extends StatelessWidget {
 
   // Stands for the reporter's cubit call that takes a while.
   Future<void> _callAsyncCubitMethod() =>
-      Future.delayed(const Duration(milliseconds: 500));
+      .delayed(const Duration(milliseconds: 500));
+
+  Future<void> _closeForm(BuildContext context) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => Dialog(
+        child: ElevatedButton(
+          onPressed: () => context.router.maybePop(true),
+          child: const Text('Confirm'),
+        ),
+      ),
+    );
+
+    unawaited(_callAsyncCubitMethod());
+
+    if (result == true && context.mounted) {
+      unawaited(context.router.maybePop(true));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,23 +95,7 @@ class _FormPage extends StatelessWidget {
       body: SafeArea(
         child: ElevatedButton(
           child: const Text('Close form'),
-          onPressed: () async {
-            final result = await showDialog<bool>(
-              context: context,
-              builder: (context) => Dialog(
-                child: ElevatedButton(
-                  onPressed: () => context.router.maybePop(true),
-                  child: const Text('Confirm'),
-                ),
-              ),
-            );
-
-            unawaited(_callAsyncCubitMethod());
-
-            if (result == true && context.mounted) {
-              unawaited(context.router.maybePop(true));
-            }
-          },
+          onPressed: () => unawaited(_closeForm(context)),
         ),
       ),
     );

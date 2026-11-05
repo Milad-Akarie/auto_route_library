@@ -57,31 +57,38 @@ void main() {
 class _DetailPage extends StatelessWidget {
   const new();
 
+  /// Opens a dialog whose button closes it and then navigates with the page's
+  /// controller: the dialog's own context is gone once it pops.
+  Future<void> _openDialog(BuildContext context) {
+    final controller = RouterScope.of(context).controller;
+    return showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        actions: [
+          TextButton(
+            onPressed: () =>
+                unawaited(_confirmDelete(controller, dialogContext)),
+            child: const Text('Confirm'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _confirmDelete(
+    RoutingController controller,
+    BuildContext dialogContext,
+  ) async {
+    await dialogContext.maybePop();
+    unawaited(controller.navigate(const NamedRoute('ListRoute')));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: TextButton(
-          onPressed: () => showDialog<void>(
-            context: context,
-            builder: (dialogContext) => AlertDialog(
-              actions: [
-                TextButton(
-                  onPressed: () async {
-                    await dialogContext.maybePop();
-                    // The page's context: the dialog's is gone once it pops.
-                    // ignore: use-closest-build-context
-                    if (context.mounted) {
-                      unawaited(
-                        context.navigateTo(const NamedRoute('ListRoute')),
-                      );
-                    }
-                  },
-                  child: const Text('Confirm'),
-                ),
-              ],
-            ),
-          ),
+          onPressed: () => unawaited(_openDialog(context)),
           child: const Text('Delete'),
         ),
       ),
