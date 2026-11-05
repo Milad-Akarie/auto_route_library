@@ -152,7 +152,7 @@ class RouteMatch<T> {
   List<String> allSegments({bool includeEmpty = false}) => [
     if (segments.isEmpty && includeEmpty) '',
     ...segments,
-    if (hasChildren) ...children!.last.allSegments(includeEmpty: includeEmpty),
+    if (children case [..., final last]) ...last.allSegments(includeEmpty: includeEmpty),
   ];
 
   /// Joins all segments to a valid path
@@ -162,7 +162,7 @@ class RouteMatch<T> {
   /// e.g if we have = RouteMatch1[RouteMatch2[RouteMatch3]]
   /// the result is [RouteMatch1,RouteMatch2,RouteMatch3]
   List<RouteMatch<Object?>> get flattened {
-    return [this, if (hasChildren) ...children!.last.flattened];
+    return [this, if (children case [..., final last]) ...last.flattened];
   }
 
   /// Returns a new instance of [RouteMatch]

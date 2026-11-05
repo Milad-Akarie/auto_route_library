@@ -138,7 +138,7 @@ class PageRouteInfo<T extends Object?> {
   /// e.g if we have = Route1[Route2[Route3]]
   /// the result is [Route1,Route2,Route3]
   List<PageRouteInfo> get flattened {
-    return [this, if (hasChildren) ...initialChildren!.last.flattened];
+    return [this, if (initialChildren case [..., final last]) ...last.flattened];
   }
 
   /// Returns a new instance with the provided
