@@ -107,7 +107,8 @@ void main() {
   testWidgets(
     'navigate() to an open page whose guard overrides its children opens them',
     (tester) async {
-      var reset = false;
+      final reset = ValueNotifier(false);
+      addTearDown(reset.dispose);
       final router = RootStackRouter.build(
         routes: [
           AutoRoute(
@@ -115,7 +116,7 @@ void main() {
             path: '/',
             guards: [
               AutoRouteGuard.simple((resolver, _) {
-                if (reset) {
+                if (reset.value) {
                   resolver.overrideNext(children: [const _HomeRoute()]);
                 } else {
                   resolver.next();
@@ -129,7 +130,7 @@ void main() {
       await pumpRouterAppWithConfig(tester, router);
       expectTopPage(router, _HomeRoute.name);
 
-      reset = true;
+      reset.value = true;
       unawaited(
         router.navigate(const _DashboardRoute(children: [_ProfileRoute()])),
       );

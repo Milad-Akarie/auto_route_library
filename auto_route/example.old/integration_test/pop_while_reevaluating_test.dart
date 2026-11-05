@@ -82,11 +82,11 @@ void main() {
     'A dialog popped by a listener of the reevaluation stream stays closed '
     '(#1785)',
     (tester) async {
-      var isAppGuarded = false;
+      final isAppGuarded = ValueNotifier(false);
+      addTearDown(isAppGuarded.dispose);
       final settings = StreamController<bool>.broadcast();
       addTearDown(settings.close);
-      late final RootStackRouter router;
-      router = RootStackRouter.build(
+      final router = RootStackRouter.build(
         routes: [
           NamedRouteDef(
             name: 'HomeRoute',
@@ -94,7 +94,8 @@ void main() {
             guards: [
               AutoRouteGuard.simple((resolver, router) {
                 resolver.next();
-                if (isAppGuarded && !router.isRouteActive('AppGuardRoute')) {
+                if (isAppGuarded.value &&
+                    !router.isRouteActive('AppGuardRoute')) {
                   unawaited(router.push(const NamedRoute('AppGuardRoute')));
                 }
               }),
@@ -114,7 +115,7 @@ void main() {
         router,
         reevaluationNotifier: ReevaluateListenable.stream(settings.stream),
       );
-      isAppGuarded = true;
+      isAppGuarded.value = true;
       settings.add(true);
       await tester.pumpAndSettle();
       expect(router.stack.map((e) => e.routeData.name), [
@@ -126,7 +127,7 @@ void main() {
       });
       addTearDown(unlockListener.cancel);
 
-      isAppGuarded = false;
+      isAppGuarded.value = false;
       settings.add(false);
       await tester.pumpAndSettle();
 
