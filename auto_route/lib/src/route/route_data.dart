@@ -117,11 +117,12 @@ class RouteData<R> {
       if (orElse == null) {
         final messages = ['$T can not be null because the corresponding page has a required parameter'];
         if (_route.autoFilled) {
-          messages.add('${_route.name} is an auto created ancestor of target route ${_route.flattened.last.name}');
-          messages.add(
-            'This usually happens when you try to navigate to a route that is inside of a nested-router\nbefore adding the nested-router to the stack first',
-          );
-          messages.add('try navigating to ${_route.flattened.map((e) => e.name).join(' -> ')}');
+          messages
+            ..add('${_route.name} is an auto created ancestor of target route ${_route.flattened.last.name}')
+            ..add(
+              'This usually happens when you try to navigate to a route that is inside of a nested-router\nbefore adding the nested-router to the stack first',
+            )
+            ..add('try navigating to ${_route.flattened.map((e) => e.name).join(' -> ')}');
         }
         throw MissingRequiredParameterError('\n${messages.join('\n')}\n');
       }

@@ -174,14 +174,15 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<AutoLeadingButtonBuilder?>('builder', widget.builder));
-    properties.add(DiagnosticsProperty<NullableWidgetBuilder?>('nullableBuilder', widget._nullableBuilder));
-    properties.add(DiagnosticsProperty<bool>('showIfChildCanPop', widget.showIfChildCanPop));
-    properties.add(DiagnosticsProperty<bool>('ignorePagelessRoutes', widget.ignorePagelessRoutes));
-    properties.add(DiagnosticsProperty<bool>('showIfParentCanPop', widget._showIfParentCanPop));
-    properties.add(DiagnosticsProperty<Color?>('color', widget.color));
-    properties.add(DiagnosticsProperty<RouterScope>('scope', RouterScope.of(context)));
-    properties.add(DiagnosticsProperty<PagelessRoutesObserver>('pagelessRoutesObserver', _pagelessRoutesObserver));
+    properties
+      ..add(DiagnosticsProperty<AutoLeadingButtonBuilder?>('builder', widget.builder))
+      ..add(DiagnosticsProperty<NullableWidgetBuilder?>('nullableBuilder', widget._nullableBuilder))
+      ..add(DiagnosticsProperty<bool>('showIfChildCanPop', widget.showIfChildCanPop))
+      ..add(DiagnosticsProperty<bool>('ignorePagelessRoutes', widget.ignorePagelessRoutes))
+      ..add(DiagnosticsProperty<bool>('showIfParentCanPop', widget._showIfParentCanPop))
+      ..add(DiagnosticsProperty<Color?>('color', widget.color))
+      ..add(DiagnosticsProperty<RouterScope>('scope', RouterScope.of(context)))
+      ..add(DiagnosticsProperty<PagelessRoutesObserver>('pagelessRoutesObserver', _pagelessRoutesObserver));
   }
 }
 

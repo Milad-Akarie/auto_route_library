@@ -219,13 +219,14 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<StackRouter>('router', widget.router));
-    properties.add(IterableProperty<NavigatorObserver>('navigatorObservers', widget.navigatorObservers));
-    properties.add(DiagnosticsProperty<RoutesBuilder>('declarativeRoutesBuilder', widget.declarativeRoutesBuilder));
-    properties.add(DiagnosticsProperty<WidgetBuilder>('placeholder', widget.placeholder));
-    properties.add(DiagnosticsProperty<Clip>('clipBehavior', widget.clipBehavior));
-    properties.add(DiagnosticsProperty<String?>('navRestorationScopeId', widget.navRestorationScopeId));
-    properties.add(DiagnosticsProperty<RoutePopCallBack>('didPop', widget.didPop));
+    properties
+      ..add(DiagnosticsProperty<StackRouter>('router', widget.router))
+      ..add(IterableProperty<NavigatorObserver>('navigatorObservers', widget.navigatorObservers))
+      ..add(DiagnosticsProperty<RoutesBuilder>('declarativeRoutesBuilder', widget.declarativeRoutesBuilder))
+      ..add(DiagnosticsProperty<WidgetBuilder>('placeholder', widget.placeholder))
+      ..add(DiagnosticsProperty<Clip>('clipBehavior', widget.clipBehavior))
+      ..add(DiagnosticsProperty<String?>('navRestorationScopeId', widget.navRestorationScopeId))
+      ..add(DiagnosticsProperty<RoutePopCallBack>('didPop', widget.didPop));
   }
 }
 

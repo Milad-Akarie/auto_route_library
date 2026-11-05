@@ -245,9 +245,10 @@ abstract class AutoTabsRouterState<T extends AutoTabsRouter> extends State<T> {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<TabsRouter>('controller', _controller));
-    properties.add(DiagnosticsProperty<RoutingController>('parentController', _parentController));
-    properties.add(DiagnosticsProperty<List<NavigatorObserver>>('navigatorObservers', _navigatorObservers));
+    properties
+      ..add(DiagnosticsProperty<TabsRouter>('controller', _controller))
+      ..add(DiagnosticsProperty<RoutingController>('parentController', _parentController))
+      ..add(DiagnosticsProperty<List<NavigatorObserver>>('navigatorObservers', _navigatorObservers));
   }
 }
 

@@ -288,8 +288,9 @@ abstract class RoutingController with ChangeNotifier {
     }
     for (final ctr in _childControllers) {
       if (ctr._markedForDataUpdate && ctr.key == created.key) {
-        ctr.updateRouteData(created);
-        ctr._markedForDataUpdate = false;
+        ctr
+          ..updateRouteData(created)
+          .._markedForDataUpdate = false;
       }
     }
 
@@ -2105,8 +2106,7 @@ abstract class StackRouter extends RoutingController {
   /// otherwise they'll be thrown
   Future<void> popAndPushAll(List<PageRouteInfo> routes, {OnNavigationFailure? onFailure}) {
     assert(routes.isNotEmpty, 'routes must not be empty.');
-    final scope = _findStackScope(routes.first);
-    scope.pop();
+    final scope = _findStackScope(routes.first)..pop();
     return scope._pushAll(routes, onFailure: onFailure);
   }
 
@@ -2238,8 +2238,7 @@ abstract class StackRouter extends RoutingController {
     TO? result,
     OnNavigationFailure? onFailure,
   }) {
-    final scope = _findStackScope(route);
-    scope.pop<TO>(result);
+    final scope = _findStackScope(route)..pop<TO>(result);
     return scope._push(route, onFailure: onFailure);
   }
 
@@ -2443,8 +2442,7 @@ abstract class StackRouter extends RoutingController {
 
   void _addReevaluatedPage(ReevaluatableRouteMatch<Object?, Object?> match, {bool notify = true}) {
     var page = match.currentPage;
-    final data = page.routeData;
-    data._onEndReevaluating();
+    final data = page.routeData.._onEndReevaluating();
     // args a guard set are shown by a page built with them, which keeps the route and its state
     if (match.args != data.args) {
       data._updateRoute(match.originalMatch);

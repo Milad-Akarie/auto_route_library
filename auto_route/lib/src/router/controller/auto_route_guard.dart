@@ -315,8 +315,9 @@ class NavigationResolver {
     _isRedirecting = false;
     final routeData = scope.stackData.firstWhereOrNull((e) => e.matchId == match.id);
     if (routeData != null) {
-      scope.markUrlStateForReplace();
-      scope._removeRoute(match);
+      scope
+        ..markUrlStateForReplace()
+        .._removeRoute(match);
       // complete the pop completer with null result
       routeData.onPopInvoked(null);
     }
