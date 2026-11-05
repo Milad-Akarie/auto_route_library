@@ -58,7 +58,7 @@ void main() {
       final errors = await collectErrors(tester, () => pumpRouterConfigApp(tester, router.config()));
 
       expect(errors, hasLength(1));
-      expect(errors.single.exception.toString(), contains('LoginRoute'));
+      expect(errors.singleOrNull?.exception.toString(), contains('LoginRoute'));
       expect(guardCalls, lessThan(100));
     },
   );
@@ -93,7 +93,7 @@ void main() {
     });
 
     expect(errors, hasLength(1));
-    expect(errors.single.exception.toString(), allOf(contains('ARoute'), contains('BRoute')));
+    expect(errors.singleOrNull?.exception.toString(), allOf(contains('ARoute'), contains('BRoute')));
     expect(guardCalls, lessThan(100));
   });
 
@@ -114,7 +114,7 @@ void main() {
       final errors = await collectErrors(tester, () => pumpRouterConfigApp(tester, router.config()));
 
       expect(errors, hasLength(1));
-      expect(errors.single.exception.toString(), contains('A guard redirected LoginRoute to itself.'));
+      expect(errors.singleOrNull?.exception.toString(), contains('A guard redirected LoginRoute to itself.'));
       expect(guardCalls, 2);
     },
   );

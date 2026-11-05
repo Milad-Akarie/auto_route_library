@@ -39,7 +39,7 @@ void main() {
                 page: _page(name),
                 path: name,
                 guards: [
-                  if (name == _kTabNames[2])
+                  if (name == _kGuardedTab)
                     AutoRouteGuard.simple((resolver, _) => _reject ? resolver.reject() : resolver.next()),
                 ],
               ),
@@ -67,7 +67,7 @@ void main() {
 
   void expectTab(TabsRouter tabs, int index) {
     expect(tabs.activeIndex, index);
-    expect(find.text(_kTabNames[index]), findsOneWidget);
+    expect(find.text(_kTabNames.elementAtOrNull(index)!), findsOneWidget);
   }
 
   setUp(() => _reject = false);
@@ -102,7 +102,7 @@ void main() {
     expectTab(tabs, 0);
     await systemBack(tester);
     expect(find.text('FirstRoute'), findsOneWidget);
-    expect(find.text(_kTabNames[0]), findsNothing);
+    expect(find.text(_kFirstTab), findsNothing);
   });
 
   testWidgets('popping the tabs router walks the same history', (tester) async {
@@ -164,7 +164,9 @@ void main() {
   });
 }
 
-const _kTabNames = ['NewsRoute', 'FeedRoute', 'RankingRoute', 'ProfileRoute'];
+const _kFirstTab = 'NewsRoute';
+const _kGuardedTab = 'RankingRoute';
+const List<String> _kTabNames = [_kFirstTab, 'FeedRoute', _kGuardedTab, 'ProfileRoute'];
 var _backThroughHistory = true;
 var _homeIndex = -1;
 var _reject = false;

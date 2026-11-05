@@ -27,7 +27,8 @@ void main() {
     unawaited(router.push(const NamedRoute('DayRoute', params: {'id': '1'})));
     await tester.pumpAndSettle();
     expect(find.text('day 1'), findsOneWidget);
-    final pageBefore = router.stack.last;
+    final keyBefore = router.stack.lastOrNull?.routeKey;
+    expect(keyBefore, isNotNull);
 
     unawaited(router.replace(const NamedRoute('DayRoute', params: {'id': '2'})));
     await tester.pump();
@@ -38,7 +39,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(router.stack.map((p) => p.name), ['HomeRoute', 'DayRoute']);
-    expect(router.stack.last.routeKey, pageBefore.routeKey);
+    expect(router.stack.lastOrNull?.routeKey, keyBefore);
     expect(router.currentUrl, '/day/2');
   });
 }

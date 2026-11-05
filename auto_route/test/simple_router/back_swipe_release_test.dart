@@ -52,11 +52,14 @@ void main() {
       await tester.pump(const Duration(milliseconds: 16));
       values.add(animation.value);
     }
-    for (var index = 1; index < values.length; index++) {
-      expect(values[index], lessThanOrEqualTo(values[index - 1]), reason: 'frame $index of $values');
-      expect(values[index - 1] - values[index], lessThan(0.2), reason: 'frame $index of $values');
+    final [first, ...rest] = values;
+    var previous = first;
+    for (final (index, value) in rest.indexed) {
+      expect(value, lessThanOrEqualTo(previous), reason: 'frame ${index + 1} of $values');
+      expect(previous - value, lessThan(0.2), reason: 'frame ${index + 1} of $values');
+      previous = value;
     }
-    expect(values.last, 0);
+    expect(values.lastOrNull, 0);
 
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);

@@ -48,11 +48,11 @@ void main() {
     );
     setPages(() => pages = [...pages, page('Second')]);
     await tester.pumpAndSettle();
-    expect(titles.last, 'Second');
+    expect(titles.lastOrNull, 'Second');
 
-    setPages(() => pages = [pages.first]);
+    setPages(() => pages = pages.take(1).toList());
     await tester.pumpAndSettle();
     expect(find.text('First'), findsOneWidget);
-    expect(titles.last, 'Second');
+    expect(titles.lastOrNull, 'Second');
   });
 }

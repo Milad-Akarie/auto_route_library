@@ -70,7 +70,9 @@ void main() {
     await tester.pumpAndSettle();
     expectTopPage(router, SecondNested1Route.name);
 
-    router.list.last = host([nested1, AutoRoute(path: 'nested2', page: SecondNested2Route.page)]);
+    router.list.replaceRange(router.list.length - 1, router.list.length, [
+      host([nested1, AutoRoute(path: 'nested2', page: SecondNested2Route.page)]),
+    ]);
     unawaited(tester.binding.reassembleApplication());
     await tester.pumpAndSettle();
 

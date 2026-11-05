@@ -90,7 +90,7 @@ void main() {
     final frames = await pushDoneKeeping(tester, nested, 'Home');
     expect(tester.takeException(), isNull);
     // S2, the page on screen, stays under Done until Done covers it.
-    expect(frames.first, startsWith('S2'), reason: 'frames: $frames');
+    expect(frames.firstOrNull, startsWith('S2'), reason: 'frames: $frames');
     expect(frames.takeWhile((frame) => !frame.endsWith('Done@0')), everyElement(startsWith('S2')));
     expect(frames.where((frame) => frame.contains('S1') || frame.contains('Home')), isEmpty);
     expect(observed, ['push Done', 'remove Shell']);

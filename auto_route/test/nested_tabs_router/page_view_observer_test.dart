@@ -58,6 +58,6 @@ void main() {
     await tester.fling(find.text('Tab2'), const Offset(400, 0), 1000);
     await tester.pumpAndSettle();
     expect(tabsRouter.activeIndex, 0);
-    expect(_tabEvents.last, 'didChangeTabRoute Tab1 from Tab2');
+    expect(_tabEvents.lastOrNull, 'didChangeTabRoute Tab1 from Tab2');
   });
 }

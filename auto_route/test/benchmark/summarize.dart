@@ -56,7 +56,8 @@ class _Stats {
   static double _median(List<double> values) {
     final sorted = [...values]..sort();
     final middle = sorted.length ~/ 2;
-    return sorted.length.isOdd ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
+    final centre = sorted.skip(sorted.length.isOdd ? middle : middle - 1).take(sorted.length.isOdd ? 1 : 2);
+    return centre.fold(0.0, (sum, value) => sum + value) / centre.length;
   }
 }
 

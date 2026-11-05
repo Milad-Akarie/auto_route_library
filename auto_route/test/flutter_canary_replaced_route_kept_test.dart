@@ -40,7 +40,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     for (var i = 1; i <= 10; i++) {
-      setPages(() => pages = [pages.first, MaterialPage(key: ValueKey('page $i'), child: _TrackedPage(states))]);
+      setPages(() => pages = [...pages.take(1), MaterialPage(key: ValueKey('page $i'), child: _TrackedPage(states))]);
       await tester.pumpAndSettle();
     }
     expect(routes, hasLength(12));

@@ -90,7 +90,7 @@ void main() {
     unawaited(router.push<String>(const ThirdRoute()).then((result) => results[ThirdRoute.name] = result));
     await tester.pumpAndSettle();
 
-    router.removeRoute(router.stackData.firstWhere((route) => route.name == SecondRoute.name));
+    router.removeRoute(router.stackData.where((route) => route.name == SecondRoute.name).firstOrNull!);
     await tester.pumpAndSettle();
 
     expectCurrentPage(router, ThirdRoute.name);

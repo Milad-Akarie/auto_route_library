@@ -43,12 +43,15 @@ void main() {
 
     // A swipe can leave the offset a hair short of the page, as Flutter's own TabBarView does.
     void expectOneWay(List<double> values, double end, {double tolerance = 1e-6}) {
-      final rising = end > values.first;
-      for (var i = 1; i < values.length; i++) {
-        final step = values[i] - values[i - 1];
-        expect(rising ? step >= -1e-9 : step <= 1e-9, isTrue, reason: 'frame $i of $values');
+      final [first, ...rest] = values;
+      final rising = end > first;
+      var previous = first;
+      for (final (index, value) in rest.indexed) {
+        final step = value - previous;
+        expect(rising ? step >= -1e-9 : step <= 1e-9, isTrue, reason: 'frame ${index + 1} of $values');
+        previous = value;
       }
-      expect(values.last, closeTo(end, tolerance));
+      expect(values.lastOrNull, closeTo(end, tolerance));
     }
 
     await tester.tap(find.byType(Tab).at(2));

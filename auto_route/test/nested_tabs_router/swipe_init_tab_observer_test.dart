@@ -48,19 +48,19 @@ Future<void> _expectSwipesInitNewTabs(WidgetTester tester, RootStackRouter route
   await tester.fling(find.text('Tab1'), const Offset(-400, 0), 1000);
   await tester.pumpAndSettle();
   expect(tabsRouter.activeIndex, 1);
-  expect(_tabEvents.last, 'didInitTabRoute Tab2 from Tab1');
+  expect(_tabEvents.lastOrNull, 'didInitTabRoute Tab2 from Tab1');
 
   // Swipes back to the first tab, already opened.
   await tester.fling(find.text('Tab2'), const Offset(400, 0), 1000);
   await tester.pumpAndSettle();
   expect(tabsRouter.activeIndex, 0);
-  expect(_tabEvents.last, 'didChangeTabRoute Tab1 from Tab2');
+  expect(_tabEvents.lastOrNull, 'didChangeTabRoute Tab1 from Tab2');
 
   // Swipes forward to the second tab again: opened before, so a change.
   await tester.fling(find.text('Tab1'), const Offset(-400, 0), 1000);
   await tester.pumpAndSettle();
   expect(tabsRouter.activeIndex, 1);
-  expect(_tabEvents.last, 'didChangeTabRoute Tab2 from Tab1');
+  expect(_tabEvents.lastOrNull, 'didChangeTabRoute Tab2 from Tab1');
 }
 
 void main() {

@@ -50,7 +50,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(router.stack.map((page) => page.name), [_HomeRoute.name, _ProfileRoute.name, _SettingsRoute.name]);
-    expect(router.stackData[1].argsAs<_ProfileArgs>().userId, 'guest');
+    expect(router.stackData.elementAtOrNull(1)?.argsAs<_ProfileArgs>().userId, 'guest');
     expect(find.text(_SettingsRoute.name), findsOneWidget);
     router.pop();
     await tester.pumpAndSettle();

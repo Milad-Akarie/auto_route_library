@@ -20,7 +20,10 @@ void main() {
     ], root: true),
   );
 
-  RouteMatch<Object?> matchOf(String url) => matcher.matchUri(Uri.parse(url))!.single;
+  RouteMatch<Object?> matchOf(String url) {
+    final [match] = matcher.matchUri(Uri.parse(url))!;
+    return match;
+  }
 
   test('the root is its own segment', () {
     final match = matchOf('/');
@@ -49,7 +52,7 @@ void main() {
     final match = matchOf('/shelf/a%2Fb/item');
     expect(match.stringMatch, '/shelf/a%2Fb');
     expect(match.params.getString('id'), 'a/b');
-    expect(match.children!.single.name, 'ShelfItemRoute');
+    expect(match.children!.singleOrNull?.name, 'ShelfItemRoute');
   });
 
   // On the web the path package rejoined the segments as urls, where a first

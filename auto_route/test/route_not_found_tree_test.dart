@@ -76,7 +76,7 @@ void main() {
     final failures = <NavigationFailure>[];
     unawaited(router.pushPath('/shop/1/reviews', onFailure: failures.add));
     await tester.pumpAndSettle();
-    final failure = failures.single as RouteNotFoundFailure;
+    final [failure as RouteNotFoundFailure] = failures;
     expect(failure.path, '/shop/1/reviews');
     expect(failure.toString(), allOf(contains('/shop/1/reviews'), contains(tree)));
 
@@ -97,7 +97,8 @@ void main() {
     final failures = <NavigationFailure>[];
     unawaited(router.push(const PageRouteInfo('CartRoute'), onFailure: failures.add));
     await tester.pumpAndSettle();
-    expect((failures.single as RouteNotFoundFailure).toString(), allOf(contains('CartRoute'), contains(tree)));
+    final [failure as RouteNotFoundFailure] = failures;
+    expect(failure.toString(), allOf(contains('CartRoute'), contains(tree)));
 
     Object? error;
     try {

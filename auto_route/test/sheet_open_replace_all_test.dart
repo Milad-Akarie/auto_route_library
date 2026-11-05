@@ -50,7 +50,7 @@ void main() {
         expect(tester.takeException(), isNull);
         expect(find.text('Over'), findsNothing);
         expect(find.text('P3'), findsOneWidget);
-        expect(router.stack.last.name, 'P3');
+        expect(router.stack.lastOrNull?.name, 'P3');
       });
     }
   }

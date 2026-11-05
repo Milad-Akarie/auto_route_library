@@ -28,12 +28,12 @@ void main() {
     unawaited(router.push(const PageRouteInfo('B')));
     await Future<void>.value();
     expect(router.canPop(), isTrue);
-    expect(heard.last, isTrue);
+    expect(heard.lastOrNull, isTrue);
     await tester.pumpAndSettle();
 
     router.pop();
     expect(router.canPop(), isFalse);
-    expect(heard.last, isFalse);
+    expect(heard.lastOrNull, isFalse);
     await tester.pumpAndSettle();
     expect(router.canPop(), isFalse);
   });

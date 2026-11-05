@@ -24,11 +24,11 @@ void main() {
     });
 
     test('Auto-generated root paths for routes marked as initial should be "/"', () {
-      expect(RouteCollection.fromList([TestRoute('A', initial: true)], root: true).routes.first.path, '/');
+      expect(RouteCollection.fromList([TestRoute('A', initial: true)], root: true).routes.firstOrNull?.path, '/');
     });
 
     test('Auto-generated sub-paths for routes marked as initial should be empty""', () {
-      expect(RouteCollection.fromList([TestRoute('A', initial: true)]).routes.first.path, '');
+      expect(RouteCollection.fromList([TestRoute('A', initial: true)]).routes.firstOrNull?.path, '');
     });
 
     test('Creating a RouteCollection with more than one routes marked as initial should throw', () {
@@ -46,18 +46,20 @@ void main() {
       () {
         final firstResolvedRoute = RouteCollection.fromList([
           TestRoute('A', path: '/a', initial: true),
-        ], root: true).routes.first;
+        ], root: true).routes.firstOrNull;
         expect(firstResolvedRoute, isA<RedirectRoute>());
-        expect(firstResolvedRoute.path, '/');
+        expect(firstResolvedRoute?.path, '/');
       },
     );
 
     test(
       'Creating a sub RouteCollection with no initialPath with initial set to true should add a RedirectRoute(path:"")',
       () {
-        final firstResolvedRoute = RouteCollection.fromList([TestRoute('A', path: 'a', initial: true)]).routes.first;
+        final firstResolvedRoute = RouteCollection.fromList([TestRoute('A', path: 'a', initial: true)])
+            .routes
+            .firstOrNull;
         expect(firstResolvedRoute, isA<RedirectRoute>());
-        expect(firstResolvedRoute.path, '');
+        expect(firstResolvedRoute?.path, '');
       },
     );
 
@@ -641,7 +643,7 @@ void main() {
     });
 
     test('Should return a redirect match for bogus url /adsfadsg', () {
-      expect(match('/adsfadsg')?.first.children?.first.redirectedFrom, '*');
+      expect(match('/adsfadsg')?.firstOrNull?.children?.firstOrNull?.redirectedFrom, '*');
     });
   });
 
@@ -670,8 +672,8 @@ void main() {
       expect(result!.name, 'C');
       expect(result.autoFilled, isTrue);
       expect(result.children, hasLength(1));
-      expect(result.children!.first.name, 'C1');
-      expect(result.children!.first.params.rawMap, {'id': '123'});
+      expect(result.children!.firstOrNull?.name, 'C1');
+      expect(result.children!.firstOrNull?.params.rawMap, {'id': '123'});
     });
 
     test('Should return null for non-existing route', () {

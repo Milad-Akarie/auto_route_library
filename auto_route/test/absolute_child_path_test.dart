@@ -34,7 +34,7 @@ void main() {
     final router = routerWithChildPath('setting');
     addTearDown(router.dispose);
     final matches = router.matcher.match('/profile/setting')!;
-    expect(matches.single.name, 'ProfileRoute');
-    expect(matches.single.children!.single.name, SecondRoute.name);
+    expect(matches.singleOrNull?.name, 'ProfileRoute');
+    expect(matches.singleOrNull?.children!.singleOrNull?.name, SecondRoute.name);
   });
 }

@@ -74,7 +74,7 @@ void main() {
       expect(_heard, [false, false]);
 
       expect(router.topRoute.name, 'TabA');
-      expect(router.stack.last.name, _tabsScreen.name);
+      expect(router.stack.lastOrNull?.name, _tabsScreen.name);
     });
   }
 

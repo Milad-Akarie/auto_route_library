@@ -50,6 +50,6 @@ void main() {
     ]);
     expect(find.text('foreground'), findsOneWidget);
     expect(errors, isNotEmpty);
-    expect('${errors.first}', contains('RenderBox was not laid out'));
+    expect(errors.firstOrNull?.toString(), contains('RenderBox was not laid out'));
   });
 }

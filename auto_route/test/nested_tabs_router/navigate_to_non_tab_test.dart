@@ -48,7 +48,7 @@ void main() {
     unawaited(tabs.navigate(const NamedRoute('OtherExternalPageRoute'), onFailure: failures.add));
     await tester.pumpAndSettle();
 
-    expect(failures.single, isA<RouteNotFoundFailure>());
+    expect(failures.singleOrNull, isA<RouteNotFoundFailure>());
     expect(find.text('PagerPage1Route'), findsOneWidget);
   });
 

@@ -55,7 +55,7 @@ void main() {
       frames.add(shown());
     }
     expect(frames.where((frame) => frame.contains('Home') || frame.contains('B')), isEmpty, reason: 'frames: $frames');
-    expect(frames.last, ['D']);
+    expect(frames.lastOrNull, ['D']);
     expect(router.stack.map((page) => page.name), ['Home', 'D']);
 
     // The removed pages' push futures complete, and so does the new one's.

@@ -92,7 +92,8 @@ List<AutoRoute> _level(int depth) => [
 
 final _deepUrl = '/${[for (var depth = 0; depth < _kDepth; depth++) 'level$depth-${_kSiblings - 1}/$depth'].join('/')}';
 
-final List<RouteMatch<Object?>> _deepMatches = _deepMatcher.match(_deepUrl)!.last.flattened;
+final List<RouteMatch<Object?>> _deepMatches =
+    _deepMatcher.match(_deepUrl)?.lastOrNull?.flattened ?? (throw StateError('$_deepUrl matched nothing'));
 
 const _kQuery =
     'search=blue%20shoes&page=2&sort=price&order=asc&size=9&color=blue&brand=acme&tag=new&tag=sale'

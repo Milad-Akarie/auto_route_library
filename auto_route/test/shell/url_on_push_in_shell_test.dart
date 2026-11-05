@@ -45,19 +45,19 @@ void main() {
       );
       await pumpRouterApp(tester, router, initialLink: '/reports/sales');
       expect(find.text('SalesRoute'), findsOneWidget);
-      expect(sentUrls.last, '/reports/sales');
+      expect(sentUrls.lastOrNull, '/reports/sales');
 
       final salesRouter = tester.element(find.text('SalesRoute')).router;
       unawaited(push(salesRouter));
       await tester.pumpAndSettle();
       expect(find.text('SalesDetailRoute'), findsOneWidget);
       expect(router.innerRouterOf<StackRouter>('TabShellRoute')!.topRoute.name, 'SalesDetailRoute');
-      expect(sentUrls.last, '/reports/sales/detail');
+      expect(sentUrls.lastOrNull, '/reports/sales/detail');
 
       salesRouter.pop();
       await tester.pumpAndSettle();
       expect(find.text('SalesRoute'), findsOneWidget);
-      expect(sentUrls.last, '/reports/sales');
+      expect(sentUrls.lastOrNull, '/reports/sales');
     });
   }
 }

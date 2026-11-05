@@ -54,7 +54,7 @@ void main() {
       await back(tester);
 
       expect(tabs.activeIndex, 0);
-      expect(find.text(_kTabNames.first), findsOneWidget);
+      expect(find.text(_kFirstTab), findsOneWidget);
       expect(frameworkHandlesBack.last, isFalse);
     }, skip: kIsWeb);
   }
@@ -71,7 +71,8 @@ void main() {
   }, skip: kIsWeb);
 }
 
-const _kTabNames = ['NewsRoute', 'FeedRoute', 'RankingRoute', 'ProfileRoute'];
+const _kFirstTab = 'NewsRoute';
+const List<String> _kTabNames = [_kFirstTab, 'FeedRoute', 'RankingRoute', 'ProfileRoute'];
 var _homeIndex = 0;
 
 final _tabsPage = PageInfo(

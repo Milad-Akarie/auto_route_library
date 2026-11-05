@@ -55,7 +55,7 @@ void main() {
     unawaited(router.pushPath('/bar/baz'));
     await tester.pumpAndSettle();
     expect(find.text('BazRoute'), findsOneWidget);
-    expect(calls.last, 'baz');
+    expect(calls.lastOrNull, 'baz');
     expect(calls, contains('bar'));
   });
 }

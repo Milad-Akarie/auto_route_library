@@ -61,7 +61,7 @@ void main() {
       final failures = <NavigationFailure>[];
       unawaited(open(router, '/nope', failures.add));
       await tester.pumpAndSettle();
-      expect(failures.single, isA<RouteNotFoundFailure>().having((f) => f.path, 'path', '/nope'));
+      expect(failures.singleOrNull, isA<RouteNotFoundFailure>().having((f) => f.path, 'path', '/nope'));
 
       Object? error;
       try {

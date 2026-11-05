@@ -17,7 +17,7 @@ class _ReadingObserver extends AutoRouterObserver {
       // RouteData.of reports a missing scope with this error.
       // ignore: avoid_catching_errors
     } on FlutterError catch (e) {
-      found.add('error: ${e.message.split('\n').first}');
+      found.add('error: ${e.message.split('\n').firstOrNull ?? ''}');
     }
   }
 }
@@ -75,7 +75,7 @@ void main() {
   ) async {
     await pumpRouterApp(tester, router, observers: () => [rootObserver]);
     await openAndPickFromMenu(tester, useRootNavigator: true);
-    expect(rootObserver.found.single, startsWith('error: RouteData operation requested with a context'));
+    expect(rootObserver.found.singleOrNull, startsWith('error: RouteData operation requested with a context'));
     expect(shellObserver.found, isEmpty);
   });
 }

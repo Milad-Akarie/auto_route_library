@@ -59,7 +59,7 @@ void main() {
     FlutterError.onError = onError;
 
     expect(errors, isNotEmpty);
-    expect(errors.first, startsWith('Multiple widgets used the same GlobalKey.'));
+    expect(errors.firstOrNull, startsWith('Multiple widgets used the same GlobalKey.'));
     expect(router.topRoute.name, 'SecondRoute');
   });
 }

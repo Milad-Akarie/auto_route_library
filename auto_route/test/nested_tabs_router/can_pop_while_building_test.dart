@@ -46,7 +46,7 @@ void main() {
     await pumpRouterApp(tester, router);
 
     expect(tester.takeException(), isNull);
-    expect(heard.first, (tabs: false, root: false));
+    expect(heard.firstOrNull, (tabs: false, root: false));
 
     unawaited(router.navigatePath('/feed/post'));
     await tester.pumpAndSettle();
@@ -57,7 +57,7 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(router.topRoute.name, 'FeedPost');
-    expect(heard.last, (tabs: true, root: true));
+    expect(heard.lastOrNull, (tabs: true, root: true));
   });
 }
 

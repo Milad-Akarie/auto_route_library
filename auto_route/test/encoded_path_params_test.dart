@@ -33,8 +33,8 @@ void main() {
       expect(url.pathSegments, ['files', name]);
 
       final reopened = router.matcher.matchUri(Uri.parse(url.toString()));
-      expect(reopened?.last.name, _FileRoute.pageName);
-      expect(reopened?.last.params.rawMap, {'name': name});
+      expect(reopened?.lastOrNull?.name, _FileRoute.pageName);
+      expect(reopened?.lastOrNull?.params.rawMap, {'name': name});
     });
   }
 

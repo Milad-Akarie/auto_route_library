@@ -69,12 +69,15 @@ void main() {
     await pumpRouterApp(tester, router, reevaluationNotifier: reevaluationNotifier);
     unawaited(router.push(const ThirdRoute()));
     await tester.pumpAndSettle();
-    final resolver = verify(mockListener(captureAny, router)).captured[0] as NavigationResolver;
-    expect(resolver.isReevaluating, false);
+    final resolver = verify(mockListener(captureAny, router)).captured.firstOrNull as NavigationResolver?;
+    expect(resolver?.isReevaluating, false);
     verifyNever(mockListener(captureAny, router));
     reevaluationNotifier.value = true;
     await tester.pumpAndSettle();
-    expect((verify(mockListener(captureAny, router)).captured[0] as NavigationResolver).isReevaluating, true);
+    expect(
+      (verify(mockListener(captureAny, router)).captured.firstOrNull as NavigationResolver?)?.isReevaluating,
+      true,
+    );
     await tester.pumpAndSettle();
     verifyNever(mockListener(captureAny, router));
     expectTopPage(router, ThirdRoute.name);
@@ -195,8 +198,8 @@ void main() {
     expectTopPage(localRouter, ThirdRoute.name);
     reevaluationNotifier.value = true;
     await tester.pumpAndSettle();
-    final resolver = verify(mockListener(captureAny, localRouter)).captured[0] as NavigationResolver;
-    expect(resolver.isReevaluating, true);
+    final resolver = verify(mockListener(captureAny, localRouter)).captured.firstOrNull as NavigationResolver?;
+    expect(resolver?.isReevaluating, true);
     expectTopPage(localRouter, SecondRoute.name);
   });
 

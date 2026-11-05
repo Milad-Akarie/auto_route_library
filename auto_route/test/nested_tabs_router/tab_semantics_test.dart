@@ -50,7 +50,8 @@ void main() {
           return true;
         }
 
-        visit(tester.binding.renderViews.first.owner!.semanticsOwner!.rootSemanticsNode!);
+        final [view] = tester.binding.renderViews.toList();
+        visit(view.owner!.semanticsOwner!.rootSemanticsNode!);
         return nodes;
       }
 

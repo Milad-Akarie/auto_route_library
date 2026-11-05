@@ -59,8 +59,9 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(routers, hasLength(2));
-    expectCurrentPage(routers.last, SecondRoute.name);
-    expect(routers.last.currentUrl, '/second-route');
+    final [..., current] = routers;
+    expectCurrentPage(current, SecondRoute.name);
+    expect(current.currentUrl, '/second-route');
   });
 }
 

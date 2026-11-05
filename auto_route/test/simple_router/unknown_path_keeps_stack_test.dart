@@ -51,7 +51,7 @@ void main() {
     unawaited(router.pushPath('/nope', onFailure: failures.add));
     await tester.pumpAndSettle();
 
-    expect(failures.single, isA<RouteNotFoundFailure>());
+    expect(failures.singleOrNull, isA<RouteNotFoundFailure>());
     expect(names(router), ['Home', 'Details']);
     expectTopPage(router, 'Details');
   });

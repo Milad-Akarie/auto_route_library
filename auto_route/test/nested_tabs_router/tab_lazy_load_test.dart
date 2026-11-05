@@ -41,7 +41,7 @@ void main() {
         final router = _buildRouter(kind);
         await pumpRouterApp(tester, router);
 
-        expect(_builds, {_kTabNames.first: 1});
+        expect(_builds, {_kFirstTab: 1});
       });
     });
   }
@@ -50,7 +50,8 @@ void main() {
 enum _Kind { tabBar, pageView }
 
 const _kLastTab = 'ProfileRoute';
-const List<String> _kTabNames = ['NewsRoute', 'FeedRoute', _kLastTab];
+const _kFirstTab = 'NewsRoute';
+const List<String> _kTabNames = [_kFirstTab, 'FeedRoute', _kLastTab];
 
 // How often each tab's page was built.
 final _builds = <String, int>{};

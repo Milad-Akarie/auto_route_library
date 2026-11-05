@@ -28,15 +28,16 @@ void main() {
     ['RecordRoute'],
     ['RecordRoute', 'FormRoute'],
   ]) {
-    testWidgets('replaceAll from ${pushed.last} leaves only the new page', (tester) async {
+    final [..., top] = pushed;
+    testWidgets('replaceAll from $top leaves only the new page', (tester) async {
       await pumpRouterConfigApp(tester, router.config());
       for (final name in pushed) {
         unawaited(router.push(PageRouteInfo(name)));
         await tester.pumpAndSettle();
       }
-      expectCurrentPage(router, pushed.last);
+      expectCurrentPage(router, top);
 
-      final topContext = tester.element(find.text(pushed.last));
+      final topContext = tester.element(find.text(top));
       unawaited(topContext.router.replaceAll([const PageRouteInfo('LoginRoute')]));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
