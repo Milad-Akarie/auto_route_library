@@ -201,8 +201,11 @@ class _CurrentPageChildState extends State<_CurrentPageChild> {
 
   @override
   Widget build(BuildContext context) {
-    final settings = ModalRoute.of(context)?.settings;
+    final route = ModalRoute.of(context);
+    final settings = route?.settings;
     final page = settings is AutoRoutePage ? settings : widget.page;
+    // The route is the app's own, so it can't set it as auto_route's do.
+    page.routeData.animation ??= route?.animation;
     return page.buildPage(context);
   }
 }

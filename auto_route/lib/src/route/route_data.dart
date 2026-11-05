@@ -240,7 +240,12 @@ class RouteData<R> {
   /// A guard reevaluation that collected the stack before the pop does not
   /// add the page back.
   @internal
-  void onPoppedByNavigator() => _isPoppedByNavigator = true;
+  void onPoppedByNavigator() {
+    _isPoppedByNavigator = true;
+    if ((router, animation) case (final StackRouter router, final animation?)) {
+      router._addLeavingAnimation(animation);
+    }
+  }
 
   /// Completes the pop completer with the given result
   void onPopInvoked(R? result) {
@@ -256,7 +261,9 @@ class RouteData<R> {
   /// The animation of the [Route] that shows this page, or null before the
   /// route is built.
   ///
-  /// The page's route sets it when it builds; [animationCompletion] reads it.
+  /// The page's route sets it when it builds, as does the page of a route
+  /// built by [CustomRouteType.customRouteBuilder]; [animationCompletion] and
+  /// [RoutingController.waitForTransitions] read it.
   Animation<dynamic>? animation;
 
   /// Sets [animation].

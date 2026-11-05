@@ -586,6 +586,44 @@ abstract class RoutingController with ChangeNotifier {
   /// Returns the root router as [RootStackRouter]
   RootStackRouter get root => (_parent?.root ?? this) as RootStackRouter;
 
+  /// Completes once the pages of every router in the app have ended their
+  /// transitions: a page coming in after a push or replace, and a page
+  /// leaving after a pop.
+  ///
+  /// Call it right after the navigation, without awaiting the navigation's
+  /// own future: the future of [StackRouter.push] completes only when the
+  /// pushed page is popped. For example, to open a bottom sheet once the page
+  /// has come in, since a sheet opened while the page still moves can close
+  /// at once:
+  ///
+  /// ```dart
+  /// unawaited(context.router.push(const DetailsRoute()));
+  /// await context.router.waitForTransitions();
+  /// if (context.mounted) showModalBottomSheet(context: context, builder: ...);
+  /// ```
+  ///
+  /// It checks after every frame, from the frame after the call, so a page
+  /// pushed just before the call has started to come in. A push still
+  /// waiting on an asynchronous guard is not waited for, and neither are
+  /// dialogs and other routes pushed without a page. With nothing moving, it
+  /// completes after the next frame.
+  Future<void> waitForTransitions() async {
+    do {
+      await SchedulerBinding.instance.endOfFrame;
+    } while (_hasTransitionIn(root));
+  }
+
+  // Whether a page of [router], or of a router nested in it, is coming in or
+  // leaving, or a push to it is about to add its page.
+  static bool _hasTransitionIn(RoutingController router) {
+    if (router case final StackRouter stack) {
+      stack._leavingAnimations.removeWhere((animation) => !animation.isAnimating);
+      if (stack._landingPushes.isNotEmpty || stack._leavingAnimations.isNotEmpty) return true;
+      if (stack._pages.any((page) => page.routeData.animation?.isAnimating ?? false)) return true;
+    }
+    return router._childControllers.any(_hasTransitionIn);
+  }
+
   /// Returns parent route as [StackRouter]
   StackRouter? get parentAsStackRouter => parent<StackRouter>();
 
@@ -1472,6 +1510,22 @@ abstract class StackRouter extends RoutingController {
   // microtask later. A pop called meanwhile waits for them, so it pops the
   // page the caller just pushed rather than the one below it.
   final _landingPushes = <Future<void>>{};
+
+  // The animations of pages the navigator popped, while they leave the
+  // screen; see [waitForTransitions].
+  final _leavingAnimations = <Animation<dynamic>>{};
+
+  void _addLeavingAnimation(Animation<dynamic> animation) {
+    if (!animation.isAnimating) return;
+    _leavingAnimations.add(animation);
+    void listener(AnimationStatus _) {
+      if (animation.isAnimating) return;
+      animation.removeStatusListener(listener);
+      _leavingAnimations.remove(animation);
+    }
+
+    animation.addStatusListener(listener);
+  }
 
   /// Whether a reevaluation is in progress
   bool _isReevaluating = false;

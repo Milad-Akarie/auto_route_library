@@ -179,6 +179,7 @@ import 'unmatched_deep_link_test.dart' as unmatched_deep_link;
 import 'url_after_tab_switch_test.dart' as url_after_tab_switch;
 import 'url_on_pop_test.dart' as url_on_pop;
 import 'url_on_push_in_shell_test.dart' as url_on_push_in_shell;
+import 'wait_for_transitions_test.dart' as wait_for_transitions;
 import 'window_resize_test.dart' as window_resize;
 import 'wrapper_push_from_child_test.dart' as wrapper_push_from_child;
 
@@ -368,6 +369,7 @@ void main() {
   group('url after tab switch', url_after_tab_switch.main);
   group('url on pop', url_on_pop.main);
   group('url on push in shell', url_on_push_in_shell.main);
+  group('wait for transitions', wait_for_transitions.main);
   group('window resize', window_resize.main);
   group('wrapper push from child', wrapper_push_from_child.main);
 }

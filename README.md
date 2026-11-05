@@ -338,6 +338,18 @@ context.maybePop();
 context.pop();
 ```
 
+### Waiting for a transition to end
+
+The future of `push` completes when the pushed page is popped, not when it has come in. To act once the pages have stopped moving, for example to open a bottom sheet, which closes at once if opened during a transition, await `waitForTransitions()` right after the navigation:
+
+```dart
+unawaited(context.router.push(const DetailsRoute()));
+await context.router.waitForTransitions();
+if (context.mounted) showModalBottomSheet(context: context, builder: (_) => const FiltersSheet());
+```
+
+It waits for every page in the app that is coming in after a push or replace, or leaving after a pop, in every router, so it works the same after `pop()`. A push still waiting on an asynchronous guard isn't waited for, nor are dialogs and other routes pushed without a page.
+
 ## Passing Arguments
 
 That's the fun part! **AutoRoute** automatically detects and handles your page arguments for you, the generated route object will deliver all the arguments your page needs including path/query params.
