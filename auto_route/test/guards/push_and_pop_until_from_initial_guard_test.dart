@@ -20,8 +20,8 @@ void main() {
         NamedRouteDef.guarded(
           name: 'HomeRoute',
           path: '/',
-          onNavigation: (resolver, router) {
-            unawaited(router.pushAndPopUntil(const NamedRoute('LoginRoute'), predicate: (_) => false));
+          onNavigation: (resolver, guardedRouter) {
+            unawaited(guardedRouter.pushAndPopUntil(const NamedRoute('LoginRoute'), predicate: (_) => false));
           },
           builder: (_, _) => const Scaffold(body: Text('HomeRoute')),
         ),

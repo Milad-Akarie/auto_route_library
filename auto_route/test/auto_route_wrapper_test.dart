@@ -46,7 +46,7 @@ void main() {
   // second ParentRoute with its own wrapper, as the issue's comments explain.
   testWidgets('Pushing a sibling route from a child widget keeps the wrapper of the host route', (tester) async {
     _ProvidedState.created = 0;
-    final router = RootStackRouter.build(
+    final localRouter = RootStackRouter.build(
       routes: [
         AutoRoute(
           path: '/parent',
@@ -62,14 +62,14 @@ void main() {
         ),
       ],
     );
-    await pumpRouterApp(tester, router);
+    await pumpRouterApp(tester, localRouter);
     expect(find.text('Push B'), findsOneWidget);
     expect(_ProvidedState.created, 1);
 
     await tester.tap(find.text('Push B'));
     await tester.pumpAndSettle();
-    expect(router.topRoute.name, 'BRoute');
-    expect(router.stack.map((page) => page.name), [_ParentRoute.name]);
+    expect(localRouter.topRoute.name, 'BRoute');
+    expect(localRouter.stack.map((page) => page.name), [_ParentRoute.name]);
     expect(_ProvidedState.created, 1);
   });
 }

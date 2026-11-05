@@ -37,10 +37,10 @@ void main() {
 
   for (final how in ['replaceAll', 'push']) {
     testWidgets('A guard rejecting the first navigation can open another page with $how', (tester) async {
-      final router = buildRouter((resolver, router) {
+      final router = buildRouter((resolver, guardedRouter) {
         resolver.reject();
         const fallback = NamedRoute('FallbackRoute');
-        unawaited(how == 'push' ? router.push(fallback) : router.replaceAll([fallback]));
+        unawaited(how == 'push' ? guardedRouter.push(fallback) : guardedRouter.replaceAll([fallback]));
       });
       await pumpAtDeepLink(tester, router, '/protected', includePrefixMatches: false);
       expect(tester.takeException(), isNull);

@@ -401,7 +401,7 @@ void main() {
     });
 
     test('Should redirect to [/A?foo=bar]', () {
-      final match = RouteMatcher(
+      final matchUrl = RouteMatcher(
         RouteCollection.fromList([RedirectRoute(path: '/', redirectTo: '/a?foo=bar'), routeA], root: true),
       ).match;
       final expectedMatches = [
@@ -414,17 +414,17 @@ void main() {
           redirectedFrom: '/',
         ),
       ];
-      expect(match('/?foo=bar'), expectedMatches);
+      expect(matchUrl('/?foo=bar'), expectedMatches);
     });
 
     test('Should redirect to [/A/:id]', () {
-      final routeA = TestRoute('A', path: '/a/:id');
-      final match = RouteMatcher(
-        RouteCollection.fromList([RedirectRoute(path: '/x/:id', redirectTo: '/a/:id'), routeA], root: true),
+      final routeWithId = TestRoute('A', path: '/a/:id');
+      final matchUrl = RouteMatcher(
+        RouteCollection.fromList([RedirectRoute(path: '/x/:id', redirectTo: '/a/:id'), routeWithId], root: true),
       ).match;
       final expectedMatches = [
         RouteMatch<dynamic>(
-          config: routeA,
+          config: routeWithId,
           key: const ValueKey('A'),
           stringMatch: '/a/foo',
           segments: const ['/', 'a', 'foo'],
@@ -432,7 +432,7 @@ void main() {
           redirectedFrom: '/x/foo',
         ),
       ];
-      expect(match('/x/foo'), expectedMatches);
+      expect(matchUrl('/x/foo'), expectedMatches);
     });
   });
 

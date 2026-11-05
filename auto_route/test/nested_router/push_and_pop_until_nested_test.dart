@@ -42,7 +42,7 @@ void main() {
     );
   });
 
-  List<String> namesOf(StackRouter router) => router.stack.map((page) => page.routeData.name).toList();
+  List<String> namesOf(StackRouter activeRouter) => activeRouter.stack.map((page) => page.routeData.name).toList();
 
   // Opens Home, then the shell with S1 and S2, and returns the shell's
   // nested router.

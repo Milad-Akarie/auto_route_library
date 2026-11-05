@@ -23,7 +23,7 @@ void main() {
           page: SecondRoute.page,
           path: '/second',
           guards: [
-            AutoRouteGuard.simple((resolver, router) {
+            AutoRouteGuard.simple((resolver, guardedRouter) {
               token = resolver.context.getInheritedWidgetOfExactType<_Token>()?.value;
               resolver.next();
             }),

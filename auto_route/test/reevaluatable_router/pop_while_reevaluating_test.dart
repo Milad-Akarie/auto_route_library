@@ -115,10 +115,10 @@ void main() {
           name: 'HomeRoute',
           path: '/',
           guards: [
-            AutoRouteGuard.simple((resolver, router) {
+            AutoRouteGuard.simple((resolver, guardedRouter) {
               resolver.next();
-              if (isAppGuarded.value && !router.isRouteActive('AppGuardRoute')) {
-                unawaited(router.push(const NamedRoute('AppGuardRoute')));
+              if (isAppGuarded.value && !guardedRouter.isRouteActive('AppGuardRoute')) {
+                unawaited(guardedRouter.push(const NamedRoute('AppGuardRoute')));
               }
             }),
           ],

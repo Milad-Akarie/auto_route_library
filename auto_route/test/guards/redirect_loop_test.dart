@@ -109,9 +109,9 @@ void main() {
     final router = _AppRouter(
       routes: routes,
       guards: [
-        AutoRouteGuard.simple((resolver, router) {
+        AutoRouteGuard.simple((resolver, guardedRouter) {
           if (loopedTooLong()) return;
-          final skipAuth = router.current.meta['skipAuth'] as bool?;
+          final skipAuth = guardedRouter.current.meta['skipAuth'] as bool?;
           if (skipAuth == true) {
             resolver.next();
           } else {

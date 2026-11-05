@@ -32,9 +32,9 @@ void main() {
   });
 
   final links = <String, Future<Object?> Function(RootStackRouter router)>{
-    'navigatePath': (router) => router.navigatePath('/protected'),
-    'pushPath': (router) => router.pushPath('/protected'),
-    'navigate': (router) => router.navigate(const NamedRoute('ProtectedRoute')),
+    'navigatePath': (activeRouter) => activeRouter.navigatePath('/protected'),
+    'pushPath': (activeRouter) => activeRouter.pushPath('/protected'),
+    'navigate': (activeRouter) => activeRouter.navigate(const NamedRoute('ProtectedRoute')),
   };
 
   for (final MapEntry(:key, :value) in links.entries) {

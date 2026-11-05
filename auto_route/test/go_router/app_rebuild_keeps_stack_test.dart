@@ -41,11 +41,11 @@ void main() {
       await tester.pumpWidget(
         ValueListenableBuilder(
           valueListenable: app,
-          builder: (_, settings, _) => MaterialApp.router(
+          builder: (_, appSettings, _) => MaterialApp.router(
             routerConfig: config,
-            showPerformanceOverlay: settings.showPerformanceOverlay,
-            showSemanticsDebugger: settings.showSemanticsDebugger,
-            builder: settings.wrap ? (_, child) => ColoredBox(color: Colors.white, child: child) : null,
+            showPerformanceOverlay: appSettings.showPerformanceOverlay,
+            showSemanticsDebugger: appSettings.showSemanticsDebugger,
+            builder: appSettings.wrap ? (_, child) => ColoredBox(color: Colors.white, child: child) : null,
           ),
         ),
       );

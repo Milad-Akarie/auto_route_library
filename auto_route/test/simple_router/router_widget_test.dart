@@ -111,8 +111,8 @@ void main() {
         AutoRoute(page: ThirdRoute.page),
         AutoRoute.guarded(
           page: FourthRoute.page,
-          onNavigation: (resolver, router) async {
-            await router.push(const SecondRoute());
+          onNavigation: (resolver, routerBeingGuarded) async {
+            await routerBeingGuarded.push(const SecondRoute());
             guardResumed = true;
             resolver.next();
           },

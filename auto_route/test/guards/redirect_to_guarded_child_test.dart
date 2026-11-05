@@ -27,9 +27,9 @@ void main() {
               name: 'HomeRouter',
               path: 'home',
               guards: [
-                AutoRouteGuard.simple((resolver, router) {
+                AutoRouteGuard.simple((resolver, guardedRouter) {
                   guardCalls++;
-                  unawaited(router.push(const NamedRoute('LoginRoute')));
+                  unawaited(guardedRouter.push(const NamedRoute('LoginRoute')));
                   resolver.reject();
                 }),
               ],

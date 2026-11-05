@@ -40,7 +40,7 @@ void main() {
   });
 
   testWidgets('AutoTabsScaffold should use default routes if no children are provided', (tester) async {
-    final router = RootStackRouter.build(
+    final localRouter = RootStackRouter.build(
       routes: [
         AutoRoute(
           page: TabsScaffoldDefaultRoute.page,
@@ -52,8 +52,8 @@ void main() {
         ),
       ],
     );
-    await pumpRouterApp(tester, router);
-    final tabsRouter = router.innerRouterOf(TabsScaffoldDefaultRoute.name);
+    await pumpRouterApp(tester, localRouter);
+    final tabsRouter = localRouter.innerRouterOf(TabsScaffoldDefaultRoute.name);
     expect(tabsRouter, isA<TabsRouter>());
     expect(tabsRouter!.pageCount, 2);
     expect(tabsRouter.stackData.map((e) => e.name), [FirstRoute.name, SecondRoute.name]);
@@ -64,7 +64,7 @@ void main() {
   testWidgets(
     'AutoTabsScaffold should throw (FlutterError) if building default routes when one has required arguments',
     (tester) async {
-      final router = RootStackRouter.build(
+      final localRouter = RootStackRouter.build(
         routes: [
           AutoRoute(
             page: TabsScaffoldDefaultRoute.page,
@@ -76,7 +76,7 @@ void main() {
           ),
         ],
       );
-      await pumpRouterApp(tester, router);
+      await pumpRouterApp(tester, localRouter);
       expect(tester.takeException(), isA<FlutterError>());
     },
     // The tabs router throws while Flutter mounts it, so Flutter never

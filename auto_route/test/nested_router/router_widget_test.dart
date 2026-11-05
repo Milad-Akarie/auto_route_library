@@ -293,17 +293,17 @@ void main() {
   testWidgets('root maybePop should respect a PopScope on the host page when the nested router has one page', (
     tester,
   ) async {
-    final router = _PopScopeHostRouter();
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(const _PopScopeHostRoute()));
+    final localRouter = _PopScopeHostRouter();
+    await pumpRouterApp(tester, localRouter);
+    unawaited(localRouter.push(const _PopScopeHostRoute()));
     await tester.pumpAndSettle();
-    expectTopPage(router, SecondNested1Route.name);
+    expectTopPage(localRouter, SecondNested1Route.name);
 
-    await router.maybePop();
+    await localRouter.maybePop();
     await tester.pumpAndSettle();
 
-    expect(router.current.name, _PopScopeHostRoute.name);
-    expectTopPage(router, SecondNested1Route.name);
+    expect(localRouter.current.name, _PopScopeHostRoute.name);
+    expectTopPage(localRouter, SecondNested1Route.name);
   });
 
   // Regression of the #2154 fix (navigate() waits for the route it opens).

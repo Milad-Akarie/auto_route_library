@@ -28,9 +28,9 @@ void main() {
 
   // Each way the drawer's button can go back to Home.
   final goHomeCalls = <String, void Function(StackRouter router)>{
-    'navigate': (router) => unawaited(router.navigate(const PageRouteInfo('Home'))),
-    'replaceAll': (router) => unawaited(router.replaceAll(const [PageRouteInfo('Home')])),
-    'popUntilRoot': (router) => router.popUntilRoot(),
+    'navigate': (activeRouter) => unawaited(activeRouter.navigate(const PageRouteInfo('Home'))),
+    'replaceAll': (activeRouter) => unawaited(activeRouter.replaceAll(const [PageRouteInfo('Home')])),
+    'popUntilRoot': (activeRouter) => activeRouter.popUntilRoot(),
   };
 
   for (final MapEntry(key: name, value: goHome) in goHomeCalls.entries) {

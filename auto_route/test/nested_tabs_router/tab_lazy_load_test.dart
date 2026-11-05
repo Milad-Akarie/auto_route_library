@@ -63,9 +63,12 @@ RootStackRouter _buildRouter(_Kind kind, {bool? lazyLoad}) {
         page: PageInfo(
           'TabsRoute',
           builder: (_) => switch ((kind, lazyLoad)) {
-            (.tabBar, final bool lazyLoad) => AutoTabsRouter.tabBar(routes: routes, lazyLoad: lazyLoad),
+            (.tabBar, final bool explicitLazyLoad) => AutoTabsRouter.tabBar(routes: routes, lazyLoad: explicitLazyLoad),
             (.tabBar, null) => AutoTabsRouter.tabBar(routes: routes),
-            (.pageView, final bool lazyLoad) => AutoTabsRouter.pageView(routes: routes, lazyLoad: lazyLoad),
+            (.pageView, final bool explicitLazyLoad) => AutoTabsRouter.pageView(
+              routes: routes,
+              lazyLoad: explicitLazyLoad,
+            ),
             (.pageView, null) => AutoTabsRouter.pageView(routes: routes),
           },
         ),

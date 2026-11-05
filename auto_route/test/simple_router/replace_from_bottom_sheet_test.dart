@@ -35,7 +35,7 @@ void main() {
   }
 
   testWidgets('replace from the sheet replaces the page under it, and the sheet closes', (tester) async {
-    await openSheet(tester, (router) => router.replace(const PageRouteInfo('B')));
+    await openSheet(tester, (activeRouter) => activeRouter.replace(const PageRouteInfo('B')));
 
     await tester.tap(find.text('Push to page B'));
     await tester.pumpAndSettle();
@@ -51,7 +51,7 @@ void main() {
   });
 
   testWidgets('popAndPush from the sheet closes it and shows B over Home, and pop returns to Home', (tester) async {
-    await openSheet(tester, (router) => router.popAndPush(const PageRouteInfo('B')));
+    await openSheet(tester, (activeRouter) => activeRouter.popAndPush(const PageRouteInfo('B')));
 
     await tester.tap(find.text('Push to page B'));
     await tester.pumpAndSettle();

@@ -31,13 +31,13 @@ void main() {
           page: _HomeRoute.page(authRepo),
           initial: true,
           guards: [
-            AutoRouteGuard.simple((resolver, router) {
+            AutoRouteGuard.simple((resolver, guardedRouter) {
               if (authRepo.isLoggedIn) {
                 resolver.next();
                 return;
               }
               resolver.reject();
-              unawaited(router.replaceAll([const _LoginRoute()]));
+              unawaited(guardedRouter.replaceAll([const _LoginRoute()]));
             }),
           ],
         ),
