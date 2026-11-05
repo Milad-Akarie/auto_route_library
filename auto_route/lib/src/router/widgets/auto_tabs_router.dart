@@ -295,7 +295,7 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
     super.initState();
     _animationController = AnimationController(vsync: this, duration: widget.duration);
     _curvedAnimation = CurvedAnimation(parent: _animationController, curve: widget.curve);
-    _animation = Tween(begin: 0.0, end: 1.0).animate(_curvedAnimation);
+    _animation = Tween<double>(begin: 0, end: 1).animate(_curvedAnimation);
     _tabsHash = const ListEquality<Object?>().hash(widget.routes);
   }
 
@@ -326,7 +326,7 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
       setState(() {
         _index = _controller!.activeIndex;
       });
-      _animationController.forward(from: 0.0);
+      _animationController.forward(from: 0);
     }
   }
 

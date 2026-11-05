@@ -19,8 +19,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:material_ui/material_ui.dart';
 
-const double _kBackGestureWidth = 20.0;
-const double _kMinFlingVelocity = 1.0; // Screen widths per second.
+const double _kBackGestureWidth = 20;
+const double _kMinFlingVelocity = 1; // Screen widths per second.
 
 // An eyeballed value for the maximum time it takes for a page to animate forward
 // if the user releases a page mid swipe.
@@ -39,13 +39,13 @@ const Color kCupertinoModalBarrierColor = CupertinoDynamicColor.withBrightness(
 );
 
 // Offset from offscreen to the right to fully on screen.
-final Animatable<Offset> _kRightMiddleTween = Tween(begin: const Offset(1.0, 0.0), end: Offset.zero);
+final Animatable<Offset> _kRightMiddleTween = Tween(begin: const Offset(1, 0), end: Offset.zero);
 
 // Offset from fully on screen to 1/3 offscreen to the left.
-final Animatable<Offset> _kMiddleLeftTween = Tween(begin: Offset.zero, end: const Offset(-1.0 / 3.0, 0.0));
+final Animatable<Offset> _kMiddleLeftTween = Tween(begin: Offset.zero, end: const Offset(-1.0 / 3.0, 0));
 
 // Offset from offscreen below to fully on screen.
-final Animatable<Offset> _kBottomUpTween = Tween(begin: const Offset(0.0, 1.0), end: Offset.zero);
+final Animatable<Offset> _kBottomUpTween = Tween(begin: const Offset(0, 1), end: Offset.zero);
 
 /// A mixin that implements methods and/or parameters of a [PageRoute].
 ///
@@ -266,7 +266,7 @@ class _CupertinoBackGestureDetectorState<T> extends State<_CupertinoBackGestureD
     assert(mounted);
     // This can be called even if start is not called, paired with the "down" event
     // that we don't consider here.
-    _backGestureController?.dragEnd(0.0);
+    _backGestureController?.dragEnd(0);
     _backGestureController = null;
   }
 
@@ -297,10 +297,10 @@ class _CupertinoBackGestureDetectorState<T> extends State<_CupertinoBackGestureD
       children: [
         widget.child,
         PositionedDirectional(
-          start: 0.0,
+          start: 0,
           width: dragAreaWidth,
-          top: 0.0,
-          bottom: 0.0,
+          top: 0,
+          bottom: 0,
           child: Listener(onPointerDown: _handlePointerDown, behavior: .translucent),
         ),
       ],
@@ -367,7 +367,7 @@ class _CupertinoBackGestureController<T> {
         _kMaxPageBackAnimationTime,
       );
       controller.animateTo(
-        1.0,
+        1,
         duration: Duration(milliseconds: droppedPageForwardAnimationTime),
         curve: animationCurve,
       );
@@ -384,7 +384,7 @@ class _CupertinoBackGestureController<T> {
           controller.value,
         )!.floor();
         controller.animateBack(
-          0.0,
+          0,
           duration: Duration(milliseconds: droppedPageBackAnimationTime),
           curve: animationCurve,
         );
@@ -572,7 +572,7 @@ class _CupertinoEdgeShadowPainter extends BoxPainter {
       final paint = Paint()
         ..color = Color.lerp(colors[bandColorIndex], colors[bandColorIndex + 1], (dx % bandWidth) / bandWidth)!;
       final x = start + shadowDirection * dx;
-      canvas.drawRect(Rect.fromLTWH(x - 1.0, offset.dy, 1.0, shadowHeight), paint);
+      canvas.drawRect(Rect.fromLTWH(x - 1.0, offset.dy, 1, shadowHeight), paint);
     }
   }
 }

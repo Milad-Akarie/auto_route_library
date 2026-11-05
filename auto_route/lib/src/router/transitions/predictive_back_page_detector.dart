@@ -169,8 +169,8 @@ class _PredictiveBackSharedElementPageTransitionState extends State<_PredictiveB
   // Constants as per the motion specs
   // https://developer.android.com/design/ui/mobile/guides/patterns/predictive-back#motion-specs
   static const double _kMinScale = 0.9;
-  static const double _kDivisionFactor = 20.0;
-  static const double _kMargin = 8.0;
+  static const double _kDivisionFactor = 20;
+  static const double _kMargin = 8;
   static const double _kYPositionFactor = 0.1;
 
   // The duration of the commit transition.
@@ -182,7 +182,7 @@ class _PredictiveBackSharedElementPageTransitionState extends State<_PredictiveB
   static const int _kCommitMilliseconds = 400;
   static const Curve _kCurve = Curves.easeInOutCubicEmphasized;
   static const Interval _kCommitInterval = Interval(
-    0.0,
+    0,
     _kCommitMilliseconds / FadeForwardsPageTransitionsBuilder.kTransitionMilliseconds,
     curve: _kCurve,
   );
@@ -191,18 +191,18 @@ class _PredictiveBackSharedElementPageTransitionState extends State<_PredictiveB
   // used, but that is not yet supported. Instead, this value is a best guess at
   // a value that looks reasonable on most devices.
   // See https://github.com/flutter/flutter/issues/97349.
-  static const double _kDeviceBorderRadius = 32.0;
+  static const double _kDeviceBorderRadius = 32;
 
   // Since we don't know the device border radius, this provides a smooth
   // transition between the default radius and the actual radius.
-  final Tween<double> _borderRadiusTween = Tween(begin: 0.0, end: _kDeviceBorderRadius);
+  final Tween<double> _borderRadiusTween = Tween(begin: 0, end: _kDeviceBorderRadius);
 
   // The route fades out after commit.
-  final Tween<double> _opacityTween = Tween(begin: 1.0, end: 0.0);
+  final Tween<double> _opacityTween = Tween(begin: 1, end: 0);
 
   // The route shrinks during the gesture and animates back to normal after
   // commit.
-  final Tween<double> _scaleTween = Tween(begin: 1.0, end: _kMinScale);
+  final Tween<double> _scaleTween = Tween(begin: 1, end: _kMinScale);
 
   // An animation that stays constant at zero before the commit, and after the
   // commit goes from zero to one.
@@ -213,7 +213,7 @@ class _PredictiveBackSharedElementPageTransitionState extends State<_PredictiveB
   // Used for animations that follow the gesture and then animate back to their
   // original value after commit.
   final ProxyAnimation _bounceAnimation = ProxyAnimation();
-  double _lastBounceAnimationValue = 0.0;
+  double _lastBounceAnimationValue = 0;
 
   // An animation that proxies to widget.animation during the gesture and then
   // to _commitAnimation after the commit. So, it goes from zero to a maximum of
@@ -241,7 +241,7 @@ class _PredictiveBackSharedElementPageTransitionState extends State<_PredictiveB
     final rawYShift = currentTouchY - startTouchY;
     final easedYShift =
         // This curve was eyeballed on a Pixel 9 running Android 16.
-        Curves.easeOut.transform(clampDouble(rawYShift.abs() / screenHeight, 0.0, 1.0)) * rawYShift.sign * yShiftMax;
+        Curves.easeOut.transform(clampDouble(rawYShift.abs() / screenHeight, 0, 1)) * rawYShift.sign * yShiftMax;
 
     return clampDouble(easedYShift, -yShiftMax, yShiftMax);
   }
@@ -253,7 +253,7 @@ class _PredictiveBackSharedElementPageTransitionState extends State<_PredictiveB
     };
 
     _bounceAnimation.parent = switch (widget.phase) {
-      .commit => Tween(begin: 0.0, end: _lastBounceAnimationValue).animate(_curvedAnimation!),
+      .commit => _curvedAnimation!.drive(Tween(begin: 0, end: _lastBounceAnimationValue)),
       .idle || .start || .update || .cancel => ReverseAnimation(widget.animation),
     };
 
@@ -264,7 +264,7 @@ class _PredictiveBackSharedElementPageTransitionState extends State<_PredictiveB
 
     final xShift = (screenSize.width / _kDivisionFactor) - _kMargin;
     _positionAnimation = _animation.drive(switch (widget.phase) {
-      .commit => Tween(begin: _lastDrag, end: Offset(screenSize.height * _kYPositionFactor, 0.0)),
+      .commit => Tween(begin: _lastDrag, end: Offset(screenSize.height * _kYPositionFactor, 0)),
       .idle || .start || .update || .cancel => Tween(
         // The y position before commit is given by the vertical drag, not by an
         // animation.
@@ -371,17 +371,17 @@ class _PredictiveBackFullscreenPageTransitionState extends State<_PredictiveBack
   // These values were eyeballed to match the Android spec for the Full Screen
   // page transition:
   // https://developer.android.com/design/ui/mobile/guides/patterns/predictive-back#full-screen-surfaces
-  static const double _kScaleStart = 1.0;
+  static const double _kScaleStart = 1;
   static const double _kScaleCommit = 0.95;
-  static const double _kOpacityFullyOpened = 1.0;
+  static const double _kOpacityFullyOpened = 1;
   static const double _kOpacityStartTransition = 0.95;
   // The point at which the drag would cause a commit instead of a cancel if it
   // were released.
   static const double _kCommitAt = 0.65;
   static const double _kWeightPreCommit = _kCommitAt;
   static const double _kWeightPostCommit = 1 - _kWeightPreCommit;
-  static const double _kScreenWidthDivisionFactor = 20.0;
-  static const double _kXShiftAdjustment = 8.0;
+  static const double _kScreenWidthDivisionFactor = 20;
+  static const double _kXShiftAdjustment = 8;
   static const Duration _kCommitDuration = Duration(milliseconds: 100);
 
   final Animatable<double> _primaryOpacityTween = Tween(begin: _kOpacityStartTransition, end: _kOpacityFullyOpened);
@@ -436,13 +436,13 @@ class _PredictiveBackFullscreenPageTransitionState extends State<_PredictiveBack
         weight: _kWeightPreCommit,
       ),
       TweenSequenceItem<Offset>(
-        tween: Tween<Offset>(begin: Offset(xShift, 0.0), end: Offset.zero),
+        tween: Tween<Offset>(begin: Offset(xShift, 0), end: Offset.zero),
         weight: _kWeightPostCommit,
       ),
     ]);
 
     _secondaryCurrentPositionTween = ConstantTween(Offset.zero);
-    _secondaryPositionTween = Tween(begin: Offset(xShift, 0.0), end: Offset.zero);
+    _secondaryPositionTween = Tween(begin: Offset(xShift, 0), end: Offset.zero);
   }
 
   Widget _secondaryAnimatedBuilder(BuildContext context, Widget? child) {
