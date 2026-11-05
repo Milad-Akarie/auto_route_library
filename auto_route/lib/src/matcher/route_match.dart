@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
-import 'package:path/path.dart' as p;
+import 'package:path/path.dart' as p show posix;
 
 /// This is the result returned by `RouteMatcher`
 /// when a match is found
@@ -157,8 +157,9 @@ class RouteMatch<T> {
       ...last.allSegments(includeEmpty: includeEmpty),
   ];
 
-  /// Joins all segments to a valid path
-  String get fullPath => p.joinAll(allSegments());
+  /// Joins all segments to a valid path, with '/' on every platform,
+  /// Windows too.
+  String get fullPath => p.posix.joinAll(allSegments());
 
   /// Returns a flattened list of this match and it's sub-matches
   /// e.g if we have = RouteMatch1[RouteMatch2[RouteMatch3]]

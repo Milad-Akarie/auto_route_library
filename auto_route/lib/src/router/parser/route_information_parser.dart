@@ -6,7 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart'
     show RouteInformation, RouteInformationParser;
-import 'package:path/path.dart' as p;
+import 'package:path/path.dart' as p show posix;
 
 /// AutoRoute extension of [RouteInformationParser]
 class DefaultRouteParser extends RouteInformationParser<UrlState> {
@@ -60,10 +60,13 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
     );
   }
 
+  // A url's separator is '/' on every platform, so paths go through the
+  // posix context of package:path, never the platform's: on Windows that
+  // one turns '/' into '\'.
   Uri _normalize(Uri uri) {
     final path = uri.path.isEmpty ? '/' : uri.path;
     return Uri(
-      path: p.normalize(path),
+      path: p.posix.normalize(path),
       queryParameters: uri.queryParameters.isEmpty
           ? null
           : uri.queryParametersAll,
@@ -458,10 +461,10 @@ class UrlState {
     if (lastSegment == null) {
       return Uri(path: '/');
     }
-    final fullPath = p.joinAll(
+    final fullPath = p.posix.joinAll(
       routes.where((e) => e.stringMatch.isNotEmpty).map((e) => e.stringMatch),
     );
-    final normalized = p.normalize(fullPath);
+    final normalized = p.posix.normalize(fullPath);
     final queryParams = <String, Object?>{};
     if (lastSegment.queryParams.isNotEmpty) {
       final queries = lastSegment.queryParams.rawMap;
