@@ -83,8 +83,9 @@ class AutoRouter extends StatefulWidget {
   /// [heroControllerBuilder] works as [AutoRouter.heroControllerBuilder]
   /// does: pass [MaterialApp.createMaterialHeroController] or
   /// `CupertinoApp.createCupertinoHeroController` to fly Heroes between this
-  /// router's pages, and the router disposes the controller it creates.
-  /// [AutoTabsRouter] needs none.
+  /// router's pages, and the router disposes the controller it creates. Left
+  /// out, the router creates no [HeroController] and flies no Heroes between
+  /// its pages. [AutoTabsRouter] needs none.
   static Widget declarative({
     required RoutesBuilder routes,
     Key? key,
@@ -111,7 +112,7 @@ class AutoRouter extends StatefulWidget {
     routesBuilder: routes,
     clipBehavior: clipBehavior,
     traversalEdgeBehavior: traversalEdgeBehavior,
-    heroControllerBuilder: heroControllerBuilder ?? HeroController.new,
+    heroControllerBuilder: heroControllerBuilder,
   );
 
   @override

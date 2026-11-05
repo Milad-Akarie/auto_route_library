@@ -3,6 +3,8 @@
   of a nested router: pass `MaterialApp.createMaterialHeroController` or `CupertinoApp.createCupertinoHeroController`,
   and the router disposes the controller it creates. Left out, `AutoRouter` flies none, as before (#372,
   flutter/flutter#90103).
+- **BEHAVIOR CHANGE**: `AutoRouter.declarative` no longer creates a hero controller by itself; pass
+  `heroControllerBuilder` to keep hero animations between its pages.
 
 ## 12.3.0
 - **BREAKING CHANGE**: `Parameters.optBool` and `getBool` take their default by name:

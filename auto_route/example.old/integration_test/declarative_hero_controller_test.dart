@@ -8,14 +8,15 @@ import 'package:material_ui/material_ui.dart';
 import 'support/app.dart';
 import 'support/disposal_tracker.dart';
 
-// Leaving a declarative router disposes the HeroController it creates.
+// Leaving a declarative router disposes the HeroController its
+// heroControllerBuilder creates.
 // Headless test: auto_route/test/leaks/declarative_hero_controller_test.dart
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('declarative hero controller', () {
-    // Steps: push HostRoute, whose page holds an AutoRouter.declarative, then
-    // go back, three times.
+    // Steps: push HostRoute, whose page holds an AutoRouter.declarative given
+    // a heroControllerBuilder, then go back, three times.
     // Should: each visit's HeroController is disposed when the host leaves.
     testWidgets('leaving a declarative router disposes its HeroController', (
       tester,
@@ -35,6 +36,7 @@ void main() {
               'HostRoute',
               builder: (_) => AutoRouter.declarative(
                 routes: (_) => [const NamedRoute('ChildRoute')],
+                heroControllerBuilder: HeroController.new,
               ),
             ),
             children: [

@@ -142,6 +142,55 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('to'), findsOneWidget);
     });
+
+    testWidgets('a rebuild that clears it disposes the controller', (
+      tester,
+    ) async {
+      final heroControllers = DisposalTracker<HeroController>();
+      final pages = ValueNotifier<List<PageRouteInfo>>(const [_kFromRoute]);
+      addTearDown(pages.dispose);
+      final heroControllerBuilder = ValueNotifier<_HeroControllerBuilder?>(
+        MaterialApp.createMaterialHeroController,
+      );
+      addTearDown(heroControllerBuilder.dispose);
+      await pumpRouterApp(
+        tester,
+        _declarativeRouter(pages, heroControllerBuilder),
+      );
+      // The app's own controller and the nested router's.
+      final createdWithBuilder = heroControllers.created;
+
+      heroControllerBuilder.value = null;
+      await tester.pump();
+      expect((createdWithBuilder, heroControllers.undisposed), (2, 1));
+      pages.value = const [_kFromRoute, _kToRoute];
+      await _pumpUntilFlight(tester);
+      _expectHeroStaysPut();
+      await tester.pumpAndSettle();
+      expect(find.text('to'), findsOneWidget);
+    });
+
+    // Before, AutoRouter.declarative always made a HeroController of its
+    // own; now it flies Heroes only when asked, as AutoRouter does.
+    testWidgets('left out, a Hero stays put', (tester) async {
+      final pages = ValueNotifier<List<PageRouteInfo>>(const [_kFromRoute]);
+      addTearDown(pages.dispose);
+      final heroControllerBuilder = ValueNotifier<_HeroControllerBuilder?>(
+        null,
+      );
+      addTearDown(heroControllerBuilder.dispose);
+      await pumpRouterApp(
+        tester,
+        _declarativeRouter(pages, heroControllerBuilder),
+      );
+      expect(find.text('from'), findsOneWidget);
+
+      pages.value = const [_kFromRoute, _kToRoute];
+      await _pumpUntilFlight(tester);
+      _expectHeroStaysPut();
+      await tester.pumpAndSettle();
+      expect(find.text('to'), findsOneWidget);
+    });
   });
 }
 
