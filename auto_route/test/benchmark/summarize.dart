@@ -62,8 +62,9 @@ class _Stats {
 }
 
 void _printRuns(Map<String, List<double>> runs) {
-  stdout.writeln('| case | median | lowest | highest | spread | runs |');
-  stdout.writeln('|---|---:|---:|---:|---:|---:|');
+  stdout
+    ..writeln('| case | median | lowest | highest | spread | runs |')
+    ..writeln('|---|---:|---:|---:|---:|---:|');
   for (final MapEntry(:key, :value) in runs.entries) {
     final stats = _Stats(value);
     stdout.writeln(
@@ -74,8 +75,9 @@ void _printRuns(Map<String, List<double>> runs) {
 }
 
 void _printComparison(Map<String, List<double>> before, Map<String, List<double>> after) {
-  stdout.writeln('| case | before | after | change | spread |');
-  stdout.writeln('|---|---:|---:|---:|---:|');
+  stdout
+    ..writeln('| case | before | after | change | spread |')
+    ..writeln('|---|---:|---:|---:|---:|');
   for (final MapEntry(:key, :value) in before.entries) {
     final afterValues = after[key];
     if (afterValues == null) continue;

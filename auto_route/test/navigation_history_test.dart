@@ -361,8 +361,9 @@ void main() {
       await router.push(const FirstRoute());
       await router.push(const SecondRoute());
 
-      history.back();
-      history.back();
+      history
+        ..back()
+        ..back();
       await Future<void>.delayed(const Duration(milliseconds: 20));
 
       expect(() => history.length, returnsNormally);

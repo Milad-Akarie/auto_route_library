@@ -29,9 +29,7 @@ void main() {
       testWidgets('setActiveIndex to a tab whose guard rejects keeps the current tab', (tester) async {
         final router = _buildRouter(kind);
         await pumpRouterApp(tester, router);
-        final tabs = _tabsOf(router);
-
-        tabs.setActiveIndex(1);
+        final tabs = _tabsOf(router)..setActiveIndex(1);
         await tester.pumpAndSettle();
 
         expect(_guardCalls, 1);
@@ -43,9 +41,7 @@ void main() {
         _allow = true;
         final router = _buildRouter(kind);
         await pumpRouterApp(tester, router);
-        final tabs = _tabsOf(router);
-
-        tabs.setActiveIndex(1);
+        final tabs = _tabsOf(router)..setActiveIndex(1);
         await tester.pumpAndSettle();
 
         expect(_guardCalls, 1);
@@ -91,9 +87,7 @@ void main() {
         final decision = _decision = Completer<bool>();
         final router = _buildRouter(kind);
         await pumpRouterApp(tester, router);
-        final tabs = _tabsOf(router);
-
-        tabs.setActiveIndex(1);
+        final tabs = _tabsOf(router)..setActiveIndex(1);
         await tester.pumpAndSettle();
         _expectTab(tabs, 0);
 
@@ -108,9 +102,7 @@ void main() {
       testWidgets('a guard that redirects to a login page shows the tab after the login', (tester) async {
         final router = _buildRouter(kind, guard: _loginGuard);
         await pumpRouterApp(tester, router);
-        final tabs = _tabsOf(router);
-
-        tabs.setActiveIndex(1);
+        final tabs = _tabsOf(router)..setActiveIndex(1);
         await tester.pumpAndSettle();
         expectTopPage(router, 'LoginRoute');
 
@@ -127,8 +119,7 @@ void main() {
         _allow = true;
         final router = _buildRouter(kind, guardedTab: 0, homeIndex: 0);
         await pumpRouterApp(tester, router);
-        final tabs = _tabsOf(router);
-        tabs.setActiveIndex(1);
+        final tabs = _tabsOf(router)..setActiveIndex(1);
         await tester.pumpAndSettle();
         _expectTab(tabs, 1);
 
@@ -145,8 +136,7 @@ void main() {
         _allow = true;
         final router = _buildRouter(kind, guardedTab: 0, homeIndex: 0);
         await pumpRouterApp(tester, router);
-        final tabs = _tabsOf(router);
-        tabs.setActiveIndex(1);
+        final tabs = _tabsOf(router)..setActiveIndex(1);
         await tester.pumpAndSettle();
 
         final decision = _decision = Completer<bool>();

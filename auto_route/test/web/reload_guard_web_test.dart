@@ -35,8 +35,7 @@ void main() {
             ],
           ),
         ],
-      );
-      router.routeInfoProvider(initialRouteInformation: RouteInformation(uri: Uri.parse('/dashboard')));
+      )..routeInfoProvider(initialRouteInformation: RouteInformation(uri: Uri.parse('/dashboard')));
       await pumpRouterConfigApp(tester, router.config(includePrefixMatches: includePrefixMatches));
       await tester.pump(const Duration(milliseconds: 200));
       await settleBrowser(tester);

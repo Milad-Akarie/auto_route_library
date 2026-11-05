@@ -22,11 +22,11 @@ void main() {
   ]) {
     testWidgets('Pushing in a shell with $how updates the browser url', (tester) async {
       final sentUrls = <String>[];
-      final messenger = tester.binding.defaultBinaryMessenger;
-      messenger.setMockMethodCallHandler(SystemChannels.navigation, (call) async {
-        if (call.method == 'routeInformationUpdated') sentUrls.add((call.arguments as Map)['uri'] as String);
-        return null;
-      });
+      final messenger = tester.binding.defaultBinaryMessenger
+        ..setMockMethodCallHandler(SystemChannels.navigation, (call) async {
+          if (call.method == 'routeInformationUpdated') sentUrls.add((call.arguments as Map)['uri'] as String);
+          return null;
+        });
       addTearDown(() => messenger.setMockMethodCallHandler(SystemChannels.navigation, null));
 
       final router = RootStackRouter.build(

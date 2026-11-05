@@ -39,12 +39,12 @@ void main() {
       var appClosed = false;
       bool? frameworkHandlesBack;
       tester.binding.handleAppLifecycleStateChanged(.resumed);
-      final messenger = tester.binding.defaultBinaryMessenger;
-      messenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
-        if (call.method == 'SystemNavigator.pop') appClosed = true;
-        if (call.method == 'SystemNavigator.setFrameworkHandlesBack') frameworkHandlesBack = call.arguments as bool;
-        return null;
-      });
+      final messenger = tester.binding.defaultBinaryMessenger
+        ..setMockMethodCallHandler(SystemChannels.platform, (call) async {
+          if (call.method == 'SystemNavigator.pop') appClosed = true;
+          if (call.method == 'SystemNavigator.setFrameworkHandlesBack') frameworkHandlesBack = call.arguments as bool;
+          return null;
+        });
       addTearDown(() => messenger.setMockMethodCallHandler(SystemChannels.platform, null));
       await tester.pumpWidget(MaterialApp.router(theme: androidTheme, routerConfig: router.config()));
       await tester.pumpAndSettle();

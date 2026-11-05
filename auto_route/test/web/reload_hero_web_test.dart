@@ -28,8 +28,7 @@ void main() {
         AutoRoute(page: _page1, path: '/'),
         AutoRoute(page: _page2, path: '/second'),
       ],
-    );
-    router.routeInfoProvider(initialRouteInformation: RouteInformation(uri: Uri.parse('/second')));
+    )..routeInfoProvider(initialRouteInformation: RouteInformation(uri: Uri.parse('/second')));
     await pumpRouterConfigApp(tester, router.config(includePrefixMatches: true));
     await settleBrowser(tester);
     expect(router.stack.map((p) => p.name), ['Page1Route', 'Page2Route']);

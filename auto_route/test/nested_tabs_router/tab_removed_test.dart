@@ -33,8 +33,7 @@ void _runRemovedTabTests(_TabsKind kind) {
       ],
     );
     await pumpRouterConfigApp(tester, router.config());
-    final tabsRouter = router.innerRouterOf<TabsRouter>(_TabsHostRoute.name)!;
-    tabsRouter.setActiveIndex(1);
+    final tabsRouter = router.innerRouterOf<TabsRouter>(_TabsHostRoute.name)!..setActiveIndex(1);
     await tester.pumpAndSettle();
     tabsRouter.setActiveIndex(2);
     await tester.pumpAndSettle();

@@ -94,8 +94,9 @@ void main() {
     expect(_builds['detail'], afterFirst + 2);
     expect(r.stack, hasLength(4));
 
-    r.pop();
-    r.pop();
+    r
+      ..pop()
+      ..pop();
     await tester.pumpAndSettle();
     expect(find.text('detail taps 1'), findsOneWidget);
   });

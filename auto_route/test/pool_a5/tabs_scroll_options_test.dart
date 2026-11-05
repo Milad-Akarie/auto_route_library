@@ -70,9 +70,7 @@ void main() {
         },
       );
       await pumpRouterApp(tester, router);
-      final tabs = router.innerRouterOf<TabsRouter>('HostRoute')!;
-
-      tabs.setActiveIndex(2);
+      final tabs = router.innerRouterOf<TabsRouter>('HostRoute')!..setActiveIndex(2);
       await tester.pump();
       await tester.pump();
       expect(tabs.activeIndex, 2);

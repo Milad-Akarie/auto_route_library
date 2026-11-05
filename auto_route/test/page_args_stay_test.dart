@@ -79,8 +79,7 @@ void main() {
       ],
     );
     await pumpRouterConfigApp(tester, router.config());
-    final tabs = router.innerRouterOf<TabsRouter>('TabsRoute')!;
-    tabs.setActiveIndex(1);
+    final tabs = router.innerRouterOf<TabsRouter>('TabsRoute')!..setActiveIndex(1);
     await tester.pumpAndSettle();
     expect(find.text('BRoute b'), findsOneWidget);
     tabs.setActiveIndex(0);

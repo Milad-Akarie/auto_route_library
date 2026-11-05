@@ -50,17 +50,14 @@ void main() {
         ],
       );
       await pumpRouterApp(tester, router);
-      final tabs = router.innerRouterOf<TabsRouter>('HomeRoute')!;
-
-      tabs.setActiveIndex(1);
+      final tabs = router.innerRouterOf<TabsRouter>('HomeRoute')!..setActiveIndex(1);
       await tester.pumpAndSettle();
       expect(find.text('BRoute'), findsOneWidget);
       unawaited(toDetail(tester.element(find.text('BRoute')).router));
       await tester.pumpAndSettle();
       expect(find.text('DetailRoute'), findsOneWidget);
 
-      final detailRouter = tester.element(find.text('DetailRoute')).router;
-      detailRouter.pop();
+      final detailRouter = tester.element(find.text('DetailRoute')).router..pop();
       unawaited(toA(detailRouter));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);

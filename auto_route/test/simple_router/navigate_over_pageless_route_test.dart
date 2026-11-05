@@ -29,8 +29,9 @@ void main() {
   List<String> names() => router.stack.map((page) => page.routeData.name).toList();
 
   Future<void> pushPageless(WidgetTester tester, String name) async {
-    final navigator = tester.state<NavigatorState>(find.byType(Navigator).first);
-    navigator.push(MaterialPageRoute<void>(builder: (_) => Scaffold(body: Text(name))));
+    tester
+        .state<NavigatorState>(find.byType(Navigator).first)
+        .push(MaterialPageRoute<void>(builder: (_) => Scaffold(body: Text(name))));
     await tester.pumpAndSettle();
     expect(find.text(name), findsOneWidget);
   }

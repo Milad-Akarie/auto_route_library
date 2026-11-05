@@ -92,8 +92,9 @@ void main() {
     unawaited(router.push(const PageRouteInfo('OrderSummaryRoute')));
     await tester.pump(const Duration(milliseconds: 10));
 
-    router.popUntilRoot();
-    router.popUntilRoot();
+    router
+      ..popUntilRoot()
+      ..popUntilRoot();
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(stackNames(), ['MainRoute']);
