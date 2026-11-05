@@ -22,7 +22,7 @@ import 'package:flutter/widgets.dart';
 class PageRouteInfo<T extends Object?> {
   /// Default constructor
   const PageRouteInfo(
-    this._name, {
+    String name, {
     this.initialChildren,
     this.args,
     this.rawPathParams = const {},
@@ -31,7 +31,8 @@ class PageRouteInfo<T extends Object?> {
     this.stringMatch,
     this.redirectedFrom,
     this.argsEquality = true,
-  }) : fragment = fragment ?? '';
+  }) : _name = name,
+       fragment = fragment ?? '';
 
   /// Creates a new instance form [RouteMatch]
   factory PageRouteInfo.fromMatch(RouteMatch<dynamic> match) {
