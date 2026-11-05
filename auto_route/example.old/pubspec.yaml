@@ -9,25 +9,24 @@ environment:
 resolution: workspace
 
 dependencies:
+  auto_route:
+  collection: any
+  cupertino_ui: any
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  provider: ^6.1.5+1
-  auto_route:
-
-
-  collection: any
   material_ui: any
-  cupertino_ui: any
+  provider: ^6.1.5+1
+
 dev_dependencies:
+  auto_route_generator:
   build_runner: ^2.4.15
+  flutter_driver:
+    sdk: flutter
   flutter_test:
     sdk: flutter
-  auto_route_generator:
   integration_test:
-    sdk: flutter
-  flutter_driver:
     sdk: flutter
   very_good_analysis: ^11.0.0
 
