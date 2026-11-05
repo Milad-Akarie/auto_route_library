@@ -14,7 +14,7 @@ class UserDataCollectorPage extends StatelessWidget
 
   /// Called with the collected data when the flow ends.
   // The generated router copies this type into its args class.
-  final Function(UserData data)? onResult;
+  final void Function(UserData data)? onResult;
 
   @override
   Widget wrappedRoute(BuildContext context) {

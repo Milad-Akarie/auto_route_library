@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:material_ui/material_ui.dart';
 
 import 'support/app.dart';
 import 'support/pages.dart';
