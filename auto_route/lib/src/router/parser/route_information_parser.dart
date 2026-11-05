@@ -489,7 +489,7 @@ class UrlState {
   }
 
   /// Stringify query param value
-  static dynamic normalizeQueryParamValue(dynamic value) {
+  static Object? normalizeQueryParamValue(Object? value) {
     if (value == null) {
       return null;
     }

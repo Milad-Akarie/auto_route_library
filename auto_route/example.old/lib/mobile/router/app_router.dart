@@ -47,7 +47,7 @@ class AppRouter extends RootStackRouter {
                 unawaited(resolver.redirectUntil(LoginRoute()));
               },
               title: (ctx, data) {
-                return 'Book Details ${data.params.get('id')}';
+                return 'Book Details ${data.params.getString('id')}';
               },
             ),
           ],

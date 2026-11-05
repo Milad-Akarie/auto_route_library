@@ -31,6 +31,9 @@
   `animation`, as before.
 - **BREAKING CHANGE**: `ReevaluateListenable.stream` takes a `Stream<Object?>`, not a `Stream<dynamic>`. Any stream
   still fits, so a call needs no change; code that tears the constructor off as a function names `Stream<Object?>`.
+- **BREAKING CHANGE**: `Parameters.get` takes and returns `Object?`, not `dynamic`, and
+  `UrlState.normalizeQueryParamValue` does the same. Read a typed value with `getString`, `getInt` and their kin, or
+  cast, `params.get('id') as String?`.
 
 ## 12.3.0
 - **BREAKING CHANGE**: `Parameters.optBool` and `getBool` take their default by name:

@@ -45,7 +45,7 @@ class Parameters {
 
   /// returns the value corresponding with [key] as is, without type checking
   /// if null returns [defaultValue]
-  dynamic get(String key, [dynamic defaultValue]) {
+  Object? get(String key, [Object? defaultValue]) {
     return _rawMap[key] ?? defaultValue;
   }
 
