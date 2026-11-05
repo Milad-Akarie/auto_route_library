@@ -212,7 +212,6 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
           )
         : (widget.placeholder?.call(context) ??
               // A Container with no child fills its space; a ColoredBox would shrink to nothing.
-              // ignore: banned-usage
               Container(color: Theme.of(context).scaffoldBackgroundColor));
   }
 

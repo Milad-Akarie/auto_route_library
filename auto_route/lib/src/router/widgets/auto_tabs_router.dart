@@ -349,7 +349,6 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
 
         final builderChild = stack.isEmpty
             // A Container with no child fills its space; a ColoredBox would shrink to nothing.
-            // ignore: banned-usage
             ? Container(color: Theme.of(stackContext).scaffoldBackgroundColor)
             : _IndexedStackBuilder(
                 key: _indexedStackKey,
