@@ -2748,7 +2748,8 @@ abstract class StackRouter extends RoutingController {
     while (hasPagelessTopRoute) {
       final top = pagelessRoutesObserver.current!;
       if (predicate(top)) return (accepted: true, rejected: 0);
-      top.navigator?.removeRoute(top);
+      final navigator = top.navigator;
+      navigator?.removeRoute(top);
       if (pagelessRoutesObserver.current == top) break;
     }
     var rejected = 0;
@@ -2777,7 +2778,8 @@ abstract class StackRouter extends RoutingController {
     _markLeaving(_pages.reversed.take(count), withPush ? .replaced : .removed);
     for (var i = 0; i < count; i++) {
       final shownRoute = pagelessRoutesObserver.routeOf(_pages.last);
-      if (!withPush) shownRoute?.navigator?.removeRoute(shownRoute);
+      final shownNavigator = shownRoute?.navigator;
+      if (!withPush && shownRoute != null) shownNavigator?.removeRoute(shownRoute);
       _removeLast(notify: false);
       if (shownRoute != null) {
         // drops the removed page's history entry, as a pop does
