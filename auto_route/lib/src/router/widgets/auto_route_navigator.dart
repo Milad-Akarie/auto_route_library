@@ -62,7 +62,7 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
   List<PageRouteInfo>? _routesSnapshot;
   // The ancestors' routers, owned by them; this state only listens.
   List<TabsRouter> _ancestorTabs = const [];
-  late bool _inActiveTabs = widget.router.isInActiveTabs;
+  late bool _isInActiveTabs = widget.router.isInActiveTabs;
 
   @override
   void initState() {
@@ -101,9 +101,9 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
   }
 
   void _handleAncestorTabsChanged() {
-    final inActiveTabs = widget.router.isInActiveTabs;
-    if (mounted && inActiveTabs != _inActiveTabs) {
-      setState(() => _inActiveTabs = inActiveTabs);
+    final isInActiveTabs = widget.router.isInActiveTabs;
+    if (mounted && isInActiveTabs != _isInActiveTabs) {
+      setState(() => _isInActiveTabs = isInActiveTabs);
     }
   }
 
@@ -146,7 +146,7 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
       widget.router.addListener(_handleStackChanged);
       _topPageKey = widget.router.stack.lastOrNull?.key;
       _listenToAncestorTabs();
-      _inActiveTabs = widget.router.isInActiveTabs;
+      _isInActiveTabs = widget.router.isInActiveTabs;
     }
     if (widget.declarativeRoutesBuilder != null) {
       _updateDeclarativeRoutes();
@@ -206,9 +206,9 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
     // still tells NavigatorPopHandler whether it can take back, for when the
     // tab shows again, but not the app.
     return NotificationListener<NavigationNotification>(
-      onNotification: (_) => !_inActiveTabs,
+      onNotification: (_) => !_isInActiveTabs,
       child: NavigatorPopHandler<Object?>(
-        enabled: widget.router.hasEntries && _inActiveTabs,
+        enabled: widget.router.hasEntries && _isInActiveTabs,
         onPopWithResult: (result) =>
             widget.router.navigatorKey.currentState?.maybePop(result),
         // Flutter drops the semantics of widgets painted before a nested

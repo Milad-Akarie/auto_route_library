@@ -286,11 +286,11 @@ class AutoRouteObserver extends AutoRouterObserver {
     if (nestedSubscribers == null) return;
     for (final MapEntry(key: routeAware, value: route)
         in nestedSubscribers.entries.toList()) {
-      if (_showsInHost(route, hostKey)) notify(routeAware);
+      if (_isShownInHost(route, hostKey)) notify(routeAware);
     }
   }
 
-  static bool _showsInHost(RouteData<Object?> route, LocalKey hostKey) {
+  static bool _isShownInHost(RouteData<Object?> route, LocalKey hostKey) {
     for (
       RouteData<Object?>? data = route;
       data != null && data.key != hostKey;

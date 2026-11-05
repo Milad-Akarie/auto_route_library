@@ -98,9 +98,9 @@ class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
   @override
   void didChangeTop(Route<Object?> topRoute, Route<Object?>? previousTopRoute) {
     current = topRoute;
-    final topIsPageless = topRoute.settings is! Page;
-    if (_hasPagelessTopRoute != topIsPageless) {
-      _hasPagelessTopRoute = topIsPageless;
+    final isTopPageless = topRoute.settings is! Page;
+    if (_hasPagelessTopRoute != isTopPageless) {
+      _hasPagelessTopRoute = isTopPageless;
       notifyListeners();
     }
   }

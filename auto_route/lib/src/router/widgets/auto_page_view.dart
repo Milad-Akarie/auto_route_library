@@ -128,12 +128,12 @@ class AutoPageViewState extends State<AutoPageView> {
   /// Returns true when this opens the tab for the first time, also when a
   /// drag already loaded it.
   bool preload(int index) {
-    final draggedIn = _draggedInTabs.remove(_matchIdAt(index));
+    final wasDraggedIn = _draggedInTabs.remove(_matchIdAt(index));
     final didPreload = _tabKeyAt(index)?.currentState?.preload() == true;
     if (didPreload && mounted) {
       setState(_updateChildren);
     }
-    return didPreload || draggedIn;
+    return didPreload || wasDraggedIn;
   }
 
   // Loads the tab a drag is uncovering, without opening it. A guarded tab
@@ -206,7 +206,8 @@ class AutoPageViewState extends State<AutoPageView> {
   }
 
   // A zero duration jumps: animateToPage asserts a duration above zero.
-  bool get _animates => widget.animatePageTransition && widget.duration > .zero;
+  bool get _doesAnimate =>
+      widget.animatePageTransition && widget.duration > .zero;
 
   Future<void> _animateToPage(int page) async {
     _warpUnderwayCount += 1;
@@ -219,7 +220,7 @@ class AutoPageViewState extends State<AutoPageView> {
   }
 
   Future<void> _warpToAdjacentTab() async {
-    if (_animates) {
+    if (_doesAnimate) {
       await _animateToPage(_router.activeIndex);
     } else {
       _jumpToPage(_router.activeIndex);
@@ -243,7 +244,7 @@ class AutoPageViewState extends State<AutoPageView> {
     });
     _jumpToPage(initialPage);
 
-    if (_animates) {
+    if (_doesAnimate) {
       await _animateToPage(_router.activeIndex);
     } else {
       _jumpToPage(_router.activeIndex);
@@ -258,9 +259,9 @@ class AutoPageViewState extends State<AutoPageView> {
     // tab a swipe reached when its guards kept it out.
     final previousIndex = _controller.page!.round();
 
-    final adjacentDestination =
+    final isAdjacentDestination =
         (_router.activeIndex - previousIndex).abs() == 1;
-    if (adjacentDestination) {
+    if (isAdjacentDestination) {
       await _warpToAdjacentTab();
     } else {
       await _warpToNonAdjacentTab(previousIndex);

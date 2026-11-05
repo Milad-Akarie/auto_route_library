@@ -18,23 +18,23 @@ class KeepAliveTab extends StatefulWidget {
 /// The state of [KeepAliveTab]
 class KeepAliveTabState extends State<KeepAliveTab>
     with AutomaticKeepAliveClientMixin {
-  late bool _load = widget.initiallyLoaded;
+  late bool _isLoaded = widget.initiallyLoaded;
 
   /// preloads the tab so other navigation actions can be done
   /// before the tab is initialized
   bool preload() {
-    if (_load) return false;
+    if (_isLoaded) return false;
     setState(() {
-      _load = true;
+      _isLoaded = true;
     });
     return true;
   }
 
   /// unloads the tab if it's not needed
   void unloadIfRequired() {
-    if (_load && !widget.page.maintainState) {
+    if (_isLoaded && !widget.page.maintainState) {
       setState(() {
-        _load = false;
+        _isLoaded = false;
       });
     }
   }
@@ -44,7 +44,9 @@ class KeepAliveTabState extends State<KeepAliveTab>
     super.build(context);
     return Semantics(
       role: .tabPanel,
-      child: _load ? widget.page.buildPage(context) : const SizedBox.shrink(),
+      child: _isLoaded
+          ? widget.page.buildPage(context)
+          : const SizedBox.shrink(),
     );
   }
 

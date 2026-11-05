@@ -175,13 +175,13 @@ class Parameters {
   /// if null returns [defaultValue]
   // The bool is a default value, placed like getInt(key, 5), not a flag.
   bool getBool(String key, [bool? defaultValue]) {
-    final val = optBool(key, defaultValue);
-    if (val == null) {
+    final isTrue = optBool(key, defaultValue);
+    if (isTrue == null) {
       throw MissingRequiredParameterError(
         'Failed to parse [bool] $key value from ${_rawMap[key]}',
       );
     }
-    return val;
+    return isTrue;
   }
 
   /// Returns the value of [key] read by [converter], or [defaultValue] when

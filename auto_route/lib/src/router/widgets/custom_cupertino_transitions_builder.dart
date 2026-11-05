@@ -114,7 +114,7 @@ class CupertinoPageTransition extends StatelessWidget {
                      ))
                .drive(
                  _CupertinoEdgeShadowDecoration.tween(
-                   withShadow: linearTransition,
+                   hasShadow: linearTransition,
                  ),
                );
 
@@ -157,11 +157,11 @@ class CupertinoPageTransition extends StatelessWidget {
 class _CupertinoEdgeShadowDecoration extends Decoration {
   const new _([this._colors]);
 
-  static DecorationTween tween({required bool withShadow}) => .new(
+  static DecorationTween tween({required bool hasShadow}) => .new(
     begin: const _CupertinoEdgeShadowDecoration._(), // No decoration initially.
     end: _CupertinoEdgeShadowDecoration._(
       // Eyeballed gradient used to mimic a drop shadow on the start side only.
-      withShadow
+      hasShadow
           ? const [
               Color(0x38000000),
               Color(0x12000000),

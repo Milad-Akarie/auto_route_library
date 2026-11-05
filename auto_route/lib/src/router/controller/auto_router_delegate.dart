@@ -274,7 +274,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     if (history.consumeOwnBrowserMove(configuration)) {
       return;
     }
-    if (history.isBrowserBehindApp && await _topRouteRefusesPop()) {
+    if (history.isBrowserBehindApp && await _doesTopRouteRefusePop()) {
       history.returnBrowserToApp();
       return;
     }
@@ -317,7 +317,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   // Whether the route on top of the top-most navigator refuses to be popped,
   // through a PopScope or a WillPopScope; asks it the way Navigator.maybePop
   // does, so it hears of the attempt.
-  Future<bool> _topRouteRefusesPop() async {
+  Future<bool> _doesTopRouteRefusePop() async {
     final topMost = controller.topMostRouter();
     if (topMost is! StackRouter) return false;
     Route<Object?>? topRoute;
@@ -381,12 +381,12 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   // Disposing the root router disposes this delegate, and this delegate
   // disposes the root router; the second call returns at once.
-  bool _disposed = false;
+  bool _isDisposed = false;
 
   @override
   void dispose() {
-    if (_disposed) return;
-    _disposed = true;
+    if (_isDisposed) return;
+    _isDisposed = true;
     super.dispose();
     controller.navigationHistory.removeListener(_handleRebuild);
     reevaluateListenable?.removeListener(_reevaluateGuards);
@@ -456,25 +456,25 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
   // away from its home tab, or with tabs in its history, takes back too: it
   // shows another tab (TabsRouter.maybePop). So this corrects the value, and
   // sends it again after a tab switch, which the navigator never reports.
-  bool? _reportedCanHandlePop;
-  bool _tabsTookBack = false;
-  bool _reportScheduled = false;
+  bool? _canHandlePopAsReported;
+  bool _didTabsTakeBack = false;
+  bool _isReportScheduled = false;
 
-  bool _tabsTakeBack() {
+  bool _doTabsTakeBack() {
     for (
       RoutingController? r = router.topMostRouter();
       r != null;
       r = r.parent()
     ) {
-      if (r is TabsRouter && r._takesBack) return true;
+      if (r is TabsRouter && r._doesTakeBack) return true;
     }
     return false;
   }
 
-  bool _handleNavigationNotification(NavigationNotification notification) {
-    _tabsTookBack = _tabsTakeBack();
-    if (notification.canHandlePop || !_tabsTookBack) {
-      _reportedCanHandlePop = notification.canHandlePop;
+  bool _didHandleNavigationNotification(NavigationNotification notification) {
+    _didTabsTakeBack = _doTabsTakeBack();
+    if (notification.canHandlePop || !_didTabsTakeBack) {
+      _canHandlePopAsReported = notification.canHandlePop;
       return false;
     }
     _report(true);
@@ -482,27 +482,27 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
   }
 
   void _report(bool canHandlePop) {
-    _reportedCanHandlePop = canHandlePop;
+    _canHandlePopAsReported = canHandlePop;
     NavigationNotification(canHandlePop: canHandlePop).dispatch(context);
   }
 
   void _scheduleTabsReport() {
-    if (_reportScheduled) return;
-    _reportScheduled = true;
+    if (_isReportScheduled) return;
+    _isReportScheduled = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _reportScheduled = false;
+      _isReportScheduled = false;
       if (!mounted) return;
-      final tabsTakeBack = _tabsTakeBack();
-      if (tabsTakeBack == _tabsTookBack) return;
-      _tabsTookBack = tabsTakeBack;
-      final canHandlePop = tabsTakeBack || _rootNavigatorTakesBack();
-      if (canHandlePop != _reportedCanHandlePop) _report(canHandlePop);
+      final doTabsTakeBack = _doTabsTakeBack();
+      if (doTabsTakeBack == _didTabsTakeBack) return;
+      _didTabsTakeBack = doTabsTakeBack;
+      final canHandlePop = doTabsTakeBack || _doesRootNavigatorTakeBack();
+      if (canHandlePop != _canHandlePopAsReported) _report(canHandlePop);
     }, debugLabel: 'AutoRootRouter.reportTabsBack');
   }
 
   // What the root navigator reports: whether it can pop, or its top route
   // refuses the pop.
-  bool _rootNavigatorTakesBack() {
+  bool _doesRootNavigatorTakeBack() {
     final navigator = router.navigatorKey.currentState;
     if (navigator == null) return false;
     if (navigator.canPop()) return true;
@@ -519,7 +519,7 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
   @override
   Widget build(BuildContext context) {
     return NotificationListener<NavigationNotification>(
-      onNotification: _handleNavigationNotification,
+      onNotification: _didHandleNavigationNotification,
       child: ListenableBuilder(
         listenable: router,
         builder: (context, _) {

@@ -19,16 +19,16 @@ import 'package:material_ui/material_ui.dart';
 /// When it returns a theme, [context] depends on it, so it rebuilds when that
 /// theme changes.
 flutter.ThemeData? flutterMaterialThemeOf(BuildContext context) {
-  var flutterThemeIsNearer = false;
+  var isFlutterThemeNearer = false;
   context.visitAncestorElements((element) {
     final widget = element.widget;
     if (widget is flutter.Theme) {
-      flutterThemeIsNearer = true;
+      isFlutterThemeNearer = true;
       return false;
     }
     return widget is! Theme;
   });
-  return flutterThemeIsNearer ? flutter.Theme.of(context) : null;
+  return isFlutterThemeNearer ? flutter.Theme.of(context) : null;
 }
 
 /// The page transitions builder of [theme] for its platform, or Flutter's

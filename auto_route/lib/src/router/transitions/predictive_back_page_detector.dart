@@ -81,8 +81,8 @@ class _PredictiveBackGestureDetectorState
   @override
   bool handleStartBackGesture(PredictiveBackEvent backEvent) {
     phase = .start;
-    final gestureInProgress = !backEvent.isButtonEvent && _isEnabled;
-    if (!gestureInProgress) {
+    final isGestureInProgress = !backEvent.isButtonEvent && _isEnabled;
+    if (!isGestureInProgress) {
       return false;
     }
 

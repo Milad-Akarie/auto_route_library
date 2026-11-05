@@ -784,14 +784,14 @@ class RouteCollection {
   List<AutoRoute> findPathTo(String routeName) {
     final track = <AutoRoute>[];
     for (final route in routes) {
-      if (_findPath(route, routeName, track)) {
+      if (_hasPathTo(route, routeName, track)) {
         break;
       }
     }
     return track;
   }
 
-  bool _findPath(AutoRoute node, String routeName, List<AutoRoute> track) {
+  bool _hasPathTo(AutoRoute node, String routeName, List<AutoRoute> track) {
     if (node.name == routeName) {
       track.add(node);
       return true;
@@ -799,7 +799,7 @@ class RouteCollection {
 
     if (node.hasSubTree) {
       for (final child in node.children!) {
-        if (_findPath(child, routeName, track)) {
+        if (_hasPathTo(child, routeName, track)) {
           track.insert(0, node);
           return true;
         }

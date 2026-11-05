@@ -46,14 +46,14 @@ typedef NavigatorObserversBuilder = List<NavigatorObserver> Function();
 /// page navigation
 abstract class RoutingController with ChangeNotifier {
   final _childControllers = <RoutingController>[];
-  bool _ignorePopCompleter = false;
+  bool _shouldIgnorePopCompleter = false;
 
   /// Whether [AutoRoutePage] should await for pop-completer
-  bool get ignorePopCompleters => root._ignorePopCompleter;
+  bool get ignorePopCompleters => root._shouldIgnorePopCompleter;
 
   @visibleForTesting
   set ignorePopCompleters(bool value) {
-    root._ignorePopCompleter = value;
+    root._shouldIgnorePopCompleter = value;
   }
 
   /// This key is passed to the router scope
@@ -95,7 +95,7 @@ abstract class RoutingController with ChangeNotifier {
   /// See [NavigationHistory.markUrlStateForReplace]
   void markUrlStateForReplace() => navigationHistory.markUrlStateForReplace();
 
-  bool _markedForDataUpdate = false;
+  bool _isMarkedForDataUpdate = false;
 
   /// Adds the given controller to the list of [childControllers]
   void attachChildController(RoutingController childController) {
@@ -299,10 +299,10 @@ abstract class RoutingController with ChangeNotifier {
     };
     created._takeRestorationIdApartFrom(takenRestorationIds);
     for (final ctr in _childControllers) {
-      if (ctr._markedForDataUpdate && ctr.key == created.key) {
+      if (ctr._isMarkedForDataUpdate && ctr.key == created.key) {
         ctr
           ..updateRouteData(created)
-          .._markedForDataUpdate = false;
+          .._isMarkedForDataUpdate = false;
       }
     }
 
@@ -1013,7 +1013,7 @@ class TabsRouter extends RoutingController {
   final _tabHistory = <int>[];
 
   // Whether back stays inside these tabs, by showing another one.
-  bool get _takesBack =>
+  bool get _doesTakeBack =>
       (backThroughHistory && _tabHistory.isNotEmpty) ||
       (homeIndex != -1 && _activeIndex != homeIndex);
 
@@ -1135,7 +1135,7 @@ class TabsRouter extends RoutingController {
     OnNavigationFailure? onFailure,
     bool remember = true,
   }) {
-    if (_disposed || change != _tabChanges) return .replaced;
+    if (_isDisposed || change != _tabChanges) return .replaced;
     _pendingTab = null;
     _pendingChange = null;
     if (!result.continueNavigation) {
@@ -1221,11 +1221,11 @@ class TabsRouter extends RoutingController {
     return root;
   }
 
-  bool _disposed = false;
+  bool _isDisposed = false;
 
   @override
   void dispose() {
-    _disposed = true;
+    _isDisposed = true;
     super.dispose();
   }
 
@@ -1250,11 +1250,11 @@ class TabsRouter extends RoutingController {
   @override
   @optionalTypeArgs
   Future<bool> maybePop<T extends Object?>([T? result]) {
-    final shown = _showTabOnBack();
-    if (shown is bool) {
-      return shown ? SynchronousFuture(true) : _maybePopParent(result);
+    final hasShownTab = _hasShownTabOnBack();
+    if (hasShownTab is bool) {
+      return hasShownTab ? SynchronousFuture(true) : _maybePopParent(result);
     }
-    return shown.then(
+    return hasShownTab.then(
       (wasShown) => wasShown ? true : _maybePopParent<T>(result),
     );
   }
@@ -1273,11 +1273,13 @@ class TabsRouter extends RoutingController {
       if (!shown) _parent?.pop(result);
     }
 
-    final shown = _showTabOnBack();
-    if (shown is bool) {
-      popParentUnless(shown: shown);
+    final hasShownTab = _hasShownTabOnBack();
+    if (hasShownTab is bool) {
+      popParentUnless(shown: hasShownTab);
     } else {
-      unawaited(shown.then((wasShown) => popParentUnless(shown: wasShown)));
+      unawaited(
+        hasShownTab.then((wasShown) => popParentUnless(shown: wasShown)),
+      );
     }
   }
 
@@ -1285,22 +1287,24 @@ class TabsRouter extends RoutingController {
   // home tab. Answers whether it showed one; false when there is none, or
   // when the guards of the home tab, and of every tab in the history, keep
   // theirs out. Back then goes on as it would from the home tab.
-  FutureOr<bool> _showTabOnBack() {
-    final fromHistory = backThroughHistory && _tabHistory.isNotEmpty;
+  FutureOr<bool> _hasShownTabOnBack() {
+    final isFromHistory = backThroughHistory && _tabHistory.isNotEmpty;
     final FutureOr<_TabChange> change;
-    if (fromHistory) {
+    if (isFromHistory) {
       change = _changeTab(_tabHistory.removeLast(), remember: false);
     } else if (homeIndex != -1 && _activeIndex != homeIndex) {
       change = _changeTab(homeIndex, remember: false);
     } else {
       return false;
     }
-    FutureOr<bool> next(_TabChange outcome) {
+    FutureOr<bool> hasShownNext(_TabChange outcome) {
       if (outcome != .rejected) return true;
-      return fromHistory ? _showTabOnBack() : false;
+      return isFromHistory ? _hasShownTabOnBack() : false;
     }
 
-    return change is _TabChange ? next(change) : change.then(next);
+    return change is _TabChange
+        ? hasShownNext(change)
+        : change.then(hasShownNext);
   }
 
   /// Pushes given [routes] to [_pages] stack
@@ -1350,7 +1354,7 @@ class TabsRouter extends RoutingController {
       _tabHistory.addAll(_historyOf(outgoing._tabHistoryNames, routesToPush));
     }
     if (routesToPush.isNotEmpty) {
-      _pushAll(routesToPush, fromDefault: routes == null);
+      _pushAll(routesToPush, isFromDefault: routes == null);
     }
     _routeData.pendingChildren.clear();
     if (guarding != null) {
@@ -1393,7 +1397,10 @@ class TabsRouter extends RoutingController {
     );
   }
 
-  void _pushAll(List<RouteMatch<Object?>> routes, {required bool fromDefault}) {
+  void _pushAll(
+    List<RouteMatch<Object?>> routes, {
+    required bool isFromDefault,
+  }) {
     for (final route in routes) {
       final data = _createRouteData<Object?>(route, routeData);
       try {
@@ -1401,7 +1408,7 @@ class TabsRouter extends RoutingController {
         // A page that needs args it can't get is reported with the reason.
         // That is the error to catch.
       } on MissingRequiredParameterError catch (e, stackTrace) {
-        if (fromDefault) {
+        if (isFromDefault) {
           // The new error carries the original message and stack trace.
           Error.throwWithStackTrace(
             FlutterError(
@@ -1477,7 +1484,7 @@ class TabsRouter extends RoutingController {
         previousPages.remove(keptPage);
         _pages.add(keptPage);
       } else {
-        _pushAll([route], fromDefault: routes == null);
+        _pushAll([route], isFromDefault: routes == null);
       }
     }
     final keptMatchIds = _pages.map((p) => p.routeData.matchId).toSet();
@@ -1571,7 +1578,7 @@ class TabsRouter extends RoutingController {
     );
     for (final ctr in _childControllers) {
       if (ctr.matchId == _pages[index].routeData.matchId) {
-        ctr._markedForDataUpdate = true;
+        ctr._isMarkedForDataUpdate = true;
       }
     }
 
@@ -1615,7 +1622,7 @@ class TabsRouter extends RoutingController {
     ];
     if (tabs.length < 2) return tabs.firstOrNull ?? -1;
     final childName = route.children?.firstOrNull?.name;
-    bool holdsChild(int index) {
+    bool doesHoldChild(int index) {
       final data = _pages[index].routeData;
       final pageNames =
           _innerControllerOfMatch(data.matchId)?.stackData.map((d) => d.name) ??
@@ -1624,7 +1631,7 @@ class TabsRouter extends RoutingController {
       return pageNames.contains(childName);
     }
 
-    final holding = tabs.where(holdsChild).toList();
+    final holding = tabs.where(doesHoldChild).toList();
     final meant = holding.isEmpty ? tabs : holding;
     return meant.contains(_activeIndex) ? _activeIndex : meant.first;
   }
@@ -1720,7 +1727,7 @@ abstract class StackRouter extends RoutingController {
 
   @override
   void dispose() {
-    _disposed = true;
+    _isDisposed = true;
     super.dispose();
     pagelessRoutesObserver.dispose();
     activeGuardObserver.dispose();
@@ -1728,7 +1735,7 @@ abstract class StackRouter extends RoutingController {
 
   // Whether [dispose] was called; a navigation that resumes after awaiting a
   // guard stops here, since the router's page left the stack meanwhile.
-  bool _disposed = false;
+  bool _isDisposed = false;
 
   // Pushes that no guard checks, from the call until their page is added a
   // microtask later. A pop called meanwhile waits for them, so it pops the
@@ -1798,7 +1805,7 @@ abstract class StackRouter extends RoutingController {
   // as a navigation to the route already shown does, stays on screen and
   // hasn't left.
   void _reportLeaves() {
-    if (_leaveReportHolds > 0 || _disposed) return;
+    if (_leaveReportHolds > 0 || _isDisposed) return;
     final before = [for (final page in _pagesAtLastLeaveReport) page.routeData];
     final now = [for (final page in _pages) page.routeData];
     final takenOver = {
@@ -1812,7 +1819,7 @@ abstract class StackRouter extends RoutingController {
     final oldTop = before.lastOrNull;
     if (oldTop == null) return;
     final stillShown = now.toSet();
-    final newTopIsNew = switch (now.lastOrNull) {
+    final isNewTopNew = switch (now.lastOrNull) {
       final newTop? => !before.contains(newTop),
       null => false,
     };
@@ -1824,12 +1831,12 @@ abstract class StackRouter extends RoutingController {
             page.routeData,
             kinds[page.routeData] ??
                 switch (page.routeData == oldTop) {
-                  true when newTopIsNew => .replaced,
+                  true when isNewTopNew => .replaced,
                   true => .popped,
                   false => .removed,
                 },
           ),
-      if (stillShown.contains(oldTop) && newTopIsNew) (oldTop, .covered),
+      if (stillShown.contains(oldTop) && isNewTopNew) (oldTop, .covered),
     ];
     for (final (data, kind) in leaves) {
       data._reportLeave(kind);
@@ -1843,7 +1850,7 @@ abstract class StackRouter extends RoutingController {
   /// and there are auth-protected routes in the stack
   Future<void> reevaluateGuards() async {
     final composed = await _composeMatchesForReevaluate();
-    if (_disposed) return;
+    if (_isDisposed) return;
     // A page removed while the stack was composed, e.g. by a replaceAll called
     // right after the listenable changed, stays removed.
     final matches = composed
@@ -1854,7 +1861,7 @@ abstract class StackRouter extends RoutingController {
       await _navigateAll(matches, isReevaluating: true);
       _isReevaluating = false;
     }
-    if (_disposed) return;
+    if (_isDisposed) return;
     notifyAll();
   }
 
@@ -2056,7 +2063,7 @@ abstract class StackRouter extends RoutingController {
     if (_landingPushes.isNotEmpty) {
       await Future.wait(_landingPushes);
     }
-    if (_popUnbuiltTop(result)) return true;
+    if (_didPopUnbuiltTop(result)) return true;
     final navigator = _navigatorKey.currentState;
     if (await navigator?.maybePop<T>(result) ?? false) {
       return true;
@@ -2081,7 +2088,7 @@ abstract class StackRouter extends RoutingController {
       unawaited(Future.wait(_landingPushes).then((_) => pop<T>(result)));
       return;
     }
-    if (_popUnbuiltTop(result)) return;
+    if (_didPopUnbuiltTop(result)) return;
     final navigator = _navigatorKey.currentState;
     if (navigator != null) {
       navigator.pop(result);
@@ -2093,7 +2100,7 @@ abstract class StackRouter extends RoutingController {
   // the page below it instead. The last page is never removed this way: right
   // after replaceAll or navigate it is the only page, and the pop goes to what
   // the navigator has built, as a back on a single-page router does.
-  bool _popUnbuiltTop(Object? result) {
+  bool _didPopUnbuiltTop(Object? result) {
     final navigator = _navigatorKey.currentState;
     final top = _pages.lastOrNull;
     if (navigator == null ||
@@ -2236,7 +2243,7 @@ abstract class StackRouter extends RoutingController {
       toPush[0] = anchor.withId(anchorPage.routeData.matchId);
       for (final ctr in _childControllers) {
         if (ctr.matchId == anchorPage.routeData.matchId) {
-          ctr._markedForDataUpdate = true;
+          ctr._isMarkedForDataUpdate = true;
         }
       }
     }
@@ -2313,7 +2320,7 @@ abstract class StackRouter extends RoutingController {
       // Its listeners run in a later microtask, after this push adds its page.
       landing.complete();
     }
-    if (_disposed) return null;
+    if (_isDisposed) return null;
     if (result.continueNavigation) {
       onAccepted?.call();
       _updateSharedPathData(
@@ -2460,7 +2467,7 @@ abstract class StackRouter extends RoutingController {
     // the stack restored.
     final previousPages = List.of(_pages);
     final previousStackKey = _stackKey;
-    var rejected = false;
+    var wasRejected = false;
     _pages.clear();
     if (!updateExistingRoutes) {
       _stackKey = UniqueKey();
@@ -2471,11 +2478,11 @@ abstract class StackRouter extends RoutingController {
       onFailure: (failure) {
         if (failure is RejectedByGuardFailure &&
             matches.any((match) => match.id == failure.route.id)) {
-          rejected = true;
+          wasRejected = true;
         }
       },
     );
-    if (rejected) {
+    if (wasRejected) {
       for (final page in _pages.where(
         (added) => !previousPages.contains(added),
       )) {
@@ -2496,7 +2503,7 @@ abstract class StackRouter extends RoutingController {
       _navigatorKey.currentState != null,
       'The navigator of this router is not mounted.',
     );
-    _popUntilShowingNoneBetween((route) => route.isFirst);
+    _didPopUntilShowingNoneBetween((route) => route.isFirst);
   }
 
   // Navigator.popUntil pops every route with its exit animation, so each
@@ -2504,7 +2511,7 @@ abstract class StackRouter extends RoutingController {
   // removes the routes in between first, while the top route still covers
   // them, then pops the top route with its animation over the route that
   // meets [predicate]. Returns whether a route met it.
-  bool _popUntilShowingNoneBetween(RoutePredicate predicate) {
+  bool _didPopUntilShowingNoneBetween(RoutePredicate predicate) {
     final navigator = _navigatorKey.currentState;
     if (navigator == null) return false;
     // The navigator's routes, top first: each page's route under the
@@ -2519,9 +2526,9 @@ abstract class StackRouter extends RoutingController {
     final top = routes.firstOrNull;
     if (top == null || top != _topRouteOf(navigator)) {
       // A route the router doesn't know of is on top; pop as Flutter does.
-      var met = false;
-      navigator.popUntil((route) => met = predicate(route));
-      return met;
+      var wasMet = false;
+      navigator.popUntil((route) => wasMet = predicate(route));
+      return wasMet;
     }
     final target = routes.indexWhere(predicate);
     if (target == 0) return true;
@@ -2580,14 +2587,14 @@ abstract class StackRouter extends RoutingController {
       return _removeUntil(predicate);
     }
     final routers = _topMostRouter()._buildRoutersHierarchy();
-    var predicateWasSatisfied = false;
+    var wasPredicateSatisfied = false;
     for (final router in routers.whereType<StackRouter>()) {
       router._removeUntil((route) {
-        return predicateWasSatisfied = predicate(route);
+        return wasPredicateSatisfied = predicate(route);
       });
-      if (predicateWasSatisfied) break;
+      if (wasPredicateSatisfied) break;
     }
-    return predicateWasSatisfied;
+    return wasPredicateSatisfied;
   }
 
   /// Calls [maybePop] repeatedly on the navigator until the predicate returns
@@ -2600,14 +2607,14 @@ abstract class StackRouter extends RoutingController {
   /// top until satisfied
   void popUntil(RoutePredicate predicate, {bool scoped = true}) {
     if (scoped) {
-      _popUntilShowingNoneBetween(predicate);
+      _didPopUntilShowingNoneBetween(predicate);
       return;
     }
     final routers = _topMostRouter()._buildRoutersHierarchy();
     for (final router in routers.whereType<StackRouter>()) {
       final navState = router._navigatorKey.currentState;
       if (navState == null) break;
-      if (router._popUntilShowingNoneBetween(predicate)) break;
+      if (router._didPopUntilShowingNoneBetween(predicate)) break;
     }
   }
 
@@ -2628,17 +2635,17 @@ abstract class StackRouter extends RoutingController {
         ._buildRoutersHierarchy()
         .whereType<StackRouter>()
         .toList();
-    var predicateWasSatisfied = false;
+    var wasPredicateSatisfied = false;
     for (final router in routers) {
       final navState = router._navigatorKey.currentState;
       if (navState == null) break;
       final isLast = router == routers.last;
       navState.popUntil(
         (route) =>
-            (predicateWasSatisfied = predicate(route)) ||
+            (wasPredicateSatisfied = predicate(route)) ||
             isLast && route.isFirst,
       );
-      if (predicateWasSatisfied) break;
+      if (wasPredicateSatisfied) break;
     }
   }
 
@@ -2753,7 +2760,7 @@ abstract class StackRouter extends RoutingController {
             .toList(),
         isReevaluating: isReevaluating,
       );
-      if (_disposed) break;
+      if (_isDisposed) break;
       // A later link took over while a guard decided.
       if (link != null && root._linkCount != link) break;
       final match = result.route;
@@ -2846,7 +2853,7 @@ abstract class StackRouter extends RoutingController {
       match = route.withId(takenOver.matchId);
       for (final ctr in _childControllers) {
         if (ctr.matchId == takenOver.matchId) {
-          ctr._markedForDataUpdate = true;
+          ctr._isMarkedForDataUpdate = true;
         }
       }
     }
@@ -2887,11 +2894,11 @@ abstract class StackRouter extends RoutingController {
       return null;
     }
     final data = shownPage.routeData;
-    final takesOver =
+    final doesTakeOver =
         data.key == route.key &&
         data.stackKey == _stackKey &&
         data.matchId != route.id;
-    return takesOver ? data : null;
+    return doesTakeOver ? data : null;
   }
 
   // A fresh nested router opens the children of its page's route; the one a
@@ -2933,7 +2940,7 @@ abstract class StackRouter extends RoutingController {
         ),
       );
     }
-    var reevaluateNext = true;
+    var shouldReevaluateNext = true;
     for (final guard in guards) {
       if (routeToCheck.evaluatedGuards.contains(guard)) {
         routeToCheck = routeToCheck.copyWith(
@@ -2956,7 +2963,7 @@ abstract class StackRouter extends RoutingController {
       final result = await resolver.checkGuard(guard, this);
       routeToCheck = result.route;
       if (!result.reevaluateNext) {
-        reevaluateNext = false;
+        shouldReevaluateNext = false;
       }
       if (!result.continueNavigation) {
         if (onFailure != null) {
@@ -2969,7 +2976,7 @@ abstract class StackRouter extends RoutingController {
     }
     return ResolverResult(
       continueNavigation: true,
-      reevaluateNext: reevaluateNext,
+      reevaluateNext: shouldReevaluateNext,
       route: routeToCheck,
     );
   }
@@ -3054,13 +3061,13 @@ abstract class StackRouter extends RoutingController {
         }
         // children a guard set while reevaluating are new routes, not pages
         // being reevaluated
-        final childrenOverridden = newChildren.any(
+        final areChildrenOverridden = newChildren.any(
           (child) => child is! ReevaluatableRouteMatch,
         );
         return await mayUpdateController._navigateAll(
           newChildren,
           onFailure: onFailure,
-          isReevaluating: isReevaluating && !childrenOverridden,
+          isReevaluating: isReevaluating && !areChildrenOverridden,
         );
       }
     } else if (!managedByWidget) {
@@ -3133,7 +3140,7 @@ abstract class StackRouter extends RoutingController {
         if (scopedPopUntil) {
           scope._removePagesUntil(
             scope._rejectedPagesUntil(predicate).rejected,
-            withPush: true,
+            isForPush: true,
           );
           return;
         }
@@ -3146,20 +3153,22 @@ abstract class StackRouter extends RoutingController {
             .toList();
         final rejectedPages = <int>[];
         for (final router in routers) {
-          final (:accepted, :rejected) = router._rejectedPagesUntil(predicate);
+          final (:isAccepted, :rejected) = router._rejectedPagesUntil(
+            predicate,
+          );
           rejectedPages.add(rejected);
-          if (accepted) break;
+          if (isAccepted) break;
         }
         // Each router sits on the top page of the next one.
-        var staysShown = true;
+        var isStillShown = true;
         for (var i = rejectedPages.length - 1; i >= 0; i--) {
-          if (staysShown) {
+          if (isStillShown) {
             routers[i]._removePagesUntil(
               rejectedPages[i],
-              withPush: routers[i] == scope,
+              isForPush: routers[i] == scope,
             );
           }
-          staysShown = staysShown && rejectedPages[i] == 0;
+          isStillShown = isStillShown && rejectedPages[i] == 0;
         }
       },
     );
@@ -3168,13 +3177,13 @@ abstract class StackRouter extends RoutingController {
   // Asks [predicate] about the routes from the top down until it accepts one.
   // Pageless routes it rejects, such as dialogs, are removed on the way; the
   // pages it rejects are only counted, for [_removePagesUntil].
-  ({bool accepted, int rejected}) _rejectedPagesUntil(
+  ({bool isAccepted, int rejected}) _rejectedPagesUntil(
     RoutePredicate predicate,
   ) {
     // Pageless routes, such as dialogs, sit above the top page.
     while (hasPagelessTopRoute) {
       final top = pagelessRoutesObserver.current!;
-      if (predicate(top)) return (accepted: true, rejected: 0);
+      if (predicate(top)) return (isAccepted: true, rejected: 0);
       final navigator = top.navigator;
       navigator?.removeRoute(top);
       if (pagelessRoutesObserver.current == top) break;
@@ -3182,30 +3191,30 @@ abstract class StackRouter extends RoutingController {
     var rejected = 0;
     for (final page in _pages.reversed) {
       final shownRoute = pagelessRoutesObserver.routeOf(page);
-      final bool accepted;
+      final bool isAccepted;
       if (shownRoute != null) {
-        accepted = predicate(shownRoute);
+        isAccepted = predicate(shownRoute);
       } else {
         // a page pushed in this frame has no route yet
         final unshownRoute = _UnshownPageRoute(page);
-        accepted = predicate(unshownRoute);
+        isAccepted = predicate(unshownRoute);
         unshownRoute.release();
       }
-      if (accepted) return (accepted: true, rejected: rejected);
+      if (isAccepted) return (isAccepted: true, rejected: rejected);
       rejected++;
     }
-    return (accepted: false, rejected: rejected);
+    return (isAccepted: false, rejected: rejected);
   }
 
-  // Removes the [count] top pages without animating them out. With [withPush]
+  // Removes the [count] top pages without animating them out. With [isForPush]
   // a page pushed in the same update makes the navigator remove them and keep
   // the old top under the new page; otherwise each is removed from the
   // navigator here, and this router is notified.
-  void _removePagesUntil(int count, {required bool withPush}) {
-    _markLeaving(_pages.reversed.take(count), withPush ? .replaced : .removed);
+  void _removePagesUntil(int count, {required bool isForPush}) {
+    _markLeaving(_pages.reversed.take(count), isForPush ? .replaced : .removed);
     for (var i = 0; i < count; i++) {
       final shownRoute = pagelessRoutesObserver.routeOf(_pages.last);
-      if (!withPush && shownRoute != null) {
+      if (!isForPush && shownRoute != null) {
         final shownNavigator = shownRoute.navigator;
         shownNavigator?.removeRoute(shownRoute);
       }
@@ -3218,7 +3227,7 @@ abstract class StackRouter extends RoutingController {
         markUrlStateForReplace();
       }
     }
-    if (!withPush && count > 0) {
+    if (!isForPush && count > 0) {
       notifyAll(forceUrlRebuild: true);
     }
   }
@@ -3474,23 +3483,23 @@ class ActiveGuardObserver extends ValueNotifier<List<GuardEntry>> {
   new() : super([]);
 
   // A guard can finish after its router, and this observer, are disposed.
-  bool _disposed = false;
+  bool _isDisposed = false;
 
   /// Adds `guard` to the list of active guards
   void _add(GuardEntry entry) {
-    if (_disposed) return;
+    if (_isDisposed) return;
     value = [...value, entry];
   }
 
   /// Removes `guard` from the list of active guards
   void _remove(GuardEntry entry) {
-    if (_disposed) return;
+    if (_isDisposed) return;
     value = [...value..remove(entry)];
   }
 
   @override
   void dispose() {
-    _disposed = true;
+    _isDisposed = true;
     super.dispose();
   }
 

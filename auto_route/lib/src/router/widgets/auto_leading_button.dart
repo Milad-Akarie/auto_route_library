@@ -48,7 +48,7 @@ class AutoLeadingButton extends StatefulWidget {
          'Pass either color or builder, not both.',
        ),
        _nullableBuilder = null,
-       _showIfParentCanPop = showIfParentCanPop ?? true;
+       _shouldShowIfParentCanPop = showIfParentCanPop ?? true;
 
   /// builds a nullable leading widget based on the current router state
   ///
@@ -76,7 +76,7 @@ class AutoLeadingButton extends StatefulWidget {
     this.ignorePagelessRoutes = false,
   }) : _nullableBuilder = builder,
        builder = null,
-       _showIfParentCanPop = showIfParentCanPop ?? true;
+       _shouldShowIfParentCanPop = showIfParentCanPop ?? true;
 
   /// The color of [BackButton] and [CloseButton]
   final Color? color;
@@ -93,7 +93,7 @@ class AutoLeadingButton extends StatefulWidget {
   /// route and is tied to the [Route] that _does_ correspond to a [Page] object
   /// that is below it in the history.
   final bool ignorePagelessRoutes;
-  final bool _showIfParentCanPop;
+  final bool _shouldShowIfParentCanPop;
 
   /// Clients can use this builder to customize
   /// the looks and feels of their leading buttons
@@ -124,19 +124,19 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
         Widget? leading;
         if (scope.controller.canPop(
           ignoreChildRoutes: !widget.showIfChildCanPop,
-          ignoreParentRoutes: !widget._showIfParentCanPop,
+          ignoreParentRoutes: !widget._shouldShowIfParentCanPop,
           ignorePagelessRoutes: widget.ignorePagelessRoutes,
         )) {
           final topPage = scope.controller.topPage;
-          final useCloseButton = topPage?.fullscreenDialog ?? false;
+          final shouldUseCloseButton = topPage?.fullscreenDialog ?? false;
           if (widget.builder != null) {
             return widget.builder!(
               leadingContext,
-              useCloseButton ? .close : .back,
+              shouldUseCloseButton ? .close : .back,
               () => unawaited(scope.controller.maybePopTop()),
             );
           }
-          leading = useCloseButton
+          leading = shouldUseCloseButton
               ? CloseButton(
                   key: const ValueKey(LeadingType.close),
                   color: widget.color,
@@ -214,7 +214,7 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
       ..add(
         DiagnosticsProperty<bool>(
           'showIfParentCanPop',
-          widget._showIfParentCanPop,
+          widget._shouldShowIfParentCanPop,
         ),
       )
       ..add(DiagnosticsProperty<Color?>('color', widget.color))

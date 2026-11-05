@@ -420,7 +420,7 @@ class NavigationResolver {
   // Rejects [route] when the guards that redirected the user here opened the
   // same route earlier in this chain of redirects, which would repeat without
   // end.
-  bool _reportRedirectLoop() {
+  bool _didReportRedirectLoop() {
     final chain = <RouteMatch<Object?>>[];
     for (
       var by = _redirectingResolvers[route.id];
@@ -487,7 +487,7 @@ class NavigationResolver {
     AutoRouteGuard guard,
     StackRouter router,
   ) async {
-    if (_reportRedirectLoop()) return await future;
+    if (_didReportRedirectLoop()) return await future;
     // Several reevaluations can wait for the same check; each takes its own
     // turn.
     while (_waitingCompleter != null) {

@@ -30,10 +30,10 @@ class NavigationHistoryImpl extends NavigationHistory {
 
   bool _isSteppingBack = false;
 
-  bool _addsEntryWithSameUrl = false;
+  bool _doesAddEntryWithSameUrl = false;
 
   @override
-  bool get addsEntryWithSameUrl => _addsEntryWithSameUrl;
+  bool get addsEntryWithSameUrl => _doesAddEntryWithSameUrl;
 
   @override
   void onNewUrlState(UrlState newState, {bool notify = true}) {
@@ -48,14 +48,14 @@ class NavigationHistoryImpl extends NavigationHistory {
         !_isSteppingBack &&
         !_isPageOfEntry(browserIndex, newState) &&
         _isPushedOverSameUrl(newState);
-    _addsEntryWithSameUrl = notify && isPushedOverSameUrl;
+    _doesAddEntryWithSameUrl = notify && isPushedOverSameUrl;
     try {
       // While stepping back, the browser reports the new url once it gets
       // there. A notification now would make the router write it as a new
       // entry.
       super.onNewUrlState(newState, notify: notify && !_isSteppingBack);
     } finally {
-      _addsEntryWithSameUrl = false;
+      _doesAddEntryWithSameUrl = false;
     }
     if (_isSteppingBack) return;
     if (!isPushedOverSameUrl &&
@@ -86,14 +86,14 @@ class NavigationHistoryImpl extends NavigationHistory {
     final index = _currentIndex;
     // Whether the entry at index i holds the page on top of [state]; two pages
     // with the same url, pushed one over the other, are told apart by page.
-    bool holds(int i, UrlState state) {
+    bool doesHold(int i, UrlState state) {
       final entry = _entries[i];
       return entry != null &&
           _isSameUrl(entry.url, state.url) &&
           (!isSameUrl || entry.topMatch?.id == state.topMatch?.id);
     }
 
-    if (index > 0 && holds(index, popped) && holds(index - 1, newState)) {
+    if (index > 0 && doesHold(index, popped) && doesHold(index - 1, newState)) {
       _isSteppingBack = true;
       try {
         rebuildUrl();

@@ -85,7 +85,7 @@ class AutoTabViewState extends State<AutoTabView> {
   // If the TabBarView is rebuilt with a new tab controller, the caller should
   // dispose the old one. In that case the old controller's animation will be
   // null and should not be accessed.
-  bool get _controllerIsValid => _controller.animation != null;
+  bool get _isControllerValid => _controller.animation != null;
 
   @override
   void initState() {
@@ -101,12 +101,12 @@ class AutoTabViewState extends State<AutoTabView> {
   /// Returns true when this opens the tab for the first time, also when a
   /// drag already loaded it.
   bool preload(int index) {
-    final draggedIn = _draggedInTabs.remove(_matchIdAt(index));
+    final wasDraggedIn = _draggedInTabs.remove(_matchIdAt(index));
     final didPreload = _tabKeyAt(index)?.currentState?.preload() == true;
     if (didPreload && mounted) {
       setState(_updateChildren);
     }
-    return didPreload || draggedIn;
+    return didPreload || wasDraggedIn;
   }
 
   // Loads the tab a drag is uncovering, without opening it. A guarded tab
@@ -158,7 +158,7 @@ class AutoTabViewState extends State<AutoTabView> {
 
   @override
   void dispose() {
-    if (_controllerIsValid) {
+    if (_isControllerValid) {
       _controller.animation!.removeListener(_handleTabControllerAnimationTick);
     }
     _router.removeListener(_onRouterUpdated);
@@ -225,9 +225,9 @@ class AutoTabViewState extends State<AutoTabView> {
       return;
     }
     _disposeInactiveChildren();
-    final adjacentDestination =
+    final isAdjacentDestination =
         (_currentIndex! - _controller.previousIndex).abs() == 1;
-    if (adjacentDestination) {
+    if (isAdjacentDestination) {
       await _warpToAdjacentTab(_controller.animationDuration);
     } else {
       await _warpToNonAdjacentTab(_controller.animationDuration);

@@ -176,7 +176,7 @@ abstract class RootStackRouter extends StackRouter {
   /// listeners. Disposing that delegate disposes this router too.
   @override
   void dispose() {
-    if (_disposed) return;
+    if (_isDisposed) return;
     super.dispose();
     _navigationHistory.dispose();
     _lazyInformationProvider?.dispose();

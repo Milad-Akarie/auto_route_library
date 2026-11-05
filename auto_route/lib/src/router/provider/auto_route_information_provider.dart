@@ -79,21 +79,21 @@ class AutoRouteInformationProvider extends RouteInformationProvider
 
     // The routes saved for state restoration stay with the Router.
     final state = UrlState.platformState(routeInformation.state);
-    var replace =
+    var shouldReplace =
         type == .neglect ||
         (type == .none &&
             _valueInEngine.uri == appRouteInformation.uri &&
             UrlState.platformState(_valueInEngine.state) == state);
 
-    if (!replace && routeInformation is AutoRouteInformation) {
-      replace = routeInformation.replace;
+    if (!shouldReplace && routeInformation is AutoRouteInformation) {
+      shouldReplace = routeInformation.replace;
     }
     unawaited(SystemNavigator.selectMultiEntryHistory());
     unawaited(
       SystemNavigator.routeInformationUpdated(
         uri: reportedUri,
         state: state,
-        replace: replace,
+        replace: shouldReplace,
       ),
     );
     _value = appRouteInformation;
