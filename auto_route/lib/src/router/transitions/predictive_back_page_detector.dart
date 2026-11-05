@@ -35,7 +35,7 @@ class _PredictiveBackGestureDetector extends StatefulWidget {
   const _PredictiveBackGestureDetector({required this.route, required this.builder});
 
   final _PredictiveBackGestureDetectorWidgetBuilder builder;
-  final PageRoute<dynamic> route;
+  final PageRoute<Object?> route;
 
   @override
   State<_PredictiveBackGestureDetector> createState() => _PredictiveBackGestureDetectorState();

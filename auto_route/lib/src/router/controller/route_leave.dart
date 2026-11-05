@@ -89,7 +89,7 @@ class AutoRouteLeaveListener extends StatefulWidget {
 }
 
 class _AutoRouteLeaveListenerState extends State<AutoRouteLeaveListener> {
-  RouteData<dynamic>? _routeData;
+  RouteData<Object?>? _routeData;
 
   void _onLeave(RouteLeaveKind kind) => widget.onLeave(kind);
 

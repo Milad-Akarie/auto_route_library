@@ -35,7 +35,7 @@ class PageRouteInfo<T extends Object?> {
        fragment = fragment ?? '';
 
   /// Creates a new instance form [RouteMatch]
-  factory PageRouteInfo.fromMatch(RouteMatch<dynamic> match) {
+  factory PageRouteInfo.fromMatch(RouteMatch<Object?> match) {
     return PageRouteInfo(
       match.name,
       rawPathParams: match.params.rawMap,
@@ -53,8 +53,8 @@ class PageRouteInfo<T extends Object?> {
     String name, {
     List<PageRouteInfo>? children,
     T? args,
-    Map<String, dynamic> params,
-    Map<String, dynamic> queryParams,
+    Map<String, Object?> params,
+    Map<String, Object?> queryParams,
     String? fragment,
   }) = NamedRoute<T>;
   final String _name;
@@ -69,13 +69,13 @@ class PageRouteInfo<T extends Object?> {
   /// a [PathParam], and when this entity is generated
   /// it generates a corresponding parameter that's passed
   /// to this map so it can be used to build the url later on
-  final Map<String, dynamic> rawPathParams;
+  final Map<String, Object?> rawPathParams;
 
   /// Route page parameters can be marked as
   /// a [QueryParam], and when this entity is generated
   /// it generates a corresponding parameter that's passed
   /// to this map so it can be used to build the url later on
-  final Map<String, dynamic> rawQueryParams;
+  final Map<String, Object?> rawQueryParams;
 
   /// The list of initial route entries to be matched
   /// by the sub-router when it's created
@@ -118,7 +118,7 @@ class PageRouteInfo<T extends Object?> {
   /// their corresponding values from [params]
   /// e.g if [template] = '/products/:id' and [params] = {'id':'5'}
   /// the result is '/products/5'
-  static String expandPath(String template, Map<String, dynamic> params) {
+  static String expandPath(String template, Map<String, Object?> params) {
     if (mapNullOrEmpty(params)) {
       return template;
     }
@@ -151,23 +151,23 @@ class PageRouteInfo<T extends Object?> {
   PageRouteInfo copyWith({
     String? name,
     T? args,
-    Map<String, dynamic>? rawPathParams,
-    Map<String, dynamic>? rawQueryParams,
+    Map<String, Object?>? rawPathParams,
+    Map<String, Object?>? rawQueryParams,
     List<PageRouteInfo>? initialChildren,
     String? fragment,
     String? stringMatch,
     String? redirectedFrom,
     bool? argsEquality,
     // Deprecated in 12.0.0, removed in 13.0.0.
-    @Deprecated('Use rawPathParams instead') Map<String, dynamic>? params,
+    @Deprecated('Use rawPathParams instead') Map<String, Object?>? params,
     // Deprecated in 12.0.0, removed in 13.0.0.
-    @Deprecated('Use rawQueryParams instead') Map<String, dynamic>? queryParams,
+    @Deprecated('Use rawQueryParams instead') Map<String, Object?>? queryParams,
     // Deprecated in 12.0.0, removed in 13.0.0.
     @Deprecated('Use initialChildren instead') List<PageRouteInfo>? children,
     // Deprecated in 12.0.0, removed in 13.0.0.
     @Deprecated('A PageRouteInfo holds no path; this is ignored') String? path,
     // Deprecated in 12.0.0, removed in 13.0.0.
-    @Deprecated('A PageRouteInfo holds no match; this is ignored') RouteMatch<dynamic>? match,
+    @Deprecated('A PageRouteInfo holds no match; this is ignored') RouteMatch<Object?>? match,
   }) {
     final newPathParams = rawPathParams ?? params;
     final newQueryParams = rawQueryParams ?? queryParams;
@@ -214,7 +214,7 @@ class PageRouteInfo<T extends Object?> {
 
   /// Returns the match result of this route
   /// which internally calls `router.matcher.matchByRoute`
-  RouteMatch<dynamic>? match(BuildContext context) {
+  RouteMatch<Object?>? match(BuildContext context) {
     return context.router.match(this);
   }
 
@@ -225,7 +225,7 @@ class PageRouteInfo<T extends Object?> {
           _name == other._name &&
           fragment == other.fragment &&
           (!argsEquality || args == other.args) &&
-          const ListEquality<dynamic>().equals(initialChildren, other.initialChildren) &&
+          const ListEquality<Object?>().equals(initialChildren, other.initialChildren) &&
           // Deep, so params holding equal lists or sets are equal.
           const DeepCollectionEquality().equals(rawPathParams, other.rawPathParams) &&
           const DeepCollectionEquality().equals(rawQueryParams, other.rawQueryParams);
@@ -237,7 +237,7 @@ class PageRouteInfo<T extends Object?> {
       args.hashCode ^
       const DeepCollectionEquality().hash(rawPathParams) ^
       const DeepCollectionEquality().hash(rawQueryParams) ^
-      const ListEquality<dynamic>().hash(initialChildren);
+      const ListEquality<Object?>().hash(initialChildren);
 }
 
 /// A proxy Route page that provides a way to create a [PageRouteInfo]
@@ -264,8 +264,8 @@ class NamedRoute<A extends Object?> extends PageRouteInfo<A> {
     super.name, {
     List<PageRouteInfo>? children,
     super.args,
-    Map<String, dynamic> params = const {},
-    Map<String, dynamic> queryParams = const {},
+    Map<String, Object?> params = const {},
+    Map<String, Object?> queryParams = const {},
     super.fragment,
   }) : super(initialChildren: children, rawPathParams: params, rawQueryParams: queryParams);
 }

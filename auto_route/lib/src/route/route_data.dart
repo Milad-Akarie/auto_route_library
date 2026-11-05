@@ -10,19 +10,19 @@ part of '../router/controller/routing_controller.dart';
 class RouteData<R> {
   /// Default constructor
   RouteData({
-    required RouteMatch<dynamic> route,
+    required RouteMatch<Object?> route,
     required this.router,
     this._popCompleter,
     this._parent,
     required this.stackKey,
-    required List<RouteMatch<dynamic>> pendingChildren,
+    required List<RouteMatch<Object?>> pendingChildren,
     required this.type,
   }) : _match = route,
        _ownQueryParams = route.queryParams,
        _ownFragment = route.fragment,
        _pendingChildren = List.of(pendingChildren);
-  RouteMatch<dynamic> _match;
-  RouteData<dynamic>? _parent;
+  RouteMatch<Object?> _match;
+  RouteData<Object?>? _parent;
   final Completer<R?>? _popCompleter;
 
   // The [AutoRouteLeaveListener]s in this page, told when the page is left.
@@ -83,17 +83,17 @@ class RouteData<R> {
   /// Whether this route has pending children
   bool get hasPendingChildren => _pendingChildren.isNotEmpty;
 
-  List<RouteMatch<dynamic>> _pendingChildren;
+  List<RouteMatch<Object?>> _pendingChildren;
 
   /// The pre-matched sub-routes of this route
   ///
   /// These are consumed by the sub-router once it's created
-  List<RouteMatch<dynamic>> get pendingChildren => _pendingChildren;
+  List<RouteMatch<Object?>> get pendingChildren => _pendingChildren;
 
   /// Looks up and returns the scoped instance
   ///
   /// throws an error if it does not find it
-  static RouteData<dynamic> of(BuildContext context) {
+  static RouteData<Object?> of(BuildContext context) {
     return RouteDataScope.of(context).routeData;
   }
 
@@ -126,10 +126,10 @@ class RouteData<R> {
         throw MissingRequiredParameterError('\n${messages.join('\n')}\n');
       }
       return orElse();
-    } else if (args is! T) {
-      throw MissingRequiredParameterError('Expected [$T],  found [${args.runtimeType}]');
+    } else if (args case final T typed) {
+      return typed;
     }
-    return args;
+    throw MissingRequiredParameterError('Expected [$T],  found [${args.runtimeType}]');
   }
 
   // The query params and fragment this route was opened with. A route pushed
@@ -138,14 +138,14 @@ class RouteData<R> {
   Parameters _ownQueryParams;
   String _ownFragment;
 
-  void _updateRoute(RouteMatch<dynamic> value) {
+  void _updateRoute(RouteMatch<Object?> value) {
     if (_match != value) {
       _match = value;
     }
   }
 
   /// Reruns the raw [RouteMatch]
-  RouteMatch<dynamic> get route => _match;
+  RouteMatch<Object?> get route => _match;
 
   /// Helper to access [RouteMatch.name]
   String get name => _match.name;
@@ -156,15 +156,15 @@ class RouteData<R> {
   /// Returns the parent [RouteData] of this instance
   ///
   /// Returns null if this is a root entry
-  RouteData<dynamic>? get parent => _parent;
+  RouteData<Object?>? get parent => _parent;
 
   /// Helper to access [RouteMatch.meta]
-  Map<String, dynamic> get meta => _match.meta;
+  Map<String, Object?> get meta => _match.meta;
 
   /// Helper to access [RouteMatch.args]
   ///
   /// this method is unsafe prefer using [argsAs]
-  // Null for a route pushed without args. The rule reads RouteMatch<dynamic>'s args as never null.
+  // Null for a route pushed without args. The rule reads RouteMatch<Object?>'s args as never null.
   // ignore: avoid-unnecessary-nullable-return-type
   Object? get args => _match.args;
 
@@ -177,7 +177,7 @@ class RouteData<R> {
   /// The track to the very first ancestor match
   ///
   /// This can be used to render visual breadcrumbs in UI
-  List<RouteMatch<dynamic>> get breadcrumbs => .unmodifiable([if (_parent != null) ..._parent!.breadcrumbs, _match]);
+  List<RouteMatch<Object?>> get breadcrumbs => .unmodifiable([if (_parent != null) ..._parent!.breadcrumbs, _match]);
 
   /// Collects all path params form all previous ancestors
   Parameters get inheritedPathParams {
@@ -194,7 +194,7 @@ class RouteData<R> {
   /// Helper to access [RouteMatch.fragment]
   String get fragment => _match.fragment;
 
-  RouteMatch<dynamic> _getTopMatch(RouteMatch<dynamic> routeMatch) {
+  RouteMatch<Object?> _getTopMatch(RouteMatch<Object?> routeMatch) {
     if (routeMatch.hasChildren) {
       return _getTopMatch(routeMatch.children!.last);
     }
@@ -204,7 +204,7 @@ class RouteData<R> {
   /// Returns the top most [RouteMatch] in the
   /// pending children, if it has not pending children
   /// this [_match] is returned
-  RouteMatch<dynamic> get topMatch {
+  RouteMatch<Object?> get topMatch {
     if (hasPendingChildren) {
       return _getTopMatch(pendingChildren.last);
     }
@@ -220,12 +220,12 @@ class RouteData<R> {
   // ignore: unused_field
   bool _isReevaluating = false;
 
-  void _onStartReevaluating(RouteMatch<dynamic> newMatch) {
+  void _onStartReevaluating(RouteMatch<Object?> newMatch) {
     _isReevaluating = true;
     _updateRoute(newMatch);
     _ownQueryParams = newMatch.queryParams;
     _ownFragment = newMatch.fragment;
-    _pendingChildren = List<RouteMatch<dynamic>>.from(newMatch.children ?? []);
+    _pendingChildren = List<RouteMatch<Object?>>.from(newMatch.children ?? []);
   }
 
   void _onEndReevaluating() {
@@ -264,14 +264,14 @@ class RouteData<R> {
   /// The page's route sets it when it builds, as does the page of a route
   /// built by [CustomRouteType.customRouteBuilder]; [animationCompletion] and
   /// [RoutingController.waitForTransitions] read it.
-  Animation<dynamic>? animation;
+  Animation<Object?>? animation;
 
   /// Sets [animation].
   // Deprecated in 12.0.0, removed in 13.0.0.
   @Deprecated('Set animation instead')
   // The old name, kept as a method so existing calls still compile until it is removed.
   // ignore: use_setters_to_change_properties
-  void setAnimation(Animation<dynamic>? animation) => this.animation = animation;
+  void setAnimation(Animation<Object?>? animation) => this.animation = animation;
 
   /// Returns the current animation completion future
   /// if the current route is animating

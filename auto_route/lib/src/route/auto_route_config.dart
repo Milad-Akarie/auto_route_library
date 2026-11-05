@@ -5,18 +5,18 @@ import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:meta/meta.dart';
 
 /// A Signature for a function that passes the [RouteData] and returns a [PageRoute]
-typedef AutoRoutePageBuilder = Widget Function(RouteData<dynamic> data);
+typedef AutoRoutePageBuilder = Widget Function(RouteData<Object?> data);
 
 /// Signature for a function that builds the route title
 /// Used in [AutoRoutePage]
-typedef TitleBuilder = String Function(BuildContext context, RouteData<dynamic> data);
+typedef TitleBuilder = String Function(BuildContext context, RouteData<Object?> data);
 
 /// Signature for a function that builds a widget with [RouteData]
-typedef WidgetBuilderWithData = Widget Function(BuildContext context, RouteData<dynamic> data);
+typedef WidgetBuilderWithData = Widget Function(BuildContext context, RouteData<Object?> data);
 
 /// Signature for a function that builds the page `restorationId`
 /// Used in [AutoRoutePage]
-typedef RestorationIdBuilder = String Function(RouteMatch<dynamic> match);
+typedef RestorationIdBuilder = String Function(RouteMatch<Object?> match);
 
 /// A route entry configuration used in `RouteMatcher`
 /// to create [RouteMatch]'s from paths and [PageRouteInfo]'s
@@ -30,7 +30,7 @@ class AutoRoute {
     List<AutoRouteGuard> guards = const [],
     bool fullMatch = false,
     RouteType? type,
-    Map<String, dynamic> meta = const {},
+    Map<String, Object?> meta = const {},
     bool maintainState = true,
     bool fullscreenDialog = false,
     List<AutoRoute>? children,
@@ -104,7 +104,7 @@ class AutoRoute {
     bool usesPathAsKey = false,
     bool fullMatch = false,
     RouteType? type,
-    Map<String, dynamic> meta = const {},
+    Map<String, Object?> meta = const {},
     bool maintainState = true,
     bool fullscreenDialog = false,
     List<AutoRoute>? children,
@@ -141,7 +141,7 @@ class AutoRoute {
     bool usesPathAsKey = false,
     bool fullMatch = false,
     RouteType? type,
-    Map<String, dynamic> meta = const {},
+    Map<String, Object?> meta = const {},
     bool maintainState = true,
     bool fullscreenDialog = false,
     List<AutoRoute>? children,
@@ -188,7 +188,7 @@ class AutoRoute {
 
   /// a Map of dynamic data that can be accessed by
   /// [RouteData.meta] when the route is created
-  final Map<String, dynamic> meta;
+  final Map<String, Object?> meta;
 
   /// Indicates what kind of [PageRoute] this route will use
   /// e.g [MaterialRouteType] will create `_PageBasedMaterialPageRoute`
@@ -238,7 +238,7 @@ class AutoRoute {
   AutoRoutePageBuilder get builder => _pageBuilder;
 
   /// Builds a [AutoRoutePage] from [RouteData]
-  AutoRoutePage<T> buildPage<T>(RouteData<dynamic> data) {
+  AutoRoutePage<T> buildPage<T>(RouteData<Object?> data) {
     return AutoRoutePage(child: builder(data), routeData: data);
   }
 
@@ -269,7 +269,7 @@ class AutoRoute {
     bool? usesPathAsKey,
     List<AutoRouteGuard>? guards,
     bool? fullMatch,
-    Map<String, dynamic>? meta,
+    Map<String, Object?>? meta,
     bool? maintainState,
     bool? fullscreenDialog,
     List<AutoRoute>? children,
@@ -767,10 +767,10 @@ class RouteCollection {
       identical(this, other) ||
       other is RouteCollection &&
           runtimeType == other.runtimeType &&
-          const MapEquality<dynamic, dynamic>().equals(_routesMap, other._routesMap);
+          const MapEquality<Object?, Object?>().equals(_routesMap, other._routesMap);
 
   @override
-  int get hashCode => const MapEquality<dynamic, dynamic>().hash(_routesMap);
+  int get hashCode => const MapEquality<Object?, Object?>().hash(_routesMap);
 
   /// Default path generator
   static String defaultPathGenerator(AutoRoute r) {

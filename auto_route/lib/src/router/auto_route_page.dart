@@ -26,7 +26,7 @@ class AutoRoutePage<T> extends Page<T> {
       );
 
   /// The Route Data that's used to build the page
-  final RouteData<dynamic> routeData;
+  final RouteData<Object?> routeData;
   final Widget _child;
 
   /// Whether to treat the built route as a fullscreenDialog.
@@ -76,7 +76,7 @@ class AutoRoutePage<T> extends Page<T> {
   /// the same [routeKey] is removed from below it, the page must not take the
   /// removed page's route and leave its own to be popped.
   @override
-  bool canUpdate(Page<dynamic> other) {
+  bool canUpdate(Page<Object?> other) {
     final canUpdate =
         other.runtimeType == runtimeType &&
         (other as AutoRoutePage).routeKey == routeKey &&
@@ -172,7 +172,7 @@ class _CurrentPageChild extends StatefulWidget {
   const _CurrentPageChild({required this.page});
 
   /// The page the route was created with.
-  final AutoRoutePage<dynamic> page;
+  final AutoRoutePage<Object?> page;
 
   @override
   State<_CurrentPageChild> createState() => _CurrentPageChildState();
@@ -452,9 +452,9 @@ mixin _CustomPredictiveBackGestureMixin<T> on _PageRoute<T> implements Predictiv
 }
 
 abstract class _PageRoute<T> extends PageRoute<T> {
-  _PageRoute({required AutoRoutePage<dynamic> page}) : super(settings: page);
+  _PageRoute({required AutoRoutePage<Object?> page}) : super(settings: page);
 
-  AutoRoutePage<dynamic> get _page => settings as AutoRoutePage;
+  AutoRoutePage<Object?> get _page => settings as AutoRoutePage;
 
   @override
   bool get popGestureEnabled {
@@ -494,7 +494,7 @@ abstract class _PageRoute<T> extends PageRoute<T> {
   String get debugLabel => '${super.debugLabel}(${_page.name})';
 
   @override
-  bool canTransitionTo(TransitionRoute<dynamic> nextRoute) {
+  bool canTransitionTo(TransitionRoute<Object?> nextRoute) {
     return (nextRoute is _CustomPageBasedPageRouteBuilder && !nextRoute.fullscreenDialog ||
             nextRoute is MaterialRouteTransitionMixin && !nextRoute.fullscreenDialog) ||
         (nextRoute is _NoAnimationPageRouteTransitionMixin && !nextRoute.fullscreenDialog) ||

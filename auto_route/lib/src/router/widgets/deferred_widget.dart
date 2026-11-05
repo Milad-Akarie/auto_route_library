@@ -32,7 +32,7 @@ class DeferredWidget extends StatefulWidget {
 
   static Future<void> _preload(LibraryLoader loader) {
     if (!_moduleLoaders.containsKey(loader)) {
-      _moduleLoaders[loader] = loader().then((dynamic _) {
+      _moduleLoaders[loader] = loader().then((_) {
         _loadedModules.add(loader);
       });
     }
@@ -61,7 +61,7 @@ class _DeferredWidgetState extends State<DeferredWidget> {
       _onLibraryLoaded();
     } else {
       unawaited(
-        DeferredWidget._preload(widget.libraryLoader).then((dynamic _) {
+        DeferredWidget._preload(widget.libraryLoader).then((_) {
           // The page can leave the tree before its library loads.
           if (mounted) _onLibraryLoaded();
         }),

@@ -176,7 +176,7 @@ class _WebEngineUri implements Uri {
     String? path,
     Iterable<String>? pathSegments,
     String? query,
-    Map<String, dynamic>? queryParameters,
+    Map<String, Object?>? queryParameters,
     String? fragment,
   }) => _uri.replace(
     scheme: scheme,
@@ -242,7 +242,7 @@ class UrlState {
 
   /// Builds UrlState from list of
   /// route matches instead of uri
-  factory UrlState.fromSegments(List<RouteMatch<dynamic>> routes, {bool shouldReplace = false, Object? state}) {
+  factory UrlState.fromSegments(List<RouteMatch<Object?>> routes, {bool shouldReplace = false, Object? state}) {
     return UrlState(_buildUri(routes), routes, shouldReplace: shouldReplace, pathState: state);
   }
 
@@ -250,7 +250,7 @@ class UrlState {
   final Uri uri;
 
   /// The list of segments representing the current [uri]
-  final List<RouteMatch<dynamic>> segments;
+  final List<RouteMatch<Object?>> segments;
 
   /// This is passed to [AutoRouteInformation.replace]
   /// when location is restored
@@ -344,7 +344,7 @@ class UrlState {
   /// to a hierarchy of routes
   /// e.g [Match1,Match2,Match3]
   /// will be [Match1[Match2[Match3]]]
-  static RouteMatch<dynamic> toHierarchy(List<RouteMatch<dynamic>> segments) {
+  static RouteMatch<Object?> toHierarchy(List<RouteMatch<Object?>> segments) {
     if (segments.length == 1) {
       return segments.first;
     }
@@ -367,11 +367,11 @@ class UrlState {
 
   /// Returns to topMost item in the segments list
   /// Witch is the last
-  RouteMatch<dynamic>? get topMatch => hasSegments ? segments.last : null;
+  RouteMatch<Object?>? get topMatch => hasSegments ? segments.last : null;
 
-  RouteMatch<dynamic>? _findSegment(
-    List<RouteMatch<dynamic>> segments,
-    bool Function(RouteMatch<dynamic> segment) predicate,
+  RouteMatch<Object?>? _findSegment(
+    List<RouteMatch<Object?>> segments,
+    bool Function(RouteMatch<Object?> segment) predicate,
   ) {
     for (final segment in segments) {
       if (predicate(segment)) {
@@ -387,11 +387,11 @@ class UrlState {
   }
 
   /// re
-  List<RouteMatch<dynamic>> childrenOfSegmentNamed(String routeName) {
+  List<RouteMatch<Object?>> childrenOfSegmentNamed(String routeName) {
     return _findSegment(segments, (match) => match.name == routeName)?.children ?? const [];
   }
 
-  static Uri _buildUri(List<RouteMatch<dynamic>> routes) {
+  static Uri _buildUri(List<RouteMatch<Object?>> routes) {
     var fullPath = '/';
     if (routes.isEmpty) {
       return Uri(path: fullPath);
@@ -399,7 +399,7 @@ class UrlState {
     fullPath = p.joinAll(routes.where((e) => e.stringMatch.isNotEmpty).map((e) => e.stringMatch));
     final normalized = p.normalize(fullPath);
     final lastSegment = routes.last;
-    final queryParams = <String, dynamic>{};
+    final queryParams = <String, Object?>{};
     if (lastSegment.queryParams.isNotEmpty) {
       final queries = lastSegment.queryParams.rawMap;
       for (final key in queries.keys) {
@@ -439,15 +439,15 @@ class UrlState {
       other is UrlState &&
           runtimeType == other.runtimeType &&
           pathState == other.pathState &&
-          const ListEquality<dynamic>().equals(segments, other.segments);
+          const ListEquality<Object?>().equals(segments, other.segments);
 
   @override
-  int get hashCode => const ListEquality<dynamic>().hash(segments) ^ pathState.hashCode;
+  int get hashCode => const ListEquality<Object?>().hash(segments) ^ pathState.hashCode;
 
   /// Returns a new [UrlState] instance
   /// with replaced properties
   UrlState copyWith({
-    List<RouteMatch<dynamic>>? segments,
+    List<RouteMatch<Object?>>? segments,
     Uri? uri,
     bool? shouldReplace,
     Object? pathState,

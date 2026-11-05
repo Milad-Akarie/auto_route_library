@@ -17,7 +17,7 @@ extension on RoutingController {
     return [for (final data in pages) _savedRoute(data)];
   }
 
-  Map<String, Object?> _savedRoute(RouteData<dynamic> data) {
+  Map<String, Object?> _savedRoute(RouteData<Object?> data) {
     final child = _innerControllerOfMatch(data.matchId);
     final List<Object?>? children;
     if (child != null) {
@@ -34,14 +34,14 @@ extension on RoutingController {
 }
 
 Map<String, Object?> _savedMatch(
-  RouteMatch<dynamic> match, {
+  RouteMatch<Object?> match, {
   Parameters? queryParams,
   String? fragment,
   List<Object?>? children,
 }) {
   queryParams ??= match.queryParams;
   fragment ??= match.fragment;
-  children ??= [for (final child in match.children ?? const <RouteMatch<dynamic>>[]) _savedMatch(child)];
+  children ??= [for (final child in match.children ?? const <RouteMatch<Object?>>[]) _savedMatch(child)];
   return {
     'name': match.name,
     if (match.params.isNotEmpty) 'path': _plainValues(match.params.rawMap),
@@ -51,7 +51,7 @@ Map<String, Object?> _savedMatch(
   };
 }
 
-Map<String, Object?> _plainValues(Map<String, dynamic> values) {
+Map<String, Object?> _plainValues(Map<String, Object?> values) {
   Object? plain(Object? value) => switch (value) {
     null || String() || num() || bool() => value,
     Iterable() => [for (final item in value) plain(item)],
@@ -95,17 +95,17 @@ List<PageRouteInfo>? _restoredRoutes(Object? saved) {
 // The restored routes, less those whose page can't be built without the
 // args it was opened with, which aren't saved, and less the routes nested
 // in those. Builds each page once to find out, as the router will.
-List<RouteMatch<dynamic>> _buildableMatches(List<RouteMatch<dynamic>> matches, RoutingController router) {
-  final buildable = <RouteMatch<dynamic>>[];
+List<RouteMatch<Object?>> _buildableMatches(List<RouteMatch<Object?>> matches, RoutingController router) {
+  final buildable = <RouteMatch<Object?>>[];
   for (final match in matches) {
     try {
-      RouteData<dynamic>(
+      RouteData<Object?>(
         route: match,
         router: router,
         stackKey: UniqueKey(),
         pendingChildren: const [],
         type: match.type ?? router.root.defaultRouteType,
-      ).buildPage<dynamic>();
+      ).buildPage<Object?>();
       // A page that needs args it can't get is skipped; that is the error to catch.
       // ignore: avoid_catching_errors
     } on MissingRequiredParameterError {

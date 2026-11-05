@@ -50,7 +50,7 @@ class RouteMatch<T> {
   final Parameters queryParams;
 
   /// The list of child matches of this match
-  final List<RouteMatch<dynamic>>? children;
+  final List<RouteMatch<Object?>>? children;
 
   /// The url fragment form [Uri.fragment]
   final String fragment;
@@ -96,7 +96,7 @@ class RouteMatch<T> {
   bool get isBranch => _config.hasSubTree;
 
   /// Helper to access [AutoRoute.meta]
-  Map<String, dynamic> get meta => _config.meta;
+  Map<String, Object?> get meta => _config.meta;
 
   /// Helper to access [AutoRoute.type]
   RouteType? get type => _config.type;
@@ -120,7 +120,7 @@ class RouteMatch<T> {
   TitleBuilder? get titleBuilder => _config.title;
 
   /// Helper to access [AutoRoute.buildPage]
-  AutoRoutePage<R> buildPage<R>(RouteData<dynamic> data) => _config.buildPage(data);
+  AutoRoutePage<R> buildPage<R>(RouteData<Object?> data) => _config.buildPage(data);
 
   /// The unique key of this match
   ///
@@ -161,7 +161,7 @@ class RouteMatch<T> {
   /// Returns a flattened list of this match and it's sub-matches
   /// e.g if we have = RouteMatch1[RouteMatch2[RouteMatch3]]
   /// the result is [RouteMatch1,RouteMatch2,RouteMatch3]
-  List<RouteMatch<dynamic>> get flattened {
+  List<RouteMatch<Object?>> get flattened {
     return [this, if (hasChildren) ...children!.last.flattened];
   }
 
@@ -170,13 +170,13 @@ class RouteMatch<T> {
   ///
   /// Each parameter is named after the field it sets; the old name
   /// [pathParams] still works and loses to [params] when both are passed.
-  RouteMatch<dynamic> copyWith({
+  RouteMatch<Object?> copyWith({
     String? stringMatch,
     Parameters? params,
     // Deprecated in 12.0.0, removed in 13.0.0.
     @Deprecated('Use params instead') Parameters? pathParams,
     Parameters? queryParams,
-    List<RouteMatch<dynamic>>? children,
+    List<RouteMatch<Object?>>? children,
     String? fragment,
     List<String>? segments,
     String? redirectedFrom,
@@ -206,7 +206,7 @@ class RouteMatch<T> {
 
   /// Returns a new instance of [RouteMatch]
   /// with the overridden id
-  RouteMatch<dynamic> withId(LocalKey newId) {
+  RouteMatch<Object?> withId(LocalKey newId) {
     return RouteMatch._internal(
       id: newId,
       config: _config,
@@ -238,21 +238,21 @@ class RouteMatch<T> {
           fullscreenDialog == other.fullscreenDialog &&
           keepHistory == other.keepHistory &&
           args == other.args &&
-          const ListEquality<dynamic>().equals(guards, other.guards) &&
+          const ListEquality<Object?>().equals(guards, other.guards) &&
           queryParams == other.queryParams &&
-          const ListEquality<dynamic>().equals(children, other.children) &&
+          const ListEquality<Object?>().equals(children, other.children) &&
           fragment == other.fragment &&
           redirectedFrom == other.redirectedFrom &&
           autoFilled == other.autoFilled &&
-          const ListEquality<dynamic>().equals(segments, other.segments) &&
-          const MapEquality<dynamic, dynamic>().equals(meta, other.meta);
+          const ListEquality<Object?>().equals(segments, other.segments) &&
+          const MapEquality<Object?, Object?>().equals(meta, other.meta);
 
   @override
   int get hashCode =>
       params.hashCode ^
       queryParams.hashCode ^
-      const ListEquality<dynamic>().hash(children) ^
-      const ListEquality<dynamic>().hash(guards) ^
+      const ListEquality<Object?>().hash(children) ^
+      const ListEquality<Object?>().hash(guards) ^
       fragment.hashCode ^
       redirectedFrom.hashCode ^
       path.hashCode ^
@@ -265,8 +265,8 @@ class RouteMatch<T> {
       type.hashCode ^
       autoFilled.hashCode ^
       args.hashCode ^
-      const ListEquality<dynamic>().hash(segments) ^
-      const MapEquality<dynamic, dynamic>().hash(meta);
+      const ListEquality<Object?>().hash(segments) ^
+      const MapEquality<Object?, Object?>().hash(meta);
 
   @override
   String toString() {
@@ -308,7 +308,7 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
   final AutoRoutePage<R> currentPage;
 
   /// The original match that was used to create this instance
-  final RouteMatch<dynamic> originalMatch;
+  final RouteMatch<Object?> originalMatch;
 
   @override
   // An override of RouteMatch.copyWith: it changes the original match and keeps the page being
@@ -320,7 +320,7 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
     // Deprecated in 12.0.0, removed in 13.0.0.
     @Deprecated('Use params instead') Parameters? pathParams,
     Parameters? queryParams,
-    List<RouteMatch<dynamic>>? children,
+    List<RouteMatch<Object?>>? children,
     String? fragment,
     List<String>? segments,
     String? redirectedFrom,
@@ -382,7 +382,7 @@ class HierarchySegment {
   final Parameters? queryParams;
 
   /// Returns a pretty json output of this hierarchy
-  Map<String, dynamic> toJson() {
+  Map<String, Object?> toJson() {
     return {
       'name': name,
       if (pathParams?.isNotEmpty == true) 'pathParams': pathParams!.rawMap,
@@ -404,11 +404,11 @@ class HierarchySegment {
           name == other.name &&
           pathParams == other.pathParams &&
           queryParams == other.queryParams &&
-          const ListEquality<dynamic>().equals(children, other.children);
+          const ListEquality<Object?>().equals(children, other.children);
 
   @override
   int get hashCode =>
-      name.hashCode ^ pathParams.hashCode ^ queryParams.hashCode ^ const ListEquality<dynamic>().hash(children);
+      name.hashCode ^ pathParams.hashCode ^ queryParams.hashCode ^ const ListEquality<Object?>().hash(children);
 }
 
 /// An extension to create a pretty json output of
@@ -419,7 +419,7 @@ extension PrettyHierarchySegmentX on List<HierarchySegment> {
   String get prettyMap {
     const encoder = JsonEncoder.withIndent('  ');
 
-    Map<dynamic, dynamic> toMap(List<HierarchySegment> segments) {
+    Map<Object?, Object?> toMap(List<HierarchySegment> segments) {
       return Map.fromEntries(
         segments.map(
           (e) => MapEntry(e.name, {

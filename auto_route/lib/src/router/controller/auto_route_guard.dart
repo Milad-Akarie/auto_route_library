@@ -89,14 +89,14 @@ abstract class ReevaluateListenable extends ChangeNotifier {
   ReevaluateListenable();
 
   /// Builds [ReevaluateListenable] from a stream
-  factory ReevaluateListenable.stream(Stream<dynamic> stream) = _StreamReevaluateListenable;
+  factory ReevaluateListenable.stream(Stream<Object?> stream) = _StreamReevaluateListenable;
 }
 
 class _StreamReevaluateListenable extends ReevaluateListenable {
-  _StreamReevaluateListenable(Stream<dynamic> stream) {
+  _StreamReevaluateListenable(Stream<Object?> stream) {
     _streamSub = stream.listen((_) => notifyListeners());
   }
-  late final StreamSubscription<dynamic> _streamSub;
+  late final StreamSubscription<Object?> _streamSub;
 
   @override
   void dispose() {
@@ -140,10 +140,10 @@ class ResolverResult {
   final bool reevaluateNext;
 
   /// Holds the route to be used in the navigation event
-  final RouteMatch<dynamic> route;
+  final RouteMatch<Object?> route;
 
   //// clones this instance with the provided values
-  ResolverResult copyWith({bool? continueNavigation, bool? reevaluateNext, RouteMatch<dynamic>? route}) {
+  ResolverResult copyWith({bool? continueNavigation, bool? reevaluateNext, RouteMatch<Object?>? route}) {
     return ResolverResult(
       continueNavigation: continueNavigation ?? this.continueNavigation,
       reevaluateNext: reevaluateNext ?? this.reevaluateNext,
@@ -178,7 +178,7 @@ class NavigationResolver {
   bool _isReevaluating = false;
 
   /// The route being processing by the guard
-  final RouteMatch<dynamic> route;
+  final RouteMatch<Object?> route;
 
   /// Helper to get [RouteMatch.name]
   String get routeName => route.name;
@@ -192,7 +192,7 @@ class NavigationResolver {
   /// and pending routes will contain [Route2, Route3]
   ///
   /// when we process  Rout2 next pending routes will contain `Route3` only
-  final List<RouteMatch<dynamic>> pendingRoutes;
+  final List<RouteMatch<Object?>> pendingRoutes;
 
   /// returns the navigator context
   ///
@@ -264,7 +264,7 @@ class NavigationResolver {
   void overrideNext({
     List<PageRouteInfo>? children,
     Object? args,
-    Map<String, dynamic>? queryParams,
+    Map<String, Object?>? queryParams,
     String? fragment,
     bool reevaluateNext = true,
   }) {
@@ -300,7 +300,8 @@ class NavigationResolver {
     _isRedirecting = true;
     // keep the page being reevaluated under the redirect route so its state is preserved
     final reevaluatedRoute = this.route;
-    if (reevaluatedRoute is ReevaluatableRouteMatch && !_router._pages.contains(reevaluatedRoute.currentPage)) {
+    if (reevaluatedRoute is ReevaluatableRouteMatch<Object?, Object?> &&
+        !_router._pages.contains(reevaluatedRoute.currentPage)) {
       _router._pages.add(reevaluatedRoute.currentPage);
     }
     await _router._redirect(
@@ -346,7 +347,7 @@ class NavigationResolver {
   // Rejects [route] when the guards that redirected the user here opened the
   // same route earlier in this chain of redirects, which would repeat without end.
   bool _reportRedirectLoop() {
-    final chain = <RouteMatch<dynamic>>[];
+    final chain = <RouteMatch<Object?>>[];
     for (var by = _redirectingResolvers[route.id]; by != null; by = _redirectingResolvers[by.route.id]) {
       chain.insert(0, by.route);
       final isSame = by.route.name == route.name && by.route.fullPath == route.fullPath;
@@ -361,7 +362,7 @@ class NavigationResolver {
     return false;
   }
 
-  void _reportLoop(List<RouteMatch<dynamic>> loop) {
+  void _reportLoop(List<RouteMatch<Object?>> loop) {
     final name = route.name;
     final names = loop.map((match) => match.name).join(' → ');
     FlutterError.reportError(
@@ -431,14 +432,14 @@ class RouteOverrides {
   final Object? args;
 
   /// The override value of [PageRouteInfo.queryParams]
-  final Map<String, dynamic>? queryParams;
+  final Map<String, Object?>? queryParams;
 
   /// The override value of [PageRouteInfo.fragment]
   final String? fragment;
 
   /// Builds a new [PageRouteInfo] with the provided overrides
-  RouteMatch<dynamic> override(RouteMatch<dynamic> route, RouteMatcher matcher) {
-    final matches = <RouteMatch<dynamic>>[];
+  RouteMatch<Object?> override(RouteMatch<Object?> route, RouteMatcher matcher) {
+    final matches = <RouteMatch<Object?>>[];
     if (children != null) {
       final coll = matcher.collection.subCollectionOf(route.name);
       final subMatcher = RouteMatcher(coll);

@@ -2,7 +2,7 @@ import 'package:cupertino_ui/cupertino_ui.dart';
 
 /// A utility to check whether the given map
 /// is null or empty
-bool mapNullOrEmpty(Map<dynamic, dynamic>? map) {
+bool mapNullOrEmpty(Map<Object?, Object?>? map) {
   return map == null || map.isEmpty;
 }
 

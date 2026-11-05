@@ -10,14 +10,14 @@ class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
   bool _hasPagelessTopRoute = false;
 
   // The routes the navigator holds, in no particular order.
-  final _routes = <Route<dynamic>>[];
+  final _routes = <Route<Object?>>[];
 
   // The page route each pageless route was pushed over, directly or over
   // other pageless routes on that page.
-  final _pageUnder = <Route<dynamic>, Route<dynamic>>{};
+  final _pageUnder = <Route<Object?>, Route<Object?>>{};
 
   /// The top-most visible route inside [Navigator]
-  Route<dynamic>? current;
+  Route<Object?>? current;
 
   /// Whether the top-most route is a pageless route
   bool get hasPagelessTopRoute => _hasPagelessTopRoute;
@@ -25,28 +25,28 @@ class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
   /// The route the [Navigator] shows [page] with, or null while it has not
   /// built one for it yet.
   @internal
-  Route<dynamic>? routeOf(Page<dynamic> page) {
+  Route<Object?>? routeOf(Page<Object?> page) {
     return _routes.lastWhereOrNull((route) => route.settings == page);
   }
 
   /// The page route on top of the [Navigator], under the pageless routes
   /// over it, or null before the first route shows.
   @internal
-  Route<dynamic>? get topPageRoute {
+  Route<Object?>? get topPageRoute {
     final top = current;
     return top == null || top.settings is Page ? top : _pageUnder[top];
   }
 
   /// The last route the [Navigator] holds that passes [test].
   @internal
-  Route<dynamic>? routeWhere(bool Function(Route<dynamic> route) test) {
+  Route<Object?>? routeWhere(bool Function(Route<Object?> route) test) {
     return _routes.lastWhereOrNull((route) => route.navigator != null && test(route));
   }
 
   /// The pageless routes, such as dialogs, the [Navigator] holds over the
   /// route of [pageRoute], below the next page.
   @internal
-  List<Route<dynamic>> pagelessRoutesOver(Route<dynamic> pageRoute) {
+  List<Route<Object?>> pagelessRoutesOver(Route<Object?> pageRoute) {
     return [
       for (final MapEntry(key: route, value: pageUnder) in _pageUnder.entries)
         if (pageUnder == pageRoute && route.navigator != null) route,
@@ -54,7 +54,7 @@ class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
   }
 
   @override
-  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+  void didPush(Route<Object?> route, Route<Object?>? previousRoute) {
     // A navigator that was disposed leaves its routes without a navigator.
     _routes
       ..removeWhere((route) => route.navigator == null)
@@ -67,13 +67,13 @@ class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
   }
 
   @override
-  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) => _forget(route);
+  void didPop(Route<Object?> route, Route<Object?>? previousRoute) => _forget(route);
 
   @override
-  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) => _forget(route);
+  void didRemove(Route<Object?> route, Route<Object?>? previousRoute) => _forget(route);
 
   @override
-  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+  void didReplace({Route<Object?>? newRoute, Route<Object?>? oldRoute}) {
     _routes.remove(oldRoute);
     final pageUnder = _pageUnder.remove(oldRoute);
     if (newRoute != null) {
@@ -82,13 +82,13 @@ class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
     }
   }
 
-  void _forget(Route<dynamic> route) {
+  void _forget(Route<Object?> route) {
     _routes.remove(route);
     _pageUnder.remove(route);
   }
 
   @override
-  void didChangeTop(Route<dynamic> topRoute, Route<dynamic>? previousTopRoute) {
+  void didChangeTop(Route<Object?> topRoute, Route<Object?>? previousTopRoute) {
     current = topRoute;
     final topIsPageless = topRoute.settings is! Page;
     if (_hasPagelessTopRoute != topIsPageless) {

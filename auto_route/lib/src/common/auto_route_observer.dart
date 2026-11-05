@@ -7,7 +7,7 @@ extension RouteX<T> on Route<T> {
   /// Returns RouteData of this page if
   /// it's an [AutoRoutePage] otherwise it
   /// returns null
-  RouteData<dynamic>? get data {
+  RouteData<Object?>? get data {
     if (settings is AutoRoutePage) {
       return (settings as AutoRoutePage).routeData;
     }
@@ -117,7 +117,7 @@ class AutoRouteObserver extends AutoRouterObserver {
 
   // Subscribers of routes inside nested routers, keyed by the route in this
   // observer's navigator that hosts them, each with the route it subscribed to.
-  final Map<LocalKey, Map<AutoRouteAware, RouteData<dynamic>>> _nestedListeners = {};
+  final Map<LocalKey, Map<AutoRouteAware, RouteData<Object?>>> _nestedListeners = {};
 
   // The observers of ancestor navigators each subscriber was added to.
   final Map<AutoRouteAware, Set<AutoRouteObserver>> _ancestorObservers = {};
@@ -131,7 +131,7 @@ class AutoRouteObserver extends AutoRouterObserver {
   /// When [route] is inside a nested router, [AutoRouteAware] is also informed
   /// while [route] shows inside its host route, when the host route is covered,
   /// uncovered or popped in an ancestor navigator that has an [AutoRouteObserver].
-  void subscribe(AutoRouteAware routeAware, RouteData<dynamic> route) {
+  void subscribe(AutoRouteAware routeAware, RouteData<Object?> route) {
     final subscribers = _listeners.putIfAbsent(route.key, () => <AutoRouteAware>{});
     if (subscribers.add(routeAware)) {
       _subscribeToAncestors(routeAware, route);
@@ -157,7 +157,7 @@ class AutoRouteObserver extends AutoRouterObserver {
   // Whether another page covers [route] in its own router, or covers a host
   // route of it in an ancestor router whose observer tells [routeAware] when
   // that host shows again.
-  bool _isCovered(AutoRouteAware routeAware, RouteData<dynamic> route) {
+  bool _isCovered(AutoRouteAware routeAware, RouteData<Object?> route) {
     if (_isBelowTop(route)) return true;
     final ancestorObservers = _ancestorObservers[routeAware] ?? const <AutoRouteObserver>{};
     for (var host = route.parent; host != null && host.parent != null; host = host.parent) {
@@ -170,7 +170,7 @@ class AutoRouteObserver extends AutoRouterObserver {
     return false;
   }
 
-  static bool _isBelowTop(RouteData<dynamic> route) {
+  static bool _isBelowTop(RouteData<Object?> route) {
     final router = route.router;
     return router is StackRouter && router.stackData.isNotEmpty && router.stackData.last.key != route.key;
   }
@@ -194,7 +194,7 @@ class AutoRouteObserver extends AutoRouterObserver {
 
   // Adds [routeAware] to the observers of the navigators that hold the host
   // routes of [route], so it hears when one of them is covered or uncovered.
-  void _subscribeToAncestors(AutoRouteAware routeAware, RouteData<dynamic> route) {
+  void _subscribeToAncestors(AutoRouteAware routeAware, RouteData<Object?> route) {
     // The root router's own route data has no parent and no navigator around it.
     for (var host = route.parent; host != null && host.parent != null; host = host.parent) {
       final router = host.router;
@@ -219,8 +219,8 @@ class AutoRouteObserver extends AutoRouterObserver {
     }
   }
 
-  static bool _showsInHost(RouteData<dynamic> route, LocalKey hostKey) {
-    for (RouteData<dynamic>? data = route; data != null && data.key != hostKey; data = data.parent) {
+  static bool _showsInHost(RouteData<Object?> route, LocalKey hostKey) {
+    for (RouteData<Object?>? data = route; data != null && data.key != hostKey; data = data.parent) {
       if (data.router.currentChild?.matchId != data.matchId) return false;
     }
     return true;
@@ -247,10 +247,10 @@ class AutoRouteObserver extends AutoRouterObserver {
   }
 
   @override
-  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) => _notifyPop(route, previousRoute);
+  void didPop(Route<Object?> route, Route<Object?>? previousRoute) => _notifyPop(route, previousRoute);
 
   @override
-  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
+  void didRemove(Route<Object?> route, Route<Object?>? previousRoute) {
     // navigate() and popUntil() remove a page instead of popping it when, for
     // example, a dialog above it is still closing. When that shows the route
     // underneath again, its subscribers hear what a pop would tell them.
@@ -259,7 +259,7 @@ class AutoRouteObserver extends AutoRouterObserver {
     }
   }
 
-  void _notifyPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+  void _notifyPop(Route<Object?> route, Route<Object?>? previousRoute) {
     if (route.settings is AutoRoutePage && previousRoute?.settings is AutoRoutePage) {
       // The page that leaves hears first, then the page that shows again, as
       // on a push, where the covered page hears didPushNext before the new
@@ -287,7 +287,7 @@ class AutoRouteObserver extends AutoRouterObserver {
   }
 
   @override
-  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+  void didPush(Route<Object?> route, Route<Object?>? previousRoute) {
     if (route.settings is AutoRoutePage && previousRoute?.settings is AutoRoutePage) {
       final previousKey = (previousRoute!.settings as AutoRoutePage).routeKey;
       final previousSubscribers = _listeners[previousKey];
@@ -309,7 +309,7 @@ class TabPageRoute {
   const TabPageRoute({required this.routeInfo, required this.index});
 
   /// match information of the target tab
-  final RouteMatch<dynamic> routeInfo;
+  final RouteMatch<Object?> routeInfo;
 
   /// index of the target tab
   final int index;

@@ -8,11 +8,11 @@ import 'package:meta/meta.dart';
 @immutable
 class Parameters {
   /// default construct
-  const Parameters(Map<String, dynamic>? params) : _params = params ?? const {};
-  final Map<String, dynamic> _params;
+  const Parameters(Map<String, Object?>? params) : _params = params ?? const {};
+  final Map<String, Object?> _params;
 
   /// returns the raw map passed to the constructor
-  Map<String, dynamic> get rawMap => _params;
+  Map<String, Object?> get rawMap => _params;
 
   // coverage:ignore-start
   @override
@@ -30,10 +30,10 @@ class Parameters {
       identical(this, other) ||
       other is Parameters &&
           runtimeType == other.runtimeType &&
-          const MapEquality<dynamic, dynamic>(values: DeepCollectionEquality()).equals(_params, other._params);
+          const MapEquality<Object?, Object?>(values: DeepCollectionEquality()).equals(_params, other._params);
 
   @override
-  int get hashCode => const MapEquality<dynamic, dynamic>().hash(_params);
+  int get hashCode => const MapEquality<Object?, Object?>().hash(_params);
 
   /// Helper getter to `_params.isNotEmpty`
   bool get isNotEmpty => _params.isNotEmpty;

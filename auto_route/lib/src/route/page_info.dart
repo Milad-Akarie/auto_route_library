@@ -23,7 +23,7 @@ class PageInfo {
   /// The builder function of the generated [RoutePage]
   final AutoRoutePageBuilder builder;
 
-  static Widget _emptyShellBuilder(RouteData<dynamic> _) {
+  static Widget _emptyShellBuilder(RouteData<Object?> _) {
     return const AutoRouter();
   }
 
@@ -52,7 +52,7 @@ class _NoBuilderPageInfo extends PageInfo {
   /// Default constructor
   const _NoBuilderPageInfo(super.name) : super(builder: _noBuilder);
 
-  static Widget _noBuilder(RouteData<dynamic> _) {
+  static Widget _noBuilder(RouteData<Object?> _) {
     throw FlutterError('PageInfo does not have a builder');
   }
 }

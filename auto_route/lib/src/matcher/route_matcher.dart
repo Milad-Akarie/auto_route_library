@@ -11,7 +11,7 @@ class RouteMatcher {
   final RouteCollection collection;
 
   /// Parses a [Uri] from [rawPath] then maps call to [_match]
-  List<RouteMatch<dynamic>>? match(String rawPath, {bool includePrefixMatches = false}) {
+  List<RouteMatch<Object?>>? match(String rawPath, {bool includePrefixMatches = false}) {
     return _match(Uri.parse(rawPath), collection, includePrefixMatches: includePrefixMatches, root: true);
   }
 
@@ -21,11 +21,11 @@ class RouteMatcher {
   /// will be included in the return list
   ///
   /// returns null if not match is found
-  List<RouteMatch<dynamic>>? matchUri(Uri uri, {bool includePrefixMatches = false}) {
+  List<RouteMatch<Object?>>? matchUri(Uri uri, {bool includePrefixMatches = false}) {
     return _match(uri, collection, includePrefixMatches: includePrefixMatches, root: true);
   }
 
-  List<RouteMatch<dynamic>>? _match(
+  List<RouteMatch<Object?>>? _match(
     Uri uri,
     RouteCollection collection, {
     bool includePrefixMatches = false,
@@ -34,7 +34,7 @@ class RouteMatcher {
     List<String> redirectChain = const [],
   }) {
     final pathSegments = _split(uri.path);
-    final matches = <RouteMatch<dynamic>>[];
+    final matches = <RouteMatch<Object?>>[];
     for (final config in collection.routes) {
       var match = _matchByPath(uri, pathSegments, config, redirectedFrom: redirectedFrom);
       if (match != null) {
@@ -101,7 +101,7 @@ class RouteMatcher {
     return matches;
   }
 
-  List<RouteMatch<dynamic>>? _handleRedirect({
+  List<RouteMatch<Object?>>? _handleRedirect({
     required RouteCollection routesCollection,
     required bool includePrefixMatches,
     required Uri redirectTo,
@@ -121,7 +121,7 @@ class RouteMatcher {
   // with no segments of its own consumed none, unless a redirect to an empty
   // path made it: then it stands for the segment the redirect matched. So a
   // path no route has doesn't match the '' route of a router.
-  static int _consumedSegments(RouteMatch<dynamic> match) {
+  static int _consumedSegments(RouteMatch<Object?> match) {
     final own = match.segments.isEmpty && match.redirectedFrom != null ? 1 : match.segments.length;
     return own + (match.hasChildren ? _consumedSegments(match.children!.last) : 0);
   }
@@ -155,13 +155,13 @@ class RouteMatcher {
   /// and returns a single match result
   ///
   /// returns null if not match is found
-  RouteMatch<dynamic>? matchByPath(Uri uri, AutoRoute config, {String? redirectedFrom}) {
+  RouteMatch<Object?>? matchByPath(Uri uri, AutoRoute config, {String? redirectedFrom}) {
     // Split before decoding, so an encoded '/' stays inside its segment.
     return _matchByPath(uri, _split(uri.path), config, redirectedFrom: redirectedFrom);
   }
 
   // [segments] is the path of [uri], split.
-  RouteMatch<dynamic>? _matchByPath(Uri uri, List<String> segments, AutoRoute config, {String? redirectedFrom}) {
+  RouteMatch<Object?>? _matchByPath(Uri uri, List<String> segments, AutoRoute config, {String? redirectedFrom}) {
     final parts = _partsOf(config);
 
     if (parts.length > segments.length) {
@@ -208,16 +208,16 @@ class RouteMatcher {
   /// and it does not care about paths
   ///
   /// returns null if not match is found
-  RouteMatch<dynamic>? matchByRoute(PageRouteInfo route) {
+  RouteMatch<Object?>? matchByRoute(PageRouteInfo route) {
     return _matchByRoute(route, collection);
   }
 
-  RouteMatch<dynamic>? _matchByRoute(PageRouteInfo route, RouteCollection routes) {
+  RouteMatch<Object?>? _matchByRoute(PageRouteInfo route, RouteCollection routes) {
     final config = routes[route.routeName];
     if (config == null) {
       return null;
     }
-    final childMatches = <RouteMatch<dynamic>>[];
+    final childMatches = <RouteMatch<Object?>>[];
     if (config.hasSubTree) {
       final subRoutes = routes.subCollectionOf(route.routeName);
       if (route.hasChildren) {
@@ -263,10 +263,10 @@ class RouteMatcher {
   /// adding their parents to stack first
   ///
   /// returns null if no track is found
-  RouteMatch<dynamic>? buildPathTo(PageRouteInfo<dynamic> route) {
+  RouteMatch<Object?>? buildPathTo(PageRouteInfo<Object?> route) {
     final configs = collection.findPathTo(route.routeName);
     if (configs.isEmpty) return null;
-    final matches = <RouteMatch<dynamic>>[];
+    final matches = <RouteMatch<Object?>>[];
     for (var i = 0; i < configs.length; i++) {
       final config = configs[i];
       if (i == configs.length - 1) {
@@ -315,8 +315,8 @@ class RouteMatcher {
     return UrlState.toHierarchy(matches);
   }
 
-  Map<String, dynamic> _normalizeSingleValues(Map<String, List<String>> queryParametersAll) {
-    final queryMap = <String, dynamic>{};
+  Map<String, Object?> _normalizeSingleValues(Map<String, List<String>> queryParametersAll) {
+    final queryMap = <String, Object?>{};
     for (final key in queryParametersAll.keys) {
       final list = queryParametersAll[key];
       if (list!.length > 1) {
@@ -330,8 +330,8 @@ class RouteMatcher {
     return queryMap;
   }
 
-  Map<String, dynamic> _normalizeForUri(Map<String, dynamic> queryParameters) {
-    final queryMap = <String, dynamic>{};
+  Map<String, Object?> _normalizeForUri(Map<String, Object?> queryParameters) {
+    final queryMap = <String, Object?>{};
     for (final key in queryParameters.keys) {
       queryMap[key] = UrlState.normalizeQueryParamValue(queryParameters[key]);
     }
