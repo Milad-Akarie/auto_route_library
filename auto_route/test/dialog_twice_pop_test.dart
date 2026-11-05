@@ -14,7 +14,8 @@ import 'router_test_utils.dart';
 // Should: no error, and the dialog is gone each time.
 void main() {
   testWidgets(
-    'A dialog shown and closed twice with router.pop closes both times without an error',
+    'A dialog shown and closed twice with router.pop closes both times '
+    'without an error',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [

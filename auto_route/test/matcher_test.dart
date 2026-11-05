@@ -5,9 +5,13 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('Testing RouteCollection', () {
-    test('Building default constructor with empty map should throw in assertion error', () {
-      expect(() => RouteCollection.fromList(const []), throwsAssertionError);
-    });
+    test(
+      'Building default constructor with empty map should throw in assertion '
+      'error',
+      () {
+        expect(() => RouteCollection.fromList(const []), throwsAssertionError);
+      },
+    );
 
     final routeA = TestRoute('A', path: '/');
     final routeB = TestRoute('B', path: '/b');
@@ -58,15 +62,19 @@ void main() {
       },
     );
 
-    test('Creating a RouteCollection with more than one routes marked as initial should throw', () {
-      expect(
-        () => RouteCollection.fromList([
-          TestRoute('A', path: '/a', initial: true),
-          TestRoute('B', path: '/b', initial: true),
-        ], root: true),
-        throwsFlutterError,
-      );
-    });
+    test(
+      'Creating a RouteCollection with more than one routes marked as initial '
+      'should throw',
+      () {
+        expect(
+          () => RouteCollection.fromList([
+            TestRoute('A', path: '/a', initial: true),
+            TestRoute('B', path: '/b', initial: true),
+          ], root: true),
+          throwsFlutterError,
+        );
+      },
+    );
 
     test('Creating a root RouteCollection with no initialPath with initial set to true should add a RedirectRoute(path:/)', () {
       final firstResolvedRoute = RouteCollection.fromList([
@@ -76,13 +84,17 @@ void main() {
       expect(firstResolvedRoute?.path, '/');
     });
 
-    test('Creating a sub RouteCollection with no initialPath with initial set to true should add a RedirectRoute(path:"")', () {
-      final firstResolvedRoute = RouteCollection.fromList([
-        TestRoute('A', path: 'a', initial: true),
-      ]).routes.firstOrNull;
-      expect(firstResolvedRoute, isA<RedirectRoute>());
-      expect(firstResolvedRoute?.path, '');
-    });
+    test(
+      'Creating a sub RouteCollection with no initialPath with initial set to '
+      'true should add a RedirectRoute(path:"")',
+      () {
+        final firstResolvedRoute = RouteCollection.fromList([
+          TestRoute('A', path: 'a', initial: true),
+        ]).routes.firstOrNull;
+        expect(firstResolvedRoute, isA<RedirectRoute>());
+        expect(firstResolvedRoute?.path, '');
+      },
+    );
 
     test('Calling [routes] should return a list of all route configs', () {
       final expectedRoutes = [routeA, routeB, routeC];
@@ -132,17 +144,20 @@ void main() {
       expect(collection.containsKey('X'), isFalse);
     });
 
-    test('Extracting sub collection of a branch route should return sub collection', () {
+    test('Extracting sub collection of a branch route '
+        'should return sub collection', () {
       final expectedCollection = RouteCollection.fromList([subRouteC1]);
       expect(collection.subCollectionOf('C'), expectedCollection);
     });
 
-    test('Extracting sub collection of a leaf or a non-existing route should throw', () {
+    test('Extracting sub collection of a leaf or a non-existing route '
+        'should throw', () {
       expect(() => collection.subCollectionOf('A'), throwsAssertionError);
       expect(() => collection.subCollectionOf('X'), throwsAssertionError);
     });
 
-    test('Calling [] operator with an existing key should return corresponding route', () {
+    test('Calling [] operator with an existing key should return corresponding '
+        'route', () {
       expect(collection['A'], routeA);
     });
 
@@ -672,28 +687,32 @@ void main() {
       expect(match('/a?foo=bar'), expectedMatches);
     });
 
-    test('Should match routes [B,B1] and extract query params {foo:bar, bar:baz} for both', () {
-      final expectedMatches = [
-        RouteMatch<Object?>(
-          key: const ValueKey('B'),
-          stringMatch: '/b',
-          config: routeB,
-          segments: const ['/', 'b'],
-          queryParams: const Parameters({'foo': 'bar', 'bar': 'baz'}),
-        ),
-        RouteMatch<Object?>(
-          key: const ValueKey('B1'),
-          stringMatch: '/b/b1',
-          config: routeB1,
-          segments: const ['/', 'b', 'b1'],
-          queryParams: const Parameters({'foo': 'bar', 'bar': 'baz'}),
-        ),
-      ];
-      expect(
-        match('/b/b1?foo=bar&bar=baz', includePrefixMatches: true),
-        expectedMatches,
-      );
-    });
+    test(
+      'Should match routes [B,B1] and extract query params {foo:bar, bar:baz} '
+      'for both',
+      () {
+        final expectedMatches = [
+          RouteMatch<Object?>(
+            key: const ValueKey('B'),
+            stringMatch: '/b',
+            config: routeB,
+            segments: const ['/', 'b'],
+            queryParams: const Parameters({'foo': 'bar', 'bar': 'baz'}),
+          ),
+          RouteMatch<Object?>(
+            key: const ValueKey('B1'),
+            stringMatch: '/b/b1',
+            config: routeB1,
+            segments: const ['/', 'b', 'b1'],
+            queryParams: const Parameters({'foo': 'bar', 'bar': 'baz'}),
+          ),
+        ];
+        expect(
+          match('/b/b1?foo=bar&bar=baz', includePrefixMatches: true),
+          expectedMatches,
+        );
+      },
+    );
 
     test('Should match route [C/C1] and extract query parameters {foo:bar} for parent and child', () {
       final expectedMatches = [
@@ -734,7 +753,8 @@ void main() {
     });
   });
 
-  group('Testing matching of nested routes with a wildcard redirect and other redirects at the root', () {
+  group('Testing matching of nested routes with a wildcard redirect and other '
+      'redirects at the root', () {
     final cSubRoute = TestRoute('C1', path: '');
     final aRoute = TestRoute('A', path: '');
     final bRoute = TestRoute('B', path: 'b');

@@ -21,7 +21,8 @@ void main() {
     'the predictive back gesture': predictiveBack,
   }.entries) {
     testWidgets(
-      'After the splash page, $name on a tab pops pushed pages, then leaves the app',
+      'After the splash page, $name on a tab pops pushed pages, then leaves '
+      'the app',
       (tester) async {
         final router = RootStackRouter.build(
           routes: [
@@ -81,7 +82,9 @@ void main() {
         expect(router.canPop(), isFalse);
       },
       skip: kIsWeb,
-    ); // Android only: on web Flutter never tells the platform whether it handles back.
+      // Android only: on web Flutter never tells the platform whether it
+      // handles back.
+    );
   }
 }
 

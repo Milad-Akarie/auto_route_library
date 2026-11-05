@@ -37,8 +37,8 @@ void main() {
     ),
   ];
 
-  // Stands in for the guard's own logic; past a few calls it stops answering, so
-  // the test still ends where the loop used to run forever.
+  // Stands in for the guard's own logic; past a few calls it stops answering,
+  // so the test still ends where the loop used to run forever.
   bool loopedTooLong() => ++guardCalls > 20;
 
   Future<FlutterErrorDetails?> pumpAndTakeError(
@@ -62,7 +62,8 @@ void main() {
   // The loop must stop with an error that says what happened and how to fix it.
   for (final isAsync in [false, true]) {
     testWidgets(
-      'A global guard redirecting to a route it guards reports the loop, async: $isAsync (#2213)',
+      'A global guard redirecting to a route it guards reports the loop, '
+      'async: $isAsync (#2213)',
       (tester) async {
         final router = _AppRouter(
           routes: routes,
@@ -96,7 +97,8 @@ void main() {
 
   // The README's way: a global guard lets the route it redirects to through.
   testWidgets(
-    'A global guard that lets its redirect route through shows that route (#2213)',
+    'A global guard that lets its redirect route through shows that route '
+    '(#2213)',
     (tester) async {
       final router = _AppRouter(
         routes: routes,
@@ -126,11 +128,13 @@ void main() {
   // https://github.com/Milad-Akarie/auto_route_library/issues/1818
   // The reporter's global guard read router.current.meta['skipAuth'], which
   // holds the page on screen, the root at app start, instead of
-  // resolver.route.meta, the route being opened. So it redirected SignInRoute to
-  // itself, which ended in a stack overflow through the old
-  // NavigationResolver.redirect(). With redirectUntil() it ends in the same error.
+  // resolver.route.meta, the route being opened. So it redirected SignInRoute
+  // to itself, which ended in a stack overflow through the old
+  // NavigationResolver.redirect(). With redirectUntil() it ends in the same
+  // error.
   testWidgets(
-    'A global guard reading router.current instead of resolver.route reports the loop (#1818)',
+    'A global guard reading router.current instead of resolver.route reports '
+    'the loop (#1818)',
     (tester) async {
       final router = _AppRouter(
         routes: routes,

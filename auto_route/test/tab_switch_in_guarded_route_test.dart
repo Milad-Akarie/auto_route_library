@@ -16,7 +16,8 @@ import 'router_test_utils.dart';
 // again, as every navigation to a guarded route does; setActiveIndex does not.
 void main() {
   testWidgets(
-    'Switching tabs inside a guarded route shows the tab asked for without a redirect',
+    'Switching tabs inside a guarded route shows the tab asked for without a '
+    'redirect',
     (tester) async {
       var guardCalls = 0;
       final router = RootStackRouter.build(

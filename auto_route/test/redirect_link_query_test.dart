@@ -43,7 +43,8 @@ abstract final class _ShopRoute {
   static final PageInfo page = PageInfo(
     pageName,
     builder: (data) => Text(
-      'Shop color=${data.queryParams.optString('color') ?? 'null'} src=${data.queryParams.optString('src') ?? 'null'}',
+      'Shop color=${data.queryParams.optString('color') ?? 'null'} '
+      'src=${data.queryParams.optString('src') ?? 'null'}',
     ),
   );
 }

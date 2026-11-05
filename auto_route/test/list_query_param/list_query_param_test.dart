@@ -89,8 +89,8 @@ void main() {
   });
 
   // flutter/flutter#127373: a route whose list query params are all
-  // empty, as a default of `const []` often makes them, ended its url with a stray
-  // '?': the empty list was kept as a query param with nothing to write.
+  // empty, as a default of `const []` often makes them, ended its url with a
+  // stray '?': the empty list was kept as a query param with nothing to write.
   // Steps: push ItemsRoute with ids and picked both empty.
   // Should: the url is '/items', and a link to it opens the same page.
   testWidgets(
@@ -111,8 +111,8 @@ void main() {
   );
 
   // flutter/flutter#108437: a query param typed
-  // `Set<String>`, `Iterable<int>` or `Set` of an enum was read untyped, so a link to the
-  // page threw a TypeError: the url gives text or a list of it.
+  // `Set<String>`, `Iterable<int>` or `Set` of an enum was read untyped, so a
+  // link to the page threw a TypeError: the url gives text or a list of it.
   // Steps: open /tags with repeated tags, ids and sorts; then push TagsRoute.
   // Should: each param holds its own type, a repeated tag once; the push
   // writes them back in the url.

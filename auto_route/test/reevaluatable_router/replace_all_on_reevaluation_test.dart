@@ -61,7 +61,8 @@ void main() {
   // Tap 'Log In', which logs in and calls replaceAll([HomeRoute()]) right
   // away. Only HomeRoute should be left, not LoginRoute under it.
   testWidgets(
-    'replaceAll right after the reevaluate listenable changes replaces the stack',
+    'replaceAll right after the reevaluate listenable changes replaces the '
+    'stack',
     (tester) async {
       await pumpApp(tester);
       expect(router.stack.map((p) => p.name), [_LoginRoute.name]);

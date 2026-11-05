@@ -15,23 +15,28 @@ PageInfo _page(String name) =>
 // with RedirectRoutes and once with a guard on '/a' that redirects.
 // Should: the app ends on '/b', with the query and fragment of the link.
 void main() {
-  testWidgets("Chained RedirectRoutes end on the last page with the link's query and fragment "
-      '(flutter/flutter#178984)', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        RedirectRoute(path: '/', redirectTo: '/a'),
-        RedirectRoute(path: '/a', redirectTo: '/b'),
-        AutoRoute(page: _page('BRoute'), path: '/b'),
-      ],
-    );
-    await pumpRouterApp(tester, router, initialLink: '/?q=1#frag');
+  testWidgets(
+    "Chained RedirectRoutes end on the last page with the link's query and "
+    'fragment '
+    '(flutter/flutter#178984)',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          RedirectRoute(path: '/', redirectTo: '/a'),
+          RedirectRoute(path: '/a', redirectTo: '/b'),
+          AutoRoute(page: _page('BRoute'), path: '/b'),
+        ],
+      );
+      await pumpRouterApp(tester, router, initialLink: '/?q=1#frag');
 
-    expectCurrentPage(router, 'BRoute');
-    expect(router.currentUrl, '/b?q=1#frag');
-    expect(router.stack, hasLength(1));
-  });
+      expectCurrentPage(router, 'BRoute');
+      expect(router.currentUrl, '/b?q=1#frag');
+      expect(router.stack, hasLength(1));
+    },
+  );
 
-  testWidgets('A guard redirecting to another page ends on that page after a RedirectRoute '
+  testWidgets('A guard redirecting to another page ends on that page after a '
+      'RedirectRoute '
       '(flutter/flutter#188014)', (tester) async {
     final router = RootStackRouter.build(
       routes: [

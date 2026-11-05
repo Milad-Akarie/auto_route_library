@@ -23,7 +23,8 @@ void main() {
   // used. The phone history kept LoginRoute's entry; the browser history never
   // goes back past the app's first entry, so on web this only guards that.
   testWidgets(
-    'The browser back button after a resolved redirect on web stays on the guarded page (#2331)',
+    'The browser back button after a resolved redirect on web stays on the '
+    'guarded page (#2331)',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [
@@ -140,7 +141,8 @@ void main() {
   // The same with the sign-in page closed by the app's own back button, then
   // the browser's back button pressed.
   testWidgets(
-    'The browser back button after closing a logout redirect in the app steps back',
+    'The browser back button after closing a logout redirect in the app steps '
+    'back',
     (tester) async {
       final loggedIn = ValueNotifier(true);
       addTearDown(loggedIn.dispose);

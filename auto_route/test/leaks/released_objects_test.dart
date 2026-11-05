@@ -211,9 +211,9 @@ void main() {
   }
 
   // https://github.com/flutter/flutter/issues/151808: with
-  // Navigator.pages, a page removed while another page covers it stayed in memory, held by
-  // the BuildOwner. auto_route removes pages this way in removeWhere,
-  // navigate() and replaceAll().
+  // Navigator.pages, a page removed while another page covers it stayed in
+  // memory, held by the BuildOwner. auto_route removes pages this way in
+  // removeWhere, navigate() and replaceAll().
   // Steps: 20 times, push DetailRoute, push StackHostRoute over it, remove
   // DetailRoute with removeWhere, then pop StackHostRoute. Force a garbage
   // collection.

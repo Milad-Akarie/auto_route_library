@@ -14,8 +14,8 @@ void main() {
   // instead of failing.
   // Steps: BottomNavigationRoute '/' with tabs HomeTabRoute 'home' and
   // SecondTabRoute 'second', each a router with an initial page; from the
-  // home page call pushPath('nowhere'), on the root router and on the nested one.
-  // Should: onFailure gets a RouteNotFoundFailure, or without onFailure
+  // home page call pushPath('nowhere'), on the root router and on the nested
+  // one. Should: onFailure gets a RouteNotFoundFailure, or without onFailure
   // pushPath throws, and the stacks stay as they were.
   RootStackRouter buildRouter() => .build(
     routes: [
@@ -54,7 +54,8 @@ void main() {
   );
 
   testWidgets(
-    'pushPath of an unknown relative path reports a failure instead of pushing the first page',
+    'pushPath of an unknown relative path reports a failure instead of '
+    'pushing the first page',
     (tester) async {
       final router = buildRouter();
       await pumpRouterApp(tester, router);

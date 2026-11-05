@@ -17,7 +17,8 @@ import 'router_test_utils.dart';
 // back; on 'first', it tells Android it doesn't, so Android closes the app.
 void main() {
   testWidgets(
-    'Back on the first page of a shell inside a shell lets Android close the app',
+    'Back on the first page of a shell inside a shell lets Android close the '
+    'app',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [
@@ -72,7 +73,9 @@ void main() {
       );
     },
     skip: kIsWeb,
-  ); // Android only: on web Flutter never tells the platform whether it handles back.
+    // Android only: on web Flutter never tells the platform whether it handles
+    // back.
+  );
 }
 
 PageInfo _page(String name) =>

@@ -15,44 +15,41 @@ void main() {
     router = NestedRouter();
   });
 
-  testWidgets(
-    'Pushing ${SecondHostRoute.name} with no children should present [$SecondNested1Route]',
-    (tester) async {
-      await pumpRouterApp(tester, router);
-      unawaited(router.push(SecondHostRoute()));
-      await tester.pumpAndSettle();
-      expectTopPage(router, SecondNested1Route.name);
-      expect(router.urlState.url, '/second');
-    },
-  );
+  testWidgets('Pushing ${SecondHostRoute.name} with no children should present '
+      '[$SecondNested1Route]', (tester) async {
+    await pumpRouterApp(tester, router);
+    unawaited(router.push(SecondHostRoute()));
+    await tester.pumpAndSettle();
+    expectTopPage(router, SecondNested1Route.name);
+    expect(router.urlState.url, '/second');
+  });
+
+  testWidgets('Navigating to ${SecondHostRoute.name} with  '
+      'children[$SecondNested1Route] should present [$SecondNested1Route]', (
+    tester,
+  ) async {
+    await pumpRouterApp(tester, router);
+    unawaited(router.navigate(SecondHostRoute()));
+    await tester.pumpAndSettle();
+    expectTopPage(router, SecondNested1Route.name);
+    expect(router.urlState.url, '/second');
+  });
+
+  testWidgets('Pushing ${SecondHostRoute.name} then popping-top should present '
+      '[$FirstPage]', (tester) async {
+    await pumpRouterApp(tester, router);
+    unawaited(router.push(SecondHostRoute()));
+    await tester.pumpAndSettle();
+
+    unawaited(router.maybePopTop());
+    await tester.pumpAndSettle();
+    expectTopPage(router, FirstRoute.name);
+    expect(router.urlState.url, '/');
+  });
 
   testWidgets(
-    'Navigating to ${SecondHostRoute.name} with  children[$SecondNested1Route] should present [$SecondNested1Route]',
-    (tester) async {
-      await pumpRouterApp(tester, router);
-      unawaited(router.navigate(SecondHostRoute()));
-      await tester.pumpAndSettle();
-      expectTopPage(router, SecondNested1Route.name);
-      expect(router.urlState.url, '/second');
-    },
-  );
-
-  testWidgets(
-    'Pushing ${SecondHostRoute.name} then popping-top should present [$FirstPage]',
-    (tester) async {
-      await pumpRouterApp(tester, router);
-      unawaited(router.push(SecondHostRoute()));
-      await tester.pumpAndSettle();
-
-      unawaited(router.maybePopTop());
-      await tester.pumpAndSettle();
-      expectTopPage(router, FirstRoute.name);
-      expect(router.urlState.url, '/');
-    },
-  );
-
-  testWidgets(
-    'Pushing ${SecondHostRoute.name} with children[$SecondNested1Route, $SecondNested2Route]  should present [$SecondNested2Route]',
+    'Pushing ${SecondHostRoute.name} with children[$SecondNested1Route, '
+    '$SecondNested2Route]  should present [$SecondNested2Route]',
     (tester) async {
       await pumpRouterApp(tester, router);
       unawaited(
@@ -69,7 +66,8 @@ void main() {
   );
 
   testWidgets(
-    'Navigating to ${SecondHostRoute.name} with children[$SecondNested1Route, $SecondNested2Route]  should present [$SecondNested2Route]',
+    'Navigating to ${SecondHostRoute.name} with children[$SecondNested1Route, '
+    '$SecondNested2Route]  should present [$SecondNested2Route]',
     (tester) async {
       await pumpRouterApp(tester, router);
       unawaited(
@@ -86,7 +84,9 @@ void main() {
   );
 
   testWidgets(
-    'Navigating to $SecondHostRoute with children[$SecondNested2Route] when both routes are already at the top of their stacks should present [$SecondNested2Route]',
+    'Navigating to $SecondHostRoute with children[$SecondNested2Route] when '
+    'both routes are already at the top of their stacks should present '
+    '[$SecondNested2Route]',
     (tester) async {
       await pumpRouterApp(tester, router);
       unawaited(
@@ -109,7 +109,9 @@ void main() {
   );
 
   testWidgets(
-    'Pushing ${SecondHostRoute.name} with children[$SecondNested1Route, $SecondNested2Route] then popping-top should present [$SecondNested1Route]',
+    'Pushing ${SecondHostRoute.name} with children[$SecondNested1Route, '
+    '$SecondNested2Route] then popping-top should present '
+    '[$SecondNested1Route]',
     (tester) async {
       await pumpRouterApp(tester, router);
       unawaited(
@@ -128,7 +130,8 @@ void main() {
   );
 
   testWidgets(
-    'Pushing $SecondHostRoute should add a child router then popping it should remove it',
+    'Pushing $SecondHostRoute should add a child router then popping it '
+    'should remove it',
     (tester) async {
       await pumpRouterApp(tester, router);
       unawaited(router.push(SecondHostRoute()));
@@ -143,7 +146,8 @@ void main() {
   );
 
   testWidgets(
-    'Pushing $SecondHostRoute twice should add 2 child routers then popping once should remove top-child-router',
+    'Pushing $SecondHostRoute twice should add 2 child routers then popping '
+    'once should remove top-child-router',
     (tester) async {
       await pumpRouterApp(tester, router);
       unawaited(router.pushAll([SecondHostRoute(), SecondHostRoute()]));
@@ -161,8 +165,17 @@ void main() {
     },
   );
 
+  testWidgets('Pushing ${SecondHostRoute.name} should show back leading in '
+      'AutoLeadingButton', (tester) async {
+    await pumpRouterApp(tester, router);
+    unawaited(router.push(SecondHostRoute()));
+    await tester.pumpAndSettle();
+    expect(find.byType(BackButton), findsOneWidget);
+  });
+
   testWidgets(
-    'Pushing ${SecondHostRoute.name} should show back leading in AutoLeadingButton',
+    'Pushing ${SecondHostRoute.name}  should show back leading in Custom '
+    'AutoLeadingButton',
     (tester) async {
       await pumpRouterApp(tester, router);
       unawaited(router.push(SecondHostRoute()));
@@ -172,17 +185,8 @@ void main() {
   );
 
   testWidgets(
-    'Pushing ${SecondHostRoute.name}  should show back leading in Custom AutoLeadingButton',
-    (tester) async {
-      await pumpRouterApp(tester, router);
-      unawaited(router.push(SecondHostRoute()));
-      await tester.pumpAndSettle();
-      expect(find.byType(BackButton), findsOneWidget);
-    },
-  );
-
-  testWidgets(
-    'Initializing App with ${SecondHostRoute.name} with drawer should show drawer toggle leading in AutoLeadingButton',
+    'Initializing App with ${SecondHostRoute.name} with drawer should show '
+    'drawer toggle leading in AutoLeadingButton',
     (tester) async {
       await pumpRouterConfigApp(
         tester,
@@ -196,7 +200,8 @@ void main() {
   );
 
   testWidgets(
-    'Initializing App with ${SecondHostRoute.name} with no drawer  should show empty leading in AutoLeadingButton',
+    'Initializing App with ${SecondHostRoute.name} with no drawer  should '
+    'show empty leading in AutoLeadingButton',
     (tester) async {
       await pumpRouterConfigApp(
         tester,
@@ -209,7 +214,8 @@ void main() {
   );
 
   testWidgets(
-    'Initializing App with ${SecondHostRoute.name} should show drawer toggle leading in Custom AutoLeadingButton',
+    'Initializing App with ${SecondHostRoute.name} should show drawer toggle '
+    'leading in Custom AutoLeadingButton',
     (tester) async {
       await pumpRouterConfigApp(
         tester,
@@ -223,23 +229,22 @@ void main() {
     },
   );
 
-  testWidgets(
-    'Initializing App with ${SecondHostRoute.name} then pushing a second-nested child should show back leading in AutoLeadingButton',
-    (tester) async {
-      await pumpRouterConfigApp(
-        tester,
-        router.config(
-          deepLinkBuilder: (_) => DeepLink.single(SecondHostRoute()),
-        ),
-      );
-      unawaited(router.push(const SecondNested2Route()));
-      await tester.pumpAndSettle();
-      expect(find.byType(CloseButton), findsOneWidget);
-    },
-  );
+  testWidgets('Initializing App with ${SecondHostRoute.name} then pushing a '
+      'second-nested child should show back leading in AutoLeadingButton', (
+    tester,
+  ) async {
+    await pumpRouterConfigApp(
+      tester,
+      router.config(deepLinkBuilder: (_) => DeepLink.single(SecondHostRoute())),
+    );
+    unawaited(router.push(const SecondNested2Route()));
+    await tester.pumpAndSettle();
+    expect(find.byType(CloseButton), findsOneWidget);
+  });
 
   testWidgets(
-    'Initializing App with ${SecondHostRoute.name} then pushing a second-nested child should show close leading in Custom AutoLeadingButton',
+    'Initializing App with ${SecondHostRoute.name} then pushing a '
+    'second-nested child should show close leading in Custom AutoLeadingButton',
     (tester) async {
       await pumpRouterConfigApp(
         tester,
@@ -266,7 +271,8 @@ void main() {
   });
 
   testWidgets(
-    'When root router has pageless route, Obtaining topMostRouter from any router in hierarchy should return root router',
+    'When root router has pageless route, Obtaining topMostRouter from any '
+    'router in hierarchy should return root router',
     (tester) async {
       await pumpRouterApp(tester, router);
       unawaited(
@@ -283,7 +289,9 @@ void main() {
   );
 
   testWidgets(
-    'When root router has pageless route, Obtaining topMostRouter with ignorePagelessRoutes: true from any router in hierarchy should return SecondHostRoute',
+    'When root router has pageless route, Obtaining topMostRouter with '
+    'ignorePagelessRoutes: true from any router in hierarchy should return '
+    'SecondHostRoute',
     (tester) async {
       await pumpRouterApp(tester, router);
       unawaited(
@@ -306,14 +314,15 @@ void main() {
 
   // Reproduction for https://github.com/Milad-Akarie/auto_route_library/pull/2086
   // Steps: push SecondHostRoute (its nested router shows
-  // SecondNested1Route), remove that last nested page so the nested router has no pages left,
-  // then call maybePop on the nested router (what a back press does).
-  // Happens: maybePop returns false and SecondHostRoute stays on screen, so a
-  // back press would close the app.
+  // SecondNested1Route), remove that last nested page so the nested router has
+  // no pages left, then call maybePop on the nested router (what a back press
+  // does). Happens: maybePop returns false and SecondHostRoute stays on screen,
+  // so a back press would close the app.
   // Should happen: the nested router has nothing to pop, so the parent pops
   // SecondHostRoute, maybePop returns true and the root shows FirstRoute.
   testWidgets(
-    'maybePop on a nested router with no pages left should pop the parent router',
+    'maybePop on a nested router with no pages left should pop the parent '
+    'router',
     (tester) async {
       await pumpRouterApp(tester, router);
       unawaited(router.push(SecondHostRoute()));
@@ -345,7 +354,8 @@ void main() {
   // NavigatorPopHandler is built for. Popping the host at once would also
   // override a PopScope the app puts on the host page.
   testWidgets(
-    'root maybePop with a child pushed in a nested router should pop the child, then the host route',
+    'root maybePop with a child pushed in a nested router should pop the '
+    'child, then the host route',
     (tester) async {
       await pumpRouterApp(tester, router);
       unawaited(router.push(SecondHostRoute()));
@@ -383,7 +393,8 @@ void main() {
   // Should happen: the host page's PopScope blocks the pop; the host route
   // and its nested page stay on screen.
   testWidgets(
-    'root maybePop should respect a PopScope on the host page when the nested router has one page',
+    'root maybePop should respect a PopScope on the host page when the nested '
+    'router has one page',
     (tester) async {
       final localRouter = _PopScopeHostRouter();
       await pumpRouterApp(tester, localRouter);
@@ -400,12 +411,14 @@ void main() {
   );
 
   // Regression of the #2154 fix (navigate() waits for the route it opens).
-  // Steps: navigate to SecondHostRoute, push SecondNested2Route in its inner router, then
-  // navigate to SecondHostRoute with children [SecondNested1Route].
-  // Happened: the inner router was only updated once the host page was popped.
-  // Should: the inner router shows SecondNested1Route right away.
+  // Steps: navigate to SecondHostRoute, push SecondNested2Route in its inner
+  // router, then navigate to SecondHostRoute with children
+  // [SecondNested1Route]. Happened: the inner router was only updated once the
+  // host page was popped. Should: the inner router shows SecondNested1Route
+  // right away.
   testWidgets(
-    'navigate() to an open host route should update its nested router right away',
+    'navigate() to an open host route should update its nested router right '
+    'away',
     (tester) async {
       await pumpRouterApp(tester, router);
       unawaited(router.navigate(SecondHostRoute()));

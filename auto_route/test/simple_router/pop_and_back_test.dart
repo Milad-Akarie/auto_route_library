@@ -74,9 +74,11 @@ void main() {
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/1839
   // pushAll records only the last page, so after popping it the page now on top
-  // has no history entry yet; it must take the popped page's entry, not follow it.
+  // has no history entry yet; it must take the popped page's entry, not follow
+  // it.
   testWidgets(
-    'Popping a page pushed with pushAll then going back should not return to it',
+    'Popping a page pushed with pushAll then going back should not return to '
+    'it',
     (tester) async {
       await pumpRouterApp(tester, router);
       unawaited(router.pushAll([const SecondRoute(), const ThirdRoute()]));

@@ -38,7 +38,8 @@ void main() {
 
   for (final MapEntry(key: name, value: goHome) in goHomeCalls.entries) {
     testWidgets(
-      '$name from an open drawer shows Home, and Screen2 opens and closes again',
+      '$name from an open drawer shows Home, and Screen2 opens and closes '
+      'again',
       (tester) async {
         _goHome = goHome;
         await pumpRouterApp(tester, router);

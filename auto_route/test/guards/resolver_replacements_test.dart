@@ -1,6 +1,3 @@
-// The deprecated calls are run on purpose, to prove their replacements do the same.
-// ignore_for_file: deprecated_member_use_from_same_package
-
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
@@ -10,10 +7,10 @@ import 'package:material_ui/material_ui.dart';
 
 import '../router_test_utils.dart';
 
-// NavigationResolver.reject() replaces next(false), reject(goBack: true)
-// replaces nextOrBack(false), and resolveNext is replaced by next(), reject()
-// and overrideNext(reevaluateNext: false). Each pair must leave the same
-// stack, on a push and when reevaluateGuards runs the guard again.
+// NavigationResolver.reject() stops a push, reject(goBack: true) stops it and
+// goes back, and next(), reject() and overrideNext(reevaluateNext: false)
+// decide what a reevaluation leaves. Each call must leave the stack it
+// documents, on a push and when reevaluateGuards runs the guard again.
 // Steps: on HomeRoute, push GuardedRoute, then AboveRoute; the guard lets
 // them through. Then reevaluateGuards, where the guard resolves with the call
 // under test.
@@ -66,41 +63,32 @@ void main() {
     return names;
   }
 
-  final pairs = {
-    'next() and resolveNext(true)': (
+  final expectedStacks = {
+    'next()': (
       (NavigationResolver r) => r.next(),
-      (NavigationResolver r) => r.resolveNext(true),
+      ['HomeRoute', 'GuardedRoute', 'AboveRoute'],
     ),
-    'reject() and resolveNext(false)': (
-      (NavigationResolver r) => r.reject(),
-      (NavigationResolver r) => r.resolveNext(false),
+    'reject()': ((NavigationResolver r) => r.reject(), ['HomeRoute']),
+    'overrideNext(reevaluateNext: false)': (
+      (NavigationResolver r) => r.overrideNext(reevaluateNext: false),
+      ['HomeRoute', 'GuardedRoute'],
     ),
-    'reject() and next(false)': (
-      (NavigationResolver r) => r.reject(),
-      (NavigationResolver r) => r.next(false),
+    'reject(reevaluateNext: false)': (
+      (NavigationResolver r) => r.reject(reevaluateNext: false),
+      ['HomeRoute'],
     ),
-    'overrideNext(reevaluateNext: false) and resolveNext(true, reevaluateNext: false)':
-        (
-          (NavigationResolver r) => r.overrideNext(reevaluateNext: false),
-          (NavigationResolver r) => r.resolveNext(true, reevaluateNext: false),
-        ),
-    'reject(reevaluateNext: false) and resolveNext(false, reevaluateNext: false)':
-        (
-          (NavigationResolver r) => r.reject(reevaluateNext: false),
-          (NavigationResolver r) => r.resolveNext(false, reevaluateNext: false),
-        ),
   };
 
-  for (final MapEntry(key: name, value: (replacement, deprecated))
-      in pairs.entries) {
-    testWidgets('$name leave the same stack', (tester) async {
-      final expected = await stackAfterReevaluation(tester, replacement);
-      expect(await stackAfterReevaluation(tester, deprecated), expected);
+  for (final MapEntry(key: name, value: (call, expected))
+      in expectedStacks.entries) {
+    testWidgets('$name leaves the stack it documents', (tester) async {
+      expect(await stackAfterReevaluation(tester, call), expected);
     });
   }
 
   testWidgets(
-    'next() keeps the pages above, overrideNext(reevaluateNext: false) does not',
+    'next() keeps the pages above, overrideNext(reevaluateNext: false) does '
+    'not',
     (tester) async {
       expect(await stackAfterReevaluation(tester, (r) => r.next()), [
         'HomeRoute',
@@ -120,55 +108,50 @@ void main() {
     },
   );
 
-  testWidgets(
-    'reject(goBack: true) and nextOrBack(false) both stop the push and go back',
-    (tester) async {
-      Future<List<String>> stackAfterPush(
-        void Function(NavigationResolver resolver) decide,
-      ) async {
-        final router = RootStackRouter.build(
-          routes: [
-            NamedRouteDef(
-              name: 'HomeRoute',
-              path: '/',
-              builder: (_, _) => page('HomeRoute'),
-            ),
-            NamedRouteDef(
-              name: 'ListRoute',
-              path: '/list',
-              builder: (_, _) => page('ListRoute'),
-            ),
-            NamedRouteDef(
-              name: 'GuardedRoute',
-              path: '/guarded',
-              guards: [
-                AutoRouteGuard.simple((resolver, _) => decide(resolver)),
-              ],
-              builder: (_, _) => page('GuardedRoute'),
-            ),
-          ],
-        );
-        await pumpRouterConfigApp(tester, router.config());
-        unawaited(router.push(const NamedRoute('ListRoute')));
-        await tester.pumpAndSettle();
-        unawaited(router.push(const NamedRoute('GuardedRoute')));
-        await tester.pumpAndSettle();
-        final names = router.stack.map((page) => page.routeData.name).toList();
-        await tester.pumpWidget(const SizedBox());
-        return names;
-      }
+  testWidgets('reject(goBack: true) stops the push and goes back, '
+      'nextOrBack() lets it through', (tester) async {
+    Future<List<String>> stackAfterPush(
+      void Function(NavigationResolver resolver) decide,
+    ) async {
+      final router = RootStackRouter.build(
+        routes: [
+          NamedRouteDef(
+            name: 'HomeRoute',
+            path: '/',
+            builder: (_, _) => page('HomeRoute'),
+          ),
+          NamedRouteDef(
+            name: 'ListRoute',
+            path: '/list',
+            builder: (_, _) => page('ListRoute'),
+          ),
+          NamedRouteDef(
+            name: 'GuardedRoute',
+            path: '/guarded',
+            guards: [AutoRouteGuard.simple((resolver, _) => decide(resolver))],
+            builder: (_, _) => page('GuardedRoute'),
+          ),
+        ],
+      );
+      await pumpRouterConfigApp(tester, router.config());
+      unawaited(router.push(const NamedRoute('ListRoute')));
+      await tester.pumpAndSettle();
+      unawaited(router.push(const NamedRoute('GuardedRoute')));
+      await tester.pumpAndSettle();
+      final names = router.stack.map((page) => page.routeData.name).toList();
+      await tester.pumpWidget(const SizedBox());
+      return names;
+    }
 
-      final expected = await stackAfterPush((r) => r.reject(goBack: true));
-      expect(expected, ['HomeRoute']);
-      expect(await stackAfterPush((r) => r.nextOrBack(false)), expected);
-      expect(await stackAfterPush((r) => r.nextOrBack()), [
-        'HomeRoute',
-        'ListRoute',
-        'GuardedRoute',
-      ]);
-      // On web, back() asks the browser to go back, which the headless test page never
-      // follows; test/web/history_before_app_web_test.dart covers back() there.
-    },
-    skip: kIsWeb,
-  );
+    final expected = await stackAfterPush((r) => r.reject(goBack: true));
+    expect(expected, ['HomeRoute']);
+    expect(await stackAfterPush((r) => r.nextOrBack()), [
+      'HomeRoute',
+      'ListRoute',
+      'GuardedRoute',
+    ]);
+    // On web, back() asks the browser to go back, which the headless test
+    // page never follows; test/web/history_before_app_web_test.dart covers
+    // back() there.
+  }, skip: kIsWeb);
 }

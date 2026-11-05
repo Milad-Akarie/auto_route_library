@@ -36,7 +36,8 @@ void main() {
     ),
   ]) {
     testWidgets(
-      'A shell child pushed from outside the shell with $how returns its pop value',
+      'A shell child pushed from outside the shell with $how returns its pop '
+      'value',
       (tester) async {
         await pumpRouterConfigApp(tester, router.config());
         String? result;

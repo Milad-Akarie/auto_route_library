@@ -67,7 +67,8 @@ RootStackRouter _router() => .build(
 
 void main() {
   testWidgets(
-    'maybePop and Navigator.pop from a pushed page report the parent url without a trailing slash',
+    'maybePop and Navigator.pop from a pushed page report the parent url '
+    'without a trailing slash',
     (tester) async {
       final router = _router();
       await pumpRouterConfigApp(tester, router.config());
@@ -107,7 +108,8 @@ void main() {
   );
 
   testWidgets(
-    'Opening a page three levels deep in one jump reports its full url, and popping it reports the page under',
+    'Opening a page three levels deep in one jump reports its full url, and '
+    'popping it reports the page under',
     (tester) async {
       final router = _router();
       await pumpRouterConfigApp(tester, router.config());

@@ -61,7 +61,8 @@ void main() {
   );
 
   testWidgets(
-    'pushing several routes of a declarative router names the router and the fix',
+    'pushing several routes of a declarative router names the router and the '
+    'fix',
     (tester) async {
       await pumpRouterApp(tester, router);
       final inner = router.innerRouterOf<StackRouter>('HostRoute')!;

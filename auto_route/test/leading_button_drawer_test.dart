@@ -8,9 +8,9 @@ import 'package:material_ui/material_ui.dart';
 // with a drawer and an AutoLeadingButton in its app bar, and holds a feed
 // details page; a comments page beside the feed, as a fullscreen dialog.
 // Steps: show the app, then rebuild the MaterialApp with another
-// theme, then another locale, then with a new key, as apps do on a setting change.
-// Happened: after the rebuild the app bar showed a back button instead of
-// the drawer icon.
+// theme, then another locale, then with a new key, as apps do on a setting
+// change. Happened: after the rebuild the app bar showed a back button instead
+// of the drawer icon.
 // Should: the drawer icon shows every time, and there's no back button.
 // Already works on dev. The report doesn't show how its MaterialApp was
 // built, so these are the common ways a theme or locale change rebuilds it.
@@ -52,7 +52,8 @@ void main() {
   }
 
   testWidgets(
-    'AutoLeadingButton should keep the drawer icon when the MaterialApp rebuilds',
+    'AutoLeadingButton should keep the drawer icon when the MaterialApp '
+    'rebuilds',
     (tester) async {
       Future<void> pumpApp({
         Key? key,

@@ -34,8 +34,9 @@ void main() {
             name: 'ChatRoute',
             path: '/chat',
             onNavigation: (resolver, _) {
-              if (resolver.route.queryParams.optString('user') != null)
+              if (resolver.route.queryParams.optString('user') != null) {
                 return resolver.next();
+              }
               resolver.reject();
             },
             builder: (_, _) => const CenteredNamedPage('ChatRoute'),

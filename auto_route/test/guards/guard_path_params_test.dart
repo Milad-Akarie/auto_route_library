@@ -23,7 +23,8 @@ void main() {
         guards: [
           AutoRouteGuard.simple((resolver, _) {
             seen.add(
-              '${resolver.routeName} ${resolver.route.params.optString('username') ?? 'null'}',
+              '${resolver.routeName} '
+              '${resolver.route.params.optString('username') ?? 'null'}',
             );
             resolver.next();
           }),

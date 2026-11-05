@@ -35,7 +35,8 @@ void main() {
     ('back()', (WidgetTester tester) => browserMove(tester, router.back)),
   ]) {
     testWidgets(
-      'Going back on web with $how keeps the optional argument of the page underneath',
+      'Going back on web with $how keeps the optional argument of the page '
+      'underneath',
       (tester) async {
         await pumpRouterConfigApp(tester, router.config());
         await settleBrowser(tester);
@@ -71,11 +72,7 @@ class _BookRoute extends PageRouteInfo<_BookArgs> {
   static const String name = 'BookRoute';
   static final PageInfo page = PageInfo(
     name,
-    builder: (data) => Scaffold(
-      body: Text(
-        'Book ${data.argsAs<_BookArgs>(orElse: () => const _BookArgs()).bookId ?? 'null'}',
-      ),
-    ),
+    builder: (data) => Scaffold(body: Text('Book ${_bookIdOf(data)}')),
   );
 }
 
@@ -85,10 +82,9 @@ class _ChapterRoute extends PageRouteInfo<_BookArgs> {
   static const String name = 'ChapterRoute';
   static final PageInfo page = PageInfo(
     name,
-    builder: (data) => Scaffold(
-      body: Text(
-        'Chapter ${data.argsAs<_BookArgs>(orElse: () => const _BookArgs()).bookId ?? 'null'}',
-      ),
-    ),
+    builder: (data) => Scaffold(body: Text('Chapter ${_bookIdOf(data)}')),
   );
 }
+
+String _bookIdOf(RouteData<Object?> data) =>
+    data.argsAs<_BookArgs>(orElse: () => const _BookArgs()).bookId ?? 'null';

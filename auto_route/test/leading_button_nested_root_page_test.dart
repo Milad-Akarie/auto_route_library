@@ -39,7 +39,8 @@ void main() {
   });
 
   testWidgets(
-    'AutoLeadingButton on the first page of a nested router goes back to the page before the host',
+    'AutoLeadingButton on the first page of a nested router goes back to the '
+    'page before the host',
     (tester) async {
       await pumpRouterConfigApp(tester, router.config());
       expect(find.byType(BackButton), findsNothing);
@@ -57,7 +58,8 @@ void main() {
   );
 
   testWidgets(
-    'AutoLeadingButton on a second nested page goes back to the first nested page',
+    'AutoLeadingButton on a second nested page goes back to the first nested '
+    'page',
     (tester) async {
       await pumpRouterConfigApp(tester, router.config());
       unawaited(router.push(const _Route('UserRoute')));

@@ -9,10 +9,10 @@ import 'router_test_utils.dart';
 // Found by DCM's avoid-incomplete-copy-with while moving the package to
 // very_good_analysis; no upstream issue.
 // Steps: push a route with a child and a fragment:
-// `NamedRoute('BooksRoute', children: [NamedRoute('BookListRoute')], fragment: 'top')`.
-// Happens: the url is /books, without #top. The matcher hands the parent's
-// fragment to the child with `childRoute.copyWith(fragment: ...)`, the url
-// takes its fragment from the last segment, and PageRouteInfo.copyWith left
+// `NamedRoute('BooksRoute', children: [NamedRoute('BookListRoute')], fragment:
+// 'top')`. Happens: the url is /books, without #top. The matcher hands the
+// parent's fragment to the child with `childRoute.copyWith(fragment: ...)`, the
+// url takes its fragment from the last segment, and PageRouteInfo.copyWith left
 // the fragment out of the copy.
 // Should: the url is /books#top, as it is for a route without children.
 void main() {

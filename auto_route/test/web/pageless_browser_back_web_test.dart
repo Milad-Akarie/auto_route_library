@@ -97,7 +97,8 @@ void main() {
   // go back to FirstRoute, push a pageless route, then press forward:
   // SecondRoute opens above FirstRoute and the pageless route closes.
   testWidgets(
-    'The browser forward button with a pageless route open goes to the page after',
+    'The browser forward button with a pageless route open goes to the page '
+    'after',
     (tester) async {
       await pumpRouterConfigApp(tester, router.config());
       await settleBrowser(tester);

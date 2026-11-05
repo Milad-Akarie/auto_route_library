@@ -66,7 +66,8 @@ void main() {
     ('RouteType.adaptive()', const RouteType.adaptive()),
   ]) {
     testWidgets(
-      'A page of $label uses the pageTransitionsTheme of a MaterialApp from Flutter',
+      'A page of $label uses the pageTransitionsTheme of a MaterialApp from '
+      'Flutter',
       (tester) async {
         final builder = _FlutterRecordingTransitionsBuilder();
         final router = RootStackRouter.build(
@@ -196,7 +197,8 @@ void main() {
   );
 
   testWidgets(
-    'A widget pushed with pushWidget uses the pageTransitionsTheme of a MaterialApp from Flutter',
+    'A widget pushed with pushWidget uses the pageTransitionsTheme of a '
+    'MaterialApp from Flutter',
     (tester) async {
       final builder = _FlutterRecordingTransitionsBuilder();
       final router = RootStackRouter.build(

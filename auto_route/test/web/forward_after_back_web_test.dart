@@ -22,7 +22,8 @@ void main() {
   // router, press the browser's back button, then its forward button.
   // Should: no exception, SecondNested2Route is on top again with its url.
   testWidgets(
-    'The browser forward button after back returns to a page pushed in a nested router',
+    'The browser forward button after back returns to a page pushed in a '
+    'nested router',
     (tester) async {
       final router = NestedRouter();
       await pumpRouterConfigApp(tester, router.config());

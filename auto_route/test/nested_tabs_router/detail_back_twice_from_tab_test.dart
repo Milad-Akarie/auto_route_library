@@ -16,7 +16,8 @@ void main() {
   // From Tab1Route navigate to the detail page and back() three times.
   // Should: each back shows Tab1Route at '/home/library/tab1'.
   testWidgets(
-    'Going back from a detail page opened from a tab returns to the tab every time',
+    'Going back from a detail page opened from a tab returns to the tab every '
+    'time',
     (tester) async {
       void pass(NavigationResolver resolver, StackRouter _) => resolver.next();
       final router = RootStackRouter.build(
@@ -107,5 +108,7 @@ void main() {
       }
     },
     skip: kIsWeb,
-  ); // back() on web moves the browser's history, which this runner keeps in memory.
+    // back() on web moves the browser's history, which this runner keeps in
+    // memory.
+  );
 }

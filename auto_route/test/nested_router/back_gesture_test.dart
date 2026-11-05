@@ -62,8 +62,8 @@ void main() {
   // Regression guard for https://github.com/Milad-Akarie/auto_route_library/issues/1932
   // (upstream PR 1941 targeted it).
   // Steps: push SecondHostRoute (its nested router shows
-  // SecondNested1Route), push SecondNested3Route into that nested router, then go back the way the
-  // system does: Android back, or the iOS edge swipe.
+  // SecondNested1Route), push SecondNested3Route into that nested router, then
+  // go back the way the system does: Android back, or the iOS edge swipe.
   // Should happen: only SecondNested3Route is popped; SecondHostRoute stays
   // with SecondNested1Route on screen. A second back then pops SecondHostRoute.
   // Already works on master: the method PR 1941 changes, activeRouterCanPop,

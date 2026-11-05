@@ -23,7 +23,8 @@ void main() {
     ),
   ]) {
     testWidgets(
-      'A $label page stays in place under a CustomRoute that slides from the top',
+      'A $label page stays in place under a CustomRoute that slides from the '
+      'top',
       (tester) async {
         final router = RootStackRouter.build(
           defaultRouteType: type,

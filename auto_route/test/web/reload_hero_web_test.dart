@@ -21,7 +21,8 @@ void main() {
   // reload does, then swipe back from the left edge.
   // Should: Page1 shows, with no error.
   testWidgets(
-    'With includePrefixMatches on web, swiping back after a reload animates a Hero without an error',
+    'With includePrefixMatches on web, swiping back after a reload animates a '
+    'Hero without an error',
     (tester) async {
       final router =
           RootStackRouter.build(

@@ -12,10 +12,12 @@ const Object _kWebSupportsIt = kIsWeb
     ? 'checks that this throws, which it does only off the web'
     : false;
 const Object _kWebCountsBrowserEntries = kIsWeb
-    ? "checks the native history's entry count; on web length counts the browser's entries"
+    ? "checks the native history's entry count; "
+          "on web length counts the browser's entries"
     : false;
 const Object _kWebBackMovesBrowser = kIsWeb
-    ? "checks the native history's own back step; on web back() moves the browser, which reports it later"
+    ? "checks the native history's own back step; "
+          'on web back() moves the browser, which reports it later'
     : false;
 
 void main() {
@@ -243,7 +245,8 @@ void main() {
       history.markUrlStateForReplace();
       expect(history.isUrlStateMarkedForReplace, true);
 
-      // An empty stack has no url to record, so the mark waits for the next one (#2331).
+      // An empty stack has no url to record, so the mark waits for the next one
+      // (#2331).
       history.rebuildUrl();
       expect(
         history.isUrlStateMarkedForReplace,
@@ -408,7 +411,8 @@ void main() {
       // Call back twice rapidly without waiting
       history.back();
 
-      // Second back should be blocked because canNavigateBack is false during navigation
+      // Second back should be blocked because canNavigateBack is false during
+      // navigation
       final canNavigateDuringBack = history.canNavigateBack;
       history.back(); // This should be blocked
 
@@ -452,8 +456,9 @@ void main() {
 
       history.back();
 
-      // Try to push during back navigation - the navigation callback might trigger
-      // This simulates the scenario where onNewUrlState is called during back
+      // Try to push during back navigation - the navigation callback might
+      // trigger This simulates the scenario where onNewUrlState is called
+      // during back
       await Future<void>.delayed(const Duration(milliseconds: 20));
 
       expect(history.length, 1);
@@ -473,8 +478,9 @@ void main() {
 
         await Future<void>.delayed(const Duration(milliseconds: 50));
 
-        // If there's still one entry left, should be false (can't go back from single entry)
-        // The flag should be reset, but canNavigateBack depends on having 2+ entries
+        // If there's still one entry left, should be false (can't go back from
+        // single entry) The flag should be reset, but canNavigateBack depends
+        // on having 2+ entries
         expect(history.length, 1);
         expect(
           history.canNavigateBack,

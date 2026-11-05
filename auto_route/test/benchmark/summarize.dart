@@ -72,7 +72,8 @@ void _printRuns(Map<String, List<double>> runs) {
   for (final MapEntry(:key, :value) in runs.entries) {
     final stats = _Stats(value);
     stdout.writeln(
-      '| $key | ${_number(stats.median)} | ${_number(stats.lowest)} | ${_number(stats.highest)} '
+      '| $key | ${_number(stats.median)} | ${_number(stats.lowest)} | '
+      '${_number(stats.highest)} '
       '| ${_percent(stats.spread)} | ${stats.count} |',
     );
   }
@@ -95,7 +96,8 @@ void _printComparison(
         : (now.median - old.median) / old.median;
     final spread = old.spread > now.spread ? old.spread : now.spread;
     stdout.writeln(
-      '| $key | ${_number(old.median)} | ${_number(now.median)} | ${change >= 0 ? '+' : ''}${_percent(change)} '
+      '| $key | ${_number(old.median)} | ${_number(now.median)} | '
+      '${change >= 0 ? '+' : ''}${_percent(change)} '
       '| ${_percent(spread)} |',
     );
   }

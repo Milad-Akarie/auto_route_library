@@ -10,8 +10,8 @@ void main() {
   // https://github.com/Milad-Akarie/auto_route_library/issues/603
   // Setup, as reported: a CustomRoute with a fade-in transition, a duration and
   // a reverseDuration of zero ("essentially disable any animation").
-  // Reported: popping the page still animated, the reverse duration was ignored.
-  // Should: the page is gone right after a pop when reverseDuration is
+  // Reported: popping the page still animated, the reverse duration was
+  // ignored. Should: the page is gone right after a pop when reverseDuration is
   // zero, while the push still takes its own duration.
   late RootStackRouter router;
 

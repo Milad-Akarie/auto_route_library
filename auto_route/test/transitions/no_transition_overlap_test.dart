@@ -21,53 +21,53 @@ void main() {
   // without a background shows what is below it. A background, or
   // `duration: Duration.zero` on the CustomRoute, ends it.
   for (final (duration, overlaps) in [(null, true), (Duration.zero, false)]) {
-    testWidgets(
-      'Navigating between noTransition pages with ${duration == null ? 'the default' : 'a zero'} duration '
-      '${overlaps ? 'keeps' : 'does not keep'} the old page on screen',
-      (tester) async {
-        final router = RootStackRouter.build(
-          routes: [
-            CustomRoute(
-              page: _dashboardPage,
-              path: '/dashboard',
-              transitionsBuilder: TransitionsBuilders.noTransition,
-              children: [
-                CustomRoute(
-                  page: _page('Home'),
-                  path: 'home',
-                  initial: true,
-                  transitionsBuilder: TransitionsBuilders.noTransition,
-                  duration: duration,
-                ),
-                CustomRoute(
-                  page: _page('Brands'),
-                  path: 'brands',
-                  transitionsBuilder: TransitionsBuilders.noTransition,
-                  duration: duration,
-                ),
-              ],
-            ),
-          ],
-        );
-        await pumpRouterConfigApp(
-          tester,
-          router.config(
-            deepLinkBuilder: (_) => const DeepLink.path('/dashboard/home'),
+    testWidgets('Navigating between noTransition pages with '
+        '${duration == null ? 'the default' : 'a zero'} duration '
+        '${overlaps ? 'keeps' : 'does not keep'} the old page on screen', (
+      tester,
+    ) async {
+      final router = RootStackRouter.build(
+        routes: [
+          CustomRoute(
+            page: _dashboardPage,
+            path: '/dashboard',
+            transitionsBuilder: TransitionsBuilders.noTransition,
+            children: [
+              CustomRoute(
+                page: _page('Home'),
+                path: 'home',
+                initial: true,
+                transitionsBuilder: TransitionsBuilders.noTransition,
+                duration: duration,
+              ),
+              CustomRoute(
+                page: _page('Brands'),
+                path: 'brands',
+                transitionsBuilder: TransitionsBuilders.noTransition,
+                duration: duration,
+              ),
+            ],
           ),
-        );
-        expect(find.text('Home'), findsOneWidget);
+        ],
+      );
+      await pumpRouterConfigApp(
+        tester,
+        router.config(
+          deepLinkBuilder: (_) => const DeepLink.path('/dashboard/home'),
+        ),
+      );
+      expect(find.text('Home'), findsOneWidget);
 
-        unawaited(router.navigatePath('/dashboard/brands'));
-        await tester.pump();
-        await tester.pump();
-        await tester.pump(const Duration(milliseconds: 100));
+      unawaited(router.navigatePath('/dashboard/brands'));
+      await tester.pump();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
 
-        expect(find.text('Brands'), findsOneWidget);
-        expect(find.text('Home'), overlaps ? findsOneWidget : findsNothing);
-        await tester.pumpAndSettle();
-        expect(find.text('Home'), findsNothing);
-      },
-    );
+      expect(find.text('Brands'), findsOneWidget);
+      expect(find.text('Home'), overlaps ? findsOneWidget : findsNothing);
+      await tester.pumpAndSettle();
+      expect(find.text('Home'), findsNothing);
+    });
   }
 }
 

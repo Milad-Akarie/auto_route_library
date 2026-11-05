@@ -47,7 +47,8 @@ void main() {
   });
 
   testWidgets(
-    'pop right after push pops the pushed page and completes it with the result',
+    'pop right after push pops the pushed page and completes it with the '
+    'result',
     (tester) async {
       router = buildRouter();
       await openAThenC(tester);
@@ -98,8 +99,8 @@ void main() {
   );
 
   // Decided: a pop does not wait for a push whose guard is still
-  // deciding, since the guard may be waiting on the very route the pop closes, such as
-  // a dialog. The pop acts on the stack as it is, and B lands after it.
+  // deciding, since the guard may be waiting on the very route the pop closes,
+  // such as a dialog. The pop acts on the stack as it is, and B lands after it.
   testWidgets('pop during a push whose guard is deciding pops the page below', (
     tester,
   ) async {

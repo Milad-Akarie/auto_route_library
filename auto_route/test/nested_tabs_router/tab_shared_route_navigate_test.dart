@@ -54,7 +54,8 @@ void main() {
   // Happened: the first tab opened, still on Test1Route, at
   // /dashboard/tests/test1: the tab was looked up by route name, which found
   // the first tests tab, and its nested router too, which found the second.
-  // Should: the second tab opens, on Test2Route, and the first is left as it was.
+  // Should: the second tab opens, on Test2Route, and the first is left as it
+  // was.
   testWidgets(
     'navigate() to the second of two tabs sharing a route opens that tab',
     (tester) async {
@@ -77,7 +78,8 @@ void main() {
   // Happened: the first tab opened, but Test1Route was also pushed onto the
   // second tab's nested router.
   testWidgets(
-    'navigate() to the first of two tabs sharing a route leaves the second as it was',
+    'navigate() to the first of two tabs sharing a route leaves the second as '
+    'it was',
     (tester) async {
       await pumpDashboard(tester);
       for (final index in [0, 1, 2]) {
@@ -98,7 +100,8 @@ void main() {
   // the url the second tab recorded, /dashboard/tests/test2.
   // Should: the second tab shows again, and the first is left as it was.
   testWidgets(
-    'going back to a url of the second of two tabs sharing a route opens that tab',
+    'going back to a url of the second of two tabs sharing a route opens that '
+    'tab',
     (tester) async {
       await pumpDashboard(tester);
       for (final index in [1, 0]) {
@@ -113,7 +116,8 @@ void main() {
       expect(router.urlState.url, '/dashboard/tests/test2');
       expect(tabStacks(), [_Test1Route.name, _Test2Route.name, '-']);
       // On web, back moves the browser, whose history this runner doesn't
-      // keep; the integration test goes back there with the browser's back button.
+      // keep; the integration test goes back there with the browser's back
+      // button.
     },
     skip: kIsWeb,
   );

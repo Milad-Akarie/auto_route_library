@@ -30,7 +30,8 @@ void main() {
   // one (the count is kept), the stack holds one search page, and building
   // stops.
   testWidgets(
-    'navigate to the route on top with a new query keeps the page and its state',
+    'navigate to the route on top with a new query keeps the page and its '
+    'state',
     (tester) async {
       await pumpRouterApp(tester, router, initialLink: '/search?q=a');
       expect(find.text('q a, count 0'), findsOneWidget);
@@ -59,7 +60,8 @@ void main() {
   // flutter/flutter#107279, the same from a url: navigatePath to the path on
   // top with a new query keeps the page and its state.
   testWidgets(
-    'navigatePath to the url on top with a new query keeps the page and its state',
+    'navigatePath to the url on top with a new query keeps the page and its '
+    'state',
     (tester) async {
       await pumpRouterApp(tester, router, initialLink: '/search?q=a');
       await tester.tap(find.byType(TextButton));

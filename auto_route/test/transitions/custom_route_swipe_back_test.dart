@@ -50,7 +50,8 @@ void main() {
   // Should: the page follows the finger through its own fade, and the swipe
   // pops it.
   testWidgets(
-    'A custom-transition page with enableCupertinoBackGesture pops on a back swipe',
+    'A custom-transition page with enableCupertinoBackGesture pops on a back '
+    'swipe',
     (tester) async {
       final router = _router(enableCupertinoBackGesture: true);
       await _pumpAtDetails(tester, router);

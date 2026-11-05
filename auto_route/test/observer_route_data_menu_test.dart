@@ -67,7 +67,8 @@ void main() {
   // Steps: open a menu on a page of a nested router, pick its item.
   // Should: the menu opens and closes, and the observer reads ShellRoute.
   testWidgets(
-    'An observer reading RouteData when a menu opens in a nested router finds its host page',
+    'An observer reading RouteData when a menu opens in a nested router finds '
+    'its host page',
     (tester) async {
       await pumpRouterApp(tester, router, observers: () => [rootObserver]);
       await openAndPickFromMenu(tester, useRootNavigator: false);
@@ -80,7 +81,8 @@ void main() {
   // RouteData, so the read throws a FlutterError the observer can catch,
   // and the menu works.
   testWidgets(
-    'An observer reading RouteData when a menu opens on the root navigator gets an error it can catch',
+    'An observer reading RouteData when a menu opens on the root navigator '
+    'gets an error it can catch',
     (tester) async {
       await pumpRouterApp(tester, router, observers: () => [rootObserver]);
       await openAndPickFromMenu(tester, useRootNavigator: true);

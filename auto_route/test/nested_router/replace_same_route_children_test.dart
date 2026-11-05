@@ -92,7 +92,8 @@ void main() {
   // navigate() with the same route does. With no initial child, the shell
   // keeps the child it shows: there is no other child to open.
   testWidgets(
-    'replace() with the same parent route and no children opens its initial child',
+    'replace() with the same parent route and no children opens its initial '
+    'child',
     (tester) async {
       final router = _buildRouter(usersIsInitial: true);
       await pumpRouterApp(tester, router);
@@ -109,7 +110,8 @@ void main() {
   );
 
   testWidgets(
-    'replace() with the same parent route, no children and no initial child keeps the open child',
+    'replace() with the same parent route, no children and no initial child '
+    'keeps the open child',
     (tester) async {
       final router = _buildRouter();
       await pumpRouterApp(tester, router);

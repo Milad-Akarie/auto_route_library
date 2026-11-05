@@ -32,7 +32,8 @@ void main() {
     );
     expect(find.text('Page Content'), findsOneWidget);
 
-    // Verify structure: Column -> [Text('Wrapped'), Expanded -> _WrapperPage -> Scaffold -> Text('Page Content')]
+    // Verify structure: Column -> [Text('Wrapped'), Expanded -> _WrapperPage ->
+    // Scaffold -> Text('Page Content')]
     final columnFinder = find.byType(Column);
     expect(columnFinder, findsOneWidget);
 
@@ -55,7 +56,8 @@ void main() {
   // Pushing the absolute path '/parent/b' from the root instead pushes a
   // second ParentRoute with its own wrapper, as the issue's comments explain.
   testWidgets(
-    'Pushing a sibling route from a child widget keeps the wrapper of the host route',
+    'Pushing a sibling route from a child widget keeps the wrapper of the '
+    'host route',
     (tester) async {
       _ProvidedState.created = 0;
       final localRouter = RootStackRouter.build(

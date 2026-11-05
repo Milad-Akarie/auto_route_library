@@ -38,8 +38,8 @@ void main() {
     expect(router.urlState.uri.toString(), '/cms/a%2Fb');
   });
 
-  // A redirect read ':path' as the param ':pa' followed by 'th': the params were matched by name with no
-  // segment end, and 'pa' came first.
+  // A redirect read ':path' as the param ':pa' followed by 'th': the params
+  // were matched by name with no segment end, and 'pa' came first.
   // Open '/old/1/2', which RedirectRoute(path: '/old/:pa/:path', redirectTo: '/cms/:path') sends on.
   // Should: the page reads '2' and the url is '/cms/2', not '/cms/1th'.
   testWidgets('A redirect expands a param whose name starts another whole', (

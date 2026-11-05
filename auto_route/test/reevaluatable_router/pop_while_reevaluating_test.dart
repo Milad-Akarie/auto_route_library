@@ -12,12 +12,13 @@ void main() {
   // A dialog route sits behind a guard, and reevaluateListenable fires when the
   // user's information changes. The app updates the user, which starts the
   // reevaluation, then calls router.pop() at once to close the dialog.
-  // The dialog closed and opened again: the reevaluation had collected the stack
-  // before the pop and pushed the dialog back once its guard called next().
-  // A page popped while guards are reevaluated must stay closed.
+  // The dialog closed and opened again: the reevaluation had collected the
+  // stack before the pop and pushed the dialog back once its guard called
+  // next(). A page popped while guards are reevaluated must stay closed.
   for (final guardDelay in [Duration.zero, const Duration(milliseconds: 50)]) {
     testWidgets(
-      'A dialog popped right after a reevaluation starts stays closed, guard delay $guardDelay (#1643)',
+      'A dialog popped right after a reevaluation starts stays closed, guard '
+      'delay $guardDelay (#1643)',
       (tester) async {
         final user = ValueNotifier(0);
         addTearDown(user.dispose);
@@ -34,8 +35,9 @@ void main() {
               type: RouteType.custom(opaque: false, barrierDismissible: true),
               guards: [
                 AutoRouteGuard.simple((resolver, _) async {
-                  if (guardDelay > .zero)
+                  if (guardDelay > .zero) {
                     await Future<void>.delayed(guardDelay);
+                  }
                   resolver.next();
                 }),
               ],
@@ -84,8 +86,9 @@ void main() {
             guards: [
               AutoRouteGuard.simple((resolver, _) async {
                 // The first run opens the dialog; the reevaluation's run waits.
-                if (guardRuns++ > 0)
+                if (guardRuns++ > 0) {
                   await Future<void>.delayed(const Duration(milliseconds: 50));
+                }
                 resolver.next();
               }),
             ],
@@ -118,7 +121,8 @@ void main() {
   // settings pops AppGuardRoute.
   // The dialog closed and opened again at once, as in #1643.
   testWidgets(
-    'A dialog popped by a listener of the reevaluation stream stays closed (#1785)',
+    'A dialog popped by a listener of the reevaluation stream stays closed '
+    '(#1785)',
     (tester) async {
       final isAppGuarded = ValueNotifier(false);
       addTearDown(isAppGuarded.dispose);

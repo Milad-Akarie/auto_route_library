@@ -21,7 +21,8 @@ import 'router_test_utils.dart';
 // measures a page that was never laid out: drop this canary.
 void main() {
   testWidgets(
-    'a selection area over a page never laid out asserts when it sorts its selectables',
+    'a selection area over a page never laid out asserts when it sorts its '
+    'selectables',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [

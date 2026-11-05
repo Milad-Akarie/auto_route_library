@@ -76,7 +76,8 @@ void main() {
   // reload does.
   // Should: the stack and the page's State are kept.
   testWidgets(
-    'config() called inline keeps the stack and page state through a hot reload',
+    'config() called inline keeps the stack and page state through a hot '
+    'reload',
     (tester) async {
       await pumpInlineConfigApp(tester);
       unawaited(tester.binding.reassembleApplication());

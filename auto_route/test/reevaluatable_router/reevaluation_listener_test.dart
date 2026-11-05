@@ -157,7 +157,8 @@ void main() {
   });
 
   testWidgets(
-    'Reevaluation should call the guard and navigate to protected page [with TabRouter]',
+    'Reevaluation should call the guard and navigate to protected page [with '
+    'TabRouter]',
     (tester) async {
       const tab2Router = EmptyShellRoute('Tab2Router');
       final localRouter = RootStackRouter.build(
@@ -313,7 +314,8 @@ void main() {
   // Should happen: the stack is [FirstRoute, SecondRoute], then [FirstRoute]
   // with the counter still at 1.
   testWidgets(
-    'Reevaluation with redirectUntil should keep the state of the reevaluated page',
+    'Reevaluation with redirectUntil should keep the state of the reevaluated '
+    'page',
     (tester) async {
       final isLoggedIn = ValueNotifier(true);
       addTearDown(isLoggedIn.dispose);
@@ -364,7 +366,8 @@ void main() {
   // Should happen: the stack is [FirstRoute, SecondRoute, ThirdRoute], and
   // popping ThirdRoute without passing the guard also removes SecondRoute.
   testWidgets(
-    'Reevaluation with redirectUntil should remove the reevaluated page when rejected',
+    'Reevaluation with redirectUntil should remove the reevaluated page when '
+    'rejected',
     (tester) async {
       final localRouter = RootStackRouter.build(
         routes: [
@@ -433,7 +436,8 @@ void main() {
       await tester.pumpAndSettle();
       expect(calls, 1);
 
-      // Three passes reach the same pending resolver while the first one's guard runs.
+      // Three passes reach the same pending resolver while the first one's
+      // guard runs.
       unawaited(localRouter.reevaluateGuards());
       unawaited(localRouter.reevaluateGuards());
       unawaited(localRouter.reevaluateGuards());
@@ -455,7 +459,8 @@ void main() {
   // Happens (reported on 11.1.0): HomeRoute comes back with its counter at 0.
   // Should happen: HomeRoute comes back with its counter still at 3.
   testWidgets(
-    'Logging out and back in should keep the state of the guarded home page (#2338)',
+    'Logging out and back in should keep the state of the guarded home page '
+    '(#2338)',
     (tester) async {
       final authStore = _AuthStore();
       addTearDown(authStore.dispose);
@@ -514,7 +519,8 @@ void main() {
   // Happens (reported): the push is skipped or never becomes visible.
   // Should happen: SecondRoute is pushed and shown.
   testWidgets(
-    'Push followed by reevaluation in the same callback should still push (#2327)',
+    'Push followed by reevaluation in the same callback should still push '
+    '(#2327)',
     (tester) async {
       final localRouter = RootStackRouter.build(
         routes: [

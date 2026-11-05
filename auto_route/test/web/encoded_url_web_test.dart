@@ -55,7 +55,8 @@ void main() {
   // The same with the app built from routerDelegate and routeInformationParser,
   // which leaves reporting urls to Flutter's own route information provider.
   testWidgets(
-    'On web, a "#" in a path param survives a refresh with Flutter\'s route information provider',
+    'On web, a "#" in a path param survives a refresh with Flutter\'s route '
+    'information provider',
     (tester) async {
       await pumpRouterApp(tester, router);
       await settleBrowser(tester);
@@ -72,7 +73,8 @@ void main() {
   // page, then press the browser's back button. The address bar should keep the
   // query param encoded, so it still reads back whole.
   testWidgets(
-    'On web, a query param keeps its reserved characters encoded after the back button',
+    'On web, a query param keeps its reserved characters encoded after the '
+    'back button',
     (tester) async {
       await pumpRouterConfigApp(tester, router.config());
       await settleBrowser(tester);
@@ -97,7 +99,8 @@ void main() {
   // first page. The same route with other params is what broke it here, not
   // the characters.
   testWidgets(
-    'On web, the back button walks back through one route pushed with different params',
+    'On web, the back button walks back through one route pushed with '
+    'different params',
     (tester) async {
       await pumpRouterConfigApp(tester, router.config());
       await settleBrowser(tester);
@@ -127,7 +130,8 @@ void main() {
   // history entry for it, as for a link without one; with a second entry, the
   // first back would show the same page again.
   testWidgets(
-    "On web, a deep link to an encoded url adds no history entry with Flutter's route information provider",
+    'On web, a deep link to an encoded url adds no history entry with '
+    "Flutter's route information provider",
     (tester) async {
       for (final (link, id) in [
         ('/seconds/12', '12'),
@@ -162,7 +166,8 @@ class _SecondsRoute extends PageRouteInfo<void> {
   static final PageInfo page = PageInfo(
     name,
     builder: (data) => Text(
-      'id ${data.inheritedPathParams.getString('id')}, query ${data.queryParams.optString('query') ?? 'null'}',
+      'id ${data.inheritedPathParams.getString('id')}, query '
+      '${data.queryParams.optString('query') ?? 'null'}',
     ),
   );
 }

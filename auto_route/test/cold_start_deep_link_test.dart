@@ -28,7 +28,8 @@ void main() {
   );
 
   testWidgets(
-    'A cold start from a deep link opens that page, with the delegate and parser',
+    'A cold start from a deep link opens that page, with the delegate and '
+    'parser',
     (tester) async {
       final router = buildRouter();
       await pumpRouterApp(tester, router, initialLink: '/books/5');

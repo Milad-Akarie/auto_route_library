@@ -83,7 +83,8 @@ void main() {
   // end it and start it again with /offer, as Android does from the recent
   // apps: the link was already opened, so the restored pages stay as they were.
   testWidgets(
-    'A restored app started again with the link that first opened it shows the restored pages',
+    'A restored app started again with the link that first opened it shows '
+    'the restored pages',
     (tester) async {
       launchAt(tester, '/offer');
       await tester.pumpWidget(RestorableRouterApp(buildRouter));

@@ -28,7 +28,8 @@ void main() {
     ),
   ]) {
     testWidgets(
-      'After popping and leaving a tab, navigating by $how to its detail page shows it',
+      'After popping and leaving a tab, navigating by $how to its detail page '
+      'shows it',
       (tester) async {
         final router = RootStackRouter.build(
           routes: [

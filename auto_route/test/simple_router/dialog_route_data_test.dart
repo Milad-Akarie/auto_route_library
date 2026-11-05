@@ -101,7 +101,8 @@ class _Nested extends StatelessWidget {
   );
 }
 
-/// Whether [read] fails with a FlutterError, which is how RouteData.of reports a missing scope.
+/// Whether [read] fails with a FlutterError, which is how RouteData.of reports
+/// a missing scope.
 bool _throwsFlutterError(void Function() read) {
   try {
     read();

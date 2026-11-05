@@ -136,7 +136,8 @@ class _ContactRoute extends PageRouteInfo<void> {
   static final PageInfo page = PageInfo(
     pageName,
     builder: (data) => Text(
-      'Contact ${data.inheritedPathParams.getString('contactId')} of ${data.inheritedPathParams.getString('accountId')}',
+      'Contact ${data.inheritedPathParams.getString('contactId')} of '
+      '${data.inheritedPathParams.getString('accountId')}',
     ),
   );
 }

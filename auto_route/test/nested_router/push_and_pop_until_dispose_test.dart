@@ -36,7 +36,8 @@ void main() {
   // the key of a page it replaces in the same update takes over its route (see
   // AutoRoutePage), so the first A keeps its state instead of being disposed.
   testWidgets(
-    'pushAndPopUntil with a predicate that keeps nothing disposes the nested pages it removes',
+    'pushAndPopUntil with a predicate that keeps nothing disposes the nested '
+    'pages it removes',
     (tester) async {
       await pumpRouterConfigApp(tester, router.config());
       unawaited(
@@ -64,7 +65,8 @@ void main() {
   // and the push each report the url another way in one frame and Flutter's
   // Router asserts. pop_until_then_push_web_test.dart runs it on real history.
   testWidgets(
-    'popUntilRouteWithName then push of the same route disposes the pages above it',
+    'popUntilRouteWithName then push of the same route disposes the pages '
+    'above it',
     skip: kIsWeb,
     (tester) async {
       await pumpRouterConfigApp(tester, router.config());

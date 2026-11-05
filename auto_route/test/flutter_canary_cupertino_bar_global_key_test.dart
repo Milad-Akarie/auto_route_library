@@ -21,7 +21,8 @@ import 'router_test_utils.dart';
 // keyed widgets: drop this canary.
 void main() {
   testWidgets(
-    'pushing past a Cupertino bar that holds a GlobalKey throws on the duplicate key',
+    'pushing past a Cupertino bar that holds a GlobalKey throws on the '
+    'duplicate key',
     (tester) async {
       final settingsKey = GlobalKey();
       final router = RootStackRouter.build(

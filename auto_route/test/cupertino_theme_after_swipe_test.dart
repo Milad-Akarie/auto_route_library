@@ -17,7 +17,8 @@ import 'back_test_utils.dart';
 // Cupertino transition again.
 void main() {
   testWidgets(
-    'after a back swipe on Android, a push keeps the Cupertino transition of the theme',
+    'after a back swipe on Android, a push keeps the Cupertino transition of '
+    'the theme',
     (tester) async {
       final theme = ThemeData(
         platform: .android,

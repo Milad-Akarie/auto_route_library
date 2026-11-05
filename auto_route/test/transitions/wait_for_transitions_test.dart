@@ -107,7 +107,8 @@ void main() {
   );
 
   testWidgets(
-    'waitForTransitions() after a replace completes when the new page has come in',
+    'waitForTransitions() after a replace completes when the new page has '
+    'come in',
     (tester) async {
       final router = _router();
       await pumpRouterApp(tester, router);

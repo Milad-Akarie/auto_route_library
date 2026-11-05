@@ -98,14 +98,16 @@ void main() {
         },
       );
 
-      // Android only: on web Flutter never tells the platform whether it handles back.
-      // Twice each way, as a comment on the issue reports the second back closing the app.
+      // Android only: on web Flutter never tells the platform whether it
+      // handles back. Twice each way, as a comment on the issue reports the
+      // second back closing the app.
       for (final MapEntry(key: name, value: back) in {
         'system back': systemBack,
         'the predictive back gesture': predictiveBack,
       }.entries) {
         testWidgets(
-          'Flutter should tell Android it handles back after $name on a first page with a PopScope',
+          'Flutter should tell Android it handles back after $name on a first '
+          'page with a PopScope',
           (tester) async {
             router = RootStackRouter.build(
               routes: [

@@ -6,7 +6,8 @@ import 'package:material_ui/material_ui.dart';
 
 import 'router_test_utils.dart';
 
-// Each call an _AwarePage gets from its AutoRouteObserver, as '<route name>.<call>'.
+// Each call an _AwarePage gets from its AutoRouteObserver, as '<route
+// name>.<call>'.
 final _events = <String>[];
 
 class _AwarePage extends StatefulWidget {
@@ -102,7 +103,8 @@ void main() {
   // Same as above with two pages in the nested router: only the one on top
   // shows inside the host, so only that one hears its host covered.
   testWidgets(
-    'A page covered inside its nested router is not told again when the host is covered',
+    'A page covered inside its nested router is not told again when the host '
+    'is covered',
     (tester) async {
       final router = await _pumpApp(tester, [
         AutoRoute(

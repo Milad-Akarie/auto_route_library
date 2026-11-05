@@ -57,7 +57,8 @@ void main() {
   // Should: the parent is in the stack but does not build until back shows
   // it, then builds once.
   testWidgets(
-    'A deep link does not build a parent with maintainState false until back shows it',
+    'A deep link does not build a parent with maintainState false until back '
+    'shows it',
     (tester) async {
       final router = buildRouter(maintainParentState: false);
       await pumpAtDeepLink(tester, router, '/1', includePrefixMatches: true);

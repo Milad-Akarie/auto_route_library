@@ -38,7 +38,8 @@ void main() {
   );
 
   testWidgets(
-    'Popping a page with its own query params restores those of the page underneath',
+    'Popping a page with its own query params restores those of the page '
+    'underneath',
     (tester) async {
       await pumpRouterApp(tester, router, initialLink: '/?search=shoes#top');
       unawaited(router.pushPath('/second-route?page=2'));

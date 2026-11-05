@@ -23,7 +23,8 @@ import 'router_test_utils.dart';
 // drop this canary.
 void main() {
   testWidgets(
-    'popping a page while its FloatingActionButton comes back asserts on two heroes',
+    'popping a page while its FloatingActionButton comes back asserts on two '
+    'heroes',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [
@@ -62,7 +63,8 @@ void main() {
           (error) => error.message,
           'message',
           startsWith(
-            'There are multiple heroes that share the same tag within a subtree.',
+            'There are multiple heroes that share the same tag within a '
+            'subtree.',
           ),
         ),
       );

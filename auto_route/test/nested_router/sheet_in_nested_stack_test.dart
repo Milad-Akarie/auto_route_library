@@ -36,52 +36,56 @@ PageInfo _page(String name) => .new(
 // page open a bottom sheet and close it with context.router.maybePop().
 // Should: the sheet closes and the second page stays.
 void main() {
-  testWidgets("A bottom sheet over the second page of a tab's stack closes with maybePop and leaves the page "
-      '(flutter/flutter#148214)', (tester) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo(
-            'HostRoute',
-            builder: (_) => const AutoTabsRouter(routes: [_TabRoute()]),
-          ),
-          children: [
-            AutoRoute(
-              path: 'tab',
-              page: const PageInfo.emptyShell('TabRoute'),
-              children: [
-                AutoRoute(path: '', page: _page('Page1Route')),
-                AutoRoute(path: 'two', page: _page('Page2Route')),
-              ],
+  testWidgets(
+    "A bottom sheet over the second page of a tab's stack closes with maybePop "
+    'and leaves the page '
+    '(flutter/flutter#148214)',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HostRoute',
+              builder: (_) => const AutoTabsRouter(routes: [_TabRoute()]),
             ),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    final tab = router
-        .innerRouterOf<TabsRouter>('HostRoute')!
-        .innerRouterOf<StackRouter>('TabRoute')!;
-    unawaited(tab.push(const NamedRoute('Page2Route')));
-    await tester.pumpAndSettle();
-    expect(find.text('Page2Route'), findsOneWidget);
+            children: [
+              AutoRoute(
+                path: 'tab',
+                page: const PageInfo.emptyShell('TabRoute'),
+                children: [
+                  AutoRoute(path: '', page: _page('Page1Route')),
+                  AutoRoute(path: 'two', page: _page('Page2Route')),
+                ],
+              ),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      final tab = router
+          .innerRouterOf<TabsRouter>('HostRoute')!
+          .innerRouterOf<StackRouter>('TabRoute')!;
+      unawaited(tab.push(const NamedRoute('Page2Route')));
+      await tester.pumpAndSettle();
+      expect(find.text('Page2Route'), findsOneWidget);
 
-    await tester.tap(find.text('Open sheet'));
-    await tester.pumpAndSettle();
-    expect(find.text('Close sheet'), findsOneWidget);
+      await tester.tap(find.text('Open sheet'));
+      await tester.pumpAndSettle();
+      expect(find.text('Close sheet'), findsOneWidget);
 
-    await tester.tap(find.text('Close sheet'));
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(find.text('Close sheet'), findsNothing);
-    expect(
-      find.text('Page2Route'),
-      findsOneWidget,
-      reason: 'after tester.tap(find.text(Close sheet))',
-    );
-    expect(tab.stack.map((p) => p.name), ['Page1Route', 'Page2Route']);
-  });
+      await tester.tap(find.text('Close sheet'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Close sheet'), findsNothing);
+      expect(
+        find.text('Page2Route'),
+        findsOneWidget,
+        reason: 'after tester.tap(find.text(Close sheet))',
+      );
+      expect(tab.stack.map((p) => p.name), ['Page1Route', 'Page2Route']);
+    },
+  );
 }
 
 class _TabRoute extends PageRouteInfo<void> {

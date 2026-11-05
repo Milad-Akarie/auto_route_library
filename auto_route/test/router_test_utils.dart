@@ -34,8 +34,9 @@ Future<void> pumpRouterConfigApp(
   WidgetTester tester,
   RouterConfig<UrlState> config,
 ) {
-  if (config.routerDelegate case final AutoRouterDelegate delegate)
+  if (config.routerDelegate case final AutoRouterDelegate delegate) {
     addTearDown(delegate.dispose);
+  }
   return tester
       .pumpWidget(MaterialApp.router(routerConfig: config))
       .then((_) => tester.pumpAndSettle());

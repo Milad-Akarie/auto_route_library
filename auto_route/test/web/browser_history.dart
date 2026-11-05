@@ -6,17 +6,19 @@ import 'package:flutter/widgets.dart' show Widget;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:web/web.dart' show WindowEventGetters, window;
 
-// Helpers for headless tests that run against the real browser history in Chrome.
+// Helpers for headless tests that run against the real browser history in
+// Chrome.
 
-/// Connects the test app to the browser's own history for the calling test file.
+/// Connects the test app to the browser's own history for the calling test
+/// file.
 ///
 /// Call it first in `main()` of a file marked `@TestOn('browser')`. By default,
-/// widget tests on web run with the engine ignoring platform messages and keeping
-/// history in memory, so routes never reach `window.history`; this turns both off.
-/// The engine handles navigation messages one after another, and on the default
-/// fake clock a message still waiting when a test ends blocks every later one, so
-/// this also switches the file to [LiveTestWidgetsFlutterBinding], which runs on
-/// the real clock.
+/// widget tests on web run with the engine ignoring platform messages and
+/// keeping history in memory, so routes never reach `window.history`; this
+/// turns both off. The engine handles navigation messages one after another,
+/// and on the default fake clock a message still waiting when a test ends
+/// blocks every later one, so this also switches the file to
+/// [LiveTestWidgetsFlutterBinding], which runs on the real clock.
 void useRealBrowserHistory() {
   LiveTestWidgetsFlutterBinding.ensureInitialized();
   ui_web.TestEnvironment.setUp(
@@ -33,8 +35,8 @@ void useRealBrowserHistory() {
 
 /// Moves the browser back to its first entry, which holds '/', so a test starts there.
 ///
-/// Call it from `setUp`. Entries after the first stay as forward entries until the
-/// next navigation replaces them.
+/// Call it from `setUp`. Entries after the first stay as forward entries until
+/// the next navigation replaces them.
 Future<void> rewindBrowserHistory() async {
   final stepsBack = browserSerialCount;
   if (stepsBack <= 0) return;
@@ -45,7 +47,8 @@ Future<void> rewindBrowserHistory() async {
 
 /// The serial number the engine gives the current browser history entry.
 ///
-/// Counts from 0 for the first entry the app wrote; -1 before the app wrote any.
+/// Counts from 0 for the first entry the app wrote; -1 before the app wrote
+/// any.
 int get browserSerialCount {
   final state = window.history.state.dartify();
   return state is Map ? (state['serialCount'] as num).toInt() : -1;

@@ -34,7 +34,8 @@ void main() {
   };
   for (final MapEntry(key: name, value: buildApp) in apps.entries) {
     testWidgets(
-      'On web, a deep link to a router built after the first frame adds no history entry, with $name',
+      'On web, a deep link to a router built after the first frame adds no '
+      'history entry, with $name',
       (tester) async {
         openBrowserAt(tester, '/second');
         final router = buildRouter();

@@ -32,8 +32,9 @@ void main() {
       final sentUrls = <String>[];
       final messenger = tester.binding.defaultBinaryMessenger
         ..setMockMethodCallHandler(SystemChannels.navigation, (call) async {
-          if (call.method == 'routeInformationUpdated')
+          if (call.method == 'routeInformationUpdated') {
             sentUrls.add((call.arguments as Map)['uri'] as String);
+          }
           return null;
         });
       addTearDown(

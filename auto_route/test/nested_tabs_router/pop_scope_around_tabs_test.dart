@@ -12,8 +12,8 @@ import '../router_test_utils.dart';
 // PopScope(canPop: false) keeps it. pop_scope_once_test.dart checks this for
 // flat and nested stacks; this is the tabs variant.
 // Steps: from Home, push a page that holds an AutoTabsRouter
-// [TabA, TabB], wrapped in a PopScope; go back by system back, the predictive back
-// gesture, the app bar back button or the iOS swipe.
+// [TabA, TabB], wrapped in a PopScope; go back by system back, the predictive
+// back gesture, the app bar back button or the iOS swipe.
 void main() {
   late RootStackRouter router;
   setUp(() {
@@ -73,7 +73,8 @@ void main() {
     if (back == swipeBack) continue;
 
     testWidgets(
-      '$name with PopScope(canPop: false) keeps the tabs screen, and PopScope hears each back',
+      '$name with PopScope(canPop: false) keeps the tabs screen, and PopScope '
+      'hears each back',
       (tester) async {
         await openTabsScreen(tester, canPop: false, theme: theme);
 
@@ -104,7 +105,8 @@ void main() {
   // With a homeIndex, back on another tab shows the home tab first, as
   // home_index_back_test.dart pins, so PopScope hears the next back.
   testWidgets(
-    'system back on the second tab with homeIndex 0 shows the first tab, then asks PopScope',
+    'system back on the second tab with homeIndex 0 shows the first tab, then '
+    'asks PopScope',
     (tester) async {
       _homeIndex = 0;
       await openTabsScreen(tester, canPop: false);

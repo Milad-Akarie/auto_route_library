@@ -75,7 +75,8 @@ void main() {
   // mixin finds no other kind of observer, so a plain NavigatorObserver or
   // AutoRouterObserver tells it nothing.
   testWidgets(
-    'AutoRouteAwareStateMixin hears push and pop with the observer given to config()',
+    'AutoRouteAwareStateMixin hears push and pop with the observer given to '
+    'config()',
     (tester) async {
       await pumpRouterConfigApp(
         tester,
@@ -99,12 +100,14 @@ void main() {
   // Reproduces https://github.com/Milad-Akarie/auto_route_library/issues/1774
   // Steps: _FirstRoute has AutoRouteAwareStateMixin. Push _ConfirmRoute, open a
   // dialog there, and tap its button, which closes the dialog with
-  // `await context.maybePop()` and then calls `context.navigateTo(_FirstRoute())`.
-  // Happens: _ConfirmRoute is removed and _FirstRoute shows, but FirstRoute's
-  // didPopNext doesn't fire; the observer gets didRemove, not didPop.
-  // Should: _FirstRoute gets didPopNext, as when going back without the dialog.
+  // `await context.maybePop()` and then calls
+  // `context.navigateTo(_FirstRoute())`. Happens: _ConfirmRoute is removed and
+  // _FirstRoute shows, but FirstRoute's didPopNext doesn't fire; the observer
+  // gets didRemove, not didPop. Should: _FirstRoute gets didPopNext, as when
+  // going back without the dialog.
   testWidgets(
-    'navigateTo() back to a page right after closing a dialog tells that page didPopNext',
+    'navigateTo() back to a page right after closing a dialog tells that page '
+    'didPopNext',
     (tester) async {
       await pumpRouter(tester);
       final state = tester.state<_AutoRouteAwareTestPageState>(

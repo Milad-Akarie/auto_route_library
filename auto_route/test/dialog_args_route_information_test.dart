@@ -32,8 +32,9 @@ void main() {
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
         SystemChannels.navigation,
         (call) async {
-          if (call.method == 'routeInformationUpdated')
+          if (call.method == 'routeInformationUpdated') {
             reported.add(call.arguments);
+          }
           return null;
         },
       );
@@ -56,11 +57,8 @@ void main() {
             path: '/profile',
             page: PageInfo(
               'ProfileDialogRoute',
-              builder: (data) => AlertDialog(
-                content: Text(
-                  'Profile ${data.args is _Profile ? (data.args! as _Profile).name : 'none'}',
-                ),
-              ),
+              builder: (data) =>
+                  AlertDialog(content: Text('Profile ${_profileName(data)}')),
             ),
             customRouteBuilder: <T>(context, child, page) => DialogRoute<T>(
               context: context,
@@ -87,4 +85,9 @@ void main() {
       }
     },
   );
+}
+
+String _profileName(RouteData<Object?> data) {
+  final args = data.args;
+  return args is _Profile ? args.name : 'none';
 }

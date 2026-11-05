@@ -19,40 +19,44 @@ void main() {
   // for a stored user, then calls resolver.next(true).
   // Should: the dashboard shows and the url stays '/dashboard'.
   for (final includePrefixMatches in [false, true]) {
-    testWidgets('On web, a reload on a page whose guard awaits, then calls next(true), shows that page '
-        '(includePrefixMatches: $includePrefixMatches)', (tester) async {
-      final router =
-          RootStackRouter.build(
-            routes: [
-              AutoRoute(page: _page('HomeRoute'), path: '/', initial: true),
-              AutoRoute(
-                page: _page('DashboardRoute'),
-                path: '/dashboard',
-                guards: [
-                  AutoRouteGuard.simple((resolver, _) async {
-                    await Future<void>.delayed(
-                      const Duration(milliseconds: 100),
-                    );
-                    resolver.next();
-                  }),
-                ],
+    testWidgets(
+      'On web, a reload on a page whose guard awaits, then calls next(true), '
+      'shows that page '
+      '(includePrefixMatches: $includePrefixMatches)',
+      (tester) async {
+        final router =
+            RootStackRouter.build(
+              routes: [
+                AutoRoute(page: _page('HomeRoute'), path: '/', initial: true),
+                AutoRoute(
+                  page: _page('DashboardRoute'),
+                  path: '/dashboard',
+                  guards: [
+                    AutoRouteGuard.simple((resolver, _) async {
+                      await Future<void>.delayed(
+                        const Duration(milliseconds: 100),
+                      );
+                      resolver.next();
+                    }),
+                  ],
+                ),
+              ],
+            )..routeInfoProvider(
+              initialRouteInformation: RouteInformation(
+                uri: Uri.parse('/dashboard'),
               ),
-            ],
-          )..routeInfoProvider(
-            initialRouteInformation: RouteInformation(
-              uri: Uri.parse('/dashboard'),
-            ),
-          );
-      await pumpRouterConfigApp(
-        tester,
-        router.config(includePrefixMatches: includePrefixMatches),
-      );
-      await tester.pump(const Duration(milliseconds: 200));
-      await settleBrowser(tester);
+            );
+        await pumpRouterConfigApp(
+          tester,
+          router.config(includePrefixMatches: includePrefixMatches),
+        );
+        await tester.pump(const Duration(milliseconds: 200));
+        await settleBrowser(tester);
 
-      expectTopPage(router, 'DashboardRoute');
-      expect(browserPath, '/dashboard');
-    });
+        expectTopPage(router, 'DashboardRoute');
+        expect(browserPath, '/dashboard');
+      },
+    );
   }
 }
 

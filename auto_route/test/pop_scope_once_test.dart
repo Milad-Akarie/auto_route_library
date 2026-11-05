@@ -20,8 +20,8 @@ import 'main_router.dart';
 // and false when PopScope blocks it.
 // Already works on dev, on every way back. The report came from auto_route
 // 9, whose Navigator took pops through the deprecated onPopPage
-// callback; dev uses onDidRemovePage (since upstream 7dbb9b4). That change is the
-// likely fix, not a confirmed one.
+// callback; dev uses onDidRemovePage (since upstream 7dbb9b4). That change is
+// the likely fix, not a confirmed one.
 void main() {
   late RootStackRouter router;
   setUp(() {
@@ -132,7 +132,8 @@ void main() {
       if (back == swipeBack) continue;
 
       testWidgets(
-        '$name $where with PopScope(canPop: false) should call it once per back',
+        '$name $where with PopScope(canPop: false) should call it once per '
+        'back',
         (tester) async {
           _canPop = false;
           await openCountedPage(tester, nested: nested, theme: theme);

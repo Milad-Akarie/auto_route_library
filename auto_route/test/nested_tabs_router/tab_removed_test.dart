@@ -16,7 +16,8 @@ void _runRemovedTabTests(_TabsKind kind) {
   // Happens: the removed second page shows.
   // Should: the third page shows and keeps its state.
   testWidgets(
-    '${kind.name}: removing the page before the active page keeps the active page shown',
+    '${kind.name}: removing the page before the active page keeps the active '
+    'page shown',
     (tester) async {
       _tabsKind = kind;
       _routesNotifier.value = const [

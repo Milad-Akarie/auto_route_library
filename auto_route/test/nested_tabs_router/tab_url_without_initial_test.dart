@@ -59,7 +59,8 @@ void main() {
   // to that entry named no tab and the second tab stayed on screen.
   // Should: the url names the first tab, '/tabs/tab-1', and going back shows it.
   for (final includePrefixMatches in [false, true]) {
-    testWidgets('A tabs host opened without a tab in its url reports its first tab, '
+    testWidgets('A tabs host opened without a tab in its url '
+        'reports its first tab, '
         'includePrefixMatches: $includePrefixMatches', (tester) async {
       final router = _router();
       await pumpRouterConfigApp(

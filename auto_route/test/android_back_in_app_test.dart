@@ -97,7 +97,9 @@ void main() {
         );
       },
       skip: kIsWeb,
-    ); // Android only: on web Flutter never tells the platform whether it handles back.
+      // Android only: on web Flutter never tells the platform whether it
+      // handles back.
+    );
   }
 }
 

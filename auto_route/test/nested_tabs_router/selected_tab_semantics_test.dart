@@ -51,7 +51,8 @@ void main() {
       );
       await pumpRouterApp(tester, router);
 
-      // The bar item labeled [label]: its semantics node's id and whether it is selected.
+      // The bar item labeled [label]: its semantics node's id and whether it is
+      // selected.
       (int, bool) item(String label) {
         final node = tester.getSemantics(find.text(label));
         return (node.id, node.flagsCollection.isSelected == .isTrue);

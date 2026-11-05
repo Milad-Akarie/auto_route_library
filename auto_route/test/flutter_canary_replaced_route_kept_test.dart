@@ -21,7 +21,8 @@ import 'no_op.dart';
 // a replaced page releases its RouteData, and drop this canary.
 void main() {
   testWidgets(
-    'a page replaced in Navigator.pages releases its State, but its route stays reachable',
+    'a page replaced in Navigator.pages releases its State, but its route '
+    'stays reachable',
     (tester) async {
       final routes = <WeakReference<Route<Object?>>>[];
       final states = <WeakReference<State>>[];

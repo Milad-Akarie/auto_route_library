@@ -15,7 +15,8 @@ void main() {
   // Should: A's secondaryAnimation runs from 0 to 1 while B comes in, and
   // back to 0 when B is popped.
   testWidgets(
-    'A CustomRoute gets a running secondaryAnimation when a CustomRoute is pushed over it',
+    'A CustomRoute gets a running secondaryAnimation when a CustomRoute is '
+    'pushed over it',
     (tester) async {
       Animation<double>? secondary;
       final router = RootStackRouter.build(

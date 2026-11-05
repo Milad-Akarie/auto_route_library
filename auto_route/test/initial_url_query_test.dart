@@ -26,7 +26,8 @@ void main() {
             page: PageInfo(
               'SearchRoute',
               builder: (data) => Text(
-                'SearchRoute ${data.queryParams.getString('term')} ${data.queryParams.getInt('page')}',
+                'SearchRoute ${data.queryParams.getString('term')} '
+                '${data.queryParams.getInt('page')}',
               ),
             ),
           ),

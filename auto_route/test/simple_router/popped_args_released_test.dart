@@ -15,8 +15,8 @@ class _DetailArgs {
   final int counter;
 }
 
-// Built from a parameter, so the args are not const: a const instance is never garbage collected, which is what this
-// test checks.
+// Built from a parameter, so the args are not const: a const instance is never
+// garbage collected, which is what this test checks.
 NamedRoute<_DetailArgs> _detailRoute(int counter) =>
     .new('DetailRoute', args: _DetailArgs(counter));
 

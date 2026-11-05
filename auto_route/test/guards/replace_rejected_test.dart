@@ -83,7 +83,8 @@ void main() {
   );
 
   testWidgets(
-    'A replace redirected by its guard keeps the page under the redirect until the guard resolves (#2046)',
+    'A replace redirected by its guard keeps the page under the redirect '
+    'until the guard resolves (#2046)',
     (tester) async {
       await pumpRouterConfigApp(tester, router.config());
       unawaited(router.push(const NamedRoute('DetailsRoute')));

@@ -82,7 +82,8 @@ void main() {
   }
 
   testWidgets(
-    'A relative navigatePath with a space inside the nested router encodes it once',
+    'A relative navigatePath with a space inside the nested router encodes it '
+    'once',
     (tester) async {
       final router = buildRouter();
       await pumpRouterApp(tester, router, initialLink: '/main/search');

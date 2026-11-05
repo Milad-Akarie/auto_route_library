@@ -14,7 +14,8 @@ void main() {
   // '/patients/patient/p-123'.
   // Should: the reported url goes back to '/patients'.
   testWidgets(
-    'Popping a shell route with path params inside AutoTabsRouter reverts the reported url',
+    'Popping a shell route with path params inside AutoTabsRouter reverts the '
+    'reported url',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [

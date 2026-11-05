@@ -18,7 +18,8 @@ import 'package:material_ui/material_ui.dart';
 // title on pop: drop this canary and the note above.
 void main() {
   testWidgets(
-    'popping a page leaves the title of the page left, until the page under it builds',
+    'popping a page leaves the title of the page left, until the page under '
+    'it builds',
     (tester) async {
       final titles = <String>[];
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(

@@ -9,8 +9,8 @@ import 'router_test_utils.dart';
 // flutter/flutter#174206: apps saw a LateInitializationError on a route's
 // _modalScope when the stack was replaced, or a deep link landed, while a
 // modal bottom sheet or a dialog was open. The thread has no
-// reproduction; its trace runs through didPopNext and changedInternalState on a route not
-// yet installed.
+// reproduction; its trace runs through didPopNext and changedInternalState on a
+// route not yet installed.
 // Steps: on P2 with a modal bottom sheet open, replaceAll with P3; then the
 // same with a dialog and navigatePath.
 // Should: P3 shows alone, the sheet or dialog closes with P2, and nothing

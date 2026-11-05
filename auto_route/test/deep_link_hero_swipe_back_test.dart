@@ -14,7 +14,8 @@ void main() {
   // Hero and "_backGestureController != null" from the route, since Page1 was
   // never laid out.
   testWidgets(
-    'Swiping back from a deep link into a page with a Hero returns to the page below without an error',
+    'Swiping back from a deep link into a page with a Hero returns to the '
+    'page below without an error',
     (tester) async {
       final router = RootStackRouter.build(
         defaultRouteType: const RouteType.cupertino(),

@@ -24,7 +24,8 @@ import 'router_test_utils.dart';
 // current route: drop this canary.
 void main() {
   testWidgets(
-    'a covered page that builds an autofocus field takes focus from the page on screen',
+    'a covered page that builds an autofocus field takes focus from the page '
+    'on screen',
     (tester) async {
       final showField = ValueNotifier(false);
       addTearDown(showField.dispose);
@@ -75,7 +76,8 @@ void main() {
   // Today the field under the dialog takes focus from the dialog's button.
   // If this test fails after a Flutter upgrade, drop it with the test above.
   testWidgets(
-    'a page under a dialog that builds an autofocus field takes focus from the dialog',
+    'a page under a dialog that builds an autofocus field takes focus from '
+    'the dialog',
     (tester) async {
       final showField = ValueNotifier(false);
       addTearDown(showField.dispose);

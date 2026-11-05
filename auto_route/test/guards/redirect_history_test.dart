@@ -82,12 +82,14 @@ void main() {
   );
 
   testWidgets(
-    'A resolved redirect leaves no history entry for back() to return to (#2331)',
+    'A resolved redirect leaves no history entry for back() to return to '
+    '(#2331)',
     (tester) async {
       final router = buildRouter();
       await pumpRouterConfigApp(tester, router.config());
       expect(router.stack.map((e) => e.routeData.name), ['RouteA']);
-      // The redirect page left no entry behind, so there is nothing to go back to.
+      // The redirect page left no entry behind, so there is nothing to go back
+      // to.
       expect(router.canNavigateBack, isFalse);
 
       await tester.tap(find.text('Go to Page C (replace)'));
@@ -101,7 +103,8 @@ void main() {
         reason: 'after tester.tap(find.text(Go back))',
       );
 
-      // A second back() has nowhere to go, rather than reopening RouteARedirected.
+      // A second back() has nowhere to go, rather than reopening
+      // RouteARedirected.
       router.back();
       await tester.pumpAndSettle();
       expect(router.stack.map((e) => e.routeData.name), [

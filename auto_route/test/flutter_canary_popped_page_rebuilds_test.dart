@@ -51,7 +51,8 @@ void main() {
   );
 
   testWidgets(
-    'control: a page popped with Navigator.pop and no pages list does not build again',
+    'control: a page popped with Navigator.pop and no pages list does not '
+    'build again',
     (tester) async {
       final events = <String>[];
       final observer = RouteObserver<ModalRoute<void>>();

@@ -88,15 +88,13 @@ void main() {
   // page view loads the neighbor tab during the drag without telling
   // observers, so when the swipe makes it active it looks already opened.
   // Should: a tab's first opening fires didInitTabRoute, as a tap does.
-  testWidgets(
-    'Swiping AutoTabsRouter.pageView to a tab never opened fires didInitTabRoute',
-    (tester) async {
-      await _expectSwipesInitNewTabs(
-        tester,
-        _router(() => const AutoTabsRouter.pageView(routes: _kTabs)),
-      );
-    },
-  );
+  testWidgets('Swiping AutoTabsRouter.pageView to a tab never opened fires '
+      'didInitTabRoute', (tester) async {
+    await _expectSwipesInitNewTabs(
+      tester,
+      _router(() => const AutoTabsRouter.pageView(routes: _kTabs)),
+    );
+  });
 
   // Same steps with AutoTabsRouter.tabBar, whose tab view loads the neighbor
   // tab during the drag the same way.

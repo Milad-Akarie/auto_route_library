@@ -15,7 +15,8 @@ void main() {
   // a shell and of a tabs router, and push the same nested routes twice.
   // Should: no error; each page claims its own restoration id.
   testWidgets(
-    'Navigating nested routes with state restoration on claims no restoration id twice',
+    'Navigating nested routes with state restoration on claims no restoration '
+    'id twice',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [

@@ -10,8 +10,8 @@ void main() {
   // 'Null' is not a subtype of type 'PagelessRoutesObserver'", because the
   // button reads the router's pagelessRoutesObserver, and the mock, with
   // nothing stubbed for it, returned null. The first comment adds that the
-  // button needs a RouterScope too, and the next one that PagelessRoutesObserver
-  // was not exported to build one for the mock.
+  // button needs a RouterScope too, and the next one that
+  // PagelessRoutesObserver was not exported to build one for the mock.
   // Should: with both scopes, and a PagelessRoutesObserver (now exported from
   // package:auto_route/auto_route.dart) for the mock to return, the button
   // builds, and shows a back button when canPop is true.
@@ -42,7 +42,8 @@ void main() {
   );
 
   testWidgets(
-    'An AutoLeadingButton shows a back button with a mocked StackRouter that can pop',
+    'An AutoLeadingButton shows a back button with a mocked StackRouter that '
+    'can pop',
     (tester) async {
       final router = _MockStackRouter(canPopValue: true);
       await tester.pumpWidget(buttonWith(router));

@@ -46,7 +46,8 @@ void main() {
 
   for (final scoped in [true, false]) {
     testWidgets(
-      'popUntilRouteWithName for a missing page keeps the first page (scoped: $scoped)',
+      'popUntilRouteWithName for a missing page keeps the first page (scoped: '
+      '$scoped)',
       (tester) async {
         final router = buildRouter();
         await pumpRouterApp(tester, router);
@@ -63,7 +64,8 @@ void main() {
     );
 
     testWidgets(
-      'popUntilRouteWithPath for a missing page keeps the first page (scoped: $scoped)',
+      'popUntilRouteWithPath for a missing page keeps the first page (scoped: '
+      '$scoped)',
       (tester) async {
         final router = buildRouter();
         await pumpRouterApp(tester, router);
@@ -80,7 +82,8 @@ void main() {
   }
 
   testWidgets(
-    'popUntilRouteWithName in a nested router for a missing page keeps its first page',
+    'popUntilRouteWithName in a nested router for a missing page keeps its '
+    'first page',
     (tester) async {
       final router = buildRouter();
       await pumpRouterApp(tester, router, initialLink: '/shell/inner2');
@@ -96,7 +99,8 @@ void main() {
   );
 
   testWidgets(
-    'popUntilRouteWithName, not scoped, still finds a page of the parent router',
+    'popUntilRouteWithName, not scoped, still finds a page of the parent '
+    'router',
     (tester) async {
       final router = buildRouter();
       await pumpRouterApp(tester, router);

@@ -18,7 +18,8 @@ import '../back_test_utils.dart';
 // Should: Flutter tells Android it handles back while the tabs router is
 // away from its home tab; back shows the home tab, and only then would
 // Android close the app.
-// Android only: on web Flutter never tells the platform whether it handles back.
+// Android only: on web Flutter never tells the platform whether it handles
+// back.
 void main() {
   late FrameworkHandlesBackRecorder frameworkHandlesBack;
 
@@ -76,7 +77,8 @@ void main() {
   }
 
   testWidgets(
-    'system back on the first tab should show the home tab when homeIndex is another',
+    'system back on the first tab should show the home tab when homeIndex is '
+    'another',
     (tester) async {
       final tabs = await pumpApp(tester, homeIndex: 1);
       expect(tabs.activeIndex, 0);

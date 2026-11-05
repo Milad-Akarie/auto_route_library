@@ -31,7 +31,8 @@ void main() {
   // push another page on top, then press the browser's back button.
   // The sign-in page should show again with its argument, not fail to build.
   testWidgets(
-    'The browser back button on web returns to a page with its required argument',
+    'The browser back button on web returns to a page with its required '
+    'argument',
     (tester) async {
       await pumpRouterConfigApp(tester, router.config());
       await settleBrowser(tester);
@@ -54,7 +55,8 @@ void main() {
   );
 
   testWidgets(
-    'The browser forward button on web reopens a page with its required argument',
+    'The browser forward button on web reopens a page with its required '
+    'argument',
     (tester) async {
       await pumpRouterConfigApp(tester, router.config());
       await settleBrowser(tester);

@@ -90,7 +90,8 @@ void main() {
   );
 
   testWidgets(
-    'A guard that rejects leaves the stack as it was and completes the push with null',
+    'A guard that rejects leaves the stack as it was and completes the push '
+    'with null',
     (tester) async {
       await pushCWhileGuardDecides(tester);
       Object? resultOfC = 'unset';
@@ -122,7 +123,8 @@ void main() {
   // The predicate runs once the guard accepts, on the stack as it is then,
   // so a page popped while the guard decided is not asked about.
   testWidgets(
-    'A page popped while the guard decides is gone, and the rest go once it accepts',
+    'A page popped while the guard decides is gone, and the rest go once it '
+    'accepts',
     (tester) async {
       await pushCWhileGuardDecides(tester);
       unawaited(router.maybePop());

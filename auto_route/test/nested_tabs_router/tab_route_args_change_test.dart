@@ -30,12 +30,13 @@ void main() {
   });
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/990
-  // An AutoTabsScaffold has the routes [ChannelRoute(channel: value), SelectionRoute()],
-  // with the value read from a provider (here a ValueNotifier). Change the
-  // value. Reported: the channel route keeps its first argument. Should: the
-  // tab shows the new channel.
+  // An AutoTabsScaffold has the routes [ChannelRoute(channel: value),
+  // SelectionRoute()], with the value read from a provider (here a
+  // ValueNotifier). Change the value. Reported: the channel route keeps its
+  // first argument. Should: the tab shows the new channel.
   testWidgets(
-    'AutoTabsScaffold shows the new argument of a route when the routes it is given change',
+    'AutoTabsScaffold shows the new argument of a route when the routes it is '
+    'given change',
     (tester) async {
       await pumpRouterConfigApp(tester, router.config());
       expect(find.text('Channel news'), findsOneWidget);
@@ -52,7 +53,8 @@ void main() {
   // navigate(ChannelRoute(channel: 'sports')).
   // Should: the page shows 'sports'.
   testWidgets(
-    'navigate() to the open tab route with another argument shows the new argument',
+    'navigate() to the open tab route with another argument shows the new '
+    'argument',
     (tester) async {
       await pumpRouterConfigApp(tester, router.config());
       expect(find.text('Channel news'), findsOneWidget);

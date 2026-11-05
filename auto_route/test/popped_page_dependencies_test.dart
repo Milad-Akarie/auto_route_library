@@ -16,7 +16,8 @@ void main() {
   // it is popped. A page that reads ModalRoute.of still gets the extra call:
   // flutter_canary_popped_page_rebuilds_test.dart pins that.
   testWidgets(
-    'A page reading its route data in didChangeDependencies is not told again when popped',
+    'A page reading its route data in didChangeDependencies is not told again '
+    'when popped',
     (tester) async {
       final events = <String>[];
       final router = RootStackRouter.build(

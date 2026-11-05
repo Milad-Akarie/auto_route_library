@@ -92,7 +92,8 @@ void main() {
     expect(router.current.queryParams.rawMap, {'redirectTo': '?=:http://&'});
   });
 
-  // currentUrl still reads as text: letters outside ASCII and spaces show as they are.
+  // currentUrl still reads as text: letters outside ASCII and spaces show as
+  // they are.
   testWidgets('currentUrl shows letters outside ASCII and spaces decoded', (
     tester,
   ) async {

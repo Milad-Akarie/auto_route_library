@@ -83,7 +83,8 @@ void main() {
     for (final page in tabs.stackRouterOfIndex(index)!.stack) page.name,
   ];
 
-  // Android only: on web Flutter never tells the platform whether it handles back.
+  // Android only: on web Flutter never tells the platform whether it handles
+  // back.
   for (final MapEntry(key: name, value: back) in {
     'system back': systemBack,
     'the predictive back gesture': predictiveBack,
@@ -153,7 +154,8 @@ void main() {
   );
 
   testWidgets(
-    'system back should pop a page pushed in a tab while it was hidden, once it shows',
+    'system back should pop a page pushed in a tab while it was hidden, once '
+    'it shows',
     (tester) async {
       final tabs = await pumpApp(tester);
       await showTab(tester, tabs, 1);

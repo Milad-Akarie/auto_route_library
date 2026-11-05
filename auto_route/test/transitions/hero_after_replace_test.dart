@@ -44,7 +44,8 @@ void main() {
   // Should: ARoute's Hero shows. It does on Flutter 3.47.9: the Hero is
   // hidden for the first frame of the pop, then shown.
   testWidgets(
-    'A Hero shows again after popping a page pushed over the removed page it flew to',
+    'A Hero shows again after popping a page pushed over the removed page it '
+    'flew to',
     (tester) async {
       final router = _buildRouter();
       await pumpRouterApp(tester, router);
@@ -79,7 +80,8 @@ void main() {
   // transition, then pop NewRoute.
   // Should: HomeRoute's FloatingActionButton shows. It does on Flutter 3.47.9.
   testWidgets(
-    "A FloatingActionButton shows again after popping the page that replaced its Hero's page",
+    'A FloatingActionButton shows again after popping the page that replaced '
+    "its Hero's page",
     (tester) async {
       Widget fabPage(String label) => Scaffold(
         body: Text(label),

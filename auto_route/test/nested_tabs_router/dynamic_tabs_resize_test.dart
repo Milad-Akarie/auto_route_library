@@ -16,7 +16,8 @@ PageInfo _tab(String name) =>
 void main() {
   for (final tabBar in [true, false]) {
     testWidgets(
-      '${tabBar ? 'tabBar' : 'pageView'}: changing the tab count while the window resizes throws nothing',
+      '${tabBar ? 'tabBar' : 'pageView'}: changing the tab count while the '
+      'window resizes throws nothing',
       (tester) async {
         final count = ValueNotifier(3);
         addTearDown(count.dispose);

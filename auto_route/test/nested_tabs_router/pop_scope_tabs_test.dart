@@ -64,7 +64,8 @@ void main() {
       in setups.entries) {
     for (final MapEntry(key: name, value: back) in backs.entries) {
       testWidgets(
-        '$name twice with a PopScope $where should keep the app open and the page',
+        '$name twice with a PopScope $where should keep the app open and the '
+        'page',
         (tester) async {
           _popAttempts = 0;
           _scopeAroundTabs = scopeAroundTabs;
@@ -107,7 +108,9 @@ void main() {
           }
         },
         skip: kIsWeb,
-      ); // Android only: on web Flutter never tells the platform whether it handles back.
+        // Android only: on web Flutter never tells the platform whether it
+        // handles back.
+      );
     }
   }
 }

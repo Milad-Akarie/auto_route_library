@@ -101,7 +101,8 @@ void main() {
       });
 
       testWidgets(
-        'a guard that decides later keeps the current tab until it lets the tab in',
+        'a guard that decides later keeps the current tab until it lets the '
+        'tab in',
         (tester) async {
           final decision = _decision = Completer<bool>();
           final router = _buildRouter(kind);
@@ -161,7 +162,8 @@ void main() {
       );
 
       testWidgets(
-        "another tab chosen while back waits for the home tab's guard keeps the tabs",
+        "another tab chosen while back waits for the home tab's guard keeps "
+        'the tabs',
         (tester) async {
           _allow = true;
           final router = _buildRouter(kind, guardedTab: 0, homeIndex: 0);

@@ -19,7 +19,8 @@ void main() {
   // https://github.com/Milad-Akarie/auto_route_library/issues/1891
   // https://github.com/Milad-Akarie/auto_route_library/issues/1972
   // In nested routers, the browser's back button changed the url but left the
-  // screen as it was. Each test pushes inside a nested router, then presses back.
+  // screen as it was. Each test pushes inside a nested router, then presses
+  // back.
   testWidgets(
     'The browser back button on web pops a page pushed in a nested router',
     (tester) async {

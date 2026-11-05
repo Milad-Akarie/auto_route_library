@@ -24,7 +24,8 @@ void main() {
   // on SecondRoute's entry.
   for (final later in [false, true]) {
     testWidgets(
-      'Popping as the reevaluate listenable fires updates the url, fired later: $later',
+      'Popping as the reevaluate listenable fires updates the url, fired '
+      'later: $later',
       (tester) async {
         final auth = ValueNotifier(0);
         addTearDown(auth.dispose);

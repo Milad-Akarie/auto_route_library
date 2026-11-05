@@ -52,9 +52,11 @@ void main() {
   );
 
   // https://github.com/flutter/flutter/issues/162735
-  // In go_router, after a push, refreshListenable redirected with the state of the page below.
-  // Steps: guards on HomeRoute and SecondRoute record the route they check, then open HomeRoute, push SecondRoute, then fire reevaluateListenable.
-  // Should: each guard checks its own page, and the stack stays HomeRoute and SecondRoute with SecondRoute on screen.
+  // In go_router, after a push, refreshListenable redirected with the state of
+  // the page below. Steps: guards on HomeRoute and SecondRoute record the route
+  // they check, then open HomeRoute, push SecondRoute, then fire
+  // reevaluateListenable. Should: each guard checks its own page, and the stack
+  // stays HomeRoute and SecondRoute with SecondRoute on screen.
   testWidgets(
     'After a push, a reevaluation checks each page and keeps the stack (flutter/flutter#162735)',
     (tester) async {

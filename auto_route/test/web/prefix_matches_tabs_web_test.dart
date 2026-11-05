@@ -39,7 +39,8 @@ void main() {
   // the second tab, press the browser's back button, then its forward button.
   // Should: each button shows the tab its url names.
   testWidgets(
-    'With includePrefixMatches on web, the browser back and forward buttons switch tabs',
+    'With includePrefixMatches on web, the browser back and forward buttons '
+    'switch tabs',
     (tester) async {
       await pumpRouterConfigApp(
         tester,

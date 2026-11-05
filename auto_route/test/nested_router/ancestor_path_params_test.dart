@@ -114,7 +114,8 @@ class _FinishOrderingRoute extends PageRouteInfo<void> {
   static const String pageName = 'FinishOrderingRoute';
   static final PageInfo page = PageInfo(
     pageName,
-    // As generated for a constructor parameter marked @PathParam.inherit('businessCustomId').
+    // As generated for a constructor parameter marked
+    // @PathParam.inherit('businessCustomId').
     builder: (data) => Text(
       'New order at ${data.inheritedPathParams.getString('businessCustomId')}',
     ),
@@ -144,7 +145,8 @@ class _BookRoute extends PageRouteInfo<void> {
     builder: (data) => Column(
       children: [
         Text(
-          'Book ${data.inheritedPathParams.getInt('id')}, query ${data.queryParams.optInt('someQueryParam') ?? 'null'}',
+          'Book ${data.inheritedPathParams.getInt('id')}, query '
+          '${data.queryParams.optInt('someQueryParam') ?? 'null'}',
         ),
         const Expanded(child: AutoRouter()),
       ],

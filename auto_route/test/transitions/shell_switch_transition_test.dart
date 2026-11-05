@@ -28,7 +28,8 @@ PageInfo _leaf(String name) => .new(name, builder: (_) => NamedPage(name));
 
 void main() {
   testWidgets(
-    'Navigating between two shells keeps the old page while the new one fades in',
+    'Navigating between two shells keeps the old page while the new one fades '
+    'in',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [
@@ -59,7 +60,8 @@ void main() {
   );
 
   testWidgets(
-    'Replacing a page inside a shell keeps the old page halfway through the transition',
+    'Replacing a page inside a shell keeps the old page halfway through the '
+    'transition',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [

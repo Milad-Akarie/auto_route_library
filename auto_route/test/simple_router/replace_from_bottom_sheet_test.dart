@@ -61,7 +61,8 @@ void main() {
   );
 
   testWidgets(
-    'popAndPush from the sheet closes it and shows B over Home, and pop returns to Home',
+    'popAndPush from the sheet closes it and shows B over Home, and pop '
+    'returns to Home',
     (tester) async {
       await openSheet(
         tester,

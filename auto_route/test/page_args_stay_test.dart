@@ -12,8 +12,8 @@ import 'router_test_utils.dart';
 // Setup: a shell route with two nested pages that take args, and a tabs
 // router whose tab B takes args.
 // Steps: open the parent with args 'p', push the child with args 'c', go
-// back; open tab B with args, switch to tab A and back, and run the guards again.
-// Should: each page keeps its own args, and the tab page is built once.
+// back; open tab B with args, switch to tab A and back, and run the guards
+// again. Should: each page keeps its own args, and the tab page is built once.
 final _builds = <String>[];
 
 PageInfo _argsPage(String name) => .new(
@@ -28,7 +28,8 @@ void main() {
   setUp(_builds.clear);
 
   testWidgets(
-    'A parent and its child in a shell keep their own args when the child is popped',
+    'A parent and its child in a shell keep their own args when the child is '
+    'popped',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [
@@ -71,7 +72,8 @@ void main() {
   );
 
   testWidgets(
-    'A tab page keeps its args, and is built once, when the user leaves the tab and returns',
+    'A tab page keeps its args, and is built once, when the user leaves the '
+    'tab and returns',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [

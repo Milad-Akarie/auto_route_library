@@ -10,8 +10,8 @@ void main() {
   // Appium, could not reach or tap a Semantics-wrapped button on a page in a
   // nested router or tabs router.
   // Steps: a page inside a tab of an AutoTabsRouter, in a nested
-  // router, holds Semantics(identifier: 'login_button') around a button; find it in
-  // the semantics tree and tap the button through semantics.
+  // router, holds Semantics(identifier: 'login_button') around a button; find
+  // it in the semantics tree and tap the button through semantics.
   // Should: as in a MaterialApp without auto_route, the identifier is in the
   // tree and the tap reaches the button.
   for (final withRouter in [false, true]) {

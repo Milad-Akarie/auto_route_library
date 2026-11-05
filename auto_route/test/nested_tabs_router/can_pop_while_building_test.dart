@@ -14,7 +14,8 @@ import '../router_test_utils.dart';
 // inside a tab.
 void main() {
   testWidgets(
-    'canPop in the app bar builder answers on the first frame and after a push in a tab',
+    'canPop in the app bar builder answers on the first frame and after a '
+    'push in a tab',
     (tester) async {
       final heard = <({bool tabs, bool root})>[];
       final router = RootStackRouter.build(

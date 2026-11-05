@@ -26,7 +26,8 @@ void main() {
   // Like Navigator.pushAndRemoveUntil, the call leaves only the home page in
   // the stack. The back button then must not bring a removed page back.
   testWidgets(
-    'The browser back button after pushAndPopUntil on web does not bring a removed page back',
+    'The browser back button after pushAndPopUntil on web does not bring a '
+    'removed page back',
     (tester) async {
       await pumpRouterConfigApp(tester, router.config());
       await settleBrowser(tester);

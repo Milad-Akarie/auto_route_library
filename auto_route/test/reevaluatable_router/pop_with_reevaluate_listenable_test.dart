@@ -10,8 +10,8 @@ void main() {
   // https://github.com/flutter/flutter/issues/106166
   // In go_router, setting refreshListenable broke the back button.
   // Steps: open HomeRoute with reevaluateListenable set, push
-  // SecondRoute, fire the listenable, tap SecondRoute's AppBar back button, then fire the
-  // listenable again.
+  // SecondRoute, fire the listenable, tap SecondRoute's AppBar back button,
+  // then fire the listenable again.
   // Should: SecondRoute closes and HomeRoute stays, with no error.
   testWidgets(
     'The back button pops a page while reevaluateListenable is set (flutter/flutter#106166)',

@@ -8,7 +8,8 @@ import 'router_test_utils.dart';
 // Setup: AutoTabsRouter.pageView(animatePageTransition: false) with 3 tabs.
 // Steps: tabsRouter.setActiveIndex(1), then pump a single frame.
 // Should: the page view is already on page 1, with no slide. With
-// animatePageTransition: true (the control) it is still sliding after that frame.
+// animatePageTransition: true (the control) it is still sliding after that
+// frame.
 void main() {
   for (final animate in [false, true]) {
     testWidgets('Switching a tab with animatePageTransition: $animate', (

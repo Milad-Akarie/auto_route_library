@@ -20,7 +20,8 @@ void main() {
   // the listenable fires afterwards and when the route is guarded.
   for (final withListenable in [false, true]) {
     testWidgets(
-      'A url typed in the address bar opens its page, reevaluateListenable: $withListenable (#2173)',
+      'A url typed in the address bar opens its page, reevaluateListenable: '
+      '$withListenable (#2173)',
       (tester) async {
         final auth = ValueNotifier(0);
         addTearDown(auth.dispose);

@@ -12,7 +12,8 @@ void main() {
     // Reported: nothing happens, on 10.1.2 and not on 9.2.2.
     // Should: the first tab shows.
     testWidgets(
-      '${kind.name}: setActiveIndex through the builder context kept by a tab page opens the tab',
+      '${kind.name}: setActiveIndex through the builder context kept by a tab '
+      'page opens the tab',
       (tester) async {
         _tabsKind = kind;
         final router = RootStackRouter.build(

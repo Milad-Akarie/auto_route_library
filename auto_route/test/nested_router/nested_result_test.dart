@@ -124,7 +124,8 @@ void main() {
     ),
   ]) {
     testWidgets(
-      '$how with another page on top pushes a new parent whose future waits for the parent',
+      '$how with another page on top pushes a new parent whose future waits '
+      'for the parent',
       (tester) async {
         await pumpRouterConfigApp(tester, router.config());
         unawaited(router.push(const _OtherRoute()));

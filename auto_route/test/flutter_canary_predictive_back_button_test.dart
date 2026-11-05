@@ -104,41 +104,49 @@ void main() {
     expect(router.topRoute.name, 'FirstRoute');
   });
 
-  testWidgets('a long press on the 3-button back button starts no animation and pops on release, '
-      'until Flutter fixes flutter/flutter#183635 and #186168', (tester) async {
-    await pushSecond(tester);
-    Map<String, Object?> button(double progress) => {
-      'touchOffset': [0.0, 0.0],
-      'progress': progress,
-      'swipeEdge': 2,
-    };
-    final started = await send(tester, 'startBackGesture', button(0));
-    expect(
-      started,
-      isA<PlatformException>().having(
-        (error) => error.message,
-        'message',
-        contains('RangeError'),
-      ),
-    );
-    await send(tester, 'updateBackGestureProgress', button(0.5));
-    expect(animatingBack(tester), isFalse);
+  testWidgets(
+    'a long press on the 3-button back button starts no animation and pops on '
+    'release, '
+    'until Flutter fixes flutter/flutter#183635 and #186168',
+    (tester) async {
+      await pushSecond(tester);
+      Map<String, Object?> button(double progress) => {
+        'touchOffset': [0.0, 0.0],
+        'progress': progress,
+        'swipeEdge': 2,
+      };
+      final started = await send(tester, 'startBackGesture', button(0));
+      expect(
+        started,
+        isA<PlatformException>().having(
+          (error) => error.message,
+          'message',
+          contains('RangeError'),
+        ),
+      );
+      await send(tester, 'updateBackGestureProgress', button(0.5));
+      expect(animatingBack(tester), isFalse);
 
-    await send(tester, 'commitBackGesture');
-    await tester.pumpAndSettle();
-    expect(router.topRoute.name, 'FirstRoute');
-  });
+      await send(tester, 'commitBackGesture');
+      await tester.pumpAndSettle();
+      expect(router.topRoute.name, 'FirstRoute');
+    },
+  );
 
-  testWidgets("material_ui's predictive back builder skips a back button event, until Flutter fixes "
-      'flutter/flutter#183635', (tester) async {
-    await pushSecond(tester);
-    // A back button event Flutter can read: zero touch offset and progress.
-    final started = await send(tester, 'startBackGesture', {
-      'touchOffset': [0.0, 0.0],
-      'progress': 0.0,
-      'swipeEdge': 0,
-    });
-    expect(started, isFalse);
-    expect(animatingBack(tester), isFalse);
-  });
+  testWidgets(
+    "material_ui's predictive back builder skips a back button event, until "
+    'Flutter fixes '
+    'flutter/flutter#183635',
+    (tester) async {
+      await pushSecond(tester);
+      // A back button event Flutter can read: zero touch offset and progress.
+      final started = await send(tester, 'startBackGesture', {
+        'touchOffset': [0.0, 0.0],
+        'progress': 0.0,
+        'swipeEdge': 0,
+      });
+      expect(started, isFalse);
+      expect(animatingBack(tester), isFalse);
+    },
+  );
 }

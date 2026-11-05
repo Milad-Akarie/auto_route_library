@@ -12,13 +12,13 @@ import '../router_test_utils.dart';
 // accepts. These tests pin what that leaves across a multi-step flow in a
 // nested router, the history case flutter/flutter#193950 raises for
 // go_router.
-// Steps, on iOS so pages slide: open Home, then a shell whose nested router holds S1 and S2. From
-// inside the nested router, call pushAndPopUntil(Done, scopedPopUntil: false)
-// with Done a root route.
+// Steps, on iOS so pages slide: open Home, then a shell whose nested router
+// holds S1 and S2. From inside the nested router, call pushAndPopUntil(Done,
+// scopedPopUntil: false) with Done a root route.
 // Should: with a predicate that keeps Home, the nested pages and the shell
-// go, leaving Home and Done. With one that keeps S1, only S2 goes: the root keeps
-// Home and the shell, which holds S1, and Done goes on top. Back retraces it.
-// Happened: S2 animated out and observers heard it popped, not removed; and
+// go, leaving Home and Done. With one that keeps S1, only S2 goes: the root
+// keeps Home and the shell, which holds S1, and Done goes on top. Back retraces
+// it. Happened: S2 animated out and observers heard it popped, not removed; and
 // when the shell went too, its nested router was emptied first, so one frame
 // was blank and Done slid in over an empty shell instead of over S2.
 void main() {
@@ -133,7 +133,8 @@ void main() {
 
       final frames = await pushDoneKeeping(tester, nested, 'S1');
       expect(tester.takeException(), isNull);
-      // S2 is removed, not animated out, and S1 is under Done while it slides in.
+      // S2 is removed, not animated out, and S1 is under Done while it slides
+      // in.
       expect(
         frames.where((frame) => frame.contains('S2')),
         isEmpty,

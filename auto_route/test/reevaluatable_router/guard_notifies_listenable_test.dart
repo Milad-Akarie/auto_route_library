@@ -66,7 +66,8 @@ void main() {
         'SecondRoute',
       ]);
       expect(find.text('SecondRoute'), findsOneWidget);
-      // HomeRoute's first check, the re-check of HomeRoute the login fired, and SecondRoute's.
+      // HomeRoute's first check, the re-check of HomeRoute the login fired, and
+      // SecondRoute's.
       expect(guardCalls, lessThanOrEqualTo(3));
     },
   );

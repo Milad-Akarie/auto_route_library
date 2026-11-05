@@ -27,11 +27,12 @@ void main() {
   // subscription guard and LoginGuard. Steps: open the paywall, log in, go
   // back, open the profile, log out, go back from the sign-in page, open the
   // paywall again, log in.
-  // On 10.0.0, as on 10.0.1, the last login opened ProfileRoute, not the paywall: the
-  // guard of the profile, whose redirect the back button had closed, was
-  // still waiting and resumed. On dev it opens the paywall.
+  // On 10.0.0, as on 10.0.1, the last login opened ProfileRoute, not the
+  // paywall: the guard of the profile, whose redirect the back button had
+  // closed, was still waiting and resumed. On dev it opens the paywall.
   testWidgets(
-    'Logging in after leaving an earlier redirect opens the route that redirected last (#2178)',
+    'Logging in after leaving an earlier redirect opens the route that '
+    'redirected last (#2178)',
     (tester) async {
       final n = _GuardChangeNotifier();
       addTearDown(n.dispose);

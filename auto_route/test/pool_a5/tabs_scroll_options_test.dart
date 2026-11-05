@@ -38,7 +38,8 @@ RootStackRouter _router(Widget Function(List<PageRouteInfo> routes) tabs) {
 // shows the new tab at once, without an animation.
 void main() {
   testWidgets(
-    'pageView with a vertical scrollDirection changes tab by a vertical drag only',
+    'pageView with a vertical scrollDirection changes tab by a vertical drag '
+    'only',
     (tester) async {
       final router = _router(
         (routes) =>

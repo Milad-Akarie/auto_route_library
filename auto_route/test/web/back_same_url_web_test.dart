@@ -71,7 +71,8 @@ void main() {
   // entry, so the browser's back button then goes to Home, not to the first
   // Book again.
   testWidgets(
-    'Popping a page with the same url as the one under it steps the browser back to its entry',
+    'Popping a page with the same url as the one under it steps the browser '
+    'back to its entry',
     (tester) async {
       await pushTwoBooks(tester);
 
@@ -90,7 +91,8 @@ void main() {
   // button puts the second Book back on top of the first. The first Book used
   // to take the second one's arguments in place, so back() then left for Home.
   testWidgets(
-    'The browser forward button returns to a page pushed over one with the same url',
+    'The browser forward button returns to a page pushed over one with the '
+    'same url',
     (tester) async {
       await pushTwoBooks(tester);
       await pressBrowserBack(tester);
@@ -162,10 +164,9 @@ class _BookRoute extends PageRouteInfo<_BookArgs> {
   static const String name = 'BookRoute';
   static final PageInfo page = PageInfo(
     name,
-    builder: (data) => Scaffold(
-      body: Text(
-        'Book ${data.argsAs<_BookArgs>(orElse: () => const _BookArgs()).bookId ?? 'null'}',
-      ),
-    ),
+    builder: (data) => Scaffold(body: Text('Book ${_bookIdOf(data)}')),
   );
 }
+
+String _bookIdOf(RouteData<Object?> data) =>
+    data.argsAs<_BookArgs>(orElse: () => const _BookArgs()).bookId ?? 'null';

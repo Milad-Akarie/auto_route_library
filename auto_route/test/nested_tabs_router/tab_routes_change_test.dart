@@ -47,7 +47,8 @@ void _runRoutesChangeTests(_TabsKind kind) {
   // Happens: the first and second tab pages are disposed and built again.
   // Should: the first tab page keeps its state; only the third tab changes.
   testWidgets(
-    '${kind.name}: swapping one route in AutoTabsRouter.routes keeps the state of the active tab',
+    '${kind.name}: swapping one route in AutoTabsRouter.routes keeps the '
+    'state of the active tab',
     (tester) async {
       await pumpTabs(tester);
       expect(_CountedPageState.initCounts[_FirstTabRoute.name], 1);
@@ -76,7 +77,8 @@ void _runRoutesChangeTests(_TabsKind kind) {
   // Happens: the second tab page is disposed and built again.
   // Should: the second tab page keeps its state.
   testWidgets(
-    '${kind.name}: swapping one route in AutoTabsRouter.routes keeps the state of a loaded inactive tab',
+    '${kind.name}: swapping one route in AutoTabsRouter.routes keeps the '
+    'state of a loaded inactive tab',
     (tester) async {
       await pumpTabs(tester);
       tabsRouterOf(tester).setActiveIndex(1);

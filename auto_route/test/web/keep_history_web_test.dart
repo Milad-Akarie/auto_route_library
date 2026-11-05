@@ -15,7 +15,10 @@ void main() {
   // Apps pass either router.config() or only the delegate and parser, which
   // leaves Flutter's own route information provider in place.
   for (final withConfig in [true, false]) {
-    group(withConfig ? 'With router.config()' : 'With the delegate and parser', () {
+    final groupName = withConfig
+        ? 'With router.config()'
+        : 'With the delegate and parser';
+    group(groupName, () {
       late RootStackRouter router;
       setUp(() async {
         router = RootStackRouter.build(
@@ -30,8 +33,8 @@ void main() {
 
       // https://github.com/Milad-Akarie/auto_route_library/issues/1678
       // FirstRoute has keepHistory: false. Push SecondRoute from it.
-      // SecondRoute should take FirstRoute's browser entry, so the browser's back
-      // button can't return to FirstRoute.
+      // SecondRoute should take FirstRoute's browser entry, so the browser's
+      // back button can't return to FirstRoute.
       testWidgets(
         'Pushing from a page without history on web replaces its browser entry',
         (tester) async {
@@ -60,11 +63,12 @@ void main() {
       );
 
       // https://github.com/Milad-Akarie/auto_route_library/issues/2068
-      // FirstRoute, the initial page, has keepHistory: false and calls replaceAll
-      // with SecondRoute, as a splash screen does.
+      // FirstRoute, the initial page, has keepHistory: false and calls
+      // replaceAll with SecondRoute, as a splash screen does.
       // SecondRoute should take FirstRoute's browser entry.
       testWidgets(
-        'replaceAll from a page without history on web replaces its browser entry',
+        'replaceAll from a page without history on web replaces its browser '
+        'entry',
         (tester) async {
           await _pumpApp(tester, router, withConfig: withConfig);
           await settleBrowser(tester);

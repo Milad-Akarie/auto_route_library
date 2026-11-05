@@ -96,7 +96,8 @@ void main() {
   });
 
   testWidgets(
-    'A replaceAll with a rejected route later in the batch keeps the stack (#2299)',
+    'A replaceAll with a rejected route later in the batch keeps the stack '
+    '(#2299)',
     (tester) async {
       final router = buildRouter();
       await pumpRouterConfigApp(tester, router.config());
@@ -129,7 +130,8 @@ void main() {
   });
 
   testWidgets(
-    'A replaceAll rejected by a guard in a nested router keeps the nested stack (#2299)',
+    'A replaceAll rejected by a guard in a nested router keeps the nested '
+    'stack (#2299)',
     (tester) async {
       final router = buildRouter();
       await pumpRouterConfigApp(tester, router.config());

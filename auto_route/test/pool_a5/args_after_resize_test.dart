@@ -14,7 +14,8 @@ class _GameRoute extends PageRouteInfo<_GameArgs> {
     name,
     builder: (data) => Builder(
       builder: (context) => Text(
-        'Game ${data.argsAs<_GameArgs>().level} ${MediaQuery.widthOf(context).round()}',
+        'Game ${data.argsAs<_GameArgs>().level} '
+        '${MediaQuery.widthOf(context).round()}',
       ),
     ),
   );

@@ -234,8 +234,9 @@ void main() {
           AutoRouteGuard.redirect((resolver) {
             if (loopedTooLong()) return null;
             final onLogin = resolver.routeName == 'LoginRoute';
-            if (auth.value)
+            if (auth.value) {
               return onLogin ? const NamedRoute('HomeRoute') : null;
+            }
             return onLogin ? null : const NamedRoute('LoginRoute');
           }),
         ],

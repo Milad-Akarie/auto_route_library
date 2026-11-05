@@ -22,7 +22,8 @@ void main() {
   // press the browser's back button, and do it again.
   // Should: no error; DiscoverRoute shows at '/discover' each time.
   testWidgets(
-    'On web, the back button after a push in a nested router returns without an error',
+    'On web, the back button after a push in a nested router returns without '
+    'an error',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [

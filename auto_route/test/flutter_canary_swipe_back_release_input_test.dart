@@ -12,9 +12,9 @@ import 'package:material_ui/material_ui.dart';
 // 250 ms later tap the button, or drag the list.
 // Should: the home page takes the tap, and the drag.
 // Today, on Flutter 3.47.9 with material_ui 1.10.0: neither is recognized
-// until the release animation ends. If a test fails after a Flutter upgrade, Flutter changed how input
-// reaches the page under a closing route: RouteType.cupertino pages in
-// auto_route follow it.
+// until the release animation ends. If a test fails after a Flutter upgrade,
+// Flutter changed how input reaches the page under a closing route:
+// RouteType.cupertino pages in auto_route follow it.
 void main() {
   late int taps;
   late ScrollController controller;
@@ -76,32 +76,40 @@ void main() {
     expect(find.text('tap'), findsOneWidget);
   }
 
-  testWidgets('a tap 250 ms after an iOS swipe back is not recognized, until Flutter fixes '
-      'flutter/flutter#154719 and #166665', (tester) async {
-    await pumpAndSwipeBack(tester);
-    await tester.tap(find.text('tap'), warnIfMissed: false);
-    await tester.pumpAndSettle();
-    expect(taps, 0);
+  testWidgets(
+    'a tap 250 ms after an iOS swipe back is not recognized, until Flutter '
+    'fixes '
+    'flutter/flutter#154719 and #166665',
+    (tester) async {
+      await pumpAndSwipeBack(tester);
+      await tester.tap(find.text('tap'), warnIfMissed: false);
+      await tester.pumpAndSettle();
+      expect(taps, 0);
 
-    // The control: once the animation is over, the button works.
-    await tester.tap(find.text('tap'));
-    expect(taps, 1);
-  });
+      // The control: once the animation is over, the button works.
+      await tester.tap(find.text('tap'));
+      expect(taps, 1);
+    },
+  );
 
-  testWidgets('a drag 250 ms after an iOS swipe back does not scroll the list, until Flutter fixes '
-      'flutter/flutter#188840', (tester) async {
-    await pumpAndSwipeBack(tester);
-    await tester.drag(
-      find.text('item 3'),
-      const Offset(0, -200),
-      warnIfMissed: false,
-    );
-    await tester.pump();
-    expect(controller.offset, 0.0);
-    await tester.pumpAndSettle();
+  testWidgets(
+    'a drag 250 ms after an iOS swipe back does not scroll the list, until '
+    'Flutter fixes '
+    'flutter/flutter#188840',
+    (tester) async {
+      await pumpAndSwipeBack(tester);
+      await tester.drag(
+        find.text('item 3'),
+        const Offset(0, -200),
+        warnIfMissed: false,
+      );
+      await tester.pump();
+      expect(controller.offset, 0.0);
+      await tester.pumpAndSettle();
 
-    // The control: once the animation is over, the list scrolls.
-    await tester.drag(find.text('item 3'), const Offset(0, -200));
-    expect(controller.offset, greaterThan(0));
-  });
+      // The control: once the animation is over, the list scrolls.
+      await tester.drag(find.text('item 3'), const Offset(0, -200));
+      expect(controller.offset, greaterThan(0));
+    },
+  );
 }

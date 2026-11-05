@@ -13,7 +13,8 @@ import '../router_test_utils.dart';
 // Should: the listener is told, the url and the page's param change.
 void main() {
   testWidgets(
-    'A router listener hears navigation to the same route with another path param',
+    'A router listener hears navigation to the same route with another path '
+    'param',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [

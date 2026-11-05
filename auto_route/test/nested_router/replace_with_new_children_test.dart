@@ -14,7 +14,8 @@ void main() {
   // DashboardRoute(children: [ActivitiesRoute(children: [PendingRoute()])]).
   // Should: the nested router shows Pending, and the url follows.
   testWidgets(
-    'replace with the same route and other nested children opens those children',
+    'replace with the same route and other nested children opens those '
+    'children',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [

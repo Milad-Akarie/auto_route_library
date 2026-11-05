@@ -67,7 +67,8 @@ RootStackRouter _router() => .build(
 
 void main() {
   testWidgets(
-    'Pages pushed in the shell keep its bar, a root push covers it, and pops restore it',
+    'Pages pushed in the shell keep its bar, a root push covers it, and pops '
+    'restore it',
     (tester) async {
       final router = _router();
       await pumpRouterConfigApp(tester, router.config());

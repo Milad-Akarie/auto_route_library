@@ -20,7 +20,8 @@ void main() {
   // and press the browser's back button.
   // Should: the drawer closes with P3, P2 shows, and the url is P2's.
   testWidgets(
-    'The browser back button with a drawer open goes to the page before and keeps its url',
+    'The browser back button with a drawer open goes to the page before and '
+    'keeps its url',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [

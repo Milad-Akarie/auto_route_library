@@ -42,50 +42,54 @@ void main() {
   // Should: the entry holds '/tabs/tab-1', and each button shows the tab its
   // url names.
   for (final includePrefixMatches in [false, true]) {
-    testWidgets('On web, the browser back button returns to the first tab of a host opened without a tab in its url, '
-        'includePrefixMatches: $includePrefixMatches', (tester) async {
-      await pumpRouterConfigApp(
-        tester,
-        router.config(includePrefixMatches: includePrefixMatches),
-      );
-      await settleBrowser(tester);
-      unawaited(router.navigate(const _TabsRoute()));
-      await settleBrowser(tester);
-      expect(browserPath, '/tabs/tab-1');
-      expect(find.text('Tab 1'), findsOneWidget);
-      await tester.tap(find.text('Show tab 2'));
-      await settleBrowser(tester);
-      expect(browserPath, '/tabs/tab-2');
+    testWidgets(
+      'On web, the browser back button returns to the first tab of a host '
+      'opened without a tab in its url, '
+      'includePrefixMatches: $includePrefixMatches',
+      (tester) async {
+        await pumpRouterConfigApp(
+          tester,
+          router.config(includePrefixMatches: includePrefixMatches),
+        );
+        await settleBrowser(tester);
+        unawaited(router.navigate(const _TabsRoute()));
+        await settleBrowser(tester);
+        expect(browserPath, '/tabs/tab-1');
+        expect(find.text('Tab 1'), findsOneWidget);
+        await tester.tap(find.text('Show tab 2'));
+        await settleBrowser(tester);
+        expect(browserPath, '/tabs/tab-2');
 
-      await pressBrowserBack(tester);
-      expect(
-        browserPath,
-        '/tabs/tab-1',
-        reason: 'after pressBrowserBack(tester)',
-      );
-      expect(
-        find.text('Tab 1'),
-        findsOneWidget,
-        reason: 'after pressBrowserBack(tester)',
-      );
-      expect(router.stack.map((p) => p.name), [
-        _HomeRoute.name,
-        _TabsRoute.name,
-      ]);
+        await pressBrowserBack(tester);
+        expect(
+          browserPath,
+          '/tabs/tab-1',
+          reason: 'after pressBrowserBack(tester)',
+        );
+        expect(
+          find.text('Tab 1'),
+          findsOneWidget,
+          reason: 'after pressBrowserBack(tester)',
+        );
+        expect(router.stack.map((p) => p.name), [
+          _HomeRoute.name,
+          _TabsRoute.name,
+        ]);
 
-      await browserMove(tester, () => window.history.forward());
-      expect(
-        browserPath,
-        '/tabs/tab-2',
-        reason: 'after browserMove(tester, () => window.history.forward())',
-      );
-      expect(find.text('Tab 2'), findsOneWidget);
+        await browserMove(tester, () => window.history.forward());
+        expect(
+          browserPath,
+          '/tabs/tab-2',
+          reason: 'after browserMove(tester, () => window.history.forward())',
+        );
+        expect(find.text('Tab 2'), findsOneWidget);
 
-      await pressBrowserBack(tester);
-      await pressBrowserBack(tester);
-      expect(browserPath, '/');
-      expect(find.text('Home'), findsOneWidget);
-    });
+        await pressBrowserBack(tester);
+        await pressBrowserBack(tester);
+        expect(browserPath, '/');
+        expect(find.text('Home'), findsOneWidget);
+      },
+    );
   }
 }
 

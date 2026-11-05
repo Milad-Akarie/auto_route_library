@@ -86,7 +86,8 @@ void main() {
 
   // The reported setup: the default route type, on macOS.
   testWidgets(
-    'a tap on a page of the default route type under WidgetsApp.router plays no sound on macOS',
+    'a tap on a page of the default route type under WidgetsApp.router plays '
+    'no sound on macOS',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [

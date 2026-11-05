@@ -23,7 +23,8 @@ void main() {
                 // What a page reads from the router in build: its own route
                 // data and the router's current route and url.
                 builds.add(
-                  '${context.routeData.name} ${context.router.current.name} ${context.router.urlState.url}',
+                  '${context.routeData.name} ${context.router.current.name} '
+                  '${context.router.urlState.url}',
                 );
                 return const Text('A');
               },
@@ -49,7 +50,8 @@ void main() {
     // context.router, then go to B with [label].
     // Should: A is not built again once B is shown.
     testWidgets(
-      'A page reading the router in build is not built again after $label to another page',
+      'A page reading the router in build is not built again after $label to '
+      'another page',
       (tester) async {
         await pumpRouterApp(tester, router);
         expect(builds, ['ARoute ARoute /']);

@@ -19,58 +19,63 @@ import 'no_op.dart';
 // its stack as soon as the pop was invoked, in AutoRoutePage.onPopInvoked
 // (lib/src/router/auto_route_page.dart). Flutter fixed it in 3.44.0
 // (flutter/flutter#182315): onDidRemovePage now runs during the pop
-// itself, so the workaround is gone and AutoRouteNavigator's onDidRemovePage removes
-// the page. This test pins that fix. If it fails after a Flutter upgrade, the
-// bug is back: restore the workaround, calling `router.onPopPage(this)` from
-// onPopInvoked when the router is a StackRouter.
+// itself, so the workaround is gone and AutoRouteNavigator's onDidRemovePage
+// removes the page. This test pins that fix. If it fails after a Flutter
+// upgrade, the bug is back: restore the workaround, calling
+// `router.onPopPage(this)` from onPopInvoked when the router is a StackRouter.
 void main() {
-  testWidgets('popping a page calls onDidRemovePage before the pop animation ends, so a parent '
-      'rebuild does not push the page again', (tester) async {
-    final pushed = <String?>[];
-    final removed = <String?>[];
-    final pages = <Page<void>>[
-      const MaterialPage(name: 'first', child: Text('first')),
-    ];
-    late StateSetter setParentState;
-    await tester.pumpWidget(
-      MaterialApp(
-        home: StatefulBuilder(
-          builder: (context, setState) {
-            setParentState = setState;
-            return Navigator(
-              observers: [_PushObserver(pushed)],
-              pages: List.of(pages),
-              onDidRemovePage: (page) => setState(() {
-                removed.add(page.name);
-                pages.remove(page);
-              }),
-            );
-          },
+  testWidgets(
+    'popping a page calls onDidRemovePage before the pop animation ends, so a '
+    'parent '
+    'rebuild does not push the page again',
+    (tester) async {
+      final pushed = <String?>[];
+      final removed = <String?>[];
+      final pages = <Page<void>>[
+        const MaterialPage(name: 'first', child: Text('first')),
+      ];
+      late StateSetter setParentState;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: StatefulBuilder(
+            builder: (context, setState) {
+              setParentState = setState;
+              return Navigator(
+                observers: [_PushObserver(pushed)],
+                pages: List.of(pages),
+                onDidRemovePage: (page) => setState(() {
+                  removed.add(page.name);
+                  pages.remove(page);
+                }),
+              );
+            },
+          ),
         ),
-      ),
-    );
-    setParentState(
-      () =>
-          pages.add(const MaterialPage(name: 'second', child: Text('second'))),
-    );
-    await tester.pumpAndSettle();
-    expect(pushed, ['first', 'second']);
+      );
+      setParentState(
+        () => pages.add(
+          const MaterialPage(name: 'second', child: Text('second')),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(pushed, ['first', 'second']);
 
-    tester.state<NavigatorState>(find.byType(Navigator).last).pop();
-    expect(removed, ['second']);
+      tester.state<NavigatorState>(find.byType(Navigator).last).pop();
+      expect(removed, ['second']);
 
-    setParentState(noOp);
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 50));
-    expect(
-      find.text('second'),
-      findsOneWidget,
-      reason: 'the pop animation is still running',
-    );
-    await tester.pumpAndSettle();
-    expect(pushed, ['first', 'second']);
-    expect(find.text('second'), findsNothing);
-  });
+      setParentState(noOp);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(
+        find.text('second'),
+        findsOneWidget,
+        reason: 'the pop animation is still running',
+      );
+      await tester.pumpAndSettle();
+      expect(pushed, ['first', 'second']);
+      expect(find.text('second'), findsNothing);
+    },
+  );
 }
 
 class _PushObserver extends NavigatorObserver {

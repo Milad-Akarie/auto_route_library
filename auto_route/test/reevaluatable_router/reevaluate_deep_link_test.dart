@@ -55,7 +55,8 @@ void main() {
   );
 
   testWidgets(
-    'A url the platform pushes opens its page with reevaluateListenable set (#2173)',
+    'A url the platform pushes opens its page with reevaluateListenable set '
+    '(#2173)',
     (tester) async {
       final auth = ValueNotifier(0);
       addTearDown(auth.dispose);

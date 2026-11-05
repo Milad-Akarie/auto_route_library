@@ -31,7 +31,8 @@ void main() {
   };
   for (final MapEntry(key: name, value: guard) in guards.entries) {
     testWidgets(
-      'On web, the browser forward button to a guarded page runs its guard again, with $name '
+      'On web, the browser forward button to a guarded page runs its guard '
+      'again, with $name '
       '(flutter/flutter#149181)',
       (tester) async {
         var loggedIn = false;

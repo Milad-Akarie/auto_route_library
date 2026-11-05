@@ -24,7 +24,8 @@ void main() {
   // go back and forward again.
   // Should: each step shows the page of the url the browser moved to.
   testWidgets(
-    'On web, back and forward work with localizations delegates, before and after a reload',
+    'On web, back and forward work with localizations delegates, before and '
+    'after a reload',
     (tester) async {
       RootStackRouter buildRouter() => .build(
         routes: [

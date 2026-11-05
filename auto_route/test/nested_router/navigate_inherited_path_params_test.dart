@@ -44,9 +44,10 @@ void main() {
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/1816
   // Open the vendor 'v-42' at '/dashboard/vendors/:vendor-id', push a page on
-  // the root router over the dashboard, then call navigate(VendorBranchesRoute()).
-  // The branches page should open under vendor 'v-42' and read its inherited
-  // 'vendor-id', not fail to parse it from null at '/dashboard/vendors/:vendor-id/branches'.
+  // the root router over the dashboard, then call
+  // navigate(VendorBranchesRoute()). The branches page should open under vendor
+  // 'v-42' and read its inherited 'vendor-id', not fail to parse it from null
+  // at '/dashboard/vendors/:vendor-id/branches'.
   testWidgets(
     'navigate() from outside the nested router keeps the inherited path params',
     (tester) async {
@@ -91,7 +92,8 @@ void main() {
           ),
         ),
       );
-      // Let the router add the vendor page, which it does after checking guards.
+      // Let the router add the vendor page, which it does after checking
+      // guards.
       for (var i = 0; i < 5; i++) {
         await Future.microtask(noOp);
       }
@@ -143,7 +145,8 @@ class _EditVendorRoute extends PageRouteInfo<void> {
   static final PageInfo page = PageInfo(
     name,
     builder: (data) {
-      // As generated for a constructor parameter marked @PathParam('vendor-id').
+      // As generated for a constructor parameter marked
+      // @PathParam('vendor-id').
       final vendorId = data.inheritedPathParams.getString('vendor-id');
       return Column(
         children: [
@@ -161,7 +164,8 @@ class _VendorBranchesRoute extends PageRouteInfo<void> {
   static const String name = 'VendorBranchesRoute';
   static final PageInfo page = PageInfo(
     name,
-    // As generated for a constructor parameter marked @PathParam.inherit('vendor-id').
+    // As generated for a constructor parameter marked
+    // @PathParam.inherit('vendor-id').
     builder: (data) =>
         Text('Branches of ${data.inheritedPathParams.getString('vendor-id')}'),
   );

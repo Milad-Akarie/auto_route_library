@@ -10,7 +10,8 @@ void main() {
   // bar of its own, 120 logical pixels high.
   // Reported: the scaffold wrapped it in a PreferredSize of kToolbarHeight, so
   // the height could not be chosen.
-  // Should: the scaffold's app bar has the height the builder's widget asks for.
+  // Should: the scaffold's app bar has the height the builder's widget asks
+  // for.
   testWidgets(
     'the app bar of AutoTabsScaffold has the height its builder asks for',
     (tester) async {

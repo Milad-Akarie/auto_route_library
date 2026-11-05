@@ -23,7 +23,8 @@ void main() {
   // url, then '/'.
   // Should: each step shows the tab and page its url names.
   testWidgets(
-    'With includePrefixMatches on web, tabs follow the browser buttons and typed urls',
+    'With includePrefixMatches on web, tabs follow the browser buttons and '
+    'typed urls',
     (tester) async {
       final router = NestedTabsRouter();
       await pumpRouterConfigApp(

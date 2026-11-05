@@ -51,16 +51,14 @@ void main() {
     },
   );
 
-  testWidgets(
-    'Pushing ${SecondRoute.name} and ${ThirdRoute.name} should show [ThirdPage]',
-    (tester) async {
-      await pumpRouterApp(tester, router);
-      unawaited(router.pushAll([const SecondRoute(), const ThirdRoute()]));
-      await tester.pumpAndSettle();
-      expectCurrentPage(router, ThirdRoute.name);
-      expect(router.urlState.url, '/third-route');
-    },
-  );
+  testWidgets('Pushing ${SecondRoute.name} and ${ThirdRoute.name} should show '
+      '[ThirdPage]', (tester) async {
+    await pumpRouterApp(tester, router);
+    unawaited(router.pushAll([const SecondRoute(), const ThirdRoute()]));
+    await tester.pumpAndSettle();
+    expectCurrentPage(router, ThirdRoute.name);
+    expect(router.urlState.url, '/third-route');
+  });
 
   testWidgets('Removing multiple routes should complete each push future', (
     tester,
@@ -189,7 +187,8 @@ void main() {
   // Happens: the future returned by A's push() never completes.
   // Should happen: it completes when C is popped, as it did in 10.0.1.
   testWidgets(
-    'Popping a route that replaced the pushed route should complete the original push future',
+    'Popping a route that replaced the pushed route should complete the '
+    'original push future',
     (tester) async {
       await pumpRouterApp(tester, router);
       var completed = false;
@@ -211,9 +210,10 @@ void main() {
   );
 
   // Reproduces https://github.com/Milad-Akarie/auto_route_library/issues/2154
-  // Steps: await router.navigate(SecondRoute()), then pop SecondPage with a result.
-  // Happens: the navigate() future completes right away with null, before the page is popped.
-  // Should: it completes only when the page is popped, with the popped result, as push() does.
+  // Steps: await router.navigate(SecondRoute()), then pop SecondPage with a
+  // result. Happens: the navigate() future completes right away with null,
+  // before the page is popped. Should: it completes only when the page is
+  // popped, with the popped result, as push() does.
   testWidgets(
     'navigate() should complete with the result the opened page is popped with',
     (tester) async {

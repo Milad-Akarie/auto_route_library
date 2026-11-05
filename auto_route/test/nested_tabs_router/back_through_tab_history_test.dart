@@ -164,7 +164,8 @@ void main() {
   });
 
   testWidgets(
-    'with a homeIndex, back shows the home tab once the history is gone through',
+    'with a homeIndex, back shows the home tab once the history is gone '
+    'through',
     (tester) async {
       final tabs = await pumpApp(tester, homeIndex: 0, overFirstPage: true);
       await visit(tester, tabs, [1, 0, 3]);

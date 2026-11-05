@@ -24,11 +24,15 @@ void main() {
     expect(() => params.getString('key'), throwsFlutterError);
   });
 
-  test('Calling Parameters.optString on a string value should return a <string> and null on a none existing value', () {
-    const params = Parameters({'key': 'str'});
-    expect(params.optString('key'), isA<String>());
-    expect(params.optString('key2'), null);
-  });
+  test(
+    'Calling Parameters.optString on a string value should return a <string> '
+    'and null on a none existing value',
+    () {
+      const params = Parameters({'key': 'str'});
+      expect(params.optString('key'), isA<String>());
+      expect(params.optString('key2'), null);
+    },
+  );
 
   test('Calling Parameters.getInt on an int value should return a <int>', () {
     const params = Parameters({'key': '12'});
@@ -40,11 +44,15 @@ void main() {
     expect(() => params.getInt('key'), throwsFlutterError);
   });
 
-  test('Calling Parameters.optInt on an int value should return a <int> and null on a none existing value', () {
-    const params = Parameters({'key': '12'});
-    expect(params.optInt('key'), isA<int>());
-    expect(params.optInt('key2'), null);
-  });
+  test(
+    'Calling Parameters.optInt on an int value should return a <int> and null '
+    'on a none existing value',
+    () {
+      const params = Parameters({'key': '12'});
+      expect(params.optInt('key'), isA<int>());
+      expect(params.optInt('key2'), null);
+    },
+  );
 
   test(
     'Calling Parameters.getDouble on an int value should return a <double>',
@@ -59,11 +67,15 @@ void main() {
     expect(() => params.getDouble('key'), throwsFlutterError);
   });
 
-  test('Calling Parameters.optDouble on a double value should return a <double> and null on a none existing value', () {
-    const params = Parameters({'key': '12.1'});
-    expect(params.optDouble('key'), isA<double>());
-    expect(params.optDouble('key2'), null);
-  });
+  test(
+    'Calling Parameters.optDouble on a double value should return a <double> '
+    'and null on a none existing value',
+    () {
+      const params = Parameters({'key': '12.1'});
+      expect(params.optDouble('key'), isA<double>());
+      expect(params.optDouble('key2'), null);
+    },
+  );
 
   test('Calling Parameters.getNum on an int value should return a <int>', () {
     const params = Parameters({'key': '12'});
@@ -75,7 +87,8 @@ void main() {
     expect(() => params.getNum('key'), throwsFlutterError);
   });
 
-  test('Calling Parameters.optNum on a double value should return a <num> and null on a none existing value', () {
+  test('Calling Parameters.optNum on a double value should return a <num> and '
+      'null on a none existing value', () {
     const params = Parameters({'key': '12.1'});
     expect(params.optNum('key'), isA<double>());
     expect(params.optNum('key2'), null);
@@ -97,11 +110,15 @@ void main() {
     },
   );
 
-  test('Calling Parameters.getBool on "true" or "True" string value should return true', () {
-    const params = Parameters({'key': 'true', 'key2': 'True'});
-    expect(params.getBool('key'), true);
-    expect(params.getBool('key2'), true);
-  });
+  test(
+    'Calling Parameters.getBool on "true" or "True" string value should return '
+    'true',
+    () {
+      const params = Parameters({'key': 'true', 'key2': 'True'});
+      expect(params.getBool('key'), true);
+      expect(params.getBool('key2'), true);
+    },
+  );
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/1319
   // queryParams: {'key': true} is a bool in the map, not text; getBool and
@@ -124,13 +141,18 @@ void main() {
     },
   );
 
-  test('Calling Parameters.optBool on a true-string value should return a <bool> and null on a none existing value', () {
-    const params = Parameters({'key': 'true'});
-    expect(params.optBool('key'), isA<bool>());
-    expect(params.optBool('key2'), null);
-  });
+  test(
+    'Calling Parameters.optBool on a true-string value should return a <bool> '
+    'and null on a none existing value',
+    () {
+      const params = Parameters({'key': 'true'});
+      expect(params.optBool('key'), isA<bool>());
+      expect(params.optBool('key2'), null);
+    },
+  );
 
-  test('Calling Parameters.getBool on "false" or "False" string value should return false', () {
+  test('Calling Parameters.getBool on "false" or "False" string value should '
+      'return false', () {
     const params = Parameters({'key': 'false', 'key2': 'False'});
     expect(params.getBool('key'), false);
     expect(params.getBool('key2'), false);
@@ -144,7 +166,8 @@ void main() {
     expect(params.optList('key2'), null);
   });
 
-  test('Adding two Parameters together should create a new Parameters instance with both keys and values ', () {
+  test('Adding two Parameters together should create a new Parameters instance '
+      'with both keys and values ', () {
     final allParams =
         const Parameters({'key1': 'value1'}) +
         const Parameters({'key2': 'value2'});
@@ -166,21 +189,25 @@ void main() {
     },
   );
 
-  test('Calling Parameters.optBool on a string value should read true and false in any case', () {
-    const params = Parameters({
-      'a': 'true',
-      'b': 'FALSE',
-      'c': 'maybe',
-      'd': 1,
-    });
-    expect(params.optBool('a'), true);
-    expect(params.optBool('b'), false);
-    expect(params.optBool('c'), null);
-    expect(params.optBool('c', true), true);
-    expect(params.optBool('d'), null);
-    expect(params.optBool('missing', false), false);
-    expect(() => params.getBool('c'), throwsFlutterError);
-  });
+  test(
+    'Calling Parameters.optBool on a string value should read true and false '
+    'in any case',
+    () {
+      const params = Parameters({
+        'a': 'true',
+        'b': 'FALSE',
+        'c': 'maybe',
+        'd': 1,
+      });
+      expect(params.optBool('a'), true);
+      expect(params.optBool('b'), false);
+      expect(params.optBool('c'), null);
+      expect(params.optBool('c', true), true);
+      expect(params.optBool('d'), null);
+      expect(params.optBool('missing', false), false);
+      expect(() => params.getBool('c'), throwsFlutterError);
+    },
+  );
 
   // #1794: a param read by a ParamConverter.
   group('Parameters.optTyped and getTyped (#1794)', () {
@@ -201,7 +228,8 @@ void main() {
       expect(params.getTyped('id', const _NumberConverter()), const _Number(5));
     });
 
-    test('fall back to the default when the value is missing or the converter refuses it', () {
+    test('fall back to the default when the value is missing or the converter '
+        'refuses it', () {
       const params = Parameters({'id': 'seven'});
       expect(params.optTyped('id', const _NumberConverter()), null);
       expect(

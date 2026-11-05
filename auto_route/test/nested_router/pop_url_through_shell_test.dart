@@ -15,7 +15,8 @@ import '../router_test_utils.dart';
 // before, and the url names it.
 void main() {
   testWidgets(
-    'Each pop through pushed pages and out of a shell route reports the page under it',
+    'Each pop through pushed pages and out of a shell route reports the page '
+    'under it',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [

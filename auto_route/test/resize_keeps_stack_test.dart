@@ -12,10 +12,12 @@ import 'router_test_utils.dart';
 // instead; this pins that a resize leaves the stack, the url and the guards
 // alone.
 // Steps: push a page above the home page, resize the window.
-// Should: the pushed page is still on top, at the same url, and no guard ran again.
+// Should: the pushed page is still on top, at the same url, and no guard ran
+// again.
 void main() {
   testWidgets(
-    'Resizing the window keeps the pushed page, its url, and does not run the guards again',
+    'Resizing the window keeps the pushed page, its url, and does not run the '
+    'guards again',
     (tester) async {
       var guardCalls = 0;
       final router = RootStackRouter.build(

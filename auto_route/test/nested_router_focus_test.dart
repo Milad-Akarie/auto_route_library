@@ -70,15 +70,16 @@ void main() {
   });
 
   // https://github.com/flutter/flutter/issues/94249: with a nested
-  // Navigator, after the user focused a field on its page and tapped outside to close
-  // the keyboard, pushing the next page in the nested Navigator opened the
-  // keyboard and closed it again at once.
+  // Navigator, after the user focused a field on its page and tapped outside to
+  // close the keyboard, pushing the next page in the nested Navigator opened
+  // the keyboard and closed it again at once.
   // Steps: HostRoute's nested AutoRouter shows a page with a TextField. Tap
   // the field, tap outside it, where HostRoute unfocuses its focus scope,
   // then push the next page in the nested router.
   // Should: the push neither shows nor hides the keyboard.
   testWidgets(
-    'Pushing in a nested router after closing the keyboard does not open it again',
+    'Pushing in a nested router after closing the keyboard does not open it '
+    'again',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [

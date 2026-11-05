@@ -76,7 +76,8 @@ void main() {
 
   // should throw if building default routes when one has required arguments
   testWidgets(
-    'AutoTabsScaffold should throw (FlutterError) if building default routes when one has required arguments',
+    'AutoTabsScaffold should throw (FlutterError) if building default routes '
+    'when one has required arguments',
     (tester) async {
       final localRouter = RootStackRouter.build(
         routes: [

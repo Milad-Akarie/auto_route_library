@@ -42,7 +42,8 @@ void main() {
         _InfoRoute.name,
       ]);
 
-      // The reporter's check: whether the route is an InfoRoute holding the key.
+      // The reporter's check: whether the route is an InfoRoute holding the
+      // key.
       router.removeWhere(
         (route) =>
             route.args is _InfoRouteArgs &&

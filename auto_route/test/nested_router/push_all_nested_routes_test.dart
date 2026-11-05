@@ -39,12 +39,13 @@ void main() {
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/2214
   // On the dashboard, which shows MetricsRoute, call
-  // innerRouterOf(DashboardRoute).replaceAll([UsersRoute(), UserRoute(userId: 1)]).
-  // Both routes live in the 'UsersSellRoute' shell, which isn't open yet. They
-  // should open together in one shell, so UserRoute has a back button to
+  // innerRouterOf(DashboardRoute).replaceAll([UsersRoute(), UserRoute(userId:
+  // 1)]). Both routes live in the 'UsersSellRoute' shell, which isn't open yet.
+  // They should open together in one shell, so UserRoute has a back button to
   // UsersRoute, not each in its own copy of the shell.
   testWidgets(
-    'replaceAll with two routes of a nested router opens both in one nested router',
+    'replaceAll with two routes of a nested router opens both in one nested '
+    'router',
     (tester) async {
       final dashboard = await openDashboard(tester);
 
@@ -73,7 +74,8 @@ void main() {
   // https://github.com/Milad-Akarie/auto_route_library/issues/2214
   // The reporter's comment: pushAll with the same routes does the same.
   testWidgets(
-    'pushAll with two routes of a nested router opens both in one nested router',
+    'pushAll with two routes of a nested router opens both in one nested '
+    'router',
     (tester) async {
       final dashboard = await openDashboard(tester);
 

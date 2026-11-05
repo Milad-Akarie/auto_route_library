@@ -41,7 +41,8 @@ void main() {
   });
 
   testWidgets(
-    'the config has a back button dispatcher, and the back key pops the page on top',
+    'the config has a back button dispatcher, and the back key pops the page '
+    'on top',
     (tester) async {
       final config = router.config();
       expect(config.backButtonDispatcher, isA<RootBackButtonDispatcher>());

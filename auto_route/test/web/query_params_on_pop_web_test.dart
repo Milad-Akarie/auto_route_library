@@ -24,8 +24,8 @@ void main() {
   // https://github.com/Milad-Akarie/auto_route_library/issues/2310
   // https://github.com/Milad-Akarie/auto_route_library/issues/2332
   // Open FirstRoute with query params, push SecondRoute, then pop it.
-  // The browser should step back to FirstRoute's own entry, query params and all,
-  // so a refresh reopens the same page.
+  // The browser should step back to FirstRoute's own entry, query params and
+  // all, so a refresh reopens the same page.
   testWidgets('Popping on web steps back to the entry with the query params', (
     tester,
   ) async {

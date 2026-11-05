@@ -29,7 +29,8 @@ void _runIndexTests(_TabsKind kind) {
         ),
       ],
     );
-    // An AutoRouterObserver hears about tab changes; it reads the tab routes by index.
+    // An AutoRouterObserver hears about tab changes; it reads the tab routes by
+    // index.
     await pumpRouterApp(
       tester,
       router,

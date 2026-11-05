@@ -22,7 +22,8 @@ void main() {
   // Should: GazetteerRoute shows and the url stays '/admin/gazetteer'.
   for (final dashboardInitial in [false, true]) {
     testWidgets(
-      'On web, a reload on a nested page keeps it (initial dashboard: $dashboardInitial)',
+      'On web, a reload on a nested page keeps it (initial dashboard: '
+      '$dashboardInitial)',
       (tester) async {
         final router = RootStackRouter.build(
           routes: [

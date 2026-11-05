@@ -45,7 +45,8 @@ void main() {
         return values;
       }
 
-      // A swipe can leave the offset a hair short of the page, as Flutter's own TabBarView does.
+      // A swipe can leave the offset a hair short of the page, as Flutter's own
+      // TabBarView does.
       void expectOneWay(
         List<double> values,
         double end, {

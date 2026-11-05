@@ -9,10 +9,11 @@ import 'back_test_utils.dart';
 // flutter/flutter#155441: a PopScope(canPop: false) on the app's first page
 // was not asked on back, and the app closed.
 // Steps: the root router's only page is wrapped in PopScope(canPop:
-// false); press Android's back key, or make the predictive back gesture. PopScope
-// should hear it with didPop false, the app should not close, and Flutter
-// should keep telling Android it handles back. The same first page inside a
-// nested router is covered by nested_router/pop_scope_first_page_test.dart.
+// false); press Android's back key, or make the predictive back gesture.
+// PopScope should hear it with didPop false, the app should not close, and
+// Flutter should keep telling Android it handles back. The same first page
+// inside a nested router is covered by
+// nested_router/pop_scope_first_page_test.dart.
 void main() {
   for (final MapEntry(key: name, value: back) in {
     'system back': systemBack,
@@ -44,8 +45,9 @@ void main() {
         final messenger = tester.binding.defaultBinaryMessenger
           ..setMockMethodCallHandler(SystemChannels.platform, (call) async {
             if (call.method == 'SystemNavigator.pop') appClosed = true;
-            if (call.method == 'SystemNavigator.setFrameworkHandlesBack')
+            if (call.method == 'SystemNavigator.setFrameworkHandlesBack') {
               frameworkHandlesBack = call.arguments as bool;
+            }
             return null;
           });
         addTearDown(
@@ -70,6 +72,8 @@ void main() {
         expect(find.text('Home'), findsOneWidget);
       },
       skip: kIsWeb,
-    ); // Android only: on web Flutter never tells the platform whether it handles back.
+      // Android only: on web Flutter never tells the platform whether it
+      // handles back.
+    );
   }
 }

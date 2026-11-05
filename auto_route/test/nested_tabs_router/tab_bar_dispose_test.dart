@@ -19,7 +19,8 @@ void main() {
   // reports it first as a Ticker still active when the state is disposed.
   // Should: nothing is thrown.
   testWidgets(
-    'a tab-bar AutoTabsRouter removed while its tab bar animates after a routes change throws nothing',
+    'a tab-bar AutoTabsRouter removed while its tab bar animates after a '
+    'routes change throws nothing',
     (tester) async {
       addTearDown(() {
         _routesNotifier.value = _kInitialRoutes;
@@ -56,7 +57,8 @@ void main() {
   // The same without a routes change: the TabController in use is disposed
   // with the AutoTabsRouter, so its animation stops with it.
   testWidgets(
-    'a tab-bar AutoTabsRouter removed while its tab bar animates throws nothing',
+    'a tab-bar AutoTabsRouter removed while its tab bar animates throws '
+    'nothing',
     (tester) async {
       addTearDown(() => _showTabsNotifier.value = true);
       final router = RootStackRouter.build(

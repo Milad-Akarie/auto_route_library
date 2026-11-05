@@ -58,7 +58,8 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('field')));
       await tester.pumpAndSettle();
 
-      // The menu item a tap reaches; the field also lays out its items offstage.
+      // The menu item a tap reaches; the field also lays out its items
+      // offstage.
       final menuItem = find.widgetWithText(MenuItemButton, 'One').hitTestable();
       expect(menuItem, findsOneWidget);
       final item = tester.getRect(menuItem);

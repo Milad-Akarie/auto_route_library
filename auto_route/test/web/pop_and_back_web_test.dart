@@ -111,7 +111,8 @@ void main() {
   );
 
   testWidgets(
-    'Popping a dialog on web closes only the dialog and leaves the history alone',
+    'Popping a dialog on web closes only the dialog and leaves the history '
+    'alone',
     (tester) async {
       await pumpRouterConfigApp(tester, router.config());
       await settleBrowser(tester);

@@ -13,7 +13,8 @@ import 'router_test_utils.dart';
 void main() {
   for (final guarded in [false, true]) {
     testWidgets(
-      'A redirect with a path param to a nested child keeps one url, guarded: $guarded',
+      'A redirect with a path param to a nested child keeps one url, guarded: '
+      '$guarded',
       (tester) async {
         final router = RootStackRouter.build(
           routes: [

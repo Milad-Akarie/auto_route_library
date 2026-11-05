@@ -14,31 +14,44 @@ void main() {
     expect(first == build('Name'), true);
   });
 
-  test('Calling PageRouteInfo.fromRedirect on an redirected instance should return true', () {
+  test('Calling PageRouteInfo.fromRedirect on an redirected instance should '
+      'return true', () {
     expect(
       const PageRouteInfo('Name', redirectedFrom: '/redirect').fromRedirect,
       true,
     );
   });
 
-  test('Calling PageRouteInfo.pathParams should return Parameters instance with rawPathParams', () {
-    expect(
-      const PageRouteInfo('Name', rawPathParams: {'foo': 'bar'}).pathParams,
-      const Parameters({'foo': 'bar'}),
-    );
-  });
+  test(
+    'Calling PageRouteInfo.pathParams should return Parameters instance with '
+    'rawPathParams',
+    () {
+      expect(
+        const PageRouteInfo('Name', rawPathParams: {'foo': 'bar'}).pathParams,
+        const Parameters({'foo': 'bar'}),
+      );
+    },
+  );
 
-  test('Calling PageRouteInfo.queryParams should return Parameters instance with rawQueryParams', () {
-    expect(
-      const PageRouteInfo('Name', rawQueryParams: {'foo': 'bar'}).queryParams,
-      const Parameters({'foo': 'bar'}),
-    );
-  });
+  test(
+    'Calling PageRouteInfo.queryParams should return Parameters instance with '
+    'rawQueryParams',
+    () {
+      expect(
+        const PageRouteInfo('Name', rawQueryParams: {'foo': 'bar'}).queryParams,
+        const Parameters({'foo': 'bar'}),
+      );
+    },
+  );
 
-  test('Calling PageRouteInfo.copyWith with no params should return identically instance', () {
-    const instance = PageRouteInfo('Name', redirectedFrom: '/redirect');
-    expect(instance.copyWith() == instance, true);
-  });
+  test(
+    'Calling PageRouteInfo.copyWith with no params should return identically '
+    'instance',
+    () {
+      const instance = PageRouteInfo('Name', redirectedFrom: '/redirect');
+      expect(instance.copyWith() == instance, true);
+    },
+  );
 
   test(
     'Calling PageRouteInfo.flattened should return list of flattened children',
@@ -74,8 +87,9 @@ void main() {
     );
   });
 
-  // Routes with list or set url params, built twice with equal values, were unequal: equality compared
-  // the params' values by identity, so two lists holding 'a' differed unless they were one list.
+  // Routes with list or set url params, built twice with equal values, were
+  // unequal: equality compared the params' values by identity, so two lists
+  // holding 'a' differed unless they were one list.
   group('PageRouteInfo with equal list or set params', () {
     PageRouteInfo route(Object tags) => .new(
       'Tags',
@@ -102,7 +116,8 @@ void main() {
   });
 
   // With path params 'id' and 'idx', '/a/:idx' expanded to '/a/1x': the pattern ':(id|idx)' had no segment end,
-  // so ':id' matched the start of ':idx' and its value replaced it, keeping the 'x'.
+  // so ':id' matched the start of ':idx' and its value replaced it, keeping the
+  // 'x'.
   group('PageRouteInfo.expandPath with a param whose name starts another', () {
     test('expands the longer name whole', () {
       expect(

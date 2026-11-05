@@ -41,7 +41,8 @@ void main() {
     expect(router.isRouteActive(FirstRoute.name), true);
   });
 
-  test('Replacing single route should replace top stack entry and notify navigation history', () async {
+  test('Replacing single route should replace top stack entry and notify '
+      'navigation history', () async {
     final listener = _MockListener();
     router.navigationHistory.addListener(listener.call);
     await router.push(const FirstRoute());
@@ -50,7 +51,8 @@ void main() {
     verify(listener()).called(2);
   });
 
-  test('Navigating to a none-declared route should call onFailure(<RouteNotFoundFailure>)', () async {
+  test('Navigating to a none-declared route should call '
+      'onFailure(<RouteNotFoundFailure>)', () async {
     final mockListener = _MockOnNavigationFailureListener();
     await router.push(const SecondNested1Route(), onFailure: mockListener.call);
     expect(
@@ -59,7 +61,8 @@ void main() {
     );
   });
 
-  test('Navigating to a none-declared path should call onFailure(<RouteNotFoundFailure>)', () async {
+  test('Navigating to a none-declared path should call '
+      'onFailure(<RouteNotFoundFailure>)', () async {
     final mockListener = _MockOnNavigationFailureListener();
     await router.navigatePath('/none-declared', onFailure: mockListener.call);
     expect(

@@ -80,7 +80,8 @@ void main() {
   // back, maybePop.
   for (final fromApp in [false, true]) {
     testWidgets(
-      'Refused exits on web add no browser entries, refused from the app: $fromApp',
+      'Refused exits on web add no browser entries, refused from the app: '
+      '$fromApp',
       (tester) async {
         await pumpRouterConfigApp(tester, router.config());
         await settleBrowser(tester);

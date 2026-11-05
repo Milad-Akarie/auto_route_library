@@ -33,7 +33,8 @@ void main() {
   );
 
   testWidgets(
-    'a link with an unencoded url in its query opens one page with the whole query',
+    'a link with an unencoded url in its query opens one page with the whole '
+    'query',
     (tester) async {
       final router = buildRouter();
       await pumpRouterApp(tester, router, initialLink: '/passwordless?$query');

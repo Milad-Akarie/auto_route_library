@@ -6,7 +6,8 @@ import 'package:material_ui/material_ui.dart';
 
 import '../router_test_utils.dart';
 
-// Each call an _AwarePage gets from its AutoRouteObserver, as '<route name>.<call>'.
+// Each call an _AwarePage gets from its AutoRouteObserver, as '<route
+// name>.<call>'.
 final _events = <String>[];
 
 class _AwarePage extends StatefulWidget {
@@ -67,7 +68,8 @@ void main() {
   // page hears the tab events of its own tab (as the observer sends them to the
   // subscribers of the tab's route).
   testWidgets(
-    'Pages in tabs hear covers inside their tab, and a tab page hears its tab events',
+    'Pages in tabs hear covers inside their tab, and a tab page hears its tab '
+    'events',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [

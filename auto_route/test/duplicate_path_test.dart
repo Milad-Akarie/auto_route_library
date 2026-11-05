@@ -11,7 +11,8 @@ Object _routeCollectionFor(List<AutoRoute> routes) {
   return router.routeCollection;
 }
 
-/// A FlutterError, which is what the router throws for a route table it can't use, whose text matches [text].
+/// A FlutterError, which is what the router throws for a route table it can't
+/// use, whose text matches [text].
 Matcher _errorText(Object text) =>
     isA<FlutterError>().having((e) => e.toString(), 'message', text);
 
@@ -99,7 +100,8 @@ void main() {
 
     // A parent and its empty-path child share a url by design: the child is
     // the page the parent shows first.
-    test('are fine for a parent and its empty-path child, and for paths that differ', () {
+    test('are fine for a parent and its empty-path child, and for paths that '
+        'differ', () {
       expect(
         () => _routeCollectionFor([
           AutoRoute(
