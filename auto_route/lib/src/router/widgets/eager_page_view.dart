@@ -4,7 +4,6 @@
 
 // Copied from Flutter: the code stays as Flutter wrote it, so the two can
 // still be compared line by line.
-// ignore_for_file: prefer-parentheses-with-if-null
 
 import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:flutter/rendering.dart';
@@ -263,7 +262,7 @@ class _EagerPageViewState extends State<EagerPageView> {
     final ScrollPhysics physics = const _ForceImplicitScrollPhysics(allowImplicitScrolling: false).applyTo(
       widget.pageSnapping
           ? _kPagePhysics.applyTo(widget.physics ?? widget.scrollBehavior?.getScrollPhysics(context))
-          : widget.physics ?? widget.scrollBehavior?.getScrollPhysics(context),
+          : (widget.physics ?? widget.scrollBehavior?.getScrollPhysics(context)),
     );
 
     return NotificationListener<ScrollNotification>(
