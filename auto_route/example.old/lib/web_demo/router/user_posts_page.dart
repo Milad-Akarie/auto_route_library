@@ -18,10 +18,7 @@ class UserPostsPage extends StatelessWidget {
       body: Center(
         child: Column(
           children: [
-            Text(
-              'User Posts $id',
-              style: const TextStyle(fontSize: 30),
-            ),
+            Text('User Posts $id', style: const TextStyle(fontSize: 30)),
             ElevatedButton(
               onPressed: () {
                 showDialog<void>(
