@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/material_ui.dart';
 
+import '../named_page.dart';
 import '../router_test_utils.dart';
 
 void main() {
@@ -24,8 +24,8 @@ void main() {
               name: 'ActivitiesRoute',
               path: 'activities',
               children: [
-                NamedRouteDef(name: 'PendingRoute', path: '', builder: (_, _) => _page('PendingRoute')),
-                NamedRouteDef(name: 'DoneRoute', path: 'done', builder: (_, _) => _page('DoneRoute')),
+                NamedRouteDef(name: 'PendingRoute', path: '', builder: (_, _) => const NamedPage('PendingRoute')),
+                NamedRouteDef(name: 'DoneRoute', path: 'done', builder: (_, _) => const NamedPage('DoneRoute')),
               ],
             ),
           ],
@@ -55,5 +55,3 @@ void main() {
     expect(router.stack.map((p) => p.name), ['DashboardRoute']);
   });
 }
-
-Widget _page(String name) => Scaffold(body: Text(name));

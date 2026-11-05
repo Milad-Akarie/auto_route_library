@@ -2,11 +2,9 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/material_ui.dart';
 
+import '../centered_named_page.dart';
 import '../router_test_utils.dart';
-
-Widget _page(String name) => Scaffold(body: Center(child: Text(name)));
 
 void main() {
   // https://github.com/flutter/flutter/issues/99096
@@ -22,8 +20,12 @@ void main() {
   ) async {
     final router = RootStackRouter.build(
       routes: [
-        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => _page('HomeRoute')),
-        NamedRouteDef(name: 'ChatListRoute', path: '/chat_list', builder: (_, _) => _page('ChatListRoute')),
+        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => const CenteredNamedPage('HomeRoute')),
+        NamedRouteDef(
+          name: 'ChatListRoute',
+          path: '/chat_list',
+          builder: (_, _) => const CenteredNamedPage('ChatListRoute'),
+        ),
         NamedRouteDef.guarded(
           name: 'ChatRoute',
           path: '/chat',
@@ -31,7 +33,7 @@ void main() {
             if (resolver.route.queryParams.optString('user') != null) return resolver.next();
             resolver.reject();
           },
-          builder: (_, _) => _page('ChatRoute'),
+          builder: (_, _) => const CenteredNamedPage('ChatRoute'),
         ),
       ],
     );

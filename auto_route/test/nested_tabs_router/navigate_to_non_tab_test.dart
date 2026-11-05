@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../named_page.dart';
 import '../router_test_utils.dart';
 
 void main() {
@@ -26,12 +27,12 @@ void main() {
           builder: (_, child) => child,
         ),
         children: [
-          NamedRouteDef(name: 'PagerPage1Route', path: 'page1', builder: (_, _) => _page('PagerPage1Route')),
-          NamedRouteDef(name: 'PagerPage2Route', path: 'page2', builder: (_, _) => _page('PagerPage2Route')),
+          NamedRouteDef(name: 'PagerPage1Route', path: 'page1', builder: (_, _) => const NamedPage('PagerPage1Route')),
+          NamedRouteDef(name: 'PagerPage2Route', path: 'page2', builder: (_, _) => const NamedPage('PagerPage2Route')),
           NamedRouteDef(
             name: 'OtherExternalPageRoute',
             path: 'other',
-            builder: (_, _) => _page('OtherExternalPageRoute'),
+            builder: (_, _) => const NamedPage('OtherExternalPageRoute'),
           ),
         ],
       ),
@@ -71,5 +72,3 @@ void main() {
     expect(find.text('PagerPage2Route'), findsOneWidget);
   });
 }
-
-Widget _page(String name) => Scaffold(body: Text(name));

@@ -4,9 +4,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../centered_named_page.dart';
 import '../router_test_utils.dart';
-
-Widget _page(String name) => Scaffold(body: Center(child: Text(name)));
 
 void main() {
   // https://github.com/flutter/flutter/issues/99706
@@ -19,14 +18,17 @@ void main() {
     var asked = 0;
     final router = RootStackRouter.build(
       routes: [
-        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => _page('HomeRoute')),
+        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => const CenteredNamedPage('HomeRoute')),
         NamedRouteDef(
           name: 'EditRoute',
           path: '/edit',
-          builder: (_, _) =>
-              PopScope(canPop: false, onPopInvokedWithResult: (didPop, _) => asked++, child: _page('EditRoute')),
+          builder: (_, _) => PopScope(
+            canPop: false,
+            onPopInvokedWithResult: (didPop, _) => asked++,
+            child: const CenteredNamedPage('EditRoute'),
+          ),
         ),
-        NamedRouteDef(name: 'OtherRoute', path: '/other', builder: (_, _) => _page('OtherRoute')),
+        NamedRouteDef(name: 'OtherRoute', path: '/other', builder: (_, _) => const CenteredNamedPage('OtherRoute')),
       ],
     );
     await pumpRouterApp(tester, router);

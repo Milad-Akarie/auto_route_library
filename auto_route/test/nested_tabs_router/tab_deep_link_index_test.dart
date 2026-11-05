@@ -4,9 +4,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../centered_named_page.dart';
 import '../router_test_utils.dart';
-
-Widget _page(String name) => Scaffold(body: Center(child: Text(name)));
 
 void main() {
   // https://github.com/flutter/flutter/issues/99154
@@ -21,7 +20,7 @@ void main() {
           name: 'SettingsRoute',
           path: '/settings',
           initial: true,
-          builder: (_, _) => _page('SettingsRoute'),
+          builder: (_, _) => const CenteredNamedPage('SettingsRoute'),
         ),
         NamedRouteDef(
           name: 'BooksRoute',
@@ -36,9 +35,21 @@ void main() {
             ),
           ),
           children: [
-            NamedRouteDef(name: 'NewBooksRoute', path: 'new', builder: (_, _) => _page('NewBooksRoute')),
-            NamedRouteDef(name: 'AllBooksRoute', path: 'all', builder: (_, _) => _page('AllBooksRoute')),
-            NamedRouteDef(name: 'PopularBooksRoute', path: 'popular', builder: (_, _) => _page('PopularBooksRoute')),
+            NamedRouteDef(
+              name: 'NewBooksRoute',
+              path: 'new',
+              builder: (_, _) => const CenteredNamedPage('NewBooksRoute'),
+            ),
+            NamedRouteDef(
+              name: 'AllBooksRoute',
+              path: 'all',
+              builder: (_, _) => const CenteredNamedPage('AllBooksRoute'),
+            ),
+            NamedRouteDef(
+              name: 'PopularBooksRoute',
+              path: 'popular',
+              builder: (_, _) => const CenteredNamedPage('PopularBooksRoute'),
+            ),
           ],
         ),
       ],

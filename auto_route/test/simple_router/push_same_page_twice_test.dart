@@ -2,11 +2,9 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/material_ui.dart';
 
+import '../centered_named_page.dart';
 import '../router_test_utils.dart';
-
-Widget _page(String name) => Scaffold(body: Center(child: Text(name)));
 
 void main() {
   // https://github.com/flutter/flutter/issues/107045
@@ -15,8 +13,8 @@ void main() {
   testWidgets('The same page pushed twice stays twice and pops one at a time (flutter/flutter#107045)', (tester) async {
     final router = RootStackRouter.build(
       routes: [
-        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => _page('HomeRoute')),
-        NamedRouteDef(name: 'ItemRoute', path: '/item', builder: (_, _) => _page('ItemRoute')),
+        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => const CenteredNamedPage('HomeRoute')),
+        NamedRouteDef(name: 'ItemRoute', path: '/item', builder: (_, _) => const CenteredNamedPage('ItemRoute')),
       ],
     );
     await pumpRouterApp(tester, router);

@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/material_ui.dart';
 
+import '../named_page.dart';
 import '../router_test_utils.dart';
 
 void main() {
@@ -33,11 +33,11 @@ void main() {
                   resolver.reject();
                 }),
               ],
-              children: [NamedRouteDef(name: 'HomeRoute', path: '', builder: (_, _) => _page('HomeRoute'))],
+              children: [NamedRouteDef(name: 'HomeRoute', path: '', builder: (_, _) => const NamedPage('HomeRoute'))],
             ),
           ],
         ),
-        NamedRouteDef(name: 'LoginRoute', path: '/login', builder: (_, _) => _page('LoginRoute')),
+        NamedRouteDef(name: 'LoginRoute', path: '/login', builder: (_, _) => const NamedPage('LoginRoute')),
         RedirectRoute(path: '*', redirectTo: '/'),
       ],
     );
@@ -49,5 +49,3 @@ void main() {
     expect(find.text('HomeRoute'), findsNothing);
   });
 }
-
-Widget _page(String text) => Scaffold(body: Text(text));

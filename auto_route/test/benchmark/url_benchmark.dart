@@ -66,12 +66,10 @@ class _Benchmark extends BenchmarkBase {
   void exercise() => run();
 }
 
-Widget _page(BuildContext context, RouteData<dynamic> data) => const SizedBox();
-
 /// A router with [count] routes side by side: '/page0', '/page1' and so on.
 RouteMatcher _flatMatcher(int count) => .new(
   RouteCollection.fromList([
-    for (var i = 0; i < count; i++) NamedRouteDef(name: 'Page$i', path: '/page$i', builder: _page),
+    for (var i = 0; i < count; i++) NamedRouteDef(name: 'Page$i', path: '/page$i', builder: (_, _) => const SizedBox()),
   ], root: true),
 );
 
@@ -87,7 +85,7 @@ List<AutoRoute> _level(int depth) => [
     NamedRouteDef(
       name: 'Level$depth-$i',
       path: '${depth == 0 ? '/' : ''}level$depth-$i/:id$depth',
-      builder: _page,
+      builder: (_, _) => const SizedBox(),
       children: depth < _kDepth - 1 && i == _kSiblings - 1 ? _level(depth + 1) : null,
     ),
 ];

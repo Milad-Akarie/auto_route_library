@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'leading_button_page.dart';
 import 'router_test_utils.dart';
 
 void main() {
@@ -58,16 +59,11 @@ void main() {
   });
 }
 
-Widget _page(String name) => Scaffold(
-  appBar: AppBar(leading: const AutoLeadingButton()),
-  body: Text(name),
-);
-
 class _ProfileRoute extends PageRouteInfo<void> {
   const _ProfileRoute() : super(name);
 
   static const String name = '_ProfileRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => _page(name));
+  static PageInfo page = PageInfo(name, builder: (_) => const LeadingButtonPage(name));
 }
 
 class _AddressesShellRoute extends PageRouteInfo<void> {
@@ -81,12 +77,12 @@ class _ListRoute extends PageRouteInfo<void> {
   const _ListRoute() : super(name);
 
   static const String name = '_ListRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => _page(name));
+  static PageInfo page = PageInfo(name, builder: (_) => const LeadingButtonPage(name));
 }
 
 class _AddRoute extends PageRouteInfo<void> {
   const _AddRoute() : super(name);
 
   static const String name = '_AddRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => _page(name));
+  static PageInfo page = PageInfo(name, builder: (_) => const LeadingButtonPage(name));
 }

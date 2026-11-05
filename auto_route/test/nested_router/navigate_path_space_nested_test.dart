@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/material_ui.dart';
 
+import '../named_page.dart';
 import '../router_test_utils.dart';
 
 void main() {
@@ -17,16 +17,16 @@ void main() {
   // Should: the page gets 'a search term', and the url encodes it once.
   RootStackRouter buildRouter() => .build(
     routes: [
-      NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => _page('HomeRoute')),
+      NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => const NamedPage('HomeRoute')),
       NamedRouteDef.shell(
         name: 'SearchRoute',
         path: '/search',
         children: [
-          NamedRouteDef(name: 'ListRoute', path: '', builder: (_, _) => _page('ListRoute')),
+          NamedRouteDef(name: 'ListRoute', path: '', builder: (_, _) => const NamedPage('ListRoute')),
           NamedRouteDef(
             name: 'ResultsRoute',
             path: 'results/:term',
-            builder: (_, data) => _page('term ${data.params.getString('term')}'),
+            builder: (_, data) => NamedPage('term ${data.params.getString('term')}'),
           ),
         ],
       ),
@@ -38,11 +38,11 @@ void main() {
             name: 'MainSearchRoute',
             path: 'search',
             children: [
-              NamedRouteDef(name: 'MainListRoute', path: '', builder: (_, _) => _page('MainListRoute')),
+              NamedRouteDef(name: 'MainListRoute', path: '', builder: (_, _) => const NamedPage('MainListRoute')),
               NamedRouteDef(
                 name: 'MainResultsRoute',
                 path: 'results/:term',
-                builder: (_, data) => _page('term ${data.params.getString('term')}'),
+                builder: (_, data) => NamedPage('term ${data.params.getString('term')}'),
               ),
             ],
           ),
@@ -75,5 +75,3 @@ void main() {
     expect(router.urlState.uri.toString(), '/main/search/results/a%20thing');
   });
 }
-
-Widget _page(String text) => Scaffold(body: Text(text));

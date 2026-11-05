@@ -2,11 +2,9 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/material_ui.dart';
 
+import 'centered_named_page.dart';
 import 'router_test_utils.dart';
-
-Widget _page(String name) => Scaffold(body: Center(child: Text(name)));
 
 void main() {
   // https://github.com/flutter/flutter/issues/101757
@@ -18,11 +16,11 @@ void main() {
   ) async {
     final router = RootStackRouter.build(
       routes: [
-        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => _page('HomeRoute')),
+        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => const CenteredNamedPage('HomeRoute')),
         NamedRouteDef(
           name: 'CompanyRoute',
           path: '/:company',
-          builder: (_, data) => _page('company ${data.params.getString('company')}'),
+          builder: (_, data) => CenteredNamedPage('company ${data.params.getString('company')}'),
         ),
       ],
     );
@@ -39,7 +37,7 @@ void main() {
         NamedRouteDef(
           name: 'CompanyRoute',
           path: '/:company',
-          builder: (_, data) => _page('company ${data.params.getString('company')}'),
+          builder: (_, data) => CenteredNamedPage('company ${data.params.getString('company')}'),
         ),
       ],
     );

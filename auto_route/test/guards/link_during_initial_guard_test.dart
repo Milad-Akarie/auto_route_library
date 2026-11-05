@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../named_page.dart';
 import '../no_op.dart';
 
 void main() {
@@ -32,7 +33,7 @@ void main() {
               resolver.next();
             }),
           ],
-          builder: (_, _) => _page('MainRoute'),
+          builder: (_, _) => const NamedPage('MainRoute'),
         ),
         NamedRouteDef(
           name: 'InfoRoute',
@@ -43,7 +44,7 @@ void main() {
               resolver.next();
             }),
           ],
-          builder: (_, data) => _page('InfoRoute ${data.queryParams.optString('id') ?? 'null'}'),
+          builder: (_, data) => NamedPage('InfoRoute ${data.queryParams.optString('id') ?? 'null'}'),
         ),
       ],
     );
@@ -86,5 +87,3 @@ void _sendPlatformLink(WidgetTester tester, String location) {
     ),
   );
 }
-
-Widget _page(String name) => Scaffold(body: Text(name));

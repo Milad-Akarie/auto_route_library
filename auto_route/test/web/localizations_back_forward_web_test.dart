@@ -7,6 +7,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../named_page.dart';
 import 'browser_history.dart';
 
 void main() {
@@ -25,8 +26,13 @@ void main() {
   testWidgets('On web, back and forward work with localizations delegates, before and after a reload', (tester) async {
     RootStackRouter buildRouter() => .build(
       routes: [
-        NamedRouteDef(name: 'HomeRoute', path: '/home_page', initial: true, builder: (_, _) => _page('HomeRoute')),
-        NamedRouteDef(name: 'LoginRoute', path: '/login_page', builder: (_, _) => _page('LoginRoute')),
+        NamedRouteDef(
+          name: 'HomeRoute',
+          path: '/home_page',
+          initial: true,
+          builder: (_, _) => const NamedPage('HomeRoute'),
+        ),
+        NamedRouteDef(name: 'LoginRoute', path: '/login_page', builder: (_, _) => const NamedPage('LoginRoute')),
         RedirectRoute(path: '*', redirectTo: '/home_page'),
       ],
     );
@@ -94,5 +100,3 @@ class _AsyncStringsDelegate extends LocalizationsDelegate<_AsyncStrings> {
   @override
   bool shouldReload(_AsyncStringsDelegate old) => false;
 }
-
-Widget _page(String name) => Scaffold(body: Text(name));

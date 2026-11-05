@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/material_ui.dart';
 
+import '../named_page.dart';
 import '../router_test_utils.dart';
 
 // flutter/flutter#121355 and #130327: in go_router, moving between two shell
@@ -14,8 +14,6 @@ import '../router_test_utils.dart';
 // Steps: navigate from '/a' to '/b'; replace a child inside a shell by its
 // sibling. Look at the tree halfway through the 400 ms transition.
 // Should: the old page is still in the tree halfway, and gone at the end.
-Widget _page(String name) => Scaffold(body: Text(name));
-
 CustomRoute _fade(String path, PageInfo page, {List<AutoRoute>? children}) => .new(
   path: path,
   page: page,
@@ -25,7 +23,7 @@ CustomRoute _fade(String path, PageInfo page, {List<AutoRoute>? children}) => .n
 );
 
 PageInfo _shell(String name) => .new(name, builder: (_) => const AutoRouter());
-PageInfo _leaf(String name) => .new(name, builder: (_) => _page(name));
+PageInfo _leaf(String name) => .new(name, builder: (_) => NamedPage(name));
 
 void main() {
   testWidgets('Navigating between two shells keeps the old page while the new one fades in', (tester) async {

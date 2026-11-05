@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'named_page.dart';
 import 'router_test_utils.dart';
 
 // flutter/flutter#115832, #115913, #116769, #117431 and #117671: go_router
@@ -15,26 +16,24 @@ import 'router_test_utils.dart';
 // maybePop and through Navigator.pop.
 // Should: the router's url is the visible page's url at every step, without
 // a trailing slash.
-Widget _page(String name) => Scaffold(body: Text(name));
-
 RootStackRouter _router() => .build(
   routes: [
-    NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => _page('HomeRoute')),
-    NamedRouteDef(name: 'ARoute', path: '/a', builder: (_, _) => _page('ARoute')),
-    NamedRouteDef(name: 'DetailsRoute', path: '/a/details', builder: (_, _) => _page('DetailsRoute')),
+    NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => const NamedPage('HomeRoute')),
+    NamedRouteDef(name: 'ARoute', path: '/a', builder: (_, _) => const NamedPage('ARoute')),
+    NamedRouteDef(name: 'DetailsRoute', path: '/a/details', builder: (_, _) => const NamedPage('DetailsRoute')),
     NamedRouteDef(
       name: 'OneRoute',
       path: '/one',
       builder: (_, _) => const AutoRouter(),
       children: [
-        NamedRouteDef(name: 'OneIndexRoute', path: '', builder: (_, _) => _page('OneIndexRoute')),
+        NamedRouteDef(name: 'OneIndexRoute', path: '', builder: (_, _) => const NamedPage('OneIndexRoute')),
         NamedRouteDef(
           name: 'TwoRoute',
           path: 'two',
           builder: (_, _) => const AutoRouter(),
           children: [
-            NamedRouteDef(name: 'TwoIndexRoute', path: '', builder: (_, _) => _page('TwoIndexRoute')),
-            NamedRouteDef(name: 'ThreeRoute', path: 'three', builder: (_, _) => _page('ThreeRoute')),
+            NamedRouteDef(name: 'TwoIndexRoute', path: '', builder: (_, _) => const NamedPage('TwoIndexRoute')),
+            NamedRouteDef(name: 'ThreeRoute', path: 'three', builder: (_, _) => const NamedPage('ThreeRoute')),
           ],
         ),
       ],

@@ -4,9 +4,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../centered_named_page.dart';
 import '../router_test_utils.dart';
-
-Widget _page(String name) => Scaffold(body: Center(child: Text(name)));
 
 void main() {
   // https://github.com/Milad-Akarie/auto_route_library/issues/1643
@@ -24,7 +23,7 @@ void main() {
       addTearDown(user.dispose);
       final router = RootStackRouter.build(
         routes: [
-          NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => _page('HomeRoute')),
+          NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => const CenteredNamedPage('HomeRoute')),
           NamedRouteDef(
             name: 'DialogRoute',
             path: '/dialog',
@@ -35,7 +34,7 @@ void main() {
                 resolver.next();
               }),
             ],
-            builder: (_, _) => _page('DialogRoute'),
+            builder: (_, _) => const CenteredNamedPage('DialogRoute'),
           ),
         ],
       );
@@ -65,7 +64,7 @@ void main() {
     var guardRuns = 0;
     final router = RootStackRouter.build(
       routes: [
-        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => _page('HomeRoute')),
+        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => const CenteredNamedPage('HomeRoute')),
         NamedRouteDef(
           name: 'DialogRoute',
           path: '/dialog',
@@ -77,7 +76,7 @@ void main() {
               resolver.next();
             }),
           ],
-          builder: (_, _) => _page('DialogRoute'),
+          builder: (_, _) => const CenteredNamedPage('DialogRoute'),
         ),
       ],
     );
@@ -122,13 +121,13 @@ void main() {
               }
             }),
           ],
-          builder: (_, _) => _page('HomeRoute'),
+          builder: (_, _) => const CenteredNamedPage('HomeRoute'),
         ),
         NamedRouteDef(
           name: 'AppGuardRoute',
           path: '/locked',
           type: RouteType.custom(opaque: false),
-          builder: (_, _) => _page('AppGuardRoute'),
+          builder: (_, _) => const CenteredNamedPage('AppGuardRoute'),
         ),
       ],
     );

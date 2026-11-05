@@ -2,24 +2,26 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/material_ui.dart';
 
+import 'centered_named_page.dart';
 import 'router_test_utils.dart';
-
-Widget _page(String name) => Scaffold(body: Center(child: Text(name)));
 
 void main() {
   RootStackRouter build(List<String> order) => .build(
     routes: [
-      NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => _page('HomeRoute')),
+      NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => const CenteredNamedPage('HomeRoute')),
       for (final name in order)
         if (name == 'create')
-          NamedRouteDef(name: 'CreateRoute', path: '/home/create', builder: (_, _) => _page('CreateRoute'))
+          NamedRouteDef(
+            name: 'CreateRoute',
+            path: '/home/create',
+            builder: (_, _) => const CenteredNamedPage('CreateRoute'),
+          )
         else
           NamedRouteDef(
             name: 'DetailRoute',
             path: '/home/:id',
-            builder: (_, data) => _page('DetailRoute ${data.params.getString('id')}'),
+            builder: (_, data) => CenteredNamedPage('DetailRoute ${data.params.getString('id')}'),
           ),
     ],
   );

@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../hero_label_page.dart';
 import '../no_op.dart';
 import '../router_test_utils.dart';
 
@@ -11,22 +12,15 @@ class _Route extends PageRouteInfo<void> {
   const _Route(super.name);
 }
 
-/// A page whose Hero holds [label], with the tag every page here shares.
-Widget _heroPage(String label) => Scaffold(
-  body: Center(
-    child: Hero(tag: 'hero', child: Text(label)),
-  ),
-);
-
 RootStackRouter _buildRouter() => .build(
   routes: [
     AutoRoute(
       path: '/',
-      page: PageInfo('ARoute', builder: (_) => _heroPage('hero A')),
+      page: PageInfo('ARoute', builder: (_) => const HeroLabelPage('hero A')),
     ),
     AutoRoute(
       path: '/b',
-      page: PageInfo('BRoute', builder: (_) => _heroPage('hero B')),
+      page: PageInfo('BRoute', builder: (_) => const HeroLabelPage('hero B')),
     ),
     // As in the reports: a page with no transition either way.
     CustomRoute(

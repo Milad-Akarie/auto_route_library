@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../named_page.dart';
 import '../router_test_utils.dart';
 
 void main() {
@@ -26,12 +27,16 @@ void main() {
           NamedRouteDef.shell(
             name: 'HomeTabRoute',
             path: 'home',
-            children: [NamedRouteDef(name: 'HomeRoute', initial: true, builder: (_, _) => _page('HomeRoute'))],
+            children: [
+              NamedRouteDef(name: 'HomeRoute', initial: true, builder: (_, _) => const NamedPage('HomeRoute')),
+            ],
           ),
           NamedRouteDef.shell(
             name: 'SecondTabRoute',
             path: 'second',
-            children: [NamedRouteDef(name: 'SecondRoute', initial: true, builder: (_, _) => _page('SecondRoute'))],
+            children: [
+              NamedRouteDef(name: 'SecondRoute', initial: true, builder: (_, _) => const NamedPage('SecondRoute')),
+            ],
           ),
         ],
       ),
@@ -75,5 +80,3 @@ void main() {
     expect(find.text('SecondRoute'), findsOneWidget);
   });
 }
-
-Widget _page(String name) => Scaffold(body: Text(name));

@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/material_ui.dart';
 
+import '../named_page.dart';
 import '../router_test_utils.dart';
 
 // flutter/flutter#152301: popping back through pushed pages, and out of a
@@ -13,23 +13,21 @@ import '../router_test_utils.dart';
 // '/end/subroute'. Push LoginRoute, PinRoute, HomeRoute and EndRoute, push
 // SubRoute in EndRoute's router, then pop five times: each pop shows the page
 // before, and the url names it.
-Widget _page(String name) => Scaffold(body: Text(name));
-
 void main() {
   testWidgets('Each pop through pushed pages and out of a shell route reports the page under it', (tester) async {
     final router = RootStackRouter.build(
       routes: [
-        NamedRouteDef(name: 'DashboardRoute', path: '/', builder: (_, _) => _page('DashboardRoute')),
-        NamedRouteDef(name: 'LoginRoute', path: '/login', builder: (_, _) => _page('LoginRoute')),
-        NamedRouteDef(name: 'PinRoute', path: '/pin', builder: (_, _) => _page('PinRoute')),
-        NamedRouteDef(name: 'HomeRoute', path: '/home', builder: (_, _) => _page('HomeRoute')),
+        NamedRouteDef(name: 'DashboardRoute', path: '/', builder: (_, _) => const NamedPage('DashboardRoute')),
+        NamedRouteDef(name: 'LoginRoute', path: '/login', builder: (_, _) => const NamedPage('LoginRoute')),
+        NamedRouteDef(name: 'PinRoute', path: '/pin', builder: (_, _) => const NamedPage('PinRoute')),
+        NamedRouteDef(name: 'HomeRoute', path: '/home', builder: (_, _) => const NamedPage('HomeRoute')),
         NamedRouteDef(
           name: 'EndRoute',
           path: '/end',
           builder: (_, _) => const AutoRouter(),
           children: [
-            NamedRouteDef(name: 'EndPageRoute', path: '', builder: (_, _) => _page('EndPageRoute')),
-            NamedRouteDef(name: 'SubRoute', path: 'subroute', builder: (_, _) => _page('SubRoute')),
+            NamedRouteDef(name: 'EndPageRoute', path: '', builder: (_, _) => const NamedPage('EndPageRoute')),
+            NamedRouteDef(name: 'SubRoute', path: 'subroute', builder: (_, _) => const NamedPage('SubRoute')),
           ],
         ),
       ],

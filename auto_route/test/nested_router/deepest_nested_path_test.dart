@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../named_page.dart';
 import '../router_test_utils.dart';
 
 void main() {
@@ -19,12 +20,12 @@ void main() {
   testWidgets('A page three levels deep stays open with its full path', (tester) async {
     final router = RootStackRouter.build(
       routes: [
-        NamedRouteDef(name: 'SplashRoute', path: '/', builder: (_, _) => _page('SplashRoute')),
+        NamedRouteDef(name: 'SplashRoute', path: '/', builder: (_, _) => const NamedPage('SplashRoute')),
         NamedRouteDef.shell(
           name: 'AuthWrapperRoute',
           path: '/home_screen',
           children: [
-            NamedRouteDef(name: 'HomeRoute', path: '', builder: (_, _) => _page('HomeRoute')),
+            NamedRouteDef(name: 'HomeRoute', path: '', builder: (_, _) => const NamedPage('HomeRoute')),
             NamedRouteDef(
               name: 'DrugDatabaseRoute',
               path: 'drug_database_screen',
@@ -40,12 +41,12 @@ void main() {
                 NamedRouteDef(
                   name: 'AddDrugTemplateRoute',
                   path: 'add_drug_template_screen',
-                  builder: (_, _) => _page('AddDrugTemplateRoute'),
+                  builder: (_, _) => const NamedPage('AddDrugTemplateRoute'),
                 ),
                 NamedRouteDef(
                   name: 'AddCriTemplateRoute',
                   path: 'add_cri_template_screen',
-                  builder: (_, _) => _page('AddCriTemplateRoute'),
+                  builder: (_, _) => const NamedPage('AddCriTemplateRoute'),
                 ),
               ],
             ),
@@ -70,5 +71,3 @@ void main() {
     expect(router.urlState.url, '/home_screen/drug_database_screen/add_cri_template_screen');
   });
 }
-
-Widget _page(String text) => Scaffold(body: Text(text));

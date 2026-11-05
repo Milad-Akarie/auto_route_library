@@ -3,8 +3,8 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../no_op.dart';
 import '../router_test_utils.dart';
+import '../titled_tab_page.dart';
 
 void main() {
   for (final kind in _TabsKind.values) {
@@ -102,33 +102,23 @@ class _TabsHostRoute extends PageRouteInfo<void> {
   );
 }
 
-Widget _tabPage(String label) => Scaffold(
-  appBar: AppBar(title: Text('$label title')),
-  body: Column(
-    children: [
-      Text('$label text'),
-      ElevatedButton(onPressed: noOp, child: Text('$label button')),
-    ],
-  ),
-);
-
 class _FirstTabRoute extends PageRouteInfo<void> {
   const _FirstTabRoute() : super(name);
 
   static const String name = '_FirstTabRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => _tabPage('First'));
+  static PageInfo page = PageInfo(name, builder: (_) => const TitledTabPage('First'));
 }
 
 class _SecondTabRoute extends PageRouteInfo<void> {
   const _SecondTabRoute() : super(name);
 
   static const String name = '_SecondTabRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => _tabPage('Second'));
+  static PageInfo page = PageInfo(name, builder: (_) => const TitledTabPage('Second'));
 }
 
 class _ThirdTabRoute extends PageRouteInfo<void> {
   const _ThirdTabRoute() : super(name);
 
   static const String name = '_ThirdTabRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => _tabPage('Third'));
+  static PageInfo page = PageInfo(name, builder: (_) => const TitledTabPage('Third'));
 }

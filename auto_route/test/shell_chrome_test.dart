@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'named_page.dart';
 import 'router_test_utils.dart';
 
 // flutter/flutter#117730, #118645, #119194, #120665, #122271, #125752 and
@@ -17,12 +18,10 @@ import 'router_test_utils.dart';
 // Should: pages in the shell's router show the bar, pages pushed on the root
 // cover it, a replace in the shell keeps it, and the route data matches the
 // visible page every time.
-Widget _page(String name) => Scaffold(body: Text(name));
-
 RootStackRouter _router() => .build(
   routes: [
-    NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => _page('HomeRoute')),
-    NamedRouteDef(name: 'SettingsRoute', path: '/settings', builder: (_, _) => _page('SettingsRoute')),
+    NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => const NamedPage('HomeRoute')),
+    NamedRouteDef(name: 'SettingsRoute', path: '/settings', builder: (_, _) => const NamedPage('SettingsRoute')),
     NamedRouteDef(
       name: 'AppRoute',
       path: '/app',
@@ -33,10 +32,10 @@ RootStackRouter _router() => .build(
         ],
       ),
       children: [
-        NamedRouteDef(name: 'FeedRoute', path: '', builder: (_, _) => _page('FeedRoute')),
-        NamedRouteDef(name: 'UsersRoute', path: 'users', builder: (_, _) => _page('UsersRoute')),
-        NamedRouteDef(name: 'UserRoute', path: 'users/:id', builder: (_, _) => _page('UserRoute')),
-        NamedRouteDef(name: 'OtherRoute', path: 'other', builder: (_, _) => _page('OtherRoute')),
+        NamedRouteDef(name: 'FeedRoute', path: '', builder: (_, _) => const NamedPage('FeedRoute')),
+        NamedRouteDef(name: 'UsersRoute', path: 'users', builder: (_, _) => const NamedPage('UsersRoute')),
+        NamedRouteDef(name: 'UserRoute', path: 'users/:id', builder: (_, _) => const NamedPage('UserRoute')),
+        NamedRouteDef(name: 'OtherRoute', path: 'other', builder: (_, _) => const NamedPage('OtherRoute')),
       ],
     ),
   ],

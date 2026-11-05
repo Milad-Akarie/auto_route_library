@@ -2,32 +2,36 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/material_ui.dart';
 
+import 'centered_named_page.dart';
 import 'router_test_utils.dart';
-
-Widget _page(String name) => Scaffold(body: Center(child: Text(name)));
 
 void main() {
   final routes = [
-    NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => _page('HomeRoute')),
+    NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => const CenteredNamedPage('HomeRoute')),
     RedirectRoute(path: '/auth/register/phone/verify', redirectTo: '/auth/register'),
     NamedRouteDef(
       name: 'RegisterRoute',
       path: '/auth/register',
-      builder: (_, _) => _page('RegisterRoute'),
+      builder: (_, _) => const CenteredNamedPage('RegisterRoute'),
       children: [
         NamedRouteDef(
           name: 'PhoneRoute',
           path: 'phone',
           builder: (_, _) => const AutoRouter(),
-          children: [NamedRouteDef(name: 'VerifyRoute', path: 'verify', builder: (_, _) => _page('VerifyRoute'))],
+          children: [
+            NamedRouteDef(
+              name: 'VerifyRoute',
+              path: 'verify',
+              builder: (_, _) => const CenteredNamedPage('VerifyRoute'),
+            ),
+          ],
         ),
       ],
     ),
     RedirectRoute(path: '/old', redirectTo: '/three/four'),
-    NamedRouteDef(name: 'ThreeRoute', path: '/three', builder: (_, _) => _page('ThreeRoute')),
-    NamedRouteDef(name: 'FourRoute', path: '/three/four', builder: (_, _) => _page('FourRoute')),
+    NamedRouteDef(name: 'ThreeRoute', path: '/three', builder: (_, _) => const CenteredNamedPage('ThreeRoute')),
+    NamedRouteDef(name: 'FourRoute', path: '/three/four', builder: (_, _) => const CenteredNamedPage('FourRoute')),
   ];
 
   // https://github.com/flutter/flutter/issues/99097
@@ -83,10 +87,10 @@ void main() {
   testWidgets('Chained redirects end on the last target, once (flutter/flutter#101366)', (tester) async {
     final router = RootStackRouter.build(
       routes: [
-        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => _page('HomeRoute')),
+        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => const CenteredNamedPage('HomeRoute')),
         RedirectRoute(path: '/a', redirectTo: '/b'),
         RedirectRoute(path: '/b', redirectTo: '/target'),
-        NamedRouteDef(name: 'TargetRoute', path: '/target', builder: (_, _) => _page('TargetRoute')),
+        NamedRouteDef(name: 'TargetRoute', path: '/target', builder: (_, _) => const CenteredNamedPage('TargetRoute')),
       ],
     );
     await pumpRouterApp(tester, router);

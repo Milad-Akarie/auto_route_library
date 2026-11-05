@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../named_page.dart';
 import '../router_test_utils.dart';
 
 void main() {
@@ -21,7 +22,7 @@ void main() {
     void pass(NavigationResolver resolver, StackRouter _) => resolver.next();
     final router = RootStackRouter.build(
       routes: [
-        NamedRouteDef(name: 'LoginRoute', path: '/', builder: (_, _) => _page('LoginRoute')),
+        NamedRouteDef(name: 'LoginRoute', path: '/', builder: (_, _) => const NamedPage('LoginRoute')),
         NamedRouteDef(
           name: 'HomeRoute',
           path: '/home',
@@ -45,8 +46,8 @@ void main() {
               ),
               children: [
                 RedirectRoute(path: '', redirectTo: 'tab1'),
-                NamedRouteDef(name: 'Tab1Route', path: 'tab1', builder: (_, _) => _page('Tab1Route')),
-                NamedRouteDef(name: 'Tab2Route', path: 'tab2', builder: (_, _) => _page('Tab2Route')),
+                NamedRouteDef(name: 'Tab1Route', path: 'tab1', builder: (_, _) => const NamedPage('Tab1Route')),
+                NamedRouteDef(name: 'Tab2Route', path: 'tab2', builder: (_, _) => const NamedPage('Tab2Route')),
               ],
             ),
           ],
@@ -56,7 +57,7 @@ void main() {
           path: '/home/library/:libraryType/meetings/:meetingId',
           usesPathAsKey: true,
           guards: [AutoRouteGuard.simple(pass)],
-          builder: (_, data) => _page('meeting ${data.params.getString('meetingId')}'),
+          builder: (_, data) => NamedPage('meeting ${data.params.getString('meetingId')}'),
         ),
       ],
     );
@@ -78,5 +79,3 @@ void main() {
     }
   }, skip: kIsWeb); // back() on web moves the browser's history, which this runner keeps in memory.
 }
-
-Widget _page(String text) => Scaffold(body: Text(text));

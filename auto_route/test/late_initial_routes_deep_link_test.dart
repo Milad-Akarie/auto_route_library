@@ -1,10 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/material_ui.dart';
 
+import 'centered_named_page.dart';
 import 'router_test_utils.dart';
-
-Widget _page(String name) => Scaffold(body: Center(child: Text(name)));
 
 void main() {
   // https://github.com/flutter/flutter/issues/106204
@@ -14,8 +12,13 @@ void main() {
   testWidgets('A deep link at start opens its page, not the initial route (flutter/flutter#106204)', (tester) async {
     final router = RootStackRouter.build(
       routes: [
-        NamedRouteDef(name: 'LoginRoute', path: '/', initial: true, builder: (_, _) => _page('LoginRoute')),
-        NamedRouteDef(name: 'SecondRoute', path: '/second', builder: (_, _) => _page('SecondRoute')),
+        NamedRouteDef(
+          name: 'LoginRoute',
+          path: '/',
+          initial: true,
+          builder: (_, _) => const CenteredNamedPage('LoginRoute'),
+        ),
+        NamedRouteDef(name: 'SecondRoute', path: '/second', builder: (_, _) => const CenteredNamedPage('SecondRoute')),
       ],
     );
     await pumpRouterApp(tester, router, initialLink: '/second');

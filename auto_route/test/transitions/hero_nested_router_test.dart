@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../hero_box_page.dart';
 import '../router_test_utils.dart';
 
 void main() {
@@ -178,30 +179,18 @@ void _expectHeroInFlight(WidgetTester tester) {
   expect(position.dx, lessThan(size.width / 2), reason: 'the Hero should still be on its way right');
 }
 
-Widget _heroPage(String name, Alignment alignment) {
-  return Scaffold(
-    body: Align(
-      alignment: alignment,
-      child: Hero(
-        tag: 'box',
-        child: SizedBox(width: 50, height: 50, child: Text(name)),
-      ),
-    ),
-  );
-}
-
 class _FromRoute extends PageRouteInfo<void> {
   const _FromRoute() : super(name);
 
   static const String name = 'FromRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => _heroPage('from', .bottomLeft));
+  static PageInfo page = PageInfo(name, builder: (_) => const HeroBoxPage('from', .bottomLeft));
 }
 
 class _ToRoute extends PageRouteInfo<void> {
   const _ToRoute() : super(name);
 
   static const String name = 'ToRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => _heroPage('to', .topRight));
+  static PageInfo page = PageInfo(name, builder: (_) => const HeroBoxPage('to', .topRight));
 }
 
 class _ShellRoute extends PageRouteInfo<void> {

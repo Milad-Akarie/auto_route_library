@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/material_ui.dart';
 
+import 'named_page.dart';
 import 'router_test_utils.dart';
 import 'universal_link_test.dart' show sendPlatformLink;
 
@@ -17,11 +17,11 @@ void main() {
   testWidgets('A link to the open page with new query params updates the page', (tester) async {
     final router = RootStackRouter.build(
       routes: [
-        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => _page('HomeRoute')),
+        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => const NamedPage('HomeRoute')),
         NamedRouteDef(
           name: 'LoginRoute',
           path: '/login',
-          builder: (_, data) => _page('otp ${data.queryParams.optString('otp') ?? 'null'}'),
+          builder: (_, data) => NamedPage('otp ${data.queryParams.optString('otp') ?? 'null'}'),
         ),
       ],
     );
@@ -41,5 +41,3 @@ void main() {
     expect(router.stack.map((p) => p.name), ['HomeRoute', 'LoginRoute']);
   });
 }
-
-Widget _page(String text) => Scaffold(body: Text(text));

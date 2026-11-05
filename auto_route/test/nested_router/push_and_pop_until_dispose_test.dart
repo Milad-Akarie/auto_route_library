@@ -81,9 +81,7 @@ PageInfo _tracked(String name) => .new(name, builder: (_) => _Tracked(name));
 
 PageRouteInfo _tracked2(String name) => .new(name);
 
-PageInfo _shellPage = const PageInfo(_kShellName, builder: _buildShell);
-
-Widget _buildShell(RouteData<dynamic> _) => const AutoRouter();
+PageInfo _shellPage = PageInfo(_kShellName, builder: (_) => const AutoRouter());
 
 class _ShellRoute extends PageRouteInfo<void> {
   const _ShellRoute({List<PageRouteInfo>? children}) : super(_kShellName, initialChildren: children);

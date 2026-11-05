@@ -2,11 +2,9 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/material_ui.dart';
 
+import '../centered_named_page.dart';
 import '../router_test_utils.dart';
-
-Widget _page(String name) => Scaffold(body: Center(child: Text(name)));
 
 void main() {
   // https://github.com/flutter/flutter/issues/100682
@@ -20,17 +18,25 @@ void main() {
   ) async {
     final router = RootStackRouter.build(
       routes: [
-        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => _page('HomeRoute')),
+        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => const CenteredNamedPage('HomeRoute')),
         NamedRouteDef(
           name: 'SettingsRoute',
           path: '/settings',
           builder: (_, _) => const AutoRouter(),
           children: [
-            NamedRouteDef(name: 'SettingsHomeRoute', path: '', builder: (_, _) => _page('SettingsHomeRoute')),
-            NamedRouteDef(name: 'ProfileRoute', path: 'profile', builder: (_, _) => _page('ProfileRoute')),
+            NamedRouteDef(
+              name: 'SettingsHomeRoute',
+              path: '',
+              builder: (_, _) => const CenteredNamedPage('SettingsHomeRoute'),
+            ),
+            NamedRouteDef(
+              name: 'ProfileRoute',
+              path: 'profile',
+              builder: (_, _) => const CenteredNamedPage('ProfileRoute'),
+            ),
           ],
         ),
-        NamedRouteDef(name: 'SignInRoute', path: '/sign-in', builder: (_, _) => _page('SignInRoute')),
+        NamedRouteDef(name: 'SignInRoute', path: '/sign-in', builder: (_, _) => const CenteredNamedPage('SignInRoute')),
       ],
     );
     await pumpRouterApp(tester, router, initialLink: '/settings/profile');

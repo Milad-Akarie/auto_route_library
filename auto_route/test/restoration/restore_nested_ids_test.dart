@@ -4,6 +4,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../named_page.dart';
+
 void main() {
   // https://github.com/Milad-Akarie/auto_route_library/issues/963
   // Reported: with restorationScopeId on MaterialApp.router, navigating to a
@@ -15,7 +17,7 @@ void main() {
   testWidgets('Navigating nested routes with state restoration on claims no restoration id twice', (tester) async {
     final router = RootStackRouter.build(
       routes: [
-        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => _page('HomeRoute')),
+        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => const NamedPage('HomeRoute')),
         NamedRouteDef(
           name: 'TabsRoute',
           path: '/tabs',
@@ -25,14 +27,14 @@ void main() {
               name: 'Tab1Route',
               path: 'tab1',
               children: [
-                NamedRouteDef(name: 'ARoute', path: '', builder: (_, _) => _page('ARoute')),
-                NamedRouteDef(name: 'BRoute', path: 'b', builder: (_, _) => _page('BRoute')),
+                NamedRouteDef(name: 'ARoute', path: '', builder: (_, _) => const NamedPage('ARoute')),
+                NamedRouteDef(name: 'BRoute', path: 'b', builder: (_, _) => const NamedPage('BRoute')),
               ],
             ),
             NamedRouteDef.shell(
               name: 'Tab2Route',
               path: 'tab2',
-              children: [NamedRouteDef(name: 'CRoute', path: '', builder: (_, _) => _page('CRoute'))],
+              children: [NamedRouteDef(name: 'CRoute', path: '', builder: (_, _) => const NamedPage('CRoute'))],
             ),
           ],
         ),
@@ -40,8 +42,8 @@ void main() {
           name: 'ShellRoute',
           path: '/shell',
           children: [
-            NamedRouteDef(name: 'S1Route', path: '', builder: (_, _) => _page('S1Route')),
-            NamedRouteDef(name: 'S2Route', path: 's2', builder: (_, _) => _page('S2Route')),
+            NamedRouteDef(name: 'S1Route', path: '', builder: (_, _) => const NamedPage('S1Route')),
+            NamedRouteDef(name: 'S2Route', path: 's2', builder: (_, _) => const NamedPage('S2Route')),
           ],
         ),
       ],
@@ -63,5 +65,3 @@ void main() {
     expect(find.text('BRoute'), findsOneWidget);
   });
 }
-
-Widget _page(String name) => Scaffold(body: Text(name));

@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/material_ui.dart';
 
+import '../named_page.dart';
 import '../router_test_utils.dart';
 
 void main() {
@@ -15,14 +15,14 @@ void main() {
   // Should: the first page stays on screen.
   RootStackRouter buildRouter() => .build(
     routes: [
-      NamedRouteDef(name: 'Page1Route', path: '/', builder: (_, _) => _page('Page1Route')),
-      NamedRouteDef(name: 'Page2Route', path: '/page2', builder: (_, _) => _page('Page2Route')),
+      NamedRouteDef(name: 'Page1Route', path: '/', builder: (_, _) => const NamedPage('Page1Route')),
+      NamedRouteDef(name: 'Page2Route', path: '/page2', builder: (_, _) => const NamedPage('Page2Route')),
       NamedRouteDef.shell(
         name: 'ShellRoute',
         path: '/shell',
         children: [
-          NamedRouteDef(name: 'Inner1Route', path: '', builder: (_, _) => _page('Inner1Route')),
-          NamedRouteDef(name: 'Inner2Route', path: 'inner2', builder: (_, _) => _page('Inner2Route')),
+          NamedRouteDef(name: 'Inner1Route', path: '', builder: (_, _) => const NamedPage('Inner1Route')),
+          NamedRouteDef(name: 'Inner2Route', path: 'inner2', builder: (_, _) => const NamedPage('Inner2Route')),
         ],
       ),
     ],
@@ -86,5 +86,3 @@ void main() {
     expect(find.text('Page2Route'), findsOneWidget);
   });
 }
-
-Widget _page(String name) => Scaffold(body: Text(name));

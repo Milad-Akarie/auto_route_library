@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../back_test_utils.dart';
+import '../blocked_pop_scope.dart';
 import '../router_test_utils.dart';
 
 // Guard for https://github.com/Milad-Akarie/auto_route_library/issues/2023,
@@ -88,19 +89,13 @@ void main() {
 var _popAttempts = 0;
 var _scopeAroundTabs = false;
 
-Widget _popScope(Widget child) => PopScope(
-  canPop: false,
-  onPopInvokedWithResult: (didPop, _) {
-    if (!didPop) _popAttempts++;
-  },
-  child: child,
-);
+void _countBlockedPop() => _popAttempts++;
 
 final _tabsScreen = PageInfo(
   'TabsScreenRoute',
   builder: (_) {
     const tabs = AutoTabsRouter(routes: [_Route('TabA'), _Route('TabB')]);
-    return _scopeAroundTabs ? _popScope(tabs) : tabs;
+    return _scopeAroundTabs ? const BlockedPopScope(onBlockedPop: _countBlockedPop, child: tabs) : tabs;
   },
 );
 
@@ -108,7 +103,10 @@ final _stackTab = PageInfo('TabB', builder: (_) => const AutoRouter());
 
 PageInfo _tab(String name) => .new(name, builder: (_) => Text(name));
 
-PageInfo _guarded(String name) => .new(name, builder: (_) => _popScope(Text(name)));
+PageInfo _guarded(String name) => .new(
+  name,
+  builder: (_) => BlockedPopScope(onBlockedPop: _countBlockedPop, child: Text(name)),
+);
 
 class _Route extends PageRouteInfo<void> {
   const _Route(super.name);
