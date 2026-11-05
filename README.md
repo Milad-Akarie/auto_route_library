@@ -839,6 +839,19 @@ AutoRoute(path: '/dashboard', page: DashboardRoute.page, children: [
 
 Tabs load lazily: a tab's page is built the first time the tab shows. Pass `lazyLoad: false` to `AutoTabsRouter`, `AutoTabsRouter.pageView`, `AutoTabsRouter.tabBar` or `AutoTabsScaffold` to build every tab's page with the tabs, so its state and inner router are there before the first visit.
 
+### Starting a tab fresh each time it shows
+
+A tab keeps its page, and the stack inside it, while another tab shows. Give a tab's route `maintainState: false` to drop it instead: the tab's page is disposed when another tab shows and built anew, back at its first page, when the tab shows again. The other tabs keep theirs. It works the same with `AutoTabsRouter`, `.pageView`, `.tabBar` and `AutoTabsScaffold`.
+
+```dart
+AutoRoute(path: '/dashboard', page: DashboardRoute.page, children: [
+  AutoRoute(path: 'users', page: UsersRoute.page),
+  AutoRoute(path: 'live', page: LiveFeedRoute.page, maintainState: false),
+]),
+```
+
+This suits a tab that holds something live, such as a socket opened in `initState` and closed in `dispose`.
+
 ### Back between tabs
 
 By default back leaves the tabs from whichever tab is showing. Every `AutoTabsRouter` constructor and `AutoTabsScaffold` take two options that keep it inside them:
