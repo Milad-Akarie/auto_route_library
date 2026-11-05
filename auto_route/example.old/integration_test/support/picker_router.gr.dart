@@ -79,11 +79,11 @@ class PickerRouteArgs<T> {
     if (identical(this, other)) return true;
     if (other is! PickerRouteArgs<T>) return false;
     return key == other.key &&
-        const ListEquality<dynamic>().equals(items, other.items) &&
+        const ListEquality<Object?>().equals(items, other.items) &&
         title == other.title;
   }
 
   @override
   int get hashCode =>
-      key.hashCode ^ const ListEquality<dynamic>().hash(items) ^ title.hashCode;
+      key.hashCode ^ const ListEquality<Object?>().hash(items) ^ title.hashCode;
 }

@@ -62,11 +62,11 @@ List<Class> buildRouteInfoAndArgs(
       .toList();
   final hasArgs = nonInheritedParameters.isNotEmpty || r.isGeneric;
   // A constant can't name a type parameter, so a generic route's
-  // `const ListEquality<dynamic>()` and the like compare items as dynamic.
+  // `const ListEquality<Object?>()` and the like compare items as Object?.
   List<ResolvedType> equalityTypes(ParamConfig p) => r.isGeneric
       ? [
           for (final _ in p.type.typeArguments)
-            const ResolvedType(name: 'dynamic'),
+            const ResolvedType(name: 'Object', isNullable: true),
         ]
       : p.type.typeArguments;
   final pageInfoRefer = refer('PageInfo', kAutoRouteImport);

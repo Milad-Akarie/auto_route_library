@@ -1,3 +1,7 @@
+## Unreleased
+- **CHANGE**: a generic route's args compare their items with `const ListEquality<Object?>()` and its kin, no longer
+  `ListEquality<dynamic>()`; the comparison is the same. Regenerate routers to pick it up.
+
 ## 11.3.0
 - **BREAKING CHANGE**: `throwIf` from `build_utils.dart` takes the message first and its condition by name:
   `throwIf(message, shouldThrow: condition)`.

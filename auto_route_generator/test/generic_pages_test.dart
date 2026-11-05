@@ -62,10 +62,10 @@ class PickerPage<T> extends StatelessWidget {
       expect(source, contains('finalT?selected;'));
       expect(source, contains('PickerPage<T>buildPage()'));
       expect(source, contains('returnargs.buildPage();'));
-      // A constant can't name T, so the items are compared as dynamic.
+      // A constant can't name T, so the items are compared as Object?.
       expect(
         source,
-        contains('constListEquality<dynamic>().equals(items,other.items)'),
+        contains('constListEquality<Object?>().equals(items,other.items)'),
       );
     });
 
