@@ -614,7 +614,7 @@ abstract class RoutingController with ChangeNotifier {
   RouteMatcher get matcher;
 
   /// The current pages stack of this controller
-  List<AutoRoutePage<dynamic>> get stack;
+  List<AutoRoutePage<Object?>> get stack;
 
   RoutingController? get _parent;
 
@@ -762,7 +762,7 @@ abstract class RoutingController with ChangeNotifier {
   RouteCollection get routeCollection;
 
   /// The top-most visible page
-  AutoRoutePage<dynamic>? get topPage => _topMostRouter()._pages.lastOrNull;
+  AutoRoutePage<Object?>? get topPage => _topMostRouter()._pages.lastOrNull;
 
   /// Whether this controller has rendered pages
   bool get hasEntries => _pages.isNotEmpty;
@@ -1241,7 +1241,7 @@ class TabsRouter extends RoutingController {
   }
 
   @override
-  List<AutoRoutePage<dynamic>> get stack => .unmodifiable(_pages);
+  List<AutoRoutePage<Object?>> get stack => .unmodifiable(_pages);
 
   AutoRoutePage<Object?>? get _activePage {
     return _pages.isEmpty ? null : _pages[_activeIndex];
@@ -2202,7 +2202,7 @@ abstract class StackRouter extends RoutingController {
   }
 
   @override
-  List<AutoRoutePage<dynamic>> get stack => .unmodifiable(_pages);
+  List<AutoRoutePage<Object?>> get stack => .unmodifiable(_pages);
 
   /// Adds the corresponding page to given [route] to the [_pages] stack
   ///

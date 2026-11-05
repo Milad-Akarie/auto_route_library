@@ -1,7 +1,7 @@
 part of 'routing_controller.dart';
 
 /// Signature for a function uses `pagesMap` to build an [AutoRoutePage]
-typedef PageBuilder = AutoRoutePage<dynamic> Function(RouteData<Object?> data);
+typedef PageBuilder = AutoRoutePage<Object?> Function(RouteData<Object?> data);
 
 const ValueKey<String> _kRootKey = ValueKey('%__Root__%');
 

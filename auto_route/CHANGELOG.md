@@ -18,6 +18,9 @@
   `pagelessRoutesOver` and observer methods. An override that names `Route<dynamic>` still compiles, as the two types
   are interchangeable there; a route read from them gives `Object?` where it gave `dynamic`, so cast what it returns,
   `await route.popped as bool?`.
+- **BREAKING CHANGE**: every `AutoRoutePage<dynamic>` in the API is `AutoRoutePage<Object?>`: `RoutingController.stack`
+  and `topPage`, `KeepAliveTab.page` and the `PageBuilder` callback. Code that declares one of these types names
+  `AutoRoutePage<Object?>`, and a value read through it is `Object?`, read with a cast.
 
 ## 12.3.0
 - **BREAKING CHANGE**: `Parameters.optBool` and `getBool` take their default by name:
