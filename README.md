@@ -1836,6 +1836,20 @@ CustomRoute(
 )
 ```
 
+#### Keeping the iOS back swipe
+
+A page with a custom transition has no back swipe from the screen's left edge, as a `CupertinoRoute` has. Set `enableCupertinoBackGesture` to add it on iOS and macOS. The page follows the finger through its own transition, run backwards, and is popped when let go past the middle:
+
+```dart
+CustomRoute(
+  page: DetailsRoute.page,
+  transitionsBuilder: TransitionsBuilders.fadeIn,
+  enableCupertinoBackGesture: true,
+)
+```
+
+It does nothing on other platforms, for a `fullscreenDialog`, or for a route built by a `customRouteBuilder`. On Android, the system back gesture works with any route; see [Android Predictive Back](#android-predictive-back).
+
 ## Custom Route Builder
 
 You can use your own custom route by passing a `CustomRouteBuilder` function to `CustomRoute' and implement the builder function the same way we did with the TransitionsBuilder function, the most important part here is passing the page argument to our custom route.

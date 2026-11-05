@@ -17,6 +17,7 @@ import 'current_url_test.dart' as current_url;
 import 'custom_route_barrier_dismissible_test.dart' as custom_route_barrier_dismissible;
 import 'custom_route_current_result_test.dart' as custom_route_current_result;
 import 'custom_route_query_params_test.dart' as custom_route_query_params;
+import 'custom_route_swipe_back_test.dart' as custom_route_swipe_back;
 import 'custom_route_transition_test.dart' as custom_route_transition;
 import 'custom_route_underneath_test.dart' as custom_route_underneath;
 import 'declarative_hero_controller_test.dart' as declarative_hero_controller;
@@ -205,6 +206,7 @@ void main() {
   group('custom route barrier dismissible', custom_route_barrier_dismissible.main);
   group('custom route current result', custom_route_current_result.main);
   group('custom route query params', custom_route_query_params.main);
+  group('custom route swipe back', custom_route_swipe_back.main);
   group('custom route transition', custom_route_transition.main);
   group('custom route underneath', custom_route_underneath.main);
   group('declarative hero controller', declarative_hero_controller.main);

@@ -18,10 +18,12 @@ const pageKindNames = [
 /// type above it. Each page shows its route name.
 ///
 /// 'CustomKindRoute' slides in with [customTransitionsBuilder], over
-/// [customDuration]. 'BuiltKindRoute' is built by a `customRouteBuilder`.
+/// [customDuration], with the iOS back swipe when [customCupertinoBackGesture]
+/// is true. 'BuiltKindRoute' is built by a `customRouteBuilder`.
 RootStackRouter pageKindsRouter({
   RouteTransitionsBuilder customTransitionsBuilder = TransitionsBuilders.slideLeft,
   Duration customDuration = const Duration(milliseconds: 300),
+  bool customCupertinoBackGesture = false,
 }) {
   return RootStackRouter.build(
     routes: [
@@ -35,6 +37,7 @@ RootStackRouter pageKindsRouter({
         transitionsBuilder: customTransitionsBuilder,
         duration: customDuration,
         reverseDuration: customDuration,
+        enableCupertinoBackGesture: customCupertinoBackGesture,
       ),
       CustomRoute(
         path: '/built',

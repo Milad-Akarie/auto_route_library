@@ -430,6 +430,7 @@ class CustomRoute extends AutoRoute {
     Color? barrierColor,
     bool enablePredictiveBackGesture = false,
     RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder,
+    bool enableCupertinoBackGesture = false,
   }) : super._(
          type: RouteType.custom(
            transitionsBuilder: transitionsBuilder,
@@ -442,6 +443,7 @@ class CustomRoute extends AutoRoute {
            barrierColor: barrierColor,
            enablePredictiveBackGesture: enablePredictiveBackGesture,
            predictiveBackPageTransitionsBuilder: predictiveBackPageTransitionsBuilder,
+           enableCupertinoBackGesture: enableCupertinoBackGesture,
          ),
        );
 }

@@ -385,7 +385,20 @@ mixin _CustomPageRouteTransitionMixin<T> on _PageRoute<T> {
     Widget child,
   ) {
     final transitionsBuilder = routeType.transitionsBuilder ?? _defaultTransitionsBuilder;
-    return transitionsBuilder(context, animation, secondaryAnimation, child);
+    final transitions = transitionsBuilder(context, animation, secondaryAnimation, child);
+    final platform = flutterMaterialThemeOf(context)?.platform ?? Theme.of(context).platform;
+    if (!routeType.enableCupertinoBackGesture || (platform != .iOS && platform != .macOS)) return transitions;
+    // Flutter's iOS back gesture comes only with its slide transition, which
+    // moves nothing when its animations stand still. The gesture drives this
+    // route's own animation, so the page follows the finger through its
+    // custom transition.
+    return CupertinoRouteTransitionMixin.buildPageTransitions<T>(
+      this,
+      context,
+      kAlwaysCompleteAnimation,
+      kAlwaysDismissedAnimation,
+      transitions,
+    );
   }
 }
 

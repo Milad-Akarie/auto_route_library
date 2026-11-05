@@ -37,6 +37,7 @@ abstract class RouteType {
     Color? barrierColor,
     bool enablePredictiveBackGesture,
     RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder,
+    bool enableCupertinoBackGesture,
   }) = CustomRouteType;
   const RouteType._({this.opaque = true});
 
@@ -103,6 +104,7 @@ class CustomRouteType extends RouteType with PredictiveBackGestureMixin {
     this.barrierDismissible = false,
     this.enablePredictiveBackGesture = false,
     this.predictiveBackPageTransitionsBuilder,
+    this.enableCupertinoBackGesture = false,
     this.duration,
     this.reverseDuration,
   }) : super._();
@@ -174,6 +176,19 @@ class CustomRouteType extends RouteType with PredictiveBackGestureMixin {
   @override
   final RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder;
 
+  /// Whether the user can swipe from the screen's leading edge to go back on
+  /// iOS and macOS, as on a [CupertinoRouteType] page.
+  ///
+  /// The page follows the finger through its own [transitionsBuilder], run
+  /// backwards, and is popped when let go past the middle or flung. Off iOS
+  /// and macOS, by the platform of the app's [Theme], this does nothing.
+  /// Neither does it for a [PageRoute.fullscreenDialog], which iOS closes by
+  /// its own button, or for a route built by [customRouteBuilder].
+  ///
+  /// Defaults to false: a custom transition has no back swipe unless it opts
+  /// in.
+  final bool enableCupertinoBackGesture;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -186,7 +201,8 @@ class CustomRouteType extends RouteType with PredictiveBackGestureMixin {
           reverseDuration == other.reverseDuration &&
           barrierDismissible == other.barrierDismissible &&
           barrierLabel == other.barrierLabel &&
-          barrierColor == other.barrierColor;
+          barrierColor == other.barrierColor &&
+          enableCupertinoBackGesture == other.enableCupertinoBackGesture;
 
   @override
   int get hashCode =>
@@ -197,7 +213,8 @@ class CustomRouteType extends RouteType with PredictiveBackGestureMixin {
       reverseDuration.hashCode ^
       barrierDismissible.hashCode ^
       barrierLabel.hashCode ^
-      barrierColor.hashCode;
+      barrierColor.hashCode ^
+      enableCupertinoBackGesture.hashCode;
 }
 
 /// A mixin that allows you to configure predictive back gesture for a route
