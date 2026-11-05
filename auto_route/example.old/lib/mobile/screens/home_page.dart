@@ -112,10 +112,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   title: Text(context.topRoute.title(context)),
                 ),
                 body: child,
-                bottomNavigationBar: buildBottomNav(
-                  context,
-                  context.tabsRouter,
-                ),
+                bottomNavigationBar: buildBottomNav(context.tabsRouter),
               );
             },
           );
@@ -125,9 +122,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   ///
   /// Returns an empty box when the active route sets `hideBottomNav` in its
   /// meta.
-  // The signature of AutoTabsScaffold's bottomNavigationBuilder.
-  // ignore: avoid-unused-parameters
-  Widget buildBottomNav(BuildContext context, TabsRouter tabsRouter) {
+  Widget buildBottomNav(TabsRouter tabsRouter) {
     final shouldHideBottomNav =
         tabsRouter.topMatch.meta['hideBottomNav'] == true;
     return shouldHideBottomNav

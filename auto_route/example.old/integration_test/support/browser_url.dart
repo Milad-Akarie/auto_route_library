@@ -1,5 +1,5 @@
-/// The url in the browser's address bar, or null off the web.
-String? browserUrl() => null;
+/// The url in the browser's address bar, or empty off the web.
+String browserUrl() => '';
 
 /// The serial number the engine gives the browser's current history entry, or
 /// null off the web.

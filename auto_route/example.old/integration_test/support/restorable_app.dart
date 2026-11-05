@@ -19,10 +19,12 @@ class RestorableRouterApp extends StatefulWidget {
 }
 
 class _RestorableRouterAppState extends State<RestorableRouterApp> {
-  // Shared across a restart, so the restored app finds the same router.
-  // ignore: dispose-fields
-  late final RootStackRouter router = RestorableRouterApp.router = widget
-      .onBuildRouter();
+  @override
+  void initState() {
+    super.initState();
+    // Shared across a restart, so the restored app finds the same router.
+    RestorableRouterApp.router = widget.onBuildRouter();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,7 @@ class _RestorableRouterAppState extends State<RestorableRouterApp> {
       restorationScopeId: 'app',
       // The app opens at '/': on web the browser's url would otherwise carry
       // over from the previous test.
-      routerConfig: router.config(
+      routerConfig: RestorableRouterApp.router.config(
         deepLinkBuilder: (link) => link.initial ? DeepLink.defaultPath : link,
       ),
     );

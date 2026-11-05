@@ -33,20 +33,18 @@ void main() {
           ],
         );
         addTearDown(router.dispose);
-        Object? error;
-        try {
-          await tester.pumpWidget(
-            MaterialApp.router(routerConfig: router.config()),
-          );
-          // The router reports a route list it can't use with a FlutterError.
-          // ignore: avoid_catching_errors
-        } on FlutterError catch (e) {
-          error = e;
-        }
-        expect(
-          error?.toString(),
-          'CartRoute and OtherCartRoute have the same path, /shop/cart, so a link to it opens only CartRoute. '
-          'Give one of them another path.',
+        // The router reports a route list it can't use with a FlutterError.
+        await expectLater(
+          tester.pumpWidget(MaterialApp.router(routerConfig: router.config())),
+          throwsA(
+            isA<FlutterError>().having(
+              (error) => error.toString(),
+              'message',
+              'CartRoute and OtherCartRoute have the same path, /shop/cart, '
+                  'so a link to it opens only CartRoute. '
+                  'Give one of them another path.',
+            ),
+          ),
         );
       },
     );

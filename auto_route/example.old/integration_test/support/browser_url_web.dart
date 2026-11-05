@@ -86,8 +86,7 @@ extension type const _Location(JSObject _) implements JSObject {
 ///
 /// Flutter web keeps the url after '#' by default, so that part wins when set.
 // Matches the stub in browser_url.dart, which has no browser to read.
-// ignore: avoid-unnecessary-nullable-return-type
-String? browserUrl() {
+String browserUrl() {
   final hash = _location.hash;
   if (hash.length > 1) return hash.substring(1);
   return '${_location.pathname}${_location.search}';
