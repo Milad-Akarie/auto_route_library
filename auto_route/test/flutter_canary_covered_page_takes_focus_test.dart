@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'no_op.dart';
 import 'router_test_utils.dart';
 
 // Canary for Flutter bug https://github.com/flutter/flutter/issues/99573.
@@ -90,8 +91,8 @@ void main() {
     await pumpRouterApp(tester, router);
     showDialog<void>(
       context: router.navigatorKey.currentContext!,
-      builder: (_) => AlertDialog(
-        actions: [TextButton(autofocus: true, onPressed: () {}, child: const Text('OK'))],
+      builder: (_) => const AlertDialog(
+        actions: [TextButton(autofocus: true, onPressed: noOp, child: Text('OK'))],
       ),
     );
     await tester.pumpAndSettle();

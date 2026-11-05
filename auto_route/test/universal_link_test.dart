@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'main_router.dart';
+import 'no_op.dart';
 import 'router_test_utils.dart';
 
 // Sends a link the way the engine does when the platform opens one, and
@@ -12,7 +13,7 @@ Future<bool?> sendPlatformLink(WidgetTester tester, String location) async {
   final reply = await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
     SystemChannels.navigation.name,
     codec.encodeMethodCall(MethodCall('pushRouteInformation', {'location': location, 'state': null})),
-    (_) {},
+    ignoreArgument,
   );
   await tester.pumpAndSettle();
   return reply == null ? null : codec.decodeEnvelope(reply) as bool?;

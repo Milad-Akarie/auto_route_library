@@ -5,6 +5,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'no_op.dart';
 import 'router_test_utils.dart';
 
 // Canary for Flutter bug https://github.com/flutter/flutter/issues/129892.
@@ -28,9 +29,9 @@ void main() {
           path: '/',
           page: PageInfo(
             'HomeRoute',
-            builder: (_) => Scaffold(
-              body: const Text('HomeRoute'),
-              floatingActionButton: FloatingActionButton(onPressed: () {}, child: const Text('home button')),
+            builder: (_) => const Scaffold(
+              body: Text('HomeRoute'),
+              floatingActionButton: FloatingActionButton(onPressed: noOp, child: Text('home button')),
             ),
           ),
         ),
@@ -85,7 +86,7 @@ class _SecondPageState extends State<_SecondPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: OutlinedButton(onPressed: () => unawaited(_save()), child: const Text('save')),
-      floatingActionButton: _saving ? null : FloatingActionButton(onPressed: () {}, child: const Text('second button')),
+      floatingActionButton: _saving ? null : const FloatingActionButton(onPressed: noOp, child: Text('second button')),
     );
   }
 }

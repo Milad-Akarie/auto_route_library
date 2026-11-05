@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../no_op.dart';
 import '../router_test_utils.dart';
 
 // flutter/flutter#107804: a button in an open drawer navigates back to the
@@ -60,7 +61,7 @@ void main() {
   }
 }
 
-void Function(StackRouter router) _goHome = (_) {};
+void Function(StackRouter router) _goHome = ignoreArgument;
 
 PageInfo _page(String name) => .new(
   name,

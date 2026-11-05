@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../no_op.dart';
 import '../router_test_utils.dart';
 
 class _Route extends PageRouteInfo<void> {
@@ -73,7 +74,7 @@ void main() {
   ) async {
     Widget fabPage(String label) => Scaffold(
       body: Text(label),
-      floatingActionButton: FloatingActionButton(onPressed: () {}, child: Text('$label fab')),
+      floatingActionButton: FloatingActionButton(onPressed: noOp, child: Text('$label fab')),
     );
     final router = RootStackRouter.build(
       routes: [

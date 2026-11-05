@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:leak_tracker/leak_tracker.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'no_op.dart';
+
 // Canary for Flutter bug https://github.com/flutter/flutter/issues/164934.
 // Setup, without auto_route: a Navigator built from a pages list, as
 // auto_route's routers build theirs.
@@ -31,7 +33,7 @@ void main() {
         home: StatefulBuilder(
           builder: (context, setState) {
             setPages = setState;
-            return Navigator(observers: [_PushObserver(routes)], pages: pages, onDidRemovePage: (_) {});
+            return Navigator(observers: [_PushObserver(routes)], pages: pages, onDidRemovePage: ignoreArgument);
           },
         ),
       ),

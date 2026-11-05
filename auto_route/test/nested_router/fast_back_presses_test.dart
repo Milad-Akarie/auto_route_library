@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../back_test_utils.dart';
+import '../no_op.dart';
 import '../router_test_utils.dart';
 
 // flutter/flutter#118856: on Android, with a Router nested in a page of the
@@ -19,7 +20,7 @@ import '../router_test_utils.dart';
 void main() {
   Future<void> platformBack(WidgetTester tester) {
     final message = const JSONMethodCodec().encodeMethodCall(const MethodCall('popRoute'));
-    return tester.binding.defaultBinaryMessenger.handlePlatformMessage('flutter/navigation', message, (_) {});
+    return tester.binding.defaultBinaryMessenger.handlePlatformMessage('flutter/navigation', message, ignoreArgument);
   }
 
   final presses = <String, Future<void> Function(WidgetTester)>{

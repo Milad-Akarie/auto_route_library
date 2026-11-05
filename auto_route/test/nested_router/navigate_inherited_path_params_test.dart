@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../no_op.dart';
 import '../router_test_utils.dart';
 
 void main() {
@@ -82,7 +83,7 @@ void main() {
     );
     // Let the router add the vendor page, which it does after checking guards.
     for (var i = 0; i < 5; i++) {
-      await Future.microtask(() {});
+      await Future.microtask(noOp);
     }
 
     unawaited(router.navigate(const _VendorBranchesRoute()));

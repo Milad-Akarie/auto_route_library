@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../no_op.dart';
+
 void main() {
   // https://github.com/Milad-Akarie/auto_route_library/issues/1668
   // On a cold start from a link, iOS first hands the app '/' and then the
@@ -80,7 +82,7 @@ void _sendPlatformLink(WidgetTester tester, String location) {
     tester.binding.defaultBinaryMessenger.handlePlatformMessage(
       SystemChannels.navigation.name,
       codec.encodeMethodCall(MethodCall('pushRouteInformation', {'location': location, 'state': null})),
-      (_) {},
+      ignoreArgument,
     ),
   );
 }

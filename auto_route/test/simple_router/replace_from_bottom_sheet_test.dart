@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../no_op.dart';
 import '../router_test_utils.dart';
 
 // flutter/flutter#154729: a button in a modal bottom sheet, open over the
@@ -68,7 +69,7 @@ void main() {
   });
 }
 
-void Function(StackRouter router) _fromSheet = (_) {};
+void Function(StackRouter router) _fromSheet = ignoreArgument;
 
 class _HomeRoute extends PageRouteInfo<void> {
   const _HomeRoute() : super(name);

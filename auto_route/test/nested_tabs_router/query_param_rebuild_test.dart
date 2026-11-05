@@ -4,6 +4,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../no_op.dart';
+
 class _ParamPage extends StatefulWidget {
   const _ParamPage({required this.param});
 
@@ -88,7 +90,7 @@ void main() {
     expect(_ParamPageState.created, 1);
 
     _ParamPageState.builds = 0;
-    setParentState(() {});
+    setParentState(noOp);
     await tester.pumpAndSettle();
     expect(_ParamPageState.builds, 0);
 

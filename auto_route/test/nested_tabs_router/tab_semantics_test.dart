@@ -3,6 +3,7 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../no_op.dart';
 import '../router_test_utils.dart';
 
 void main() {
@@ -106,7 +107,7 @@ Widget _tabPage(String label) => Scaffold(
   body: Column(
     children: [
       Text('$label text'),
-      ElevatedButton(onPressed: () {}, child: Text('$label button')),
+      ElevatedButton(onPressed: noOp, child: Text('$label button')),
     ],
   ),
 );

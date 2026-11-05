@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'main_router.dart';
+import 'no_op.dart';
 
 void main() {
   late RootStackRouter router;
@@ -60,7 +61,7 @@ void main() {
   // Should: the stack and the page's State are kept.
   testWidgets('config() called again in a rebuilt build keeps the stack and page state', (tester) async {
     await pumpInlineConfigApp(tester);
-    rebuildApp(() {});
+    rebuildApp(noOp);
     await tester.pumpAndSettle();
     expectStackAndStateKept();
   });

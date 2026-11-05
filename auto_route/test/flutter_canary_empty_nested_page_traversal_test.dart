@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'no_op.dart';
 import 'router_test_utils.dart';
 
 // Canary for Flutter bug https://github.com/flutter/flutter/issues/151061.
@@ -59,7 +60,7 @@ RootStackRouter _buildRouter({required bool nestedPageButton}) => .build(
                   title: const Text('HostRoute'),
                   actions: [
                     for (var i = 0; i < 3; i++)
-                      IconButton(key: ValueKey('outer $i'), icon: const Icon(Icons.help), onPressed: () {}),
+                      IconButton(key: ValueKey('outer $i'), icon: const Icon(Icons.help), onPressed: noOp),
                   ],
                 ),
               ),
@@ -78,7 +79,7 @@ RootStackRouter _buildRouter({required bool nestedPageButton}) => .build(
               appBar: AppBar(
                 actions: [
                   if (nestedPageButton)
-                    IconButton(key: const ValueKey('nested'), icon: const Icon(Icons.help), onPressed: () {}),
+                    const IconButton(key: ValueKey('nested'), icon: Icon(Icons.help), onPressed: noOp),
                 ],
               ),
             ),

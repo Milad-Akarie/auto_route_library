@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'no_op.dart';
 import 'router_test_utils.dart';
 
 void main() {
@@ -32,8 +33,8 @@ void main() {
             NamedRouteDef(
               name: 'Tab1Route',
               path: 'tab1',
-              builder: (_, _) => Scaffold(
-                body: TextButton(onPressed: () {}, child: const Text('button')),
+              builder: (_, _) => const Scaffold(
+                body: TextButton(onPressed: noOp, child: Text('button')),
               ),
             ),
             NamedRouteDef(

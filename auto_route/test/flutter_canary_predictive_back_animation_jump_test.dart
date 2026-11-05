@@ -2,6 +2,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'no_op.dart';
+
 // Canary for Flutter bug https://github.com/flutter/flutter/issues/184653
 // (TransitionRoute.animation jumps to its end when a predictive back gesture
 // commits the pop).
@@ -38,7 +40,7 @@ void main() {
       await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
         SystemChannels.backGesture.name,
         const StandardMethodCodec().encodeMethodCall(MethodCall(method, arguments)),
-        (_) {},
+        ignoreArgument,
       );
       await tester.pump();
     }

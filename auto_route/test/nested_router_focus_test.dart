@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'no_op.dart';
 import 'router_test_utils.dart';
 
 void main() {
@@ -55,7 +56,7 @@ void main() {
     final outerFocus = FocusManager.instance.primaryFocus;
     expect(outerFocus?.context?.findAncestorWidgetOfExactType<TextField>()?.key, const Key('outer'));
 
-    setHostState(() {});
+    setHostState(noOp);
     await tester.pumpAndSettle();
     expect(FocusManager.instance.primaryFocus, same(outerFocus));
   });
