@@ -1385,6 +1385,20 @@ The same tree prints at any time while debugging:
 debugPrint(appRouter.routeCollection.toTreeString());
 ```
 
+### Keeping a url out of the address bar
+
+On the web the router reports each new url to the browser, which shows it in the address bar and adds a history entry. `neglectWhen` in `router.config` decides per url: it gets the location, such as `/checkout/confirm` (with its query, if any), and when it returns `true` that url isn't reported. The page still opens, while the address bar keeps the url before it and no history entry is added, so the browser's back button skips that page.
+
+```dart
+MaterialApp.router(
+  routerConfig: _appRouter.config(
+    neglectWhen: (location) => location?.startsWith('/checkout') ?? false,
+  ),
+);
+```
+
+To keep a single route out of the browser history wherever it's opened, `AutoRoute(keepHistory: false)` does it by route: the next page takes over that route's entry.
+
 ## Route Meta
 
 A route can carry fixed data of your own in `meta`, a `Map<String, dynamic>`. It's set where the route is declared, never in the url or the route's arguments, and every page of that route sees the same map.
