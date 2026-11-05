@@ -22,10 +22,10 @@ import 'package:material_ui/material_ui.dart';
 // A benchmark run on its own, so not a `_test` file.
 // ignore: prefer-correct-test-file-name
 void main() {
-  final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-  binding.framePolicy = .fullyLive;
   final syncMicros = <String, double>{};
-  binding.reportData = {'sync_micros': syncMicros};
+  final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
+    ..framePolicy = .fullyLive
+    ..reportData = {'sync_micros': syncMicros};
 
   // Times [steps] runs of [step] in a timeline under [key], and the median
   // time of the router call [step] makes before it awaits.

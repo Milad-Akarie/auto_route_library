@@ -36,8 +36,8 @@ void main() {
       await pumpRouterApp(tester, router);
       unawaited(router.push(const SecondHostRoute()));
       await tester.pumpAndSettle();
-      final nested = router.innerRouterOf<StackRouter>(SecondHostRoute.name)!;
-      nested.removeLast();
+      final nested = router.innerRouterOf<StackRouter>(SecondHostRoute.name)!
+        ..removeLast();
       await tester.pumpAndSettle();
       expect(nested.stack, isEmpty);
 

@@ -71,8 +71,7 @@ class LoginPage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                final authService = App.of(context).authService;
-                authService.loginAndVerify();
+                App.of(context).authService.loginAndVerify();
               },
               child: const Text('Login & Verify'),
             ),
