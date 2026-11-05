@@ -276,14 +276,12 @@ class AutoTabViewState extends State<AutoTabView> {
   }
 
   // Called when the PageView scrolls
-  // Returns false so the notification keeps bubbling up.
-  // ignore: function-always-returns-same-value
-  bool _handleScrollNotification(ScrollNotification notification) {
+  void _handleScrollNotification(ScrollNotification notification) {
     if (_warpUnderwayCount > 0 || _scrollUnderwayCount > 0) {
-      return false;
+      return;
     }
 
-    if (notification.depth != 0) return false;
+    if (notification.depth != 0) return;
 
     _scrollUnderwayCount += 1;
     if (notification is ScrollUpdateNotification && !_controller.indexIsChanging) {
@@ -320,7 +318,7 @@ class AutoTabViewState extends State<AutoTabView> {
             }
           });
           _scrollUnderwayCount -= 1;
-          return false;
+          return;
         }
       }
       _controller.index = currentPage;
@@ -330,14 +328,16 @@ class AutoTabViewState extends State<AutoTabView> {
       }
     }
     _scrollUnderwayCount -= 1;
-
-    return false;
   }
 
   @override
   Widget build(BuildContext context) {
     return NotificationListener<ScrollNotification>(
-      onNotification: _handleScrollNotification,
+      onNotification: (notification) {
+        _handleScrollNotification(notification);
+        // The notification keeps bubbling up.
+        return false;
+      },
       child: EagerPageView(
         cacheExtent: _children.length,
         scrollDirection: widget.scrollDirection,
