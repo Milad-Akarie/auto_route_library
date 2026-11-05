@@ -22,7 +22,7 @@ void main() {
   });
 
   Matcher invalidParam(String type, String key, String value) =>
-      isA<FlutterError>().having(
+      isA<MissingRequiredParameterError>().having(
         (e) => e.toString(),
         'message',
         allOf(

@@ -37,7 +37,10 @@ void main() {
       const params = Parameters({'tag': <String>[]});
       expect(params.optString('missing', 'none'), 'none');
       expect(params.optString('tag', 'none'), 'none');
-      expect(() => params.getString('tag'), throwsFlutterError);
+      expect(
+        () => params.getString('tag'),
+        throwsA(isA<MissingRequiredParameterError>()),
+      );
     },
   );
 

@@ -21,7 +21,10 @@ void main() {
 
   test('Calling Parameters.getString on a null value should throw', () {
     const params = Parameters({});
-    expect(() => params.getString('key'), throwsFlutterError);
+    expect(
+      () => params.getString('key'),
+      throwsA(isA<MissingRequiredParameterError>()),
+    );
   });
 
   test(
@@ -41,7 +44,10 @@ void main() {
 
   test('Calling Parameters.getInt on a none-int value should throw', () {
     const params = Parameters({'key': 'str'});
-    expect(() => params.getInt('key'), throwsFlutterError);
+    expect(
+      () => params.getInt('key'),
+      throwsA(isA<MissingRequiredParameterError>()),
+    );
   });
 
   test(
@@ -64,7 +70,10 @@ void main() {
 
   test('Calling Parameters.getDouble on a none-double value should throw', () {
     const params = Parameters({'key': 'str'});
-    expect(() => params.getDouble('key'), throwsFlutterError);
+    expect(
+      () => params.getDouble('key'),
+      throwsA(isA<MissingRequiredParameterError>()),
+    );
   });
 
   test(
@@ -84,7 +93,10 @@ void main() {
 
   test('Calling Parameters.getNum on a none-num value should throw', () {
     const params = Parameters({'key': 'str'});
-    expect(() => params.getNum('key'), throwsFlutterError);
+    expect(
+      () => params.getNum('key'),
+      throwsA(isA<MissingRequiredParameterError>()),
+    );
   });
 
   test('Calling Parameters.optNum on a double value should return a <num> and '
@@ -137,7 +149,10 @@ void main() {
     'Calling Parameters.getBool on a none-bool string-value should throw',
     () {
       const params = Parameters({'key': 'str'});
-      expect(() => params.getBool('key'), throwsFlutterError);
+      expect(
+        () => params.getBool('key'),
+        throwsA(isA<MissingRequiredParameterError>()),
+      );
     },
   );
 
@@ -205,7 +220,10 @@ void main() {
       expect(params.optBool('c', true), true);
       expect(params.optBool('d'), null);
       expect(params.optBool('missing', false), false);
-      expect(() => params.getBool('c'), throwsFlutterError);
+      expect(
+        () => params.getBool('c'),
+        throwsA(isA<MissingRequiredParameterError>()),
+      );
     },
   );
 

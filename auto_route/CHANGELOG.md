@@ -1,4 +1,6 @@
 ## Unreleased
+- **BREAKING CHANGE**: `MissingRequiredParameterError` is an `Exception`, no longer an `Error`; catch it with
+  `on MissingRequiredParameterError`. Its name and message are unchanged.
 - **BREAKING CHANGE**: `RouteMatch.copyWith(pathParams:)` is removed; pass `params:`.
 - **BREAKING CHANGE**: `ReevaluatableRouteMatch.copyWith(pathParams:)` is removed; pass `params:`.
 - **BREAKING CHANGE**: `PageRouteInfo.copyWith(params:)` is removed; pass `rawPathParams:`.
