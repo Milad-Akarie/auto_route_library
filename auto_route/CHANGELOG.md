@@ -5,6 +5,9 @@
 - **FEAT**: a page class with type parameters gets a generic route: `PickerPage<T>` gives `PickerRoute<T>`, and
   `push<int>(PickerRoute<int>(...))` builds `PickerPage<int>`; a page opened from a link gets each type
   parameter's bound (#2050, #1879, #1739).
+- **FEAT**: in debug builds, two routes with the same full path make the router throw a `FlutterError` naming
+  both when it first reads its routes; paths that differ only in param names count as the same
+  (flutter/flutter#190741).
 
 ## 12.0.0
 - **BREAKING CHANGE**: `RouteMatch.pathParams` and `RouteData.pathParams`, deprecated since 11.2.0, are removed;

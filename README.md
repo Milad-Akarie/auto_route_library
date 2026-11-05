@@ -1300,6 +1300,25 @@ You can also redirect paths with params like follows:
 
 **Note**: `RedirectRoutes` are fully matched.
 
+### Two Routes With the Same Path
+
+A url opens the first route whose path matches it, so a second route with the same full path could never be opened
+by its url. In a debug build the router refuses such a route list when it first reads it, which is when the app
+starts; a release build doesn't check, so an app that pushes such a route only in code keeps working:
+
+```dart
+AutoRoute(path: '/shop', page: ShopRoute.page, children: [AutoRoute(path: 'cart', page: CartRoute.page)]),
+AutoRoute(path: '/shop/cart', page: OtherCartRoute.page),
+// FlutterError: CartRoute and OtherCartRoute have the same path, /shop/cart, so a link to it opens only CartRoute.
+// Give one of them another path.
+```
+
+Full paths count, so a nested path that adds up to another route's path is reported too, and paths that differ only
+in their param names, as `/meal/:id` and `/meal/:mealId`, are the same. A parent and its child with an empty path
+share a url by design and are fine. So is a `RedirectRoute` before a route with its path, which sends that url
+elsewhere while the route's children stay reachable; a redirect after it would never run, and is reported. The generator can't make this check: the paths are in the routes list, which the
+app builds when it runs.
+
 ### Wildcards
 
 **AutoRoute** supports wildcard matching to handle invalid or undefined paths.

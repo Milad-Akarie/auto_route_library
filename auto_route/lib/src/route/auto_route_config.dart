@@ -610,8 +610,62 @@ class RouteCollection {
       final redirectRoute = RedirectRoute(path: targetInitialPath, redirectTo: routesMarkedInitial.first.path);
       routesMap = {redirectRoute.name: redirectRoute, ...routesMap};
     }
-    return RouteCollection(routesMap, subCollections);
+    final collection = RouteCollection(routesMap, subCollections);
+    // Debug builds only: an app that pushes such a route in code works, and
+    // must not start failing once it ships.
+    assert(() {
+      if (root) _throwIfPathsRepeat(collection);
+      return true;
+    }(), 'Two routes have the same path');
+    return collection;
   }
+
+  /// Throws a [FlutterError] naming two routes of the tree under [root] whose
+  /// full paths are the same, as `/a` twice, or the same but for the names
+  /// of their params, as `/meal/:id` and `/meal/:mealId`.
+  ///
+  /// A url opens the first of them, so the second is never opened by its
+  /// url. A route and its descendants may share a path: a child with an
+  /// empty path is the page its parent shows first. A redirect may come
+  /// before a route with its path, to send that url elsewhere while the
+  /// route's children stay reachable; a redirect after it would never run.
+  ///
+  /// Runs in debug builds only.
+  static void _throwIfPathsRepeat(RouteCollection root) {
+    final byPattern = <String, List<(AutoRoute, String)>>{};
+    void visit(RouteCollection collection, String parentPath, List<AutoRoute> ancestors) {
+      for (final route in collection.routes) {
+        final path = _joinPaths(parentPath, route.path);
+        // Params match any segment whatever their names.
+        final pattern = path.replaceAll(RegExp(':[^/?]+'), ':');
+        final others = byPattern.putIfAbsent(pattern, () => []);
+        for (final (other, otherPath) in others) {
+          if (other is RedirectRoute || ancestors.contains(other)) continue;
+          final (first, second) = (_describe(other), _describe(route));
+          final named = otherPath == path
+              ? '$first and $second have the same path, $path,'
+              : '$first, $otherPath, and $second, $path, have the same path,';
+          throwIf(true, '$named so a link to it opens only $first. Give one of them another path.');
+        }
+        others.add((route, path));
+        if (route.hasSubTree) {
+          visit(collection.subCollectionOf(route.name), path, [...ancestors, route]);
+        }
+      }
+    }
+
+    visit(root, '', const []);
+  }
+
+  // A redirect's name is made of its paths, so it is described by them.
+  static String _describe(AutoRoute route) =>
+      route is RedirectRoute ? 'the redirect from ${route.path} to ${route.redirectTo}' : route.name;
+
+  static String _joinPaths(String parent, String child) {
+    if (parent.isEmpty || child.isEmpty) return parent + child;
+    return parent.endsWith('/') ? '$parent$child' : '$parent/$child';
+  }
+
   final Map<String, AutoRoute> _routesMap;
   final Map<String, RouteCollection> _subCollections;
 
