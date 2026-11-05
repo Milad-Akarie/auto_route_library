@@ -207,16 +207,16 @@ class AutoRouterState extends State<AutoRouter> {
 class _DeclarativeAutoRouter extends StatefulWidget {
   const new({
     required this.routesBuilder,
+    required this.navigatorObserversBuilder,
+    required this.onPopRoute,
+    required this.navigatorKey,
+    required this.navRestorationScopeId,
+    required this.inheritNavigatorObservers,
+    required this.onNavigate,
+    required this.placeholderBuilder,
+    required this.clipBehavior,
+    required this.traversalEdgeBehavior,
     super.key,
-    this.navigatorObserversBuilder = AutoRouterDelegate.defaultNavigatorObserversBuilder,
-    this.onPopRoute,
-    this.navigatorKey,
-    this.navRestorationScopeId,
-    this.inheritNavigatorObservers = true,
-    this.onNavigate,
-    this.placeholderBuilder,
-    this.clipBehavior = Clip.hardEdge,
-    this.traversalEdgeBehavior,
   });
   final RoutesBuilder routesBuilder;
   final RoutePopCallBack? onPopRoute;

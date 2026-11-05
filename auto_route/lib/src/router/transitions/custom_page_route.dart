@@ -7,9 +7,9 @@ class AutoPageRouteBuilder<T> extends PageRoute<T> {
   /// Default constructor
   new({
     required this._child,
-    this._transitionBuilder,
-    this.transitionDuration = const Duration(milliseconds: 300),
-    this.opaque = true,
+    required this._transitionBuilder,
+    required this.transitionDuration,
+    required this.opaque,
     super.fullscreenDialog,
   });
 

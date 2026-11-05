@@ -20,11 +20,11 @@ class AutoTabView extends StatefulWidget {
   const new({
     required this.controller,
     required this._router,
+    required this._physics,
+    required this._lazyLoad,
+    required this._scrollDirection,
+    required this._dragStartBehavior,
     super.key,
-    this._physics,
-    this._lazyLoad = true,
-    this._scrollDirection = Axis.horizontal,
-    this._dragStartBehavior = DragStartBehavior.start,
   });
 
   /// The scroll direction of the [PageView]

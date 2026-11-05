@@ -374,11 +374,11 @@ class _AutoRootRouter extends StatefulWidget {
   const new({
     required this.router,
     required this.navigatorObserversBuilder,
-    this.navRestorationScopeId,
-    this.navigatorObservers = const [],
-    this.placeholderBuilder,
-    this.clipBehavior = Clip.hardEdge,
-    this.routeTraversalEdgeBehavior,
+    required this.navRestorationScopeId,
+    required this.navigatorObservers,
+    required this.placeholderBuilder,
+    required this.clipBehavior,
+    required this.routeTraversalEdgeBehavior,
   });
 
   final Clip clipBehavior;

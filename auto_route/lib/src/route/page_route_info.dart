@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:auto_route/src/utils.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 
@@ -119,7 +118,7 @@ class PageRouteInfo<T extends Object?> {
   /// e.g if [template] = '/products/:id' and [params] = {'id':'5'}
   /// the result is '/products/5'
   static String expandPath(String template, Map<String, Object?> params) {
-    if (mapNullOrEmpty(params)) {
+    if (params.isEmpty) {
       return template;
     }
     // Escaped, so a name such as `user$id` matches as it is written. A name runs to the end of its segment,

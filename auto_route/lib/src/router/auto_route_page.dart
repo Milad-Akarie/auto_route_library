@@ -271,8 +271,8 @@ class _CustomPageBasedPageRouteBuilder<T> extends _PageRoute<T>
   new({
     required super.page,
     required this.routeType,
-    this.enablePredictiveBackGesture = false,
-    this.predictiveBackPageTransitionsBuilder,
+    required this.enablePredictiveBackGesture,
+    required this.predictiveBackPageTransitionsBuilder,
   });
 
   @override
@@ -384,13 +384,13 @@ mixin _CustomPageRouteTransitionMixin<T> on _PageRoute<T> {
 
 class _PageBasedCupertinoPageRoute<T> extends _PageRoute<T>
     with CupertinoRouteTransitionMixin<T>, CupertinoRouteTransitionOverrideMixin<T> {
-  new({required super.page, this.title});
+  new({required super.page, required this.title});
 
   @override
   Widget buildContent(BuildContext context) => _page.buildPage(context);
 
   @override
-  final String? title;
+  final String title;
 }
 
 mixin _CustomPredictiveBackGestureMixin<T> on _PageRoute<T> implements PredictiveBackGestureMixin {
