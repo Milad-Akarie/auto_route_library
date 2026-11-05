@@ -16,7 +16,7 @@ void main() {
   // tree by its route name.
   // Should: each page's semantics carry `identifier: routeData.name`, so
   // `find.bySemanticsIdentifier` finds the page shown.
-  final routes = <AutoRoute>[
+  final routes = [
     AutoRoute(path: '/', page: _page('HomeRoute')),
     MaterialRoute(path: '/material', page: _page('MaterialPageRoute')),
     CupertinoRoute(path: '/cupertino', page: _page('CupertinoPageRoute')),

@@ -15,10 +15,7 @@ import 'router_test_utils.dart';
 // back by the iOS swipe, or by system back. The push should complete with
 // 'picked', as Navigator.push does.
 void main() {
-  final backs = <String, (Future<void> Function(WidgetTester), ThemeData)>{
-    'the iOS back swipe': (swipeBack, iosTheme),
-    'system back': (systemBack, androidTheme),
-  };
+  final backs = {'the iOS back swipe': (swipeBack, iosTheme), 'system back': (systemBack, androidTheme)};
 
   for (final MapEntry(key: name, value: (back, theme)) in backs.entries) {
     testWidgets("$name completes the push with the route's currentResult", (tester) async {

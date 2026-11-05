@@ -9,7 +9,7 @@ import 'package:material_ui/material_ui.dart';
 // The same scenario as flutter/flutter#115427 in go_router, where the
 // rebuild closed the pages over the root one.
 void main() {
-  final changes = <String, _AppSettings>{
+  final changes = {
     'showPerformanceOverlay': const _AppSettings(showPerformanceOverlay: true),
     'showSemanticsDebugger': const _AppSettings(showSemanticsDebugger: true),
     'builder': const _AppSettings(wrap: true),

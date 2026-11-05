@@ -38,7 +38,7 @@ void main() {
     ],
   );
 
-  TabsRouter tabsRouter() => RestorableRouterApp.router.innerRouterOf<TabsRouter>('BottomNavigationRoute')!;
+  TabsRouter tabsRouter() => RestorableRouterApp.router.innerRouterOf('BottomNavigationRoute')!;
 
   Future<void> selectTab(WidgetTester tester, int index) async {
     tabsRouter().setActiveIndex(index);

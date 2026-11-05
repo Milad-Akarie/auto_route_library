@@ -84,7 +84,7 @@ const _initialRoutes = <PageRouteInfo>[_FirstTabRoute(), _SecondTabRoute(), _Thi
 
 final _routesNotifier = ValueNotifier<List<PageRouteInfo>>(_initialRoutes);
 
-final _showTabsNotifier = ValueNotifier<bool>(true);
+final ValueNotifier<bool> _showTabsNotifier = ValueNotifier(true);
 
 class _TabsHostRoute extends PageRouteInfo<void> {
   const _TabsHostRoute() : super(name);

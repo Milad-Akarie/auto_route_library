@@ -33,7 +33,7 @@ RootStackRouter _buildRouter({bool usersIsInitial = false}) => .build(
 const NamedRoute _users = NamedRoute('AppRoute', children: [NamedRoute('UsersRoute')]);
 const NamedRoute _other = NamedRoute('AppRoute', children: [NamedRoute('OtherRoute')]);
 
-StackRouter _shell(RootStackRouter router) => router.innerRouterOf<StackRouter>('AppRoute')!;
+StackRouter _shell(RootStackRouter router) => router.innerRouterOf('AppRoute')!;
 
 void main() {
   // Reported by the c3 triage chat while it wrote guard tests for go_router

@@ -47,7 +47,7 @@ void main() {
 
     // Each frame, the page moves on toward the left edge: no jump back in,
     // and no jump straight out.
-    final values = <double>[atRelease];
+    final values = [atRelease];
     for (var frame = 0; frame < 60 && animation.value > 0; frame++) {
       await tester.pump(const Duration(milliseconds: 16));
       values.add(animation.value);

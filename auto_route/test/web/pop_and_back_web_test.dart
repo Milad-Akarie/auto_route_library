@@ -86,7 +86,7 @@ void main() {
     unawaited(router.push<String>(const ThirdRoute()).then((value) => result = value));
     await settleBrowser(tester);
 
-    router.pop<String>('picked');
+    router.pop('picked');
     await settleBrowser(tester);
     expect(result, 'picked');
     expectCurrentPage(router, SecondRoute.name);

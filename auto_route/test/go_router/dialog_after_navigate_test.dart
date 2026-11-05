@@ -42,17 +42,21 @@ void main() {
     'replaceAll': (router) => unawaited(router.replaceAll([const PageRouteInfo('ARoute')])),
   };
 
-  final overlays = <String, (Finder, void Function(BuildContext))>{
+  final overlays = {
     'dialog': (
       find.byType(AlertDialog),
-      (context) => showDialog<void>(
-        context: context,
-        builder: (_) => const AlertDialog(content: Text('Dialog')),
-      ),
+      (BuildContext context) {
+        showDialog<void>(
+          context: context,
+          builder: (_) => const AlertDialog(content: Text('Dialog')),
+        );
+      },
     ),
     'bottom sheet': (
       find.text('Sheet'),
-      (context) => showModalBottomSheet<void>(context: context, builder: (_) => const Text('Sheet')),
+      (BuildContext context) {
+        showModalBottomSheet<void>(context: context, builder: (_) => const Text('Sheet'));
+      },
     ),
   };
 

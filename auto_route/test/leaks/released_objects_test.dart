@@ -53,6 +53,8 @@ PageInfo _tabsHostPage(String tabsType) => .new(
   },
 );
 
+TabsRouter _tabsHost(RootStackRouter router) => router.innerRouterOf('TabsHostRoute')!;
+
 RootStackRouter _buildRouter({String tabsType = 'IndexedStack'}) => .build(
   routes: [
     AutoRoute(path: '/', page: _homePage),
@@ -136,7 +138,7 @@ void main() {
     unawaited(router.pushPath('/stack'));
     await tester.pumpAndSettle();
     expect(find.text('StackChildRoute'), findsOneWidget);
-    final nested = WeakReference(router.innerRouterOf<StackRouter>('StackHostRoute')!);
+    final nested = WeakReference(router.innerRouterOf('StackHostRoute')!);
     final childData = WeakReference(nested.target!.current);
 
     router.pop();
@@ -155,7 +157,7 @@ void main() {
       await pumpRouterApp(tester, router);
       unawaited(router.pushPath('/tabs'));
       await tester.pumpAndSettle();
-      final tabsRouter = WeakReference(router.innerRouterOf<TabsRouter>('TabsHostRoute')!);
+      final tabsRouter = WeakReference(_tabsHost(router));
       for (var i = 0; i < 20; i++) {
         tabsRouter.target!.setActiveIndex(i.isEven ? 1 : 0);
         await tester.pumpAndSettle();

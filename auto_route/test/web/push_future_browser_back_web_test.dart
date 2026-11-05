@@ -58,7 +58,7 @@ void main() {
     await pressBrowserBack(tester);
     await pressBrowserForward(tester);
     expectCurrentPage(router, SecondRoute.name);
-    router.pop<String>('picked');
+    router.pop('picked');
     await settleBrowser(tester);
     expectCurrentPage(router, FirstRoute.name);
     expect(completions, 1);

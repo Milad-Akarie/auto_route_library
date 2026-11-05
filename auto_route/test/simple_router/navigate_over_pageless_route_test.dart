@@ -36,7 +36,7 @@ void main() {
   }
 
   // Each way of going back to Page1.
-  final goToPage1 = <String, void Function()>{
+  final goToPage1 = {
     'navigate': () => unawaited(router.navigate(const PageRouteInfo('Page1'))),
     'replaceAll': () => unawaited(router.replaceAll(const [PageRouteInfo('Page1')])),
     'popUntilRoot': () => router.popUntilRoot(),

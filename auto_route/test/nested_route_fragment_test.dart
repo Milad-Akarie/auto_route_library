@@ -46,7 +46,7 @@ void main() {
   });
 
   test('PageRouteInfo.copyWith keeps every field it does not override', () {
-    const route = PageRouteInfo<String>(
+    const route = PageRouteInfo(
       'BookRoute',
       args: 'args',
       rawPathParams: {'id': '1'},

@@ -22,7 +22,7 @@ import '../router_test_utils.dart';
 // stay, PopScope hears of each back the swipe doesn't block, and Flutter
 // tells Android it handles back.
 void main() {
-  final routers = <String, Widget Function()>{
+  final routers = {
     'AutoRouter': () => const AutoRouter(),
     'AutoRouter.declarative': () => AutoRouter.declarative(routes: (_) => [const _GuardedRoute()]),
   };

@@ -82,6 +82,6 @@ final _tabsPage = PageInfo(
 class _LateGuard extends AutoRouteGuard {
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
-    unawaited(Future<void>.delayed(const Duration(milliseconds: 20), () => resolver.next()));
+    unawaited(Future.delayed(const Duration(milliseconds: 20), () => resolver.next()));
   }
 }

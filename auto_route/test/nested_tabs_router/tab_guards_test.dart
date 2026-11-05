@@ -267,7 +267,7 @@ RootStackRouter _buildRouter(_Tabs kind, {AutoRouteGuard? guard, int guardedTab 
   );
 }
 
-TabsRouter _tabsOf(RootStackRouter router) => router.innerRouterOf<TabsRouter>('HomeRoute')!;
+TabsRouter _tabsOf(RootStackRouter router) => router.innerRouterOf('HomeRoute')!;
 
 // The tab at [index] is the active one, and the only one on screen.
 void _expectTab(TabsRouter tabs, int index) {

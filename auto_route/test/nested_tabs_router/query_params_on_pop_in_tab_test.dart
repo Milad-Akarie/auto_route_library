@@ -33,8 +33,7 @@ void main() {
     );
   });
 
-  StackRouter shopRouter() =>
-      router.innerRouterOf<TabsRouter>(_tabsScreen.name)!.innerRouterOf<StackRouter>(_shopTab.name)!;
+  StackRouter shopRouter() => router.innerRouterOf<TabsRouter>(_tabsScreen.name)!.innerRouterOf(_shopTab.name)!;
 
   Future<void> openDetails(WidgetTester tester) async {
     await pumpRouterApp(tester, router, initialLink: '/shop?search=shoes');

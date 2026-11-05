@@ -56,7 +56,7 @@ void main() {
         // Not const: a const instance is never garbage collected, which is
         // what this test checks.
         // ignore: prefer_const_constructors
-        final route = NamedRoute<_DetailArgs>('DetailRoute', args: _DetailArgs(42));
+        final route = NamedRoute('DetailRoute', args: _DetailArgs(42));
         args = WeakReference(route.args!);
         unawaited(router.push(route));
       }();

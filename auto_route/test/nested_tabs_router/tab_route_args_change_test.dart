@@ -6,7 +6,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../router_test_utils.dart';
 
-final _channel = ValueNotifier<String>('news');
+final ValueNotifier<String> _channel = ValueNotifier('news');
 
 void main() {
   tearDownAll(_channel.dispose);

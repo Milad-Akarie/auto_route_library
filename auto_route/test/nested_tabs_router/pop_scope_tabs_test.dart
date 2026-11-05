@@ -21,7 +21,7 @@ import '../router_test_utils.dart';
 // Android it handles back.
 // Already works on dev, for each setup and both ways back.
 void main() {
-  final setups = <String, (List<AutoRoute>, {bool scopeAroundTabs, bool pushInTab})>{
+  final setups = {
     'around the tabs screen': (
       [AutoRoute(page: _tab('TabA'), path: 'a'), AutoRoute(page: _tab('TabB'), path: 'b')],
       scopeAroundTabs: true,

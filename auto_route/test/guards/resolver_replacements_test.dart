@@ -58,17 +58,20 @@ void main() {
     return names;
   }
 
-  final pairs = <String, (void Function(NavigationResolver), void Function(NavigationResolver))>{
-    'next() and resolveNext(true)': ((r) => r.next(), (r) => r.resolveNext(true)),
-    'reject() and resolveNext(false)': ((r) => r.reject(), (r) => r.resolveNext(false)),
-    'reject() and next(false)': ((r) => r.reject(), (r) => r.next(false)),
+  final pairs = {
+    'next() and resolveNext(true)': ((NavigationResolver r) => r.next(), (NavigationResolver r) => r.resolveNext(true)),
+    'reject() and resolveNext(false)': (
+      (NavigationResolver r) => r.reject(),
+      (NavigationResolver r) => r.resolveNext(false),
+    ),
+    'reject() and next(false)': ((NavigationResolver r) => r.reject(), (NavigationResolver r) => r.next(false)),
     'overrideNext(reevaluateNext: false) and resolveNext(true, reevaluateNext: false)': (
-      (r) => r.overrideNext(reevaluateNext: false),
-      (r) => r.resolveNext(true, reevaluateNext: false),
+      (NavigationResolver r) => r.overrideNext(reevaluateNext: false),
+      (NavigationResolver r) => r.resolveNext(true, reevaluateNext: false),
     ),
     'reject(reevaluateNext: false) and resolveNext(false, reevaluateNext: false)': (
-      (r) => r.reject(reevaluateNext: false),
-      (r) => r.resolveNext(false, reevaluateNext: false),
+      (NavigationResolver r) => r.reject(reevaluateNext: false),
+      (NavigationResolver r) => r.resolveNext(false, reevaluateNext: false),
     ),
   };
 
