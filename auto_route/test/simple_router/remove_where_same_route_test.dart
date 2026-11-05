@@ -87,7 +87,7 @@ class _InfoRouteArgs {
 }
 
 class _InfoRoute extends PageRouteInfo<_InfoRouteArgs> {
-  new({Key? key, required String title})
+  new({required String title, Key? key})
     : super(
         name,
         args: _InfoRouteArgs(key: key, title: title),
@@ -104,7 +104,7 @@ class _InfoRoute extends PageRouteInfo<_InfoRouteArgs> {
 }
 
 class _InfoPage extends StatefulWidget {
-  const new({super.key, required this.title});
+  const new({required this.title, super.key});
 
   final String title;
 

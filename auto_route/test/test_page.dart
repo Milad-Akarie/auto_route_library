@@ -155,7 +155,7 @@ class TabsHostPage extends StatelessWidget {
 
 @RoutePage()
 class DeclarativeRouterHostScreen extends StatelessWidget {
-  const new({super.key, required this.pageNotifier});
+  const new({required this.pageNotifier, super.key});
 
   final ValueNotifier<int> pageNotifier;
 

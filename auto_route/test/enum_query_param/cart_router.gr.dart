@@ -30,12 +30,12 @@ class CartHomeRoute extends PageRouteInfo<void> {
 /// [MfUserCartView]
 class MfUserCartRoute extends PageRouteInfo<MfUserCartRouteArgs> {
   MfUserCartRoute({
-    Key? key,
     required MfUserCartTypes? userCartType,
+    Key? key,
     List<PageRouteInfo>? children,
   }) : super(
          MfUserCartRoute.name,
-         args: MfUserCartRouteArgs(key: key, userCartType: userCartType),
+         args: MfUserCartRouteArgs(userCartType: userCartType, key: key),
          rawQueryParams: {'type': userCartType?.name},
          initialChildren: children,
        );
@@ -52,30 +52,30 @@ class MfUserCartRoute extends PageRouteInfo<MfUserCartRouteArgs> {
               .asNameMap()[queryParams.optString('type')],
         ),
       );
-      return MfUserCartView(key: args.key, userCartType: args.userCartType);
+      return MfUserCartView(userCartType: args.userCartType, key: args.key);
     },
   );
 }
 
 class MfUserCartRouteArgs {
-  const MfUserCartRouteArgs({this.key, required this.userCartType});
-
-  final Key? key;
+  const MfUserCartRouteArgs({required this.userCartType, this.key});
 
   final MfUserCartTypes? userCartType;
 
+  final Key? key;
+
   @override
   String toString() {
-    return 'MfUserCartRouteArgs{key: $key, userCartType: $userCartType}';
+    return 'MfUserCartRouteArgs{userCartType: $userCartType, key: $key}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! MfUserCartRouteArgs) return false;
-    return key == other.key && userCartType == other.userCartType;
+    return userCartType == other.userCartType && key == other.key;
   }
 
   @override
-  int get hashCode => key.hashCode ^ userCartType.hashCode;
+  int get hashCode => userCartType.hashCode ^ key.hashCode;
 }

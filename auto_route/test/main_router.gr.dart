@@ -15,14 +15,14 @@ part of 'main_router.dart';
 class DeclarativeRouterHostRoute
     extends PageRouteInfo<DeclarativeRouterHostRouteArgs> {
   DeclarativeRouterHostRoute({
-    Key? key,
     required ValueNotifier<int> pageNotifier,
+    Key? key,
     List<PageRouteInfo>? children,
   }) : super(
          DeclarativeRouterHostRoute.name,
          args: DeclarativeRouterHostRouteArgs(
-           key: key,
            pageNotifier: pageNotifier,
+           key: key,
          ),
          initialChildren: children,
        );
@@ -34,34 +34,34 @@ class DeclarativeRouterHostRoute
     builder: (data) {
       final args = data.argsAs<DeclarativeRouterHostRouteArgs>();
       return DeclarativeRouterHostScreen(
-        key: args.key,
         pageNotifier: args.pageNotifier,
+        key: args.key,
       );
     },
   );
 }
 
 class DeclarativeRouterHostRouteArgs {
-  const DeclarativeRouterHostRouteArgs({this.key, required this.pageNotifier});
-
-  final Key? key;
+  const DeclarativeRouterHostRouteArgs({required this.pageNotifier, this.key});
 
   final ValueNotifier<int> pageNotifier;
 
+  final Key? key;
+
   @override
   String toString() {
-    return 'DeclarativeRouterHostRouteArgs{key: $key, pageNotifier: $pageNotifier}';
+    return 'DeclarativeRouterHostRouteArgs{pageNotifier: $pageNotifier, key: $key}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! DeclarativeRouterHostRouteArgs) return false;
-    return key == other.key && pageNotifier == other.pageNotifier;
+    return pageNotifier == other.pageNotifier && key == other.key;
   }
 
   @override
-  int get hashCode => key.hashCode ^ pageNotifier.hashCode;
+  int get hashCode => pageNotifier.hashCode ^ key.hashCode;
 }
 
 /// generated route for

@@ -51,8 +51,8 @@ class UserHomeView extends StatelessWidget {
 @RoutePage()
 class UserProfileView extends StatelessWidget {
   const new({
-    super.key,
     @PathParam('id', kUserIdConverter) required this.id,
+    super.key,
     @QueryParam('by', kUserIdConverter) this.by,
   });
 
