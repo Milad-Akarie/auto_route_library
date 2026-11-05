@@ -26,6 +26,9 @@
   match.
 - **BREAKING CHANGE**: `PendingRoutesHandler.peek` and `initialPendingRoutes` return `List<PageRouteInfo<Object?>>?`,
   not `List<PageRouteInfo<dynamic>>?`. Code that stores the list names `PageRouteInfo<Object?>`.
+- **BREAKING CHANGE**: `RouteData.animation` is an `Animation<double>?`, not an `Animation<dynamic>?`, the type of the
+  route animation it holds, so `routeData.animation?.value` is a `double`. Code that sets it passes the route's own
+  `animation`, as before.
 
 ## 12.3.0
 - **BREAKING CHANGE**: `Parameters.optBool` and `getBool` take their default by name:

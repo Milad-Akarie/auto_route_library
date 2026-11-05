@@ -283,7 +283,7 @@ class RouteData<R> {
   /// The page's route sets it when it builds, as does the page of a route
   /// built by [CustomRouteType.customRouteBuilder]; [animationCompletion] and
   /// [RoutingController.waitForTransitions] read it.
-  Animation<dynamic>? animation;
+  Animation<double>? animation;
 
   /// Returns the current animation completion future
   /// if the current route is animating

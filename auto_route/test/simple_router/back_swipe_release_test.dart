@@ -35,7 +35,7 @@ void main() {
       await tester.pumpAndSettle();
       unawaited(router.push(const PageRouteInfo('Details')));
       await tester.pumpAndSettle();
-      final animation = router.topRoute.animation! as Animation<double>;
+      final animation = router.topRoute.animation!;
       final width = tester.getSize(find.byType(Navigator).first).width;
 
       final gesture = await tester.startGesture(const Offset(2, 300));
