@@ -223,10 +223,18 @@ class NavigationResolver {
   /// when we process  Rout2 next pending routes will contain `Route3` only
   final List<RouteMatch<dynamic>> pendingRoutes;
 
-  /// returns the navigator context
+  /// The context of the router that runs this guard, which sits above that
+  /// router's navigator.
   ///
-  /// Be-aware build context can be null if the navigator is not yet mounted
-  /// this happens if you're guarding the first route in the app
+  /// A guard reads through it what is provided above the router, such as a
+  /// widget around `MaterialApp.router`, or around the `AutoRouter` of the
+  /// parent page for a nested route.
+  ///
+  /// It is set once the router's widget is built, and the guards of the app's
+  /// first page, on the root router and in nested routers alike, already run
+  /// after that. Only a navigation started before the router's widget is
+  /// built, such as a `push` before `runApp`, has no context: reading it then
+  /// fails, in a debug build with "Router is not mounted".
   BuildContext get context {
     final context = _router.globalRouterKey.currentContext;
     assert(context != null, 'Router is not mounted');
