@@ -97,7 +97,7 @@ void main() {
     final failures = <NavigationFailure>[];
     unawaited(router.push(const PageRouteInfo('CartRoute'), onFailure: failures.add));
     await tester.pumpAndSettle();
-    expect(failures.single.toString(), allOf(contains('CartRoute'), contains(tree)));
+    expect((failures.single as RouteNotFoundFailure).toString(), allOf(contains('CartRoute'), contains(tree)));
 
     Object? error;
     try {
