@@ -96,7 +96,7 @@ void main() {
   // Pressing back here would leave the app, so this checks what Android
   // would do instead.
   testWidgets(
-    "on a tab at its first page, Android leaves the app instead of popping the "
+    'on a tab at its first page, Android leaves the app instead of popping the '
     "other tab's page",
     (
       tester,

@@ -34,7 +34,7 @@ void main() {
   // Should: Page1 shows and Page2 is gone.
   testWidgets(
     "The reporter's steps: navigate back to the page under a Navigator.push "
-    "route",
+    'route',
     (tester) async {
       await pumpRouterApp(tester, router);
 

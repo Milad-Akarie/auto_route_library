@@ -20,7 +20,7 @@ void main() {
     // the third tab shows the account page.
     testWidgets(
       "${kind.name}: signing in swaps the third tab and keeps the other tabs' "
-      "state",
+      'state',
       (tester) async {
         addTearDown(() => _signedInNotifier.value = false);
         _tabsKind = kind;
