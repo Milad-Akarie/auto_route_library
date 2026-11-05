@@ -300,6 +300,7 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
 
   @override
   void dispose() {
+    _controller?.removeListener(_onTabsChanged);
     _curvedAnimation.dispose();
     _animationController.dispose();
     super.dispose();
@@ -307,11 +308,7 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
 
   @override
   bool onPreload(int index) {
-    final didPreload = _indexedStackKey.currentState?.preload(index) == true;
-    if (didPreload & mounted) {
-      setState(() {});
-    }
-    return didPreload;
+    return _indexedStackKey.currentState?.preload(index) == true;
   }
 
   @override
@@ -320,19 +317,16 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
     _controller!.setupRoutes(widget.routes);
     _index = _controller!.activeIndex;
     _animationController.value = 1.0;
-    // Not removable, and needs no removal: this state disposes the tabs
-    // router when it is disposed, which drops the listener.
-    // ignore: avoid-unremovable-callbacks-in-listeners
-    _controller!.addListener(() {
-      if (_controller!.activeIndex != _index) {
-        setState(() {
-          _index = _controller!.activeIndex;
-        });
-        _animationController.forward(from: 0.0);
-      } else if (mounted) {
-        setState(() {});
-      }
-    });
+    _controller!.addListener(_onTabsChanged);
+  }
+
+  void _onTabsChanged() {
+    if (_controller!.activeIndex != _index) {
+      setState(() {
+        _index = _controller!.activeIndex;
+      });
+      _animationController.forward(from: 0.0);
+    }
   }
 
   @override
@@ -349,50 +343,56 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
   @override
   Widget build(BuildContext context) {
     assert(_controller != null, 'The tabs controller is not set up yet.');
-    final stack = _controller!.stack;
-    final builder = widget.builder ?? _defaultBuilder;
-    final stateHash = controller!.stateHash;
+    // Rebuilds whenever the tabs router changes, as its stack or its state.
+    return ListenableBuilder(
+      listenable: _controller!,
+      builder: (stackContext, _) {
+        final stack = _controller!.stack;
+        final builder = widget.builder ?? _defaultBuilder;
+        final stateHash = controller!.stateHash;
 
-    final builderChild = stack.isEmpty
-        // A Container with no child fills its space; a ColoredBox would shrink to nothing.
-        // ignore: banned-usage
-        ? Container(color: Theme.of(context).scaffoldBackgroundColor)
-        : _IndexedStackBuilder(
-            key: _indexedStackKey,
-            activeIndex: _index,
-            tabsHash: _tabsHash,
-            lazyLoad: widget.lazyLoad,
-            animation: _animation,
-            navigatorObservers: _navigatorObservers,
-            itemBuilder: (context, index) {
-              return KeepAliveTab(key: _tabKeyOf(stack[index]), page: stack[index]);
-            },
-            stack: stack,
-          );
-
-    return RouterScope(
-      controller: _controller!,
-      inheritableObserversBuilder: _inheritableObserversBuilder,
-      stateHash: stateHash,
-      navigatorObservers: _navigatorObservers,
-      child: TabsRouterScope(
-        controller: _controller!,
-        stateHash: stateHash,
-        child: Builder(
-          builder: (context) {
-            return builder(
-              context,
-              AnimatedBuilder(
+        final builderChild = stack.isEmpty
+            // A Container with no child fills its space; a ColoredBox would shrink to nothing.
+            // ignore: banned-usage
+            ? Container(color: Theme.of(stackContext).scaffoldBackgroundColor)
+            : _IndexedStackBuilder(
+                key: _indexedStackKey,
+                activeIndex: _index,
+                tabsHash: _tabsHash,
+                lazyLoad: widget.lazyLoad,
                 animation: _animation,
-                child: builderChild,
-                builder: (context, child) {
-                  return widget.transitionBuilder(context, child!, _animation);
+                navigatorObservers: _navigatorObservers,
+                itemBuilder: (context, index) {
+                  return KeepAliveTab(key: _tabKeyOf(stack[index]), page: stack[index]);
                 },
-              ),
-            );
-          },
-        ),
-      ),
+                stack: stack,
+              );
+
+        return RouterScope(
+          controller: _controller!,
+          inheritableObserversBuilder: _inheritableObserversBuilder,
+          stateHash: stateHash,
+          navigatorObservers: _navigatorObservers,
+          child: TabsRouterScope(
+            controller: _controller!,
+            stateHash: stateHash,
+            child: Builder(
+              builder: (context) {
+                return builder(
+                  context,
+                  AnimatedBuilder(
+                    animation: _animation,
+                    child: builderChild,
+                    builder: (context, child) {
+                      return widget.transitionBuilder(context, child!, _animation);
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -439,7 +439,8 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> with _RouteA
     if (widget.lazyLoad) {
       _didInitTabRoute(index, widget.activeIndex);
     }
-    return _initializedPagesTracker[index] = true;
+    setState(() => _initializedPagesTracker[index] = true);
+    return true;
   }
 
   @override
@@ -569,9 +570,6 @@ class _AutoTabsRouterPageViewState extends AutoTabsRouterState<_AutoTabsRouterPa
   @override
   bool onPreload(int index) {
     final didPreload = _pageViewKey.currentState?.preload(index) == true;
-    if (didPreload & mounted) {
-      setState(() {});
-    }
     if (index != _controller!.activeIndex) {
       if (didPreload) {
         _didInitTabRoute(index, _controller!.activeIndex);
@@ -683,22 +681,19 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
     _controller!.setupRoutes(widget.routes);
     _updateTabController();
     _didInitTabRoutes(lazyLoad: widget.lazyLoad, activeIndex: _controller!.activeIndex);
-    // Not removable, and needs no removal: this state disposes the tabs
-    // router when it is disposed, which drops the listener.
-    // ignore: avoid-unremovable-callbacks-in-listeners
-    _controller!.addListener(() {
-      // Also brings the tab bar back from a tab whose guards kept it out.
-      if (_tabController.index != _controller!.activeIndex) {
-        _tabController.animateTo(_controller!.activeIndex, duration: widget.duration, curve: widget.curve);
-      }
-      if (mounted) {
-        setState(() {});
-      }
-    });
+    _controller!.addListener(_onTabsChanged);
+  }
+
+  // Also brings the tab bar back from a tab whose guards kept it out.
+  void _onTabsChanged() {
+    if (_tabController.index != _controller!.activeIndex) {
+      _tabController.animateTo(_controller!.activeIndex, duration: widget.duration, curve: widget.curve);
+    }
   }
 
   @override
   void dispose() {
+    _controller?.removeListener(_onTabsChanged);
     _tabController.dispose();
     super.dispose();
   }
@@ -736,9 +731,6 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
   @override
   bool onPreload(int index) {
     final didPreload = _tabViewKey.currentState?.preload(index) == true;
-    if (didPreload & mounted) {
-      setState(() {});
-    }
 
     if (index != _controller!.activeIndex) {
       if (didPreload) {
@@ -754,36 +746,42 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
   @override
   Widget build(BuildContext context) {
     assert(_controller != null, 'The tabs controller is not set up yet.');
-    final builder = widget.builder ?? _defaultPageViewBuilder;
-    final stateHash = controller!.stateHash;
-    return RouterScope(
-      key: _controller!.globalRouterKey,
-      controller: _controller!,
-      inheritableObserversBuilder: _inheritableObserversBuilder,
-      stateHash: stateHash,
-      navigatorObservers: _navigatorObservers,
-      child: TabsRouterScope(
-        controller: _controller!,
-        stateHash: stateHash,
-        child: Builder(
-          key: ValueKey(_tabsHash),
-          builder: (context) {
-            return builder(
-              context,
-              AutoTabView(
-                key: _tabViewKey,
-                scrollDirection: widget.scrollDirection,
-                physics: widget.physics,
-                dragStartBehavior: widget.dragStartBehavior,
-                controller: _tabController,
-                router: _controller!,
-                lazyLoad: widget.lazyLoad,
-              ),
-              _tabController,
-            );
-          },
-        ),
-      ),
+    // Rebuilds whenever the tabs router changes, as its stack or its state.
+    return ListenableBuilder(
+      listenable: _controller!,
+      builder: (_, _) {
+        final builder = widget.builder ?? _defaultPageViewBuilder;
+        final stateHash = controller!.stateHash;
+        return RouterScope(
+          key: _controller!.globalRouterKey,
+          controller: _controller!,
+          inheritableObserversBuilder: _inheritableObserversBuilder,
+          stateHash: stateHash,
+          navigatorObservers: _navigatorObservers,
+          child: TabsRouterScope(
+            controller: _controller!,
+            stateHash: stateHash,
+            child: Builder(
+              key: ValueKey(_tabsHash),
+              builder: (context) {
+                return builder(
+                  context,
+                  AutoTabView(
+                    key: _tabViewKey,
+                    scrollDirection: widget.scrollDirection,
+                    physics: widget.physics,
+                    dragStartBehavior: widget.dragStartBehavior,
+                    controller: _tabController,
+                    router: _controller!,
+                    lazyLoad: widget.lazyLoad,
+                  ),
+                  _tabController,
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -827,18 +825,20 @@ class _AutoTabsRouterBuilderState extends AutoTabsRouterState<_AutoTabsRouterBui
     _controller!.setupRoutes(widget.routes);
     widget.onRouterReady?.call(_controller!);
     _didInitTabRoute(_controller!.activeIndex);
-    // Not removable, and needs no removal: this state disposes the tabs
-    // router when it is disposed, which drops the listener.
-    // ignore: avoid-unremovable-callbacks-in-listeners
-    _controller!.addListener(() {
-      if (_controller!.activeIndex != _controller!.previousIndex) {
-        _didChangeTabRoute(_controller!.activeIndex, _controller!.previousIndex ?? 0);
-        widget.onNavigate?.call(_controller!);
-      }
-      if (mounted) {
-        setState(() {});
-      }
-    });
+    _controller!.addListener(_onTabsChanged);
+  }
+
+  void _onTabsChanged() {
+    if (_controller!.activeIndex != _controller!.previousIndex) {
+      _didChangeTabRoute(_controller!.activeIndex, _controller!.previousIndex ?? 0);
+      widget.onNavigate?.call(_controller!);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller?.removeListener(_onTabsChanged);
+    super.dispose();
   }
 
   @override
@@ -856,28 +856,37 @@ class _AutoTabsRouterBuilderState extends AutoTabsRouterState<_AutoTabsRouterBui
   @override
   Widget build(BuildContext context) {
     assert(_controller != null, 'The tabs controller is not set up yet.');
-    final stack = _controller!.stack;
-    final builder = widget.builder;
-    final stateHash = controller!.stateHash;
-    return RouterScope(
-      key: _controller!.globalRouterKey,
-      controller: _controller!,
-      inheritableObserversBuilder: _inheritableObserversBuilder,
-      stateHash: stateHash,
-      navigatorObservers: _navigatorObservers,
-      child: TabsRouterScope(
-        controller: _controller!,
-        stateHash: stateHash,
-        child: Builder(
-          builder: (context) {
-            return builder(
-              context,
-              List.generate(stack.length, (index) => KeepAliveTab(key: _tabKeyOf(stack[index]), page: stack[index])),
-              _controller!,
-            );
-          },
-        ),
-      ),
+    // Rebuilds whenever the tabs router changes, as its stack or its state.
+    return ListenableBuilder(
+      listenable: _controller!,
+      builder: (_, _) {
+        final stack = _controller!.stack;
+        final builder = widget.builder;
+        final stateHash = controller!.stateHash;
+        return RouterScope(
+          key: _controller!.globalRouterKey,
+          controller: _controller!,
+          inheritableObserversBuilder: _inheritableObserversBuilder,
+          stateHash: stateHash,
+          navigatorObservers: _navigatorObservers,
+          child: TabsRouterScope(
+            controller: _controller!,
+            stateHash: stateHash,
+            child: Builder(
+              builder: (context) {
+                return builder(
+                  context,
+                  List.generate(
+                    stack.length,
+                    (index) => KeepAliveTab(key: _tabKeyOf(stack[index]), page: stack[index]),
+                  ),
+                  _controller!,
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 

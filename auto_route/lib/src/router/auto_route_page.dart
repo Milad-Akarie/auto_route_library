@@ -168,45 +168,25 @@ class AutoRoutePage<T> extends Page<T> {
 /// the navigator gives the route a new page whenever its data changes, for
 /// example new query params. So this builds the page the route holds now, and
 /// rebuilds whenever the page's router changes.
-class _CurrentPageChild extends StatefulWidget {
+class _CurrentPageChild extends StatelessWidget {
   const _CurrentPageChild({required this.page});
 
   /// The page the route was created with.
   final AutoRoutePage<Object?> page;
 
   @override
-  State<_CurrentPageChild> createState() => _CurrentPageChildState();
-}
-
-class _CurrentPageChildState extends State<_CurrentPageChild> {
-  // The router belongs to the route data, not to this state.
-  // ignore: dispose-fields
-  late final RoutingController _router = widget.page.routeData.router;
-
-  @override
-  void initState() {
-    super.initState();
-    _router.addListener(_onRouterChanged);
-  }
-
-  @override
-  void dispose() {
-    _router.removeListener(_onRouterChanged);
-    super.dispose();
-  }
-
-  void _onRouterChanged() {
-    if (mounted) setState(() {});
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final route = ModalRoute.of(context);
-    final settings = route?.settings;
-    final page = settings is AutoRoutePage ? settings : widget.page;
-    // The route is the app's own, so it can't set it as auto_route's do.
-    page.routeData.animation ??= route?.animation;
-    return page.buildPage(context);
+    return ListenableBuilder(
+      listenable: page.routeData.router,
+      builder: (context, _) {
+        final route = ModalRoute.of(context);
+        final settings = route?.settings;
+        final current = settings is AutoRoutePage ? settings : page;
+        // The route is the app's own, so it can't set it as auto_route's do.
+        current.routeData.animation ??= route?.animation;
+        return current.buildPage(context);
+      },
+    );
   }
 }
 

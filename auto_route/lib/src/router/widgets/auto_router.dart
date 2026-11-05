@@ -146,7 +146,6 @@ class AutoRouterState extends State<AutoRouter> {
         routeCollection: _parentController.routeCollection.subCollectionOf(parentRouteData.name),
       );
       _parentController.attachChildController(_controller!);
-      _controller!.addListener(_rebuildListener);
       if (_controller!.setupInitialRoutesSynchronously()) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _controller?.notifyAll();
@@ -161,43 +160,41 @@ class AutoRouterState extends State<AutoRouter> {
     }
   }
 
-  void _rebuildListener() {
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     assert(_controller != null, 'The router controller is not set up yet.');
-    final navigator = AutoRouteNavigator(
-      router: _controller!,
-      clipBehavior: widget.clipBehavior,
-      key: GlobalObjectKey(_controller.hashCode),
-      navRestorationScopeId: widget.navRestorationScopeId,
-      navigatorObservers: _navigatorObservers,
-      placeholder: widget.placeholder,
-      routeTraversalEdgeBehavior: widget.traversalEdgeBehavior,
-    );
-    final stateHash = _controller!.stateHash;
-    return RouterScope(
-      key: _controller!.globalRouterKey,
-      controller: _controller!,
-      inheritableObserversBuilder: _inheritableObserversBuilder,
-      navigatorObservers: _navigatorObservers,
-      stateHash: stateHash,
-      child: StackRouterScope(
-        controller: _controller!,
-        stateHash: stateHash,
-        child: widget.builder == null ? navigator : Builder(builder: (ctx) => widget.builder!(ctx, navigator)),
-      ),
+    return ListenableBuilder(
+      listenable: _controller!,
+      builder: (_, _) {
+        final navigator = AutoRouteNavigator(
+          router: _controller!,
+          clipBehavior: widget.clipBehavior,
+          key: GlobalObjectKey(_controller.hashCode),
+          navRestorationScopeId: widget.navRestorationScopeId,
+          navigatorObservers: _navigatorObservers,
+          placeholder: widget.placeholder,
+          routeTraversalEdgeBehavior: widget.traversalEdgeBehavior,
+        );
+        final stateHash = _controller!.stateHash;
+        return RouterScope(
+          key: _controller!.globalRouterKey,
+          controller: _controller!,
+          inheritableObserversBuilder: _inheritableObserversBuilder,
+          navigatorObservers: _navigatorObservers,
+          stateHash: stateHash,
+          child: StackRouterScope(
+            controller: _controller!,
+            stateHash: stateHash,
+            child: widget.builder == null ? navigator : Builder(builder: (ctx) => widget.builder!(ctx, navigator)),
+          ),
+        );
+      },
     );
   }
 
   @override
   void dispose() {
     if (_controller != null) {
-      _controller!.removeListener(_rebuildListener);
       _controller!.dispose();
       _parentController.removeChildController(_controller!);
       _controller = null;

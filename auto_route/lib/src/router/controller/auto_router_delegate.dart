@@ -398,29 +398,11 @@ class _AutoRootRouter extends StatefulWidget {
 class _AutoRootRouterState extends State<_AutoRootRouter> {
   StackRouter get router => widget.router;
 
-  @override
-  void initState() {
-    super.initState();
-    router.addListener(_handleRebuild);
-  }
-
-  @override
-  void dispose() {
-    router.removeListener(_handleRebuild);
-    super.dispose();
-  }
-
   // A hot reload may have changed the routes the router was built from.
   @override
   void reassemble() {
     super.reassemble();
     router._reassemble();
-  }
-
-  void _handleRebuild() {
-    if (mounted) {
-      setState(() {});
-    }
   }
 
   // Flutter tells Android whether the app takes back from the root
@@ -485,35 +467,34 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
 
   @override
   Widget build(BuildContext context) {
-    _scheduleTabsReport();
     return NotificationListener<NavigationNotification>(
       onNotification: _handleNavigationNotification,
-      // A widget class would add an element and move the state below it.
-      // ignore: avoid-returning-widgets
-      child: _buildRouterScope(),
-    );
-  }
-
-  Widget _buildRouterScope() {
-    final stateHash = router.stateHash;
-    return RouterScope(
-      key: router.globalRouterKey,
-      controller: router,
-      navigatorObservers: widget.navigatorObservers,
-      inheritableObserversBuilder: widget.navigatorObserversBuilder,
-      stateHash: stateHash,
-      child: StackRouterScope(
-        stateHash: stateHash,
-        controller: router,
-        child: AutoRouteNavigator(
-          router: router,
-          clipBehavior: widget.clipBehavior,
-          key: GlobalObjectKey(widget.router.hashCode),
-          placeholder: widget.placeholder,
-          navRestorationScopeId: widget.navRestorationScopeId,
-          navigatorObservers: widget.navigatorObservers,
-          routeTraversalEdgeBehavior: widget.routeTraversalEdgeBehavior,
-        ),
+      child: ListenableBuilder(
+        listenable: router,
+        builder: (context, _) {
+          _scheduleTabsReport();
+          final stateHash = router.stateHash;
+          return RouterScope(
+            key: router.globalRouterKey,
+            controller: router,
+            navigatorObservers: widget.navigatorObservers,
+            inheritableObserversBuilder: widget.navigatorObserversBuilder,
+            stateHash: stateHash,
+            child: StackRouterScope(
+              stateHash: stateHash,
+              controller: router,
+              child: AutoRouteNavigator(
+                router: router,
+                clipBehavior: widget.clipBehavior,
+                key: GlobalObjectKey(widget.router.hashCode),
+                placeholder: widget.placeholder,
+                navRestorationScopeId: widget.navRestorationScopeId,
+                navigatorObservers: widget.navigatorObservers,
+                routeTraversalEdgeBehavior: widget.routeTraversalEdgeBehavior,
+              ),
+            ),
+          );
+        },
       ),
     );
   }

@@ -102,8 +102,8 @@ class AutoTabViewState extends State<AutoTabView> {
   bool preload(int index) {
     final draggedIn = _draggedInTabs.remove(_matchIdAt(index));
     final didPreload = _tabKeyAt(index)?.currentState?.preload() == true;
-    if (didPreload) {
-      _updateChildren();
+    if (didPreload && mounted) {
+      setState(_updateChildren);
     }
     return didPreload || draggedIn;
   }

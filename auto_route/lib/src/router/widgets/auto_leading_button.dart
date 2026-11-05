@@ -131,70 +131,65 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
   void initState() {
     super.initState();
     _pagelessRoutesObserver = AutoRouter.of(context).pagelessRoutesObserver;
-    _pagelessRoutesObserver.addListener(_handleRebuild);
-  }
-
-  @override
-  void dispose() {
-    _pagelessRoutesObserver.removeListener(_handleRebuild);
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final scope = RouterScope.of(context, watch: true);
-    Widget? leading;
-    if (scope.controller.canPop(
-      ignoreChildRoutes: !widget.showIfChildCanPop,
-      ignoreParentRoutes: !widget._showIfParentCanPop,
-      ignorePagelessRoutes: widget.ignorePagelessRoutes,
-    )) {
-      final topPage = scope.controller.topPage;
-      final useCloseButton = topPage?.fullscreenDialog ?? false;
-      if (widget.builder != null) {
-        return widget.builder!(context, useCloseButton ? .close : .back, scope.controller.maybePopTop);
-      }
-      leading = useCloseButton
-          ? CloseButton(
-              key: const ValueKey(LeadingType.close),
-              color: widget.color,
-              onPressed: scope.controller.maybePopTop,
-            )
-          : BackButton(
-              key: const ValueKey(LeadingType.back),
-              color: widget.color,
-              onPressed: scope.controller.maybePopTop,
-            );
-    }
-    final scaffold = Scaffold.maybeOf(context);
-    if (scaffold?.hasDrawer == true) {
-      if (widget.builder != null) {
-        return widget.builder!(context, .drawer, _handleDrawerButton);
-      }
-      leading = IconButton(
-        key: const ValueKey(LeadingType.drawer),
-        icon: const Icon(Icons.menu),
-        iconSize: Theme.of(context).iconTheme.size ?? 24,
-        onPressed: _handleDrawerButton,
-        tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-      );
-    }
+    // Rebuilds when a pageless route, such as a dialog, opens or closes.
+    return ListenableBuilder(
+      listenable: _pagelessRoutesObserver,
+      builder: (leadingContext, _) {
+        final scope = RouterScope.of(leadingContext, watch: true);
+        Widget? leading;
+        if (scope.controller.canPop(
+          ignoreChildRoutes: !widget.showIfChildCanPop,
+          ignoreParentRoutes: !widget._showIfParentCanPop,
+          ignorePagelessRoutes: widget.ignorePagelessRoutes,
+        )) {
+          final topPage = scope.controller.topPage;
+          final useCloseButton = topPage?.fullscreenDialog ?? false;
+          if (widget.builder != null) {
+            return widget.builder!(leadingContext, useCloseButton ? .close : .back, scope.controller.maybePopTop);
+          }
+          leading = useCloseButton
+              ? CloseButton(
+                  key: const ValueKey(LeadingType.close),
+                  color: widget.color,
+                  onPressed: scope.controller.maybePopTop,
+                )
+              : BackButton(
+                  key: const ValueKey(LeadingType.back),
+                  color: widget.color,
+                  onPressed: scope.controller.maybePopTop,
+                );
+        }
+        final scaffold = Scaffold.maybeOf(leadingContext);
+        if (scaffold?.hasDrawer == true) {
+          if (widget.builder != null) {
+            return widget.builder!(leadingContext, .drawer, _handleDrawerButton);
+          }
+          leading = IconButton(
+            key: const ValueKey(LeadingType.drawer),
+            icon: const Icon(Icons.menu),
+            iconSize: Theme.of(leadingContext).iconTheme.size ?? 24,
+            onPressed: _handleDrawerButton,
+            tooltip: MaterialLocalizations.of(leadingContext).openAppDrawerTooltip,
+          );
+        }
 
-    if (widget.builder != null) {
-      return widget.builder!(context, .noLeading, null);
-    }
-    if (widget._nullableBuilder != null) {
-      return widget._nullableBuilder!(context, leading);
-    }
-    return leading ?? const SizedBox.shrink(key: ValueKey(LeadingType.noLeading));
+        if (widget.builder != null) {
+          return widget.builder!(leadingContext, .noLeading, null);
+        }
+        if (widget._nullableBuilder != null) {
+          return widget._nullableBuilder!(leadingContext, leading);
+        }
+        return leading ?? const SizedBox.shrink(key: ValueKey(LeadingType.noLeading));
+      },
+    );
   }
 
   void _handleDrawerButton() {
     Scaffold.of(context).openDrawer();
-  }
-
-  void _handleRebuild() {
-    setState(() {});
   }
 
   @override
