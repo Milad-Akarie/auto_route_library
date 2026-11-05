@@ -111,6 +111,7 @@ class _LegacyFormRoute extends PageRouteInfo<void> {
   static PageInfo page = PageInfo(
     name,
     // #1588 reports the deprecated WillPopScope, which apps still use.
+    // ignore: deprecated_member_use
     builder: (_) => WillPopScope(
       onWillPop: () async {
         _popAttempts++;
