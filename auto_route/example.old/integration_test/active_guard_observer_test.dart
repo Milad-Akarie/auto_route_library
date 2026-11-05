@@ -14,8 +14,8 @@ import 'support/disposal_tracker.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: push HostRoute, whose page holds an AutoRouter, then go back,
-  // three times.
+  // Steps: push HostRoute, whose page holds an AutoRouter, then go
+  // back, three times.
   // Should: each visit's ActiveGuardObserver is disposed when the host leaves.
   testWidgets('leaving a nested router disposes its ActiveGuardObserver', (
     tester,

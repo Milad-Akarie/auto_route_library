@@ -15,8 +15,8 @@ void main() {
 
   // Steps: start an app whose routes hold /shop with the child cart, and
   // /shop/cart.
-  // Should: the app fails at once with an error naming CartRoute,
-  // OtherCartRoute and the path.
+  // Should: the app fails at once with an error naming
+  // CartRoute, OtherCartRoute and the path.
   testWidgets(
     'An app with two routes for one path fails to start, naming both',
     (tester) async {

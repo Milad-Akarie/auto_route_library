@@ -45,8 +45,9 @@ void main() {
 
   final iosTheme = ThemeData(platform: .iOS);
 
-  // Steps: push SecondHostRoute (its nested router shows SecondNested1Route),
-  // push SecondNested3Route into that nested router, then go back.
+  // Steps: push SecondHostRoute (its nested router shows
+  // SecondNested1Route), push SecondNested3Route into that nested router, then
+  // go back.
   // Should: only SecondNested3Route is popped; SecondHostRoute stays with
   // SecondNested1Route on screen. A second back pops SecondHostRoute.
   group('with a sub-route pushed in a nested router', () {

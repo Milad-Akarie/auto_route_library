@@ -13,9 +13,9 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: under '/orders', open OrderRoute(orderId: 'o-1') from the orders list,
-  // then call context.navigateTo(OrderPaymentProofRoute()) from the order's
-  // page.
+  // Steps: under '/orders', open OrderRoute(orderId: 'o-1') from the orders
+  // list, then call context.navigateTo(OrderPaymentProofRoute()) from the
+  // order's page.
   // Should: the proof page opens under order 'o-1' and reads its inherited
   // 'orderId', not fail to parse it from null.
   testWidgets(

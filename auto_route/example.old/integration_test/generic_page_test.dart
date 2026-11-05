@@ -6,7 +6,7 @@ import 'support/picker_router.dart';
 
 // A page class with type parameters gets a generic route, which builds the
 // page with the type it is pushed with.
-// https://github.com/Milad-Akarie/auto_route_library/issues/2050 (also #1879,
+// https://github.com/Milad-Akarie/auto_route_library/issues/2050 (also #1879 and
 // #1739)
 // Headless tests: auto_route/test/generic_page/generic_page_test.dart
 // The router and its page are in support/picker_router.dart, with the router

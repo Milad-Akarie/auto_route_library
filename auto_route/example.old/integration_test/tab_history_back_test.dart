@@ -17,8 +17,8 @@ import 'support/tab_history_router.dart';
 // Steps: show tab 0, then 2, then 1, and press system back. On Android that
 // goes through the activity, which Android calls only while Flutter says it
 // handles back (see systemBack).
-// Should: back shows 2, then 0, then leaves the tabs: the page under them,
-// or, when the tabs are the app's first page, Android closes the app.
+// Should: back shows 2, then 0, then leaves the tabs: the page under
+// them, or, when the tabs are the app's first page, Android closes the app.
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 

@@ -9,14 +9,15 @@ import 'support/app.dart';
 
 // Logging out and back in keeps the guarded home page's state.
 // https://github.com/Milad-Akarie/auto_route_library/issues/2338
-// Headless test: auto_route/test/reevaluatable_router/reevaluation_listener_test.dart
+// Headless test:
+// auto_route/test/reevaluatable_router/reevaluation_listener_test.dart
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   // Steps: one guard on HomeRoute (initial) and LoginRoute sends a
-  // logged-out user from HomeRoute to LoginRoute with redirectUntil;
-  // reevaluateListenable is the auth store. Start logged in, tap Increment
-  // three times, tap Log out, then tap Log in.
+  // logged-out user from HomeRoute to LoginRoute with
+  // redirectUntil; reevaluateListenable is the auth store. Start logged in, tap
+  // Increment three times, tap Log out, then tap Log in.
   // Should: HomeRoute comes back with its counter still at 3.
   testWidgets(
     'Logging out and back in keeps the state of the guarded home page (#2338)',

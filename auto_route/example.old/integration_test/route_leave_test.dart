@@ -34,8 +34,8 @@ void main() {
     expect(find.text('Editor'), findsOneWidget);
   }
 
-  // Steps: open the editor, refuse pops, press system back; allow pops,
-  // press system back again.
+  // Steps: open the editor, refuse pops, press system back; allow
+  // pops, press system back again.
   // Should: the refused back reports nothing, the second reports popped.
   testWidgets('system back reports popped, unless the PopScope refuses it', (
     tester,

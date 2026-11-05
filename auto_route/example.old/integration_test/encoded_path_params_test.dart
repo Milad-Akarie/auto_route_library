@@ -24,8 +24,8 @@ void main() {
 
   // Steps: push a page whose path param is 'reports/2024', then open the app
   // again at the url it shows.
-  // Should: the url, and on web the address bar, is '/files/reports%2F2024',
-  // and the reopened page reads 'reports/2024'.
+  // Should: the url, and on web the address bar, is
+  // '/files/reports%2F2024', and the reopened page reads 'reports/2024'.
   testWidgets(
     'A "/" in a path param is encoded in the url and reads back whole',
     (tester) async {

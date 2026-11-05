@@ -38,8 +38,8 @@ void main() {
   // Steps: push CustomKindRoute, which fades in over 600 ms, without awaiting
   // the push; await router.waitForTransitions(). Then replace it with
   // MaterialKindRoute and wait again; then pop and wait again.
-  // Should: each wait completes with the page's route animation completed,
-  // and after the pop, dismissed.
+  // Should: each wait completes with the page's route animation
+  // completed, and after the pop, dismissed.
   testWidgets(
     'waitForTransitions() completes once a push, a replace and a pop have '
     'ended',

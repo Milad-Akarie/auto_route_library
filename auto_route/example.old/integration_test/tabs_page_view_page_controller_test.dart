@@ -13,8 +13,9 @@ import 'support/disposal_tracker.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: push TabsHostRoute, whose page holds an AutoTabsRouter.pageView,
-  // swipe to the second tab, then go back, three times.
+  // Steps: push TabsHostRoute, whose page holds an
+  // AutoTabsRouter.pageView, swipe to the second tab, then go back, three
+  // times.
   // Should: each visit's PageController is disposed when the host leaves.
   testWidgets(
     'leaving an AutoTabsRouter.pageView disposes its PageController',

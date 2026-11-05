@@ -13,9 +13,9 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: push SecondHostRoute (its nested router shows SecondNested1Route),
-  // remove that last nested page, then call maybePop on the nested router, as
-  // a back press does.
+  // Steps: push SecondHostRoute (its nested router shows
+  // SecondNested1Route), remove that last nested page, then call maybePop on
+  // the nested router, as a back press does.
   // Should: maybePop returns true, SecondHostRoute is popped and FirstRoute
   // shows.
   testWidgets(

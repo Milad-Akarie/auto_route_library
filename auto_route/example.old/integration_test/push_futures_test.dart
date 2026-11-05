@@ -17,8 +17,8 @@ void main() {
   late RootStackRouter router;
   setUp(() => router = buildSimpleRouter());
 
-  // Steps: push SecondRoute and ThirdRoute, each awaiting its result,
-  // then remove both with removeWhere.
+  // Steps: push SecondRoute and ThirdRoute, each awaiting its
+  // result, then remove both with removeWhere.
   // Should: both push futures complete with null and FirstRoute shows.
   testWidgets('Removing multiple routes completes each push future (#2307)', (
     tester,

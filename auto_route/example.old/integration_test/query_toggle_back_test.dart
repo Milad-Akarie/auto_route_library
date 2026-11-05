@@ -17,8 +17,8 @@ void main() {
   late RootStackRouter router;
   setUp(() => router = buildSimpleRouter());
 
-  // Steps: push SecondRoute, navigate to SecondRoute with the query p=true,
-  // then go back.
+  // Steps: push SecondRoute, navigate to SecondRoute with the query
+  // p=true, then go back.
   // Should: on web, the browser's back button shows '/second-route' without the
   // query, then FirstRoute at '/'. Elsewhere, back leaves SecondRoute at once.
   testWidgets('Back leaves a page whose query params changed', (tester) async {

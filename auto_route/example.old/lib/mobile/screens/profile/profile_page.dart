@@ -77,15 +77,7 @@ class ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 32),
               if (userData == null)
                 ElevatedButton(
-                  onPressed: () {
-                    // context.pushRoute(
-                    //   // UserDataCollectorRoute(onResult: (data) {
-                    //   //   setState(() {
-                    //   //     userData = data;
-                    //   //   });
-                    //   // }),
-                    // );
-                  },
+                  onPressed: () {},
                   child: const Text('Collect user data'),
                 )
               else

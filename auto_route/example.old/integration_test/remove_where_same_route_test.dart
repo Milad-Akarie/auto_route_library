@@ -9,7 +9,8 @@ import 'support/app.dart';
 
 // removeWhere removes the page it matches, not the top page of the same route.
 // https://github.com/Milad-Akarie/auto_route_library/issues/1943
-// Headless test: auto_route/test/simple_router/remove_where_same_route_test.dart
+// Headless test:
+// auto_route/test/simple_router/remove_where_same_route_test.dart
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -24,9 +25,9 @@ void main() {
     );
   });
 
-  // Steps: push a form, replace it with a loading InfoRoute that has a key,
-  // push a success InfoRoute over it, then removeWhere the InfoRoute holding
-  // the loader's key.
+  // Steps: push a form, replace it with a loading InfoRoute that has a
+  // key, push a success InfoRoute over it, then removeWhere the InfoRoute
+  // holding the loader's key.
   // Should: only the loading page goes; the success page stays on screen.
   testWidgets(
     'removeWhere removes the matching page, not the top page of the same route',

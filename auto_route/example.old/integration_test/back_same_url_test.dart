@@ -56,8 +56,8 @@ void main() {
     await expectBrowserUrl('/book');
   });
 
-  // Steps: the same, going back with the browser's back button on web,
-  // system back elsewhere.
+  // Steps: the same, going back with the browser's back button on
+  // web, system back elsewhere.
   // Should: the first Book, 'some-id', not Home.
   testWidgets(
     'Going back returns to a page with the same url as the current one',

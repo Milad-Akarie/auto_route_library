@@ -11,8 +11,8 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: open the app on /second, which stacks SecondRoute on HomeRoute;
-  // both pages have AutoRouteAwareStateMixin. Go back.
+  // Steps: open the app on /second, which stacks SecondRoute on
+  // HomeRoute; both pages have AutoRouteAwareStateMixin. Go back.
   // Should: HomeRoute hears didPush, then didPushNext, since SecondRoute
   // covers it; going back tells SecondRoute didPop and HomeRoute didPopNext.
   testWidgets(

@@ -29,8 +29,8 @@ void main() {
     );
   });
 
-  // Steps: from /home, push its child /home/content/1 by its full path,
-  // awaiting a bool.
+  // Steps: from /home, push its child /home/content/1 by its full
+  // path, awaiting a bool.
   // Should: the content page shows, without the "AutoRoutePage<dynamic> is
   // not a subtype of AutoRoutePage<bool>" type error.
   testWidgets(
@@ -45,8 +45,8 @@ void main() {
     },
   );
 
-  // Steps: push the content route into the home's stack awaiting a bool,
-  // then tap its back icon, which pops it with true.
+  // Steps: push the content route into the home's stack awaiting a
+  // bool, then tap its back icon, which pops it with true.
   // Should: the push completes with true and the home page shows.
   testWidgets('A nested route returns its bool result when it pops itself', (
     tester,

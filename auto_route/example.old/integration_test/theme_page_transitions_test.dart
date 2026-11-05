@@ -48,8 +48,8 @@ void main() {
     },
   );
 
-  // Steps: show the router in a MaterialApp from package:flutter/material.dart,
-  // whose Theme is another class than material_ui's, with its own page
+  // Steps: show the router in a MaterialApp from
+  // package:flutter/material.dart, whose Theme is another class than material_ui's, with its own page
   // transitions builder for every platform, then push a second page.
   // Should: the builder of that theme runs and sets the page's duration.
   testWidgets(

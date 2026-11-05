@@ -110,11 +110,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 appBar: AppBar(
                   leading: const AutoLeadingButton(),
                   title: Text(context.topRoute.title(context)),
-                  // bottom: TabBar(
-                  //   controller: controller,
-                  //   tabs: [for (final d in destinations) Tab(child:
-                  // Text(d.label))],
-                  // ),
                 ),
                 body: child,
                 bottomNavigationBar: buildBottomNav(

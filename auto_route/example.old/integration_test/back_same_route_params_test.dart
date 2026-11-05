@@ -15,13 +15,14 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: push the item route three times, with path params holding ':',
-  // '@', '+' and ' ', then go back three times: the browser's back button on
-  // web, system back elsewhere.
+  // Steps: push the item route three times, with path params holding
+  // ':', '@', '+' and ' ', then go back three times: the browser's back button
+  // on web, system back elsewhere.
   // Should: each step shows the item before, with its param whole, and the
   // last one the first page.
   testWidgets(
-    'Going back walks back through one route pushed with different params (flutter/flutter#186052)',
+    'Going back walks back through one route pushed with different params '
+    '(flutter/flutter#186052)',
     (tester) async {
       final router = RootStackRouter.build(
         routes: [

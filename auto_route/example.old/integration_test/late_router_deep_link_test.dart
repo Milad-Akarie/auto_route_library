@@ -28,8 +28,8 @@ void main() {
     ),
   };
 
-  // Steps: open the app at '/second'; it shows a splash for its first frame,
-  // then builds its router.
+  // Steps: open the app at '/second'; it shows a splash for its first
+  // frame, then builds its router.
   // Should: the second page opens at '/second', and on web the browser holds
   // the link in the same history entry, not two more.
   for (final MapEntry(key: name, value: buildApp) in apps.entries) {

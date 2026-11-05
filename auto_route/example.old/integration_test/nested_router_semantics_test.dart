@@ -11,8 +11,8 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: with semantics on, open HostRoute, a Row of Text('Left 1'),
-  // Text('Left 2'), a nested AutoRouter showing Text('Center'), and
+  // Steps: with semantics on, open HostRoute, a Row of Text('Left
+  // 1'), Text('Left 2'), a nested AutoRouter showing Text('Center'), and
   // Text('Right').
   // Should: a screen reader finds every Text.
   testWidgets('widgets before a nested router stay in the semantics tree', (

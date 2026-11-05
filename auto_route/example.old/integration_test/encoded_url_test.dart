@@ -22,8 +22,9 @@ void main() {
     ],
   );
 
-  // Steps: push a page whose path param and query param are '123#456#789',
-  // then open the app again at the url it shows, as a refresh does.
+  // Steps: push a page whose path param and query param are
+  // '123#456#789', then open the app again at the url it shows, as a refresh
+  // does.
   // Should: the url, and on web the address bar, holds '#' as '%23', and the
   // reopened page reads the whole '123#456#789', not '123'.
   testWidgets('A "#" in a path param survives a refresh', (tester) async {

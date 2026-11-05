@@ -54,8 +54,8 @@ void main() {
     if (!kIsWeb) expect(router.navigationHistory.length, 1);
   });
 
-  // Steps: start on FirstRoute, push SecondRoute, push ThirdRoute, call back(),
-  // push ThirdRoute again, then call back().
+  // Steps: start on FirstRoute, push SecondRoute, push ThirdRoute, call
+  // back(), push ThirdRoute again, then call back().
   // Should: the second ThirdRoute is recorded, so back() lands on SecondRoute.
   testWidgets('A page pushed after back() is recorded in the history', (
     tester,

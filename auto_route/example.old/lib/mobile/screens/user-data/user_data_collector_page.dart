@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 /// Host of the user data flow; hands a [SettingsState] to the pages below it.
 ///
-/// Its steps are commented out, so it shows an empty declarative router.
+/// It shows an empty declarative router: no step of the flow is wired up.
 // An example page, kept as written so the example shows the same code.
 // ignore: avoid-unnecessary-stateful-widgets
 class UserDataCollectorPage extends StatefulWidget implements AutoRouteWrapper {
@@ -33,33 +33,10 @@ class UserDataCollectorPage extends StatefulWidget implements AutoRouteWrapper {
 class UserDataCollectorPageState extends State<UserDataCollectorPage> {
   @override
   Widget build(BuildContext context) {
-    // var settingsState = context.watch<SettingsState>();
-
     return Scaffold(
       body: AutoRouter.declarative(
         routes: (handler) {
-          return [
-            // if (settingsState.userData.favoriteBook == null)
-            //   FavoriteBookFieldRoute(
-            //     message: 'What is your favorite book?',
-            //     willPopMessage: 'Please enter a book name!',
-            //     onNext: (text) {
-            //       settingsState.userData =
-            //           settingsState.userData.copyWith(favoriteBook: text);
-            //     },
-            //   ),
-            // if (settingsState.userData.name == null)
-            //   NameFieldRoute(
-            //     message: 'What is your name?',
-            //     willPopMessage: 'Please enter a name!',
-            //     onNext: (text) {
-            //       settingsState.userData =
-            //           settingsState.userData.copyWith(name: text);
-            //     },
-            //   ),
-            // if (settingsState.userData.isDone)
-            //   UserDataRoute(onResult: widget.onResult),
-          ];
+          return [];
         },
         onPopRoute: (route, results) {
           // reset the state based on popped route

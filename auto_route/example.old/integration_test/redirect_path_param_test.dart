@@ -25,8 +25,8 @@ void main() {
 
   // Steps: open the app at '/test1/a%2Fb', which a RedirectRoute sends to
   // '/cms/:path'.
-  // Should: the page reads 'a/b', and the url, and on web the address bar,
-  // is '/cms/a%2Fb'.
+  // Should: the page reads 'a/b', and the url, and on web the address
+  // bar, is '/cms/a%2Fb'.
   testWidgets('A redirect passes an encoded "/" on whole', (tester) async {
     await pumpRouterApp(tester, router, initialLink: '/test1/a%2Fb');
     expect(find.text('Cms a/b'), findsOneWidget);

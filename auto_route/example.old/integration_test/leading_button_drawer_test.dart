@@ -10,8 +10,8 @@ import 'package:material_ui/material_ui.dart';
 // Setup, as in the report: adaptive routes by default; a home router
 // holding a feed router, which starts on a feed listing page with a drawer
 // and an AutoLeadingButton in its app bar.
-// Steps: show the app, then rebuild the MaterialApp with another theme,
-// another locale, then a new key.
+// Steps: show the app, then rebuild the MaterialApp with another
+// theme, another locale, then a new key.
 // Reported: after the rebuild the app bar showed a back button.
 // Should: the drawer icon shows every time.
 void main() {

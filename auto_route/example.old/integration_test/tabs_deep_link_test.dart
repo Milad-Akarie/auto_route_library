@@ -17,8 +17,8 @@ void main() {
   // Steps: open the app from the platform's link '/profile/account', inside
   // the profile tab of an AutoTabsRouter whose route has a guard, then
   // reevaluate the guard.
-  // Should: the account page stays, and the url, and on web the address bar,
-  // keeps '/profile/account', not '/profile'.
+  // Should: the account page stays, and the url, and on web the address
+  // bar, keeps '/profile/account', not '/profile'.
   testWidgets('A deep link into a tab opens the nested page and keeps it', (
     tester,
   ) async {

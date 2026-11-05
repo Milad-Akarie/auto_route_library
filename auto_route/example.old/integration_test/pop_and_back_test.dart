@@ -24,8 +24,8 @@ void main() {
   late RootStackRouter router;
   setUp(() => router = buildSimpleRouter());
 
-  // Steps: start on FirstRoute, navigate to SecondRoute, then to ThirdRoute,
-  // pop ThirdRoute, then call back() from SecondRoute.
+  // Steps: start on FirstRoute, navigate to SecondRoute, then to
+  // ThirdRoute, pop ThirdRoute, then call back() from SecondRoute.
   // Should: back() lands on FirstRoute, not on the ThirdRoute just popped.
   testWidgets(
     'Popping then going back does not return to the popped page',

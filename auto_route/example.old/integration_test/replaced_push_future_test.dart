@@ -16,8 +16,8 @@ void main() {
   late RootStackRouter router;
   setUp(() => router = buildSimpleRouter());
 
-  // Steps: push SecondRoute and await it, replace it with ThirdRoute,
-  // then pop ThirdRoute.
+  // Steps: push SecondRoute and await it, replace it with
+  // ThirdRoute, then pop ThirdRoute.
   // Should: the future of the first push completes once ThirdRoute is popped.
   testWidgets(
     'Popping a route that replaced the pushed one completes the first push '

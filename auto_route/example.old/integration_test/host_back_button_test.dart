@@ -16,8 +16,8 @@ import 'support/pages.dart';
 // nested router that shows SecondNested1Route), push SecondNested3Route into
 // that nested router, then press the host page's button twice.
 // Before the fix: the press did nothing; SecondNested3Route stayed on screen.
-// Should: the first press pops SecondNested3Route and keeps the host page;
-// the second pops the host page. The reporter expected the first press to
+// Should: the first press pops SecondNested3Route and keeps the host
+// page; the second pops the host page. The reporter expected the first press to
 // close the host page; the fork pops the nested page first, the order system
 // back uses (see nested_back_test.dart).
 void main() {

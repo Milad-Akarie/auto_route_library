@@ -13,10 +13,10 @@ void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   tearDown(binding.platformDispatcher.clearDefaultRouteNameTestValue);
 
-  // Steps: open the app from the platform's link '/account/consentManagement',
-  // to a route whose path is 'consentManagement'.
-  // Should: the consent page opens, and the url, and on web the address bar,
-  // keeps the camelCase path.
+  // Steps: open the app from the platform's link
+  // '/account/consentManagement', to a route whose path is 'consentManagement'.
+  // Should: the consent page opens, and the url, and on web the address
+  // bar, keeps the camelCase path.
   testWidgets('A deep link matches a camelCase path', (tester) async {
     final router = RootStackRouter.build(
       routes: [

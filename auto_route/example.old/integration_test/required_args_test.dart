@@ -28,8 +28,8 @@ void main() {
     );
   });
 
-  // Steps: push a sign-in page with a required argument the url can't hold,
-  // push another page on top, then press the browser's back button.
+  // Steps: push a sign-in page with a required argument the url can't
+  // hold, push another page on top, then press the browser's back button.
   // Should: the sign-in page shows again with its argument.
   testWidgets(
     'The browser back button returns to a page with its required argument',

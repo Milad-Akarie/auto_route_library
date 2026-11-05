@@ -17,8 +17,8 @@ import 'support/app.dart';
 // Steps: push a page in one tab, switch tabs, and go back: system back (on
 // Android through the activity, see systemBack), or the iOS edge swipe (run
 // with the iOS page transitions on every platform).
-// Reported: back sometimes popped the tab's page and sometimes left the app,
-// depending on what the other tabs held.
+// Reported: back sometimes popped the tab's page and sometimes left the
+// app, depending on what the other tabs held.
 // Should: back pops the pages of the tab on screen until it reaches the
 // tab's first page; there Android leaves the app, whatever the other tabs
 // hold.

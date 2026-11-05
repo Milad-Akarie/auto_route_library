@@ -37,8 +37,8 @@ void main() {
   // Steps: at '/random-page', replace the page with
   // FirstRoute(redirectTo: currentUrl), then with
   // SecondRoute(redirectTo: currentUrl), then open currentUrl.
-  // Should: SecondRoute reads '/first-page?redirectTo=/random-page' each time,
-  // and on web the address bar holds it encoded.
+  // Should: SecondRoute reads '/first-page?redirectTo=/random-page' each
+  // time, and on web the address bar holds it encoded.
   testWidgets('currentUrl keeps a url passed in a query param intact', (
     tester,
   ) async {

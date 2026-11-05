@@ -8,8 +8,8 @@ import 'support/app.dart';
 // Does a deep link to a child build the parent's page? Asked of go_router in
 // https://github.com/flutter/flutter/issues/141281: on web, with routes '/'
 // and '/:id', entering '/1' in the address bar built the '/' screen, a costly
-// page that was never shown. On web the browser opens the app at the link;
-// elsewhere the platform hands it over as the initial route.
+// page that was never shown. On web the browser opens the app at the
+// link; elsewhere the platform hands it over as the initial route.
 // Headless tests: auto_route/test/deep_link_flat_build_test.dart and
 // auto_route/test/deep_link_prefix_build_test.dart
 void main() {
@@ -63,11 +63,11 @@ void main() {
     expect(builds, {'ChildRoute': 1});
   });
 
-  // Steps: open the app at '/1' with prefix matches, the default elsewhere,
-  // then go back.
-  // Should: '/' is stacked under the child and Flutter builds it once,
-  // offstage, since its route keeps its state; back shows it without building
-  // it again.
+  // Steps: open the app at '/1' with prefix matches, the default
+  // elsewhere, then go back.
+  // Should: '/' is stacked under the child and Flutter builds it
+  // once, offstage, since its route keeps its state; back shows it without
+  // building it again.
   testWidgets(
     'With prefix matches, a deep link builds the covered parent once',
     (tester) async {

@@ -32,8 +32,9 @@ void main() {
     ],
   );
 
-  // Steps: from the dashboard page, push the 'cashless' EmptyShellRoute,
-  // whose initial page is CashlessSchoolApplyRoute, then go back.
+  // Steps: from the dashboard page, push the 'cashless'
+  // EmptyShellRoute, whose initial page is CashlessSchoolApplyRoute, then go
+  // back.
   // Should: the apply page's own navigator reports no previous route, as
   // every Flutter Navigator does for its first route, and back returns to
   // the dashboard at '/dashboard'.
