@@ -34,6 +34,8 @@ class RouteDataScope extends InheritedWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<RouteData<Object?>>('routeData', routeData));
+    properties.add(
+      DiagnosticsProperty<RouteData<Object?>>('routeData', routeData),
+    );
   }
 }

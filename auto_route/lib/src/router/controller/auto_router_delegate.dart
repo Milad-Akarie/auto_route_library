@@ -2,7 +2,9 @@ part of 'routing_controller.dart';
 
 /// Signature for a function that builds [DeepLink]
 /// [deepLink] is the pre-resolved link coming from platform window
-typedef DeepLinkBuilder = FutureOr<DeepLink> Function(PlatformDeepLink deepLink);
+typedef DeepLinkBuilder = FutureOr<DeepLink> Function(
+  PlatformDeepLink deepLink,
+);
 
 /// Signature for a function that transform the incoming [Uri]
 /// [uri] is the pre-resolved uri coming from platform window
@@ -91,14 +93,20 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   /// Looks up and casts the scoped [Router] to [AutoRouterDelegate]
   static AutoRouterDelegate of(BuildContext context) {
     final delegate = Router.of(context).routerDelegate;
-    assert(delegate is AutoRouterDelegate, 'The nearest Router does not use an AutoRouterDelegate.');
+    assert(
+      delegate is AutoRouterDelegate,
+      'The nearest Router does not use an AutoRouterDelegate.',
+    );
     return delegate as AutoRouterDelegate;
   }
 
   /// Forces a url update
   static void reportUrlChanged(BuildContext context, String url) {
     Router.of(context).routeInformationProvider
-        ?.routerReportsNewRouteInformation(RouteInformation(uri: Uri.parse(url)), type: .navigate);
+        ?.routerReportsNewRouteInformation(
+          RouteInformation(uri: Uri.parse(url)),
+          type: .navigate,
+        );
   }
 
   @override
@@ -129,7 +137,12 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     _hadPage = _hadPage || controller.hasEntries;
     if (!_hadPage) return null;
     if (kIsWeb) return urlState;
-    return urlState.copyWith(savedRoutes: {_routesKey: controller._savedRoutes(), _launchLinkKey: _launchLink});
+    return urlState.copyWith(
+      savedRoutes: {
+        _routesKey: controller._savedRoutes(),
+        _launchLinkKey: _launchLink,
+      },
+    );
   }
 
   // The keys of what currentConfiguration saves for state restoration.
@@ -137,7 +150,8 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   static const _launchLinkKey = 'launchLink';
 
   // The route the platform started this process at: a link, or '/'.
-  static String get _launchLink => WidgetsBinding.instance.platformDispatcher.defaultRouteName;
+  static String get _launchLink =>
+      WidgetsBinding.instance.platformDispatcher.defaultRouteName;
 
   var _hadPage = false;
 
@@ -171,9 +185,15 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
       return controller.navigateAll(deepLink.matches);
     } else if (deepLink is _PathDeepLink) {
       if (deepLink.navigate) {
-        return controller.navigatePath(deepLink.path, includePrefixMatches: deepLink.includePrefixMatches);
+        return controller.navigatePath(
+          deepLink.path,
+          includePrefixMatches: deepLink.includePrefixMatches,
+        );
       }
-      return controller.pushPath(deepLink.path, includePrefixMatches: deepLink.includePrefixMatches);
+      return controller.pushPath(
+        deepLink.path,
+        includePrefixMatches: deepLink.includePrefixMatches,
+      );
     } else if (deepLink is _RoutesDeepLink) {
       if (deepLink.navigate) {
         return controller._navigateAllRoutes(deepLink.routes);
@@ -196,7 +216,8 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   @override
   Future<void> setRestoredRoutePath(UrlState configuration) {
     final saved = configuration.savedRoutes;
-    if (_launchLink != Navigator.defaultRouteName && (saved is! Map || saved[_launchLinkKey] != _launchLink)) {
+    if (_launchLink != Navigator.defaultRouteName &&
+        (saved is! Map || saved[_launchLinkKey] != _launchLink)) {
       _openLaunchLinkAfterRestore();
     }
     // Saved before the launch link was, the routes alone.
@@ -206,7 +227,9 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
         : controller._matchAllOrReportFailure(routes, (_) {
             // A saved route that no longer matches is dropped rather than thrown.
           });
-    final buildable = matches == null ? const <RouteMatch<Object?>>[] : _buildableMatches(matches, controller);
+    final buildable = matches == null
+        ? const <RouteMatch<Object?>>[]
+        : _buildableMatches(matches, controller);
     if (buildable.isEmpty) {
       return setNewRoutePath(configuration);
     }
@@ -220,9 +243,15 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final context = controller.navigatorKey.currentContext;
       // Typed as Object so the check below makes it an observer.
-      final Object? provider = context == null ? null : Router.maybeOf(context)?.routeInformationProvider;
+      final Object? provider = context == null
+          ? null
+          : Router.maybeOf(context)?.routeInformationProvider;
       if (provider is WidgetsBindingObserver) {
-        unawaited(provider.didPushRouteInformation(RouteInformation(uri: Uri.parse(_launchLink))));
+        unawaited(
+          provider.didPushRouteInformation(
+            RouteInformation(uri: Uri.parse(_launchLink)),
+          ),
+        );
       }
     }, debugLabel: 'AutoRouterDelegate.openLaunchLinkAfterRestore');
   }
@@ -258,16 +287,22 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
       // The future completes when the page is popped.
       unawaited(stack._pushAllGuarded([page]));
     } else if (configuration.hasSegments) {
-      final entryRoutes = controller.navigationHistory.routesOfBrowserEntry(configuration);
+      final entryRoutes = controller.navigationHistory.routesOfBrowserEntry(
+        configuration,
+      );
       if (entryRoutes != null && entryRoutes.isEmpty) {
         notifyListeners();
         return;
       }
       final platLink = PlatformDeepLink._(
-        entryRoutes == null ? configuration : configuration.copyWith(segments: entryRoutes),
+        entryRoutes == null
+            ? configuration
+            : configuration.copyWith(segments: entryRoutes),
         false,
       );
-      final resolvedLink = deepLinkBuilder == null ? platLink : await deepLinkBuilder!(platLink);
+      final resolvedLink = deepLinkBuilder == null
+          ? platLink
+          : await deepLinkBuilder!(platLink);
       if (rebuildStackOnDeepLink) {
         controller.popUntil((route) => false);
       }
@@ -331,7 +366,8 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
       // AutoRouteInformation.replace; it replaces the browser entry only when
       // the router reports the change as neglected.
       Router.neglect(context, notifyListeners);
-    } else if (controller.navigationHistory.addsEntryWithSameUrl && context != null) {
+    } else if (controller.navigationHistory.addsEntryWithSameUrl &&
+        context != null) {
       // The router reports a url equal to the browser's as a replace of its
       // entry unless told the change is a navigation.
       Router.navigate(context, notifyListeners);
@@ -364,9 +400,13 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   void _reportUrlInPlace() {
     final context = controller.navigatorKey.currentContext;
     final router = context == null ? null : Router.maybeOf(context);
-    final routeInformation = router?.routeInformationParser?.restoreRouteInformation(currentConfiguration);
+    final routeInformation = router?.routeInformationParser
+        ?.restoreRouteInformation(currentConfiguration);
     if (routeInformation == null) return;
-    router!.routeInformationProvider?.routerReportsNewRouteInformation(routeInformation, type: .neglect);
+    router!.routeInformationProvider?.routerReportsNewRouteInformation(
+      routeInformation,
+      type: .neglect,
+    );
   }
 }
 
@@ -418,7 +458,11 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
   bool _reportScheduled = false;
 
   bool _tabsTakeBack() {
-    for (RoutingController? r = router.topMostRouter(); r != null; r = r.parent()) {
+    for (
+      RoutingController? r = router.topMostRouter();
+      r != null;
+      r = r.parent()
+    ) {
       if (r is TabsRouter && r._takesBack) return true;
     }
     return false;
@@ -514,7 +558,8 @@ abstract class DeepLink {
   }
 
   /// Builds a deep-link form string path
-  const factory path(String path, {bool includePrefixMatches, bool navigate}) = _PathDeepLink;
+  const factory path(String path, {bool includePrefixMatches, bool navigate}) =
+      _PathDeepLink;
   const new _();
 
   /// Whether this link is navigable
@@ -538,13 +583,16 @@ abstract class DeepLink {
       if (!uri.path.startsWith(prefix)) {
         return SynchronousFuture(uri); // No change if prefix not found
       }
-      return SynchronousFuture(Uri.tryParse(uri.toString().replaceFirst(prefix, '')) ?? uri);
+      return SynchronousFuture(
+        Uri.tryParse(uri.toString().replaceFirst(prefix, '')) ?? uri,
+      );
     };
   }
 }
 
 class _PathDeepLink extends DeepLink {
-  const new(this.path, {this.includePrefixMatches = true, this.navigate = true}) : super._();
+  const new(this.path, {this.includePrefixMatches = true, this.navigate = true})
+    : super._();
   final String path;
   final bool includePrefixMatches;
 

@@ -22,7 +22,8 @@ class _IndexedStackBuilder extends StatefulWidget {
   _IndexedStackBuilderState createState() => .new();
 }
 
-class _IndexedStackBuilderState extends State<_IndexedStackBuilder> with _RouteAwareTabsMixin<_IndexedStackBuilder> {
+class _IndexedStackBuilderState extends State<_IndexedStackBuilder>
+    with _RouteAwareTabsMixin<_IndexedStackBuilder> {
   final _dummyWidget = const SizedBox.shrink();
   final _initializedPagesTracker = <int, bool>{};
 
@@ -41,7 +42,8 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> with _RouteA
   }
 
   @override
-  List<RouteMatch<Object?>> get routes => widget.stack.map((e) => e.routeData.route).toList();
+  List<RouteMatch<Object?>> get routes =>
+      widget.stack.map((e) => e.routeData.route).toList();
 
   @override
   List<NavigatorObserver> get observers => widget.navigatorObservers;
@@ -90,11 +92,14 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> with _RouteA
         index: widget.activeIndex,
         sizing: .expand,
         children: List.generate(widget.stack.length, (index) {
-          if (!widget.stack[index].maintainState && index != widget.activeIndex) {
+          if (!widget.stack[index].maintainState &&
+              index != widget.activeIndex) {
             _initializedPagesTracker[index] = false;
           }
           final isInitialized = _initializedPagesTracker[index] == true;
-          final child = isInitialized ? widget.itemBuilder(context, index) : _dummyWidget;
+          final child = isInitialized
+              ? widget.itemBuilder(context, index)
+              : _dummyWidget;
           final isInactive = index != widget.activeIndex;
 
           // Always wrap with ExcludeSemantics and ExcludeFocus but control with excluding property

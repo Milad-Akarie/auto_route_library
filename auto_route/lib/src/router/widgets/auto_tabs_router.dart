@@ -13,7 +13,10 @@ part 'auto_tabs_router_builder.dart';
 part 'keep_alive_tab.dart';
 
 /// Signature for a wrapper builder used by [_AutoTabsRouterIndexedStack]
-typedef AnimatedIndexedStackBuilder = Widget Function(BuildContext context, Widget child);
+typedef AnimatedIndexedStackBuilder = Widget Function(
+  BuildContext context,
+  Widget child,
+);
 
 /// Signature for a translation builder used by [_AutoTabsRouterIndexedStack]
 typedef AnimatedIndexedStackTransitionBuilder = Widget Function(
@@ -23,13 +26,25 @@ typedef AnimatedIndexedStackTransitionBuilder = Widget Function(
 );
 
 /// Signature for a wrapper builder used by [_AutoTabsRouterBuilder]
-typedef AutoTabsBuilder = Widget Function(BuildContext context, List<Widget> children, TabsRouter tabsRouter);
+typedef AutoTabsBuilder = Widget Function(
+  BuildContext context,
+  List<Widget> children,
+  TabsRouter tabsRouter,
+);
 
 /// Signature for a wrapper builder used by [_AutoTabsRouterPageView]
-typedef AutoTabsPageViewBuilder = Widget Function(BuildContext context, Widget child, PageController pageController);
+typedef AutoTabsPageViewBuilder = Widget Function(
+  BuildContext context,
+  Widget child,
+  PageController pageController,
+);
 
 /// Signature for a wrapper builder used by [_AutoTabsRouterTabBar]
-typedef AutoTabsTabBarBuilder = Widget Function(BuildContext context, Widget child, TabController tabController);
+typedef AutoTabsTabBarBuilder = Widget Function(
+  BuildContext context,
+  Widget child,
+  TabController tabController,
+);
 
 /// Signature for a callback function used by [_AutoTabsRouterBuilder]
 typedef OnNavigationChanged = void Function(TabsRouter tabsRouter);
@@ -58,7 +73,8 @@ abstract class AutoTabsRouter extends StatefulWidget {
     this.homeIndex = -1,
     this.backThroughHistory = false,
     this.inheritNavigatorObservers = true,
-    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.navigatorObservers =
+        AutoRouterDelegate.defaultNavigatorObserversBuilder,
   });
 
   /// Builds an [AutoTabsRouter] to uses
@@ -207,7 +223,9 @@ abstract class AutoTabsRouterState<T extends AutoTabsRouter> extends State<T> {
         backThroughHistory: widget.backThroughHistory,
         routeData: parentRoute,
         preload: onPreload,
-        routeCollection: _parentController.routeCollection.subCollectionOf(parentRoute.name),
+        routeCollection: _parentController.routeCollection.subCollectionOf(
+          parentRoute.name,
+        ),
       );
       _parentController.attachChildController(_controller!);
       _setupController();
@@ -223,7 +241,9 @@ abstract class AutoTabsRouterState<T extends AutoTabsRouter> extends State<T> {
 
   GlobalKey _tabKeyOf(AutoRoutePage<Object?> page) {
     if (_tabKeys.length > _controller!.pageCount) {
-      final matchIds = {for (final tab in _controller!.stack) tab.routeData.matchId};
+      final matchIds = {
+        for (final tab in _controller!.stack) tab.routeData.matchId,
+      };
       _tabKeys.removeWhere((matchId, _) => !matchIds.contains(matchId));
     }
     return _tabKeys.putIfAbsent(page.routeData.matchId, GlobalKey.new);
@@ -249,8 +269,18 @@ abstract class AutoTabsRouterState<T extends AutoTabsRouter> extends State<T> {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty<TabsRouter>('controller', _controller))
-      ..add(DiagnosticsProperty<RoutingController>('parentController', _parentController))
-      ..add(DiagnosticsProperty<List<NavigatorObserver>>('navigatorObservers', _navigatorObservers));
+      ..add(
+        DiagnosticsProperty<RoutingController>(
+          'parentController',
+          _parentController,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<List<NavigatorObserver>>(
+          'navigatorObservers',
+          _navigatorObservers,
+        ),
+      );
   }
 }
 
@@ -263,9 +293,15 @@ mixin _RouteAwareTabsMixin<T extends StatefulWidget> on State<T> {
     observers.whereType<AutoRouterObserver>().forEach((observer) {
       TabPageRoute? previousRoute;
       if (previous != -1) {
-        previousRoute = TabPageRoute(routeInfo: routes[previous], index: previous);
+        previousRoute = TabPageRoute(
+          routeInfo: routes[previous],
+          index: previous,
+        );
       }
-      observer.didInitTabRoute(TabPageRoute(routeInfo: routes[index], index: index), previousRoute);
+      observer.didInitTabRoute(
+        TabPageRoute(routeInfo: routes[index], index: index),
+        previousRoute,
+      );
     });
   }
 

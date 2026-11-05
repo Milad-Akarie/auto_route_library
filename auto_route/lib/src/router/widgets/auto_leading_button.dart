@@ -14,7 +14,10 @@ typedef AutoLeadingButtonBuilder = Widget Function(
 
 /// Signature function to provide nullable leading widget
 /// based on the current router state
-typedef NullableWidgetBuilder = Widget Function(BuildContext context, Widget? leading);
+typedef NullableWidgetBuilder = Widget Function(
+  BuildContext context,
+  Widget? leading,
+);
 
 /// An AutoRoute replacement of appBar aut-leading-button
 ///
@@ -40,7 +43,10 @@ class AutoLeadingButton extends StatefulWidget {
     this.showIfChildCanPop = true,
     this.ignorePagelessRoutes = false,
     this.builder,
-  }) : assert(color == null || builder == null, 'Pass either color or builder, not both.'),
+  }) : assert(
+         color == null || builder == null,
+         'Pass either color or builder, not both.',
+       ),
        _nullableBuilder = null,
        _showIfParentCanPop = showIfParentCanPop ?? true;
 
@@ -145,14 +151,19 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
         final scaffold = Scaffold.maybeOf(leadingContext);
         if (scaffold?.hasDrawer == true) {
           if (widget.builder != null) {
-            return widget.builder!(leadingContext, .drawer, _handleDrawerButton);
+            return widget.builder!(
+              leadingContext,
+              .drawer,
+              _handleDrawerButton,
+            );
           }
           leading = IconButton(
             key: const ValueKey(LeadingType.drawer),
             icon: const Icon(Icons.menu),
             iconSize: Theme.of(leadingContext).iconTheme.size ?? 24,
             onPressed: _handleDrawerButton,
-            tooltip: MaterialLocalizations.of(leadingContext).openAppDrawerTooltip,
+            tooltip: MaterialLocalizations.of(leadingContext)
+                .openAppDrawerTooltip,
           );
         }
 
@@ -162,7 +173,8 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
         if (widget._nullableBuilder != null) {
           return widget._nullableBuilder!(leadingContext, leading);
         }
-        return leading ?? const SizedBox.shrink(key: ValueKey(LeadingType.noLeading));
+        return leading ??
+            const SizedBox.shrink(key: ValueKey(LeadingType.noLeading));
       },
     );
   }
@@ -175,14 +187,44 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-      ..add(DiagnosticsProperty<AutoLeadingButtonBuilder?>('builder', widget.builder))
-      ..add(DiagnosticsProperty<NullableWidgetBuilder?>('nullableBuilder', widget._nullableBuilder))
-      ..add(DiagnosticsProperty<bool>('showIfChildCanPop', widget.showIfChildCanPop))
-      ..add(DiagnosticsProperty<bool>('ignorePagelessRoutes', widget.ignorePagelessRoutes))
-      ..add(DiagnosticsProperty<bool>('showIfParentCanPop', widget._showIfParentCanPop))
+      ..add(
+        DiagnosticsProperty<AutoLeadingButtonBuilder?>(
+          'builder',
+          widget.builder,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<NullableWidgetBuilder?>(
+          'nullableBuilder',
+          widget._nullableBuilder,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<bool>(
+          'showIfChildCanPop',
+          widget.showIfChildCanPop,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<bool>(
+          'ignorePagelessRoutes',
+          widget.ignorePagelessRoutes,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<bool>(
+          'showIfParentCanPop',
+          widget._showIfParentCanPop,
+        ),
+      )
       ..add(DiagnosticsProperty<Color?>('color', widget.color))
       ..add(DiagnosticsProperty<RouterScope>('scope', RouterScope.of(context)))
-      ..add(DiagnosticsProperty<PagelessRoutesObserver>('pagelessRoutesObserver', _pagelessRoutesObserver));
+      ..add(
+        DiagnosticsProperty<PagelessRoutesObserver>(
+          'pagelessRoutesObserver',
+          _pagelessRoutesObserver,
+        ),
+      );
   }
 }
 

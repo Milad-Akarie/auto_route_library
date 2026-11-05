@@ -23,14 +23,16 @@ class Parameters {
 
   /// merges the value of two instances of [Parameters] classes
   /// and returns a new instance containing the merged values.
-  Parameters operator +(Parameters other) => .new({..._rawMap, ...other._rawMap});
+  Parameters operator +(Parameters other) =>
+      .new({..._rawMap, ...other._rawMap});
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is Parameters &&
           runtimeType == other.runtimeType &&
-          const MapEquality<Object?, Object?>(values: DeepCollectionEquality()).equals(_rawMap, other._rawMap);
+          const MapEquality<Object?, Object?>(values: DeepCollectionEquality())
+              .equals(_rawMap, other._rawMap);
 
   @override
   int get hashCode => const MapEquality<Object?, Object?>().hash(_rawMap);
@@ -52,7 +54,8 @@ class Parameters {
   ///
   /// A key repeated in the url (`?tag=red&tag=blue`) gives its last value, as
   /// [Uri.queryParameters] does; any other value gives its `toString()`.
-  String? optString(String key, [String? defaultValue]) => _stringOf(_rawMap[key]) ?? defaultValue;
+  String? optString(String key, [String? defaultValue]) =>
+      _stringOf(_rawMap[key]) ?? defaultValue;
 
   /// returns the value corresponding with [key] as [String]
   /// if null returns [defaultValue]
@@ -61,7 +64,9 @@ class Parameters {
   String getString(String key, [String? defaultValue]) {
     final val = _stringOf(_rawMap[key]) ?? defaultValue;
     if (val == null) {
-      throw MissingRequiredParameterError('Failed to parse [String] $key value from ${_rawMap[key]}');
+      throw MissingRequiredParameterError(
+        'Failed to parse [String] $key value from ${_rawMap[key]}',
+      );
     }
     return val;
   }
@@ -91,7 +96,9 @@ class Parameters {
   int getInt(String key, [int? defaultValue]) {
     final val = optInt(key, defaultValue);
     if (val == null) {
-      throw MissingRequiredParameterError('Failed to parse [int] $key value from ${_rawMap[key]}');
+      throw MissingRequiredParameterError(
+        'Failed to parse [int] $key value from ${_rawMap[key]}',
+      );
     }
     return val;
   }
@@ -113,7 +120,9 @@ class Parameters {
   double getDouble(String key, [double? defaultValue]) {
     final val = optDouble(key, defaultValue);
     if (val == null) {
-      throw MissingRequiredParameterError('Failed to parse [double] $key value from ${_rawMap[key]}');
+      throw MissingRequiredParameterError(
+        'Failed to parse [double] $key value from ${_rawMap[key]}',
+      );
     }
     return val;
   }
@@ -135,7 +144,9 @@ class Parameters {
   num getNum(String key, [num? defaultValue]) {
     final val = optNum(key, defaultValue);
     if (val == null) {
-      throw MissingRequiredParameterError('Failed to parse [num] $key value from ${_rawMap[key]}');
+      throw MissingRequiredParameterError(
+        'Failed to parse [num] $key value from ${_rawMap[key]}',
+      );
     }
     return val;
   }
@@ -166,7 +177,9 @@ class Parameters {
   bool getBool(String key, [bool? defaultValue]) {
     final val = optBool(key, defaultValue);
     if (val == null) {
-      throw MissingRequiredParameterError('Failed to parse [bool] $key value from ${_rawMap[key]}');
+      throw MissingRequiredParameterError(
+        'Failed to parse [bool] $key value from ${_rawMap[key]}',
+      );
     }
     return val;
   }
@@ -200,7 +213,9 @@ class Parameters {
   T getTyped<T>(String key, ParamConverter<T> converter, [T? defaultValue]) {
     final val = optTyped(key, converter, defaultValue);
     if (val == null) {
-      throw MissingRequiredParameterError('Failed to parse [$T] $key value from ${_rawMap[key]}');
+      throw MissingRequiredParameterError(
+        'Failed to parse [$T] $key value from ${_rawMap[key]}',
+      );
     }
     return val;
   }
@@ -209,7 +224,9 @@ class Parameters {
   List<String> getList(String key, [List<String>? defaultValue]) {
     final val = _rawMap[key] ?? defaultValue;
     if (val == null) {
-      throw MissingRequiredParameterError('Failed to parse [List<String>] $key value from ${_rawMap[key]}');
+      throw MissingRequiredParameterError(
+        'Failed to parse [List<String>] $key value from ${_rawMap[key]}',
+      );
     }
     if (val is List) {
       return val.map((e) => e.toString()).toList();

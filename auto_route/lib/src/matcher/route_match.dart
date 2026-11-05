@@ -120,7 +120,8 @@ class RouteMatch<T> {
   TitleBuilder? get titleBuilder => _config.title;
 
   /// Helper to access [AutoRoute.buildPage]
-  AutoRoutePage<R> buildPage<R>(RouteData<Object?> data) => _config.buildPage(data);
+  AutoRoutePage<R> buildPage<R>(RouteData<Object?> data) =>
+      _config.buildPage(data);
 
   /// The unique key of this match
   ///
@@ -152,7 +153,8 @@ class RouteMatch<T> {
   List<String> allSegments({bool includeEmpty = false}) => [
     if (segments.isEmpty && includeEmpty) '',
     ...segments,
-    if (children case [..., final last]) ...last.allSegments(includeEmpty: includeEmpty),
+    if (children case [..., final last])
+      ...last.allSegments(includeEmpty: includeEmpty),
   ];
 
   /// Joins all segments to a valid path
@@ -365,7 +367,12 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
 @immutable
 class HierarchySegment {
   /// Default constructor
-  const new(this.name, {this.pathParams, this.queryParams, this.children = const []});
+  const new(
+    this.name, {
+    this.pathParams,
+    this.queryParams,
+    this.children = const [],
+  });
 
   /// The name of the route
   final String name;
@@ -385,7 +392,8 @@ class HierarchySegment {
       'name': name,
       if (pathParams?.isNotEmpty == true) 'pathParams': pathParams!.rawMap,
       if (queryParams?.isNotEmpty == true) 'queryParams': queryParams!.rawMap,
-      if (children.isNotEmpty) 'children': children.map((e) => e.toJson()).toList(),
+      if (children.isNotEmpty)
+        'children': children.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -406,7 +414,10 @@ class HierarchySegment {
 
   @override
   int get hashCode =>
-      name.hashCode ^ pathParams.hashCode ^ queryParams.hashCode ^ const ListEquality<Object?>().hash(children);
+      name.hashCode ^
+      pathParams.hashCode ^
+      queryParams.hashCode ^
+      const ListEquality<Object?>().hash(children);
 }
 
 /// An extension to create a pretty json output of
@@ -421,8 +432,10 @@ extension PrettyHierarchySegmentX on List<HierarchySegment> {
       return Map.fromEntries(
         segments.map(
           (e) => MapEntry(e.name, {
-            if (e.pathParams?.isNotEmpty == true) 'pathParams': e.pathParams!.rawMap,
-            if (e.queryParams?.isNotEmpty == true) 'queryParams': e.queryParams!.rawMap,
+            if (e.pathParams?.isNotEmpty == true)
+              'pathParams': e.pathParams!.rawMap,
+            if (e.queryParams?.isNotEmpty == true)
+              'queryParams': e.queryParams!.rawMap,
             if (e.children.isNotEmpty) 'children': toMap(e.children),
           }),
         ),

@@ -9,10 +9,16 @@ typedef AutoRoutePageBuilder = Widget Function(RouteData<Object?> data);
 
 /// Signature for a function that builds the route title
 /// Used in [AutoRoutePage]
-typedef TitleBuilder = String Function(BuildContext context, RouteData<Object?> data);
+typedef TitleBuilder = String Function(
+  BuildContext context,
+  RouteData<Object?> data,
+);
 
 /// Signature for a function that builds a widget with [RouteData]
-typedef WidgetBuilderWithData = Widget Function(BuildContext context, RouteData<Object?> data);
+typedef WidgetBuilderWithData = Widget Function(
+  BuildContext context,
+  RouteData<Object?> data,
+);
 
 /// Signature for a function that builds the page `restorationId`
 /// Used in [AutoRoutePage]
@@ -308,7 +314,8 @@ class AutoRoute {
 @immutable
 class RedirectRoute extends AutoRoute {
   /// Default constructor
-  new({required String path, required this.redirectTo}) : super._(path: path, page: PageInfo.redirect, fullMatch: true);
+  new({required String path, required this.redirectTo})
+    : super._(path: path, page: PageInfo.redirect, fullMatch: true);
 
   /// The target path which this route should
   /// redirect to
@@ -342,7 +349,8 @@ class MaterialRoute extends AutoRoute {
   }) : super._(
          type: RouteType.material(
            enablePredictiveBackGesture: enablePredictiveBackGesture,
-           predictiveBackPageTransitionsBuilder: predictiveBackPageTransitionsBuilder,
+           predictiveBackPageTransitionsBuilder:
+               predictiveBackPageTransitionsBuilder,
          ),
        );
 }
@@ -395,7 +403,8 @@ class AdaptiveRoute extends AutoRoute {
          type: RouteType.adaptive(
            opaque: opaque,
            enablePredictiveBackGesture: enablePredictiveBackGesture,
-           predictiveBackPageTransitionsBuilder: predictiveBackPageTransitionsBuilder,
+           predictiveBackPageTransitionsBuilder:
+               predictiveBackPageTransitionsBuilder,
          ),
        );
 }
@@ -441,7 +450,8 @@ class CustomRoute extends AutoRoute {
            barrierLabel: barrierLabel,
            barrierColor: barrierColor,
            enablePredictiveBackGesture: enablePredictiveBackGesture,
-           predictiveBackPageTransitionsBuilder: predictiveBackPageTransitionsBuilder,
+           predictiveBackPageTransitionsBuilder:
+               predictiveBackPageTransitionsBuilder,
            enableCupertinoBackGesture: enableCupertinoBackGesture,
          ),
        );
@@ -519,8 +529,14 @@ class NamedRouteDef extends AutoRoute {
 @visibleForTesting
 class TestRoute extends AutoRoute {
   /// Default constructor
-  new(String name, {super.path, super.children, super.fullMatch, super.restorationId, super.initial})
-    : super._(page: PageInfo(name, builder: (_) => const SizedBox()));
+  new(
+    String name, {
+    super.path,
+    super.children,
+    super.fullMatch,
+    super.restorationId,
+    super.initial,
+  }) : super._(page: PageInfo(name, builder: (_) => const SizedBox()));
 }
 
 /// Builds a simplified [AutoRoute] instance for internal usage
@@ -528,8 +544,12 @@ class TestRoute extends AutoRoute {
 @internal
 class DummyRootRoute extends AutoRoute {
   /// Default constructor
-  new({required String path, super.children, super.fullMatch, super.restorationId})
-    : super._(page: PageInfo.root, path: path);
+  new({
+    required String path,
+    super.children,
+    super.fullMatch,
+    super.restorationId,
+  }) : super._(page: PageInfo.root, path: path);
 }
 
 /// Signature for a function that generates a path for a route name
@@ -548,7 +568,10 @@ typedef OnGeneratePath = String Function(AutoRoute route);
 class RouteCollection {
   /// Default constructor
   new(this._routesMap, [this._subCollections = const {}])
-    : assert(_routesMap.isNotEmpty, 'A route collection needs at least one route.');
+    : assert(
+        _routesMap.isNotEmpty,
+        'A route collection needs at least one route.',
+      );
 
   /// Creates a Map of config-entries from [routes]
   ///
@@ -557,7 +580,11 @@ class RouteCollection {
   ///
   /// if this [RouteCollection] is created by the router [root] will be true
   /// else if it's created by a parent route-entry it will be false
-  factory fromList(List<AutoRoute> routes, {bool root = false, OnGeneratePath onGeneratePath = defaultPathGenerator}) {
+  factory fromList(
+    List<AutoRoute> routes, {
+    bool root = false,
+    OnGeneratePath onGeneratePath = defaultPathGenerator,
+  }) {
     final routesMarkedInitial = routes.where((e) => e.initial);
     if (routesMarkedInitial.length > 1) {
       throw FlutterError(
@@ -571,7 +598,10 @@ class RouteCollection {
     var hasValidInitialPath = false;
     for (final r in routes) {
       if (r.hasSubTree) {
-        subCollections[r.name] = RouteCollection.fromList(r.children!, onGeneratePath: onGeneratePath);
+        subCollections[r.name] = RouteCollection.fromList(
+          r.children!,
+          onGeneratePath: onGeneratePath,
+        );
       }
 
       final AutoRoute routeToUse;
@@ -580,7 +610,9 @@ class RouteCollection {
           throw FlutterError('Sub-paths can not start with a "/": ${r.path}');
         }
         if (root && !r.path.startsWith(RegExp('[/]|[*]'))) {
-          throw FlutterError('Root-paths must start with a "/" or be a wild-card:  ${r.path}');
+          throw FlutterError(
+            'Root-paths must start with a "/" or be a wild-card:  ${r.path}',
+          );
         }
         routeToUse = r;
       } else {
@@ -604,7 +636,10 @@ class RouteCollection {
       routesMap[r.name] = routeToUse;
     }
     if (!hasValidInitialPath && routesMarkedInitial.isNotEmpty) {
-      final redirectRoute = RedirectRoute(path: targetInitialPath, redirectTo: routesMarkedInitial.first.path);
+      final redirectRoute = RedirectRoute(
+        path: targetInitialPath,
+        redirectTo: routesMarkedInitial.first.path,
+      );
       routesMap = {redirectRoute.name: redirectRoute, ...routesMap};
     }
     final collection = RouteCollection(routesMap, subCollections);
@@ -630,7 +665,11 @@ class RouteCollection {
   /// Runs in debug builds only.
   static void _throwIfPathsRepeat(RouteCollection root) {
     final byPattern = <String, List<(AutoRoute, String)>>{};
-    void visit(RouteCollection collection, String parentPath, List<AutoRoute> ancestors) {
+    void visit(
+      RouteCollection collection,
+      String parentPath,
+      List<AutoRoute> ancestors,
+    ) {
       for (final route in collection.routes) {
         final path = _joinPaths(parentPath, route.path);
         // Params match any segment whatever their names.
@@ -642,11 +681,16 @@ class RouteCollection {
           final named = otherPath == path
               ? '$first and $second have the same path, $path,'
               : '$first, $otherPath, and $second, $path, have the same path,';
-          throw FlutterError('$named so a link to it opens only $first. Give one of them another path.');
+          throw FlutterError(
+            '$named so a link to it opens only $first. Give one of them another path.',
+          );
         }
         others.add((route, path));
         if (route.hasSubTree) {
-          visit(collection.subCollectionOf(route.name), path, [...ancestors, route]);
+          visit(collection.subCollectionOf(route.name), path, [
+            ...ancestors,
+            route,
+          ]);
         }
       }
     }
@@ -655,8 +699,9 @@ class RouteCollection {
   }
 
   // A redirect's name is made of its paths, so it is described by them.
-  static String _describe(AutoRoute route) =>
-      route is RedirectRoute ? 'the redirect from ${route.path} to ${route.redirectTo}' : route.name;
+  static String _describe(AutoRoute route) => route is RedirectRoute
+      ? 'the redirect from ${route.path} to ${route.redirectTo}'
+      : route.name;
 
   static String _joinPaths(String parent, String child) {
     if (parent.isEmpty || child.isEmpty) return parent + child;
@@ -713,10 +758,14 @@ class RouteCollection {
     for (final (index, route) in all.indexed) {
       final isLast = index == all.length - 1;
       final fullPath = _joinPaths(parentPath, route.path);
-      final label = route is RedirectRoute ? '→ ${route.redirectTo}' : route.name;
+      final label = route is RedirectRoute
+          ? '→ ${route.redirectTo}'
+          : route.name;
       lines.add('$indent${isLast ? '└─' : '├─'} $fullPath  $label');
       if (_subCollections[route.name] case final children?) {
-        lines.addAll(children._treeLines(fullPath, '$indent${isLast ? '   ' : '│  '}'));
+        lines.addAll(
+          children._treeLines(fullPath, '$indent${isLast ? '   ' : '│  '}'),
+        );
       }
     }
     return lines;
@@ -762,7 +811,10 @@ class RouteCollection {
       identical(this, other) ||
       other is RouteCollection &&
           runtimeType == other.runtimeType &&
-          const MapEquality<Object?, Object?>().equals(_routesMap, other._routesMap);
+          const MapEquality<Object?, Object?>().equals(
+            _routesMap,
+            other._routesMap,
+          );
 
   @override
   int get hashCode => const MapEquality<Object?, Object?>().hash(_routesMap);

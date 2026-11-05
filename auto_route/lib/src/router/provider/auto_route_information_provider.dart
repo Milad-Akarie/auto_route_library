@@ -17,12 +17,16 @@ import 'package:flutter/widgets.dart';
 /// [SystemNavigator.selectMultiEntryHistory] method is also called. This
 /// overrides the initialization behavior of
 /// [Navigator.reportsRouteUpdateToEngine].
-class AutoRouteInformationProvider extends RouteInformationProvider with WidgetsBindingObserver, ChangeNotifier {
+class AutoRouteInformationProvider extends RouteInformationProvider
+    with WidgetsBindingObserver, ChangeNotifier {
   /// Create a platform route information provider.
   ///
   /// Use the [initialRouteInformation] to set the default route information for this
   /// provider.
-  factory({RouteInformation? initialRouteInformation, bool Function(String? location)? neglectWhen}) {
+  factory({
+    RouteInformation? initialRouteInformation,
+    bool Function(String? location)? neglectWhen,
+  }) {
     // On web the engine starts the app with no state, even when the browser
     // entry it opens at holds the state the app saved there, as when the
     // user comes back to the app from another site (flutter/flutter#108697).
@@ -30,13 +34,19 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
     final initialRouteInfo =
         initialRouteInformation ??
         RouteInformation(
-          uri: Uri.parse(WidgetsBinding.instance.platformDispatcher.defaultRouteName),
+          uri: Uri.parse(
+            WidgetsBinding.instance.platformDispatcher.defaultRouteName,
+          ),
           state: browserEntryState(),
         );
 
-    return AutoRouteInformationProvider._(initialRouteInformation: initialRouteInfo, neglectIf: neglectWhen);
+    return AutoRouteInformationProvider._(
+      initialRouteInformation: initialRouteInfo,
+      neglectIf: neglectWhen,
+    );
   }
-  new _({required RouteInformation initialRouteInformation, this.neglectIf}) : _value = initialRouteInformation;
+  new _({required RouteInformation initialRouteInformation, this.neglectIf})
+    : _value = initialRouteInformation;
 
   /// if true is return the route will be
   /// reported to engine
@@ -53,10 +63,16 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
 
     // On web DefaultRouteParser hands over the uri escaped for the engine.
     // Compare and keep the app's own uri, and escape one that skipped it.
-    final appRouteInformation = routeInformation is AutoRouteInformation && routeInformation.appUri != null
-        ? RouteInformation(uri: routeInformation.appUri, state: routeInformation.state)
+    final appRouteInformation =
+        routeInformation is AutoRouteInformation &&
+            routeInformation.appUri != null
+        ? RouteInformation(
+            uri: routeInformation.appUri,
+            state: routeInformation.state,
+          )
         : routeInformation;
-    final reportedUri = identical(appRouteInformation, routeInformation) && kIsWeb
+    final reportedUri =
+        identical(appRouteInformation, routeInformation) && kIsWeb
         ? escapeForWebEngine(routeInformation.uri)
         : routeInformation.uri;
 
@@ -72,7 +88,13 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
       replace = routeInformation.replace;
     }
     unawaited(SystemNavigator.selectMultiEntryHistory());
-    unawaited(SystemNavigator.routeInformationUpdated(uri: reportedUri, state: state, replace: replace));
+    unawaited(
+      SystemNavigator.routeInformationUpdated(
+        uri: reportedUri,
+        state: state,
+        replace: replace,
+      ),
+    );
     _value = appRouteInformation;
     _valueInEngine = appRouteInformation;
   }
@@ -118,7 +140,10 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
 
   @override
   Future<bool> didPushRouteInformation(RouteInformation routeInformation) {
-    assert(hasListeners, 'The route information provider has no listener to report to.');
+    assert(
+      hasListeners,
+      'The route information provider has no listener to report to.',
+    );
     _platformReportsNewRouteInformation(routeInformation);
     return SynchronousFuture(true);
   }

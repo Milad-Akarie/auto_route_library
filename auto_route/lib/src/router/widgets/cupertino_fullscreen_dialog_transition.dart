@@ -46,7 +46,10 @@ class CupertinoFullscreenDialogTransition extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    assert(debugCheckHasDirectionality(context), 'A Directionality ancestor is required.');
+    assert(
+      debugCheckHasDirectionality(context),
+      'A Directionality ancestor is required.',
+    );
     final textDirection = Directionality.of(context);
     return SlideTransition(
       position: _secondaryPositionAnimation,

@@ -13,7 +13,8 @@ export 'src/router/controller/controller_scope.dart';
 export 'src/router/controller/navigation_history/navigation_history_base.dart';
 export 'src/router/controller/pageless_routes_observer.dart';
 export 'src/router/controller/routing_controller.dart';
-export 'src/router/parser/route_information_parser.dart' hide escapeForWebEngine;
+export 'src/router/parser/route_information_parser.dart'
+    hide escapeForWebEngine;
 export 'src/router/provider/auto_route_information_provider.dart';
 export 'src/router/widgets/auto_leading_button.dart';
 export 'src/router/widgets/auto_page_view.dart';

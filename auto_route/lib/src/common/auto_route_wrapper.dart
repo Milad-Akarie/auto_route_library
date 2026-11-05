@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:material_ui/material_ui.dart' show BuildContext, StatelessWidget, Widget;
+import 'package:material_ui/material_ui.dart'
+    show BuildContext, StatelessWidget, Widget;
 import 'package:meta/meta.dart' show optionalTypeArgs;
 
 /// clients will implement this class to provide a wrapped route.

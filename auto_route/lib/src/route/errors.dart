@@ -4,5 +4,8 @@ import 'package:cupertino_ui/cupertino_ui.dart';
 class MissingRequiredParameterError extends FlutterError {
   /// default construct
   new(String message)
-    : super.fromParts([ErrorSummary('Missing or invalid required parameter'), ErrorDescription(message)]);
+    : super.fromParts([
+        ErrorSummary('Missing or invalid required parameter'),
+        ErrorDescription(message),
+      ]);
 }

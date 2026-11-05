@@ -16,7 +16,8 @@ class KeepAliveTab extends StatefulWidget {
 }
 
 /// The state of [KeepAliveTab]
-class KeepAliveTabState extends State<KeepAliveTab> with AutomaticKeepAliveClientMixin {
+class KeepAliveTabState extends State<KeepAliveTab>
+    with AutomaticKeepAliveClientMixin {
   late bool _load = widget.initiallyLoaded;
 
   /// preloads the tab so other navigation actions can be done
@@ -41,7 +42,10 @@ class KeepAliveTabState extends State<KeepAliveTab> with AutomaticKeepAliveClien
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Semantics(role: .tabPanel, child: _load ? widget.page.buildPage(context) : const SizedBox.shrink());
+    return Semantics(
+      role: .tabPanel,
+      child: _load ? widget.page.buildPage(context) : const SizedBox.shrink(),
+    );
   }
 
   @override

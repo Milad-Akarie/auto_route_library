@@ -92,7 +92,9 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
     for (final tabs in _ancestorTabs) {
       tabs.removeListener(_handleAncestorTabsChanged);
     }
-    _ancestorTabs = widget.router.isRoot ? const [] : widget.router.ancestorTabsRouters;
+    _ancestorTabs = widget.router.isRoot
+        ? const []
+        : widget.router.ancestorTabsRouters;
     for (final tabs in _ancestorTabs) {
       tabs.addListener(_handleAncestorTabsChanged);
     }
@@ -124,7 +126,9 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
 
   void _updateDeclarativeRoutes() {
     final delegate = AutoRouterDelegate.of(context);
-    final newRoutes = widget.declarativeRoutesBuilder!(widget.router.pendingRoutesHandler);
+    final newRoutes = widget.declarativeRoutesBuilder!(
+      widget.router.pendingRoutesHandler,
+    );
     if (!const ListEquality<Object?>().equals(newRoutes, _routesSnapshot)) {
       _routesSnapshot = newRoutes;
       widget.router.updateDeclarativeRoutes(newRoutes);
@@ -164,9 +168,16 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
         ? Navigator(
             key: widget.router.navigatorKey,
             clipBehavior: widget.clipBehavior,
-            routeTraversalEdgeBehavior: widget.routeTraversalEdgeBehavior ?? kDefaultRouteTraversalEdgeBehavior,
-            observers: [widget.router.pagelessRoutesObserver, ...widget.navigatorObservers],
-            restorationScopeId: widget.navRestorationScopeId ?? widget.router.routeData.restorationId,
+            routeTraversalEdgeBehavior:
+                widget.routeTraversalEdgeBehavior ??
+                kDefaultRouteTraversalEdgeBehavior,
+            observers: [
+              widget.router.pagelessRoutesObserver,
+              ...widget.navigatorObservers,
+            ],
+            restorationScopeId:
+                widget.navRestorationScopeId ??
+                widget.router.routeData.restorationId,
             pages: widget.router.stack,
             transitionDelegate: const _PoppedPagelessTransitionDelegate(),
             onDidRemovePage: (page) {
@@ -197,7 +208,8 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
       onNotification: (_) => !_inActiveTabs,
       child: NavigatorPopHandler<Object?>(
         enabled: widget.router.hasEntries && _inActiveTabs,
-        onPopWithResult: (result) => widget.router.navigatorKey.currentState?.maybePop(result),
+        onPopWithResult: (result) =>
+            widget.router.navigatorKey.currentState?.maybePop(result),
         // Flutter drops the semantics of widgets painted before a nested
         // Navigator when their common parent merges its nodes upward
         // (flutter/flutter#150978). A container node of its own keeps the
@@ -212,11 +224,28 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty<StackRouter>('router', widget.router))
-      ..add(IterableProperty<NavigatorObserver>('navigatorObservers', widget.navigatorObservers))
-      ..add(DiagnosticsProperty<RoutesBuilder>('declarativeRoutesBuilder', widget.declarativeRoutesBuilder))
-      ..add(DiagnosticsProperty<WidgetBuilder>('placeholder', widget.placeholder))
+      ..add(
+        IterableProperty<NavigatorObserver>(
+          'navigatorObservers',
+          widget.navigatorObservers,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<RoutesBuilder>(
+          'declarativeRoutesBuilder',
+          widget.declarativeRoutesBuilder,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<WidgetBuilder>('placeholder', widget.placeholder),
+      )
       ..add(DiagnosticsProperty<Clip>('clipBehavior', widget.clipBehavior))
-      ..add(DiagnosticsProperty<String?>('navRestorationScopeId', widget.navRestorationScopeId))
+      ..add(
+        DiagnosticsProperty<String?>(
+          'navRestorationScopeId',
+          widget.navRestorationScopeId,
+        ),
+      )
       ..add(DiagnosticsProperty<RoutePopCallBack>('didPop', widget.didPop));
   }
 }
@@ -230,14 +259,17 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
 /// pops a dialog and then removes the page under it, as in a 'discard
 /// changes?' dialog, the page vanished and cut the dialog's animation short
 /// (flutter/flutter#111137). Navigator.pop twice animates both; so does this.
-class _PoppedPagelessTransitionDelegate<T> extends DefaultTransitionDelegate<T> {
+class _PoppedPagelessTransitionDelegate<T>
+    extends DefaultTransitionDelegate<T> {
   const new();
 
   @override
   Iterable<RouteTransitionRecord> resolve({
     required List<RouteTransitionRecord> newPageRouteHistory,
-    required Map<RouteTransitionRecord?, RouteTransitionRecord> locationToExitingPageRoute,
-    required Map<RouteTransitionRecord?, List<RouteTransitionRecord>> pageRouteToPagelessRoutes,
+    required Map<RouteTransitionRecord?, RouteTransitionRecord>
+    locationToExitingPageRoute,
+    required Map<RouteTransitionRecord?, List<RouteTransitionRecord>>
+    pageRouteToPagelessRoutes,
   }) {
     // The top-most leaving page: the last of those above the new top page.
     RouteTransitionRecord? topExiting;

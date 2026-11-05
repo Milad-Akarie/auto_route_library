@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:auto_route/auto_route.dart' show RouteMatch, StackRouter, UrlState;
+import 'package:auto_route/auto_route.dart'
+    show RouteMatch, StackRouter, UrlState;
 import 'package:auto_route/src/router/controller/navigation_history/navigation_history_base.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
@@ -67,7 +68,9 @@ class NavigationHistoryImpl extends NavigationHistory {
   // Whether [urlState] shows the page of the last entry.
   bool _isLastEntry(UrlState urlState) {
     final last = _entries.lastOrNull;
-    return last != null && last.url == urlState.url && last.pageId == urlState.topMatch?.id;
+    return last != null &&
+        last.url == urlState.url &&
+        last.pageId == urlState.topMatch?.id;
   }
 
   void _addEntry(UrlState urlState) {
@@ -81,7 +84,9 @@ class NavigationHistoryImpl extends NavigationHistory {
     // pushed twice. Otherwise it took that page's place, as navigate() does with
     // new arguments, or the router rebuilt its pages, so it takes the entry.
     final last = _entries.lastOrNull;
-    if (last != null && last.url == urlState.url && controllerOfPage(last.pageId) == null) {
+    if (last != null &&
+        last.url == urlState.url &&
+        controllerOfPage(last.pageId) == null) {
       _entries.removeLast();
     }
 
@@ -130,11 +135,14 @@ class NavigationHistoryImpl extends NavigationHistory {
 
   @override
   void forward() {
-    throw FlutterError('forward navigation is not supported for non-web platforms');
+    throw FlutterError(
+      'forward navigation is not supported for non-web platforms',
+    );
   }
 
   @override
-  Object get pathState => throw FlutterError('pathState is not supported for non-web platforms');
+  Object get pathState =>
+      throw FlutterError('pathState is not supported for non-web platforms');
 
   @override
   void pushPathState(Object? state) {
@@ -153,7 +161,10 @@ class _HistoryEntry {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is _HistoryEntry && runtimeType == other.runtimeType && url == other.url;
+      identical(this, other) ||
+      other is _HistoryEntry &&
+          runtimeType == other.runtimeType &&
+          url == other.url;
 
   @override
   int get hashCode => url.hashCode;

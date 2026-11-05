@@ -18,7 +18,10 @@ class TransitionsBuilders {
     Widget child,
   ) {
     return SlideTransition(
-      position: Tween(begin: const Offset(-1, 0), end: Offset.zero).animate(animation),
+      position: Tween(
+        begin: const Offset(-1, 0),
+        end: Offset.zero,
+      ).animate(animation),
       child: child,
     );
   }
@@ -33,7 +36,10 @@ class TransitionsBuilders {
     Widget child,
   ) {
     return SlideTransition(
-      position: Tween(begin: const Offset(1, 0), end: Offset.zero).animate(animation),
+      position: Tween(
+        begin: const Offset(1, 0),
+        end: Offset.zero,
+      ).animate(animation),
       child: child,
     );
   }
@@ -48,7 +54,10 @@ class TransitionsBuilders {
     Widget child,
   ) {
     return SlideTransition(
-      position: Tween(begin: const Offset(-1, 0), end: Offset.zero).animate(animation),
+      position: Tween(
+        begin: const Offset(-1, 0),
+        end: Offset.zero,
+      ).animate(animation),
       child: FadeTransition(opacity: animation, child: child),
     );
   }
@@ -63,7 +72,10 @@ class TransitionsBuilders {
     Widget child,
   ) {
     return SlideTransition(
-      position: Tween(begin: const Offset(1, 0), end: Offset.zero).animate(animation),
+      position: Tween(
+        begin: const Offset(1, 0),
+        end: Offset.zero,
+      ).animate(animation),
       child: FadeTransition(opacity: animation, child: child),
     );
   }
@@ -78,7 +90,10 @@ class TransitionsBuilders {
     Widget child,
   ) {
     return SlideTransition(
-      position: Tween(begin: const Offset(0, -1), end: Offset.zero).animate(animation),
+      position: Tween(
+        begin: const Offset(0, -1),
+        end: Offset.zero,
+      ).animate(animation),
       child: child,
     );
   }
@@ -93,7 +108,10 @@ class TransitionsBuilders {
     Widget child,
   ) {
     return SlideTransition(
-      position: Tween(begin: const Offset(0, 1), end: Offset.zero).animate(animation),
+      position: Tween(
+        begin: const Offset(0, 1),
+        end: Offset.zero,
+      ).animate(animation),
       child: child,
     );
   }

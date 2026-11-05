@@ -45,7 +45,10 @@ class _ForceImplicitScrollPhysics extends ScrollPhysics {
 
   @override
   _ForceImplicitScrollPhysics applyTo(ScrollPhysics? ancestor) {
-    return _ForceImplicitScrollPhysics(allowImplicitScrolling: allowImplicitScrolling, parent: buildParent(ancestor));
+    return _ForceImplicitScrollPhysics(
+      allowImplicitScrolling: allowImplicitScrolling,
+      parent: buildParent(ancestor),
+    );
   }
 
   @override
@@ -63,7 +66,9 @@ void correctToPage(PageController controller, int page) {
   if (!controller.hasClients) return;
   final position = controller.position;
   if (!position.hasViewportDimension) return;
-  position.correctPixels(page * position.viewportDimension * controller.viewportFraction);
+  position.correctPixels(
+    page * position.viewportDimension * controller.viewportFraction,
+  );
 }
 
 /// A scrollable list that works page by page.
@@ -247,10 +252,15 @@ class _EagerPageViewState extends State<EagerPageView> {
   AxisDirection _getDirection(BuildContext context) {
     switch (widget._scrollDirection) {
       case .horizontal:
-        assert(debugCheckHasDirectionality(context), 'A Directionality ancestor is required.');
+        assert(
+          debugCheckHasDirectionality(context),
+          'A Directionality ancestor is required.',
+        );
         final textDirection = Directionality.of(context);
         final axisDirection = textDirectionToAxisDirection(textDirection);
-        return widget._reverse ? flipAxisDirection(axisDirection) : axisDirection;
+        return widget._reverse
+            ? flipAxisDirection(axisDirection)
+            : axisDirection;
       case .vertical:
         return widget._reverse ? .up : .down;
     }
@@ -259,15 +269,23 @@ class _EagerPageViewState extends State<EagerPageView> {
   @override
   Widget build(BuildContext context) {
     final axisDirection = _getDirection(context);
-    final ScrollPhysics physics = const _ForceImplicitScrollPhysics(allowImplicitScrolling: false).applyTo(
-      widget._pageSnapping
-          ? _kPagePhysics.applyTo(widget._physics ?? widget._scrollBehavior?.getScrollPhysics(context))
-          : (widget._physics ?? widget._scrollBehavior?.getScrollPhysics(context)),
-    );
+    final ScrollPhysics physics =
+        const _ForceImplicitScrollPhysics(allowImplicitScrolling: false)
+            .applyTo(
+              widget._pageSnapping
+                  ? _kPagePhysics.applyTo(
+                      widget._physics ??
+                          widget._scrollBehavior?.getScrollPhysics(context),
+                    )
+                  : (widget._physics ??
+                        widget._scrollBehavior?.getScrollPhysics(context)),
+            );
 
     return NotificationListener<ScrollNotification>(
       onNotification: (notification) {
-        if (notification.depth == 0 && widget._onPageChanged != null && notification is ScrollUpdateNotification) {
+        if (notification.depth == 0 &&
+            widget._onPageChanged != null &&
+            notification is ScrollUpdateNotification) {
           final metrics = notification.metrics as PageMetrics;
           final currentPage = metrics.page!.round();
           if (currentPage != _lastReportedPage) {
@@ -283,10 +301,14 @@ class _EagerPageViewState extends State<EagerPageView> {
         controller: widget._controller,
         physics: physics,
         restorationId: widget._restorationId,
-        scrollBehavior: widget._scrollBehavior ?? ScrollConfiguration.of(context).copyWith(scrollbars: false),
+        scrollBehavior:
+            widget._scrollBehavior ??
+            ScrollConfiguration.of(context).copyWith(scrollbars: false),
         viewportBuilder: (context, position) {
           return Viewport(
-            scrollCacheExtent: ScrollCacheExtent.viewport(widget._cacheExtent.toDouble()),
+            scrollCacheExtent: ScrollCacheExtent.viewport(
+              widget._cacheExtent.toDouble(),
+            ),
             axisDirection: axisDirection,
             offset: position,
             clipBehavior: widget._clipBehavior,
@@ -309,9 +331,33 @@ class _EagerPageViewState extends State<EagerPageView> {
     description
       ..add(EnumProperty<Axis>('scrollDirection', widget._scrollDirection))
       ..add(FlagProperty('reverse', value: widget._reverse, ifTrue: 'reversed'))
-      ..add(DiagnosticsProperty<PageController>('controller', widget._controller, showName: false))
-      ..add(DiagnosticsProperty<ScrollPhysics>('physics', widget._physics, showName: false))
-      ..add(FlagProperty('pageSnapping', value: widget._pageSnapping, ifFalse: 'snapping disabled'))
-      ..add(DiagnosticsProperty<int>('cacheExtent', widget._cacheExtent, showName: false));
+      ..add(
+        DiagnosticsProperty<PageController>(
+          'controller',
+          widget._controller,
+          showName: false,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<ScrollPhysics>(
+          'physics',
+          widget._physics,
+          showName: false,
+        ),
+      )
+      ..add(
+        FlagProperty(
+          'pageSnapping',
+          value: widget._pageSnapping,
+          ifFalse: 'snapping disabled',
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<int>(
+          'cacheExtent',
+          widget._cacheExtent,
+          showName: false,
+        ),
+      );
   }
 }

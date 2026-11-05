@@ -9,7 +9,8 @@ class AutoRouter extends StatefulWidget {
   /// Default constructor
   const new({
     super.key,
-    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.navigatorObservers =
+        AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.builder,
     this.navRestorationScopeId,
     this.navigatorKey,
@@ -58,7 +59,8 @@ class AutoRouter extends StatefulWidget {
   static Widget declarative({
     required RoutesBuilder routes,
     Key? key,
-    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers =
+        AutoRouterDelegate.defaultNavigatorObserversBuilder,
     RoutePopCallBack? onPopRoute,
     String? navRestorationScopeId,
     bool inheritNavigatorObservers = true,
@@ -140,7 +142,9 @@ class AutoRouterState extends State<AutoRouter> {
         matchId: parentRouteData.matchId,
         routeData: parentRouteData,
         navigatorKey: widget.navigatorKey,
-        routeCollection: _parentController.routeCollection.subCollectionOf(parentRouteData.name),
+        routeCollection: _parentController.routeCollection.subCollectionOf(
+          parentRouteData.name,
+        ),
       );
       _parentController.attachChildController(_controller!);
       if (_controller!.setupInitialRoutesSynchronously()) {
@@ -182,7 +186,9 @@ class AutoRouterState extends State<AutoRouter> {
           child: StackRouterScope(
             controller: _controller!,
             stateHash: stateHash,
-            child: widget.builder == null ? navigator : Builder(builder: (ctx) => widget.builder!(ctx, navigator)),
+            child: widget.builder == null
+                ? navigator
+                : Builder(builder: (ctx) => widget.builder!(ctx, navigator)),
           ),
         );
       },

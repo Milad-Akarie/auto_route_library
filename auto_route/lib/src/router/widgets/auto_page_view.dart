@@ -91,7 +91,10 @@ class AutoPageViewState extends State<AutoPageView> {
   @override
   void didUpdateWidget(AutoPageView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!listEquals(_router.stack.map((page) => page.routeData.matchId).toList(), _matchIds)) {
+    if (!listEquals(
+      _router.stack.map((page) => page.routeData.matchId).toList(),
+      _matchIds,
+    )) {
       // The routes changed: show the new pages on the active one, and load
       // it, it may not have been opened yet.
       _updateChildren();
@@ -133,7 +136,14 @@ class AutoPageViewState extends State<AutoPageView> {
   // Loads the tab a drag is uncovering, without opening it. A guarded tab
   // loads only once its guards let it in.
   void _preloadDraggedIn(int index) {
-    if (_router.stack.elementAtOrNull(index)?.routeData.route.guards.isNotEmpty ?? false) return;
+    if (_router.stack
+            .elementAtOrNull(index)
+            ?.routeData
+            .route
+            .guards
+            .isNotEmpty ??
+        false)
+      return;
     if (_tabKeyAt(index)?.currentState?.preload() != true) return;
     _draggedInTabs.add(_matchIdAt(index)!);
     if (mounted) {
@@ -147,7 +157,8 @@ class AutoPageViewState extends State<AutoPageView> {
     return stack.elementAtOrNull(index)?.routeData.matchId;
   }
 
-  GlobalKey<KeepAliveTabState>? _tabKeyAt(int index) => _tabKeys[_matchIdAt(index)];
+  GlobalKey<KeepAliveTabState>? _tabKeyAt(int index) =>
+      _tabKeys[_matchIdAt(index)];
 
   void _updateChildren() {
     final stack = widget.router.stack;
@@ -163,7 +174,10 @@ class AutoPageViewState extends State<AutoPageView> {
         child: ExcludeFocus(
           excluding: !isActive,
           child: KeepAliveTab(
-            key: _tabKeys.putIfAbsent(stack[index].routeData.matchId, GlobalKey.new),
+            key: _tabKeys.putIfAbsent(
+              stack[index].routeData.matchId,
+              GlobalKey.new,
+            ),
             initiallyLoaded: isActive || !widget.lazyLoad,
             page: stack[index],
           ),
@@ -192,7 +206,11 @@ class AutoPageViewState extends State<AutoPageView> {
 
   Future<void> _animateToPage(int page) async {
     _warpUnderwayCount += 1;
-    await _controller.animateToPage(page, duration: widget.duration, curve: Curves.ease);
+    await _controller.animateToPage(
+      page,
+      duration: widget.duration,
+      curve: Curves.ease,
+    );
     _warpUnderwayCount -= 1;
   }
 
@@ -205,8 +223,13 @@ class AutoPageViewState extends State<AutoPageView> {
   }
 
   Future<void> _warpToNonAdjacentTab(int previousIndex) async {
-    assert((_router.activeIndex - previousIndex).abs() > 1, 'Only a jump of more than one page warps.');
-    final initialPage = _router.activeIndex > previousIndex ? _router.activeIndex - 1 : _router.activeIndex + 1;
+    assert(
+      (_router.activeIndex - previousIndex).abs() > 1,
+      'Only a jump of more than one page warps.',
+    );
+    final initialPage = _router.activeIndex > previousIndex
+        ? _router.activeIndex - 1
+        : _router.activeIndex + 1;
 
     setState(() {
       _children = List.of(_children, growable: false);
@@ -231,7 +254,8 @@ class AutoPageViewState extends State<AutoPageView> {
     // tab a swipe reached when its guards kept it out.
     final previousIndex = _controller.page!.round();
 
-    final adjacentDestination = (_router.activeIndex - previousIndex).abs() == 1;
+    final adjacentDestination =
+        (_router.activeIndex - previousIndex).abs() == 1;
     if (adjacentDestination) {
       await _warpToAdjacentTab();
     } else {

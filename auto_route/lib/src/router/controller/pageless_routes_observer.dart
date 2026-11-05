@@ -40,7 +40,9 @@ class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
   /// The last route the [Navigator] holds that passes [test].
   @internal
   Route<Object?>? routeWhere(bool Function(Route<Object?> route) test) {
-    return _routes.lastWhereOrNull((route) => route.navigator != null && test(route));
+    return _routes.lastWhereOrNull(
+      (route) => route.navigator != null && test(route),
+    );
   }
 
   /// The pageless routes, such as dialogs, the [Navigator] holds over the
@@ -61,16 +63,20 @@ class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
       ..add(route);
     _pageUnder.removeWhere((each, _) => each.navigator == null);
     if (route.settings is! Page && previousRoute != null) {
-      final pageUnder = previousRoute.settings is Page ? previousRoute : _pageUnder[previousRoute];
+      final pageUnder = previousRoute.settings is Page
+          ? previousRoute
+          : _pageUnder[previousRoute];
       if (pageUnder != null) _pageUnder[route] = pageUnder;
     }
   }
 
   @override
-  void didPop(Route<Object?> route, Route<Object?>? previousRoute) => _forget(route);
+  void didPop(Route<Object?> route, Route<Object?>? previousRoute) =>
+      _forget(route);
 
   @override
-  void didRemove(Route<Object?> route, Route<Object?>? previousRoute) => _forget(route);
+  void didRemove(Route<Object?> route, Route<Object?>? previousRoute) =>
+      _forget(route);
 
   @override
   void didReplace({Route<Object?>? newRoute, Route<Object?>? oldRoute}) {
@@ -78,7 +84,8 @@ class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
     final pageUnder = _pageUnder.remove(oldRoute);
     if (newRoute != null) {
       _routes.add(newRoute);
-      if (pageUnder != null && newRoute.settings is! Page) _pageUnder[newRoute] = pageUnder;
+      if (pageUnder != null && newRoute.settings is! Page)
+        _pageUnder[newRoute] = pageUnder;
     }
   }
 

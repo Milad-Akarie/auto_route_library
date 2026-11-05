@@ -22,7 +22,10 @@ abstract class NavigationHistory with ChangeNotifier {
   /// url that follows, such as the guarded page that takes the place of a
   /// [NavigationResolver.redirectUntil] page.
   void rebuildUrl() {
-    final newState = UrlState.fromSegments(router.currentSegments, shouldReplace: _isUrlStateMarkedForReplace);
+    final newState = UrlState.fromSegments(
+      router.currentSegments,
+      shouldReplace: _isUrlStateMarkedForReplace,
+    );
     if (newState.hasSegments) {
       _unMarkUrlStateForReplace();
     }
@@ -78,7 +81,8 @@ abstract class NavigationHistory with ChangeNotifier {
   /// the top page: there is nothing to navigate to, and navigating to it
   /// again would run its guards again. Always null on native platforms.
   @internal
-  List<RouteMatch<Object?>>? routesOfBrowserEntry(UrlState configuration) => null;
+  List<RouteMatch<Object?>>? routesOfBrowserEntry(UrlState configuration) =>
+      null;
 
   /// The page to push, and the stack to push it on, to follow the browser to
   /// the entry that [configuration], a route the platform just reported, came
@@ -91,7 +95,9 @@ abstract class NavigationHistory with ChangeNotifier {
   /// name, so [AutoRouterDelegate.setNewRoutePath] pushes this page instead.
   /// Null otherwise, and always on native platforms.
   @internal
-  (StackRouter, RouteMatch<Object?>)? pageToPushForBrowserEntry(UrlState configuration) => null;
+  (StackRouter, RouteMatch<Object?>)? pageToPushForBrowserEntry(
+    UrlState configuration,
+  ) => null;
 
   /// Whether the browser now shows an entry before the one holding the app's
   /// url, as after its back button, while the app hasn't followed yet.
@@ -141,7 +147,8 @@ abstract class NavigationHistory with ChangeNotifier {
   void onNewUrlState(UrlState newState, {bool notify = true}) {
     // Two pages of the same route with equal arguments have equal url states.
     // Only the page on top tells them apart.
-    if (_urlState != newState || _urlState.topMatch?.id != newState.topMatch?.id) {
+    if (_urlState != newState ||
+        _urlState.topMatch?.id != newState.topMatch?.id) {
       _urlState = newState;
       if (notify) {
         notifyListeners();
@@ -159,7 +166,9 @@ abstract class NavigationHistory with ChangeNotifier {
   /// Compares the page too, since the same route can be pushed twice with
   /// equal arguments.
   bool isRouteDataActive(RouteData<Object?> data) {
-    return urlState.segments.any((route) => route == data.route && route.id == data.route.id);
+    return urlState.segments.any(
+      (route) => route == data.route && route.id == data.route.id,
+    );
   }
 
   /// Whether this path-pattern is in the visible urlState-segments
@@ -170,9 +179,13 @@ abstract class NavigationHistory with ChangeNotifier {
   /// The controller, [router] or one nested in it, whose stack holds the page
   /// with [pageId], or null when no stack holds it any more.
   @protected
-  RoutingController? controllerOfPage(LocalKey pageId, [RoutingController? controller]) {
+  RoutingController? controllerOfPage(
+    LocalKey pageId, [
+    RoutingController? controller,
+  ]) {
     controller ??= router;
-    if (controller.stackData.any((data) => data.route.id == pageId)) return controller;
+    if (controller.stackData.any((data) => data.route.id == pageId))
+      return controller;
     for (final child in controller.childControllers) {
       final holder = controllerOfPage(pageId, child);
       if (holder != null) return holder;
@@ -188,7 +201,8 @@ abstract class NavigationHistory with ChangeNotifier {
   @protected
   void removePagesAbove(LocalKey pageId) {
     final holder = controllerOfPage(pageId);
-    if (holder is StackRouter) holder.removeUntil((data) => data.route.id == pageId);
+    if (holder is StackRouter)
+      holder.removeUntil((data) => data.route.id == pageId);
   }
 
   /// Whether the change being reported now opens a new browser entry although

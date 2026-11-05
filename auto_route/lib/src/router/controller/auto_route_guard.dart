@@ -1,7 +1,10 @@
 part of 'routing_controller.dart';
 
 /// Signature for on navigation function used by [AutoRouteGuard]
-typedef OnNavigation = FutureOr<void> Function(NavigationResolver resolver, StackRouter router);
+typedef OnNavigation = FutureOr<void> Function(
+  NavigationResolver resolver,
+  StackRouter router,
+);
 
 /// A middleware for stacked routes where clients
 /// can either resume or abort the navigation event
@@ -10,13 +13,17 @@ abstract class AutoRouteGuard {
   const new();
 
   /// Builds a simple instance that takes in the [OnNavigation] callback
-  factory simple(OnNavigation onNavigation, {String? debugLabel}) = AutoRouteGuardCallback;
+  factory simple(OnNavigation onNavigation, {String? debugLabel}) =
+      AutoRouteGuardCallback;
 
   /// Builds a simple instance that returns either a redirect-to route or null for no redirect
-  factory redirect(PageRouteInfo? Function(NavigationResolver resolver) redirect) = _AutoRouteGuardRedirectCallback;
+  factory redirect(
+    PageRouteInfo? Function(NavigationResolver resolver) redirect,
+  ) = _AutoRouteGuardRedirectCallback;
 
   /// Builds a simple instance that returns either a redirect-to path or null for no redirect
-  factory redirectPath(String? Function(NavigationResolver resolver) redirect) = _AutoRouteGuardRedirectPathCallback;
+  factory redirectPath(String? Function(NavigationResolver resolver) redirect) =
+      _AutoRouteGuardRedirectPathCallback;
 
   /// clients will call [NavigationResolver.next] to continue
   /// navigation or [NavigationResolver.reject] to abort navigation
@@ -45,7 +52,12 @@ class _AutoRouteGuardRedirectCallback extends AutoRouteGuard {
     final redirectTo = redirect(resolver);
     if (redirectTo != null) {
       final scope = router._findStackScope(redirectTo);
-      unawaited(scope._push(redirectTo, onMatch: (match) => _redirectingResolvers[match.id] = resolver));
+      unawaited(
+        scope._push(
+          redirectTo,
+          onMatch: (match) => _redirectingResolvers[match.id] = resolver,
+        ),
+      );
     }
     if (redirectTo == null) {
       resolver.next();
@@ -63,7 +75,9 @@ class _AutoRouteGuardRedirectPathCallback extends AutoRouteGuard {
   void onNavigation(NavigationResolver resolver, StackRouter router) {
     final redirectTo = redirect(resolver);
     if (redirectTo != null) {
-      final scope = router._findPathScopeOrReportFailure<StackRouter>(redirectTo);
+      final scope = router._findPathScopeOrReportFailure<StackRouter>(
+        redirectTo,
+      );
       if (scope != null) {
         for (final match in scope.matches) {
           _redirectingResolvers[match.id] = resolver;
@@ -119,7 +133,10 @@ class AutoRouteGuardCallback extends AutoRouteGuard {
 
   // Returns the callback's future, so a guard re-check can wait for an async callback.
   @override
-  FutureOr<void> onNavigation(NavigationResolver resolver, StackRouter router) => onNavigate(resolver, router);
+  FutureOr<void> onNavigation(
+    NavigationResolver resolver,
+    StackRouter router,
+  ) => onNavigate(resolver, router);
 
   @override
   String toString() => 'AutoRouteGuardCallback(${debugLabel ?? hashCode})';
@@ -129,7 +146,11 @@ class AutoRouteGuardCallback extends AutoRouteGuard {
 /// [NavigationResolver.overrideNext]
 class ResolverResult {
   /// Default constructor
-  const new({required this.continueNavigation, required this.reevaluateNext, required this.route});
+  const new({
+    required this.continueNavigation,
+    required this.reevaluateNext,
+    required this.route,
+  });
 
   /// Whether to resume the navigation event or abort it
   final bool continueNavigation;
@@ -141,7 +162,11 @@ class ResolverResult {
   final RouteMatch<Object?> route;
 
   //// clones this instance with the provided values
-  ResolverResult copyWith({bool? continueNavigation, bool? reevaluateNext, RouteMatch<Object?>? route}) {
+  ResolverResult copyWith({
+    bool? continueNavigation,
+    bool? reevaluateNext,
+    RouteMatch<Object?>? route,
+  }) {
     return ResolverResult(
       continueNavigation: continueNavigation ?? this.continueNavigation,
       reevaluateNext: reevaluateNext ?? this.reevaluateNext,
@@ -152,14 +177,22 @@ class ResolverResult {
 
 // The resolver whose redirect opened a route, by the route's match id: the
 // redirectUntil() or the AutoRouteGuard.redirect() of the guard that sent the user there.
-final _redirectingResolvers = Expando<NavigationResolver>('redirectingResolvers');
+final _redirectingResolvers = Expando<NavigationResolver>(
+  'redirectingResolvers',
+);
 
 /// Represents a guarded navigation event
 /// which can be either continued or aborted
 /// used in [AutoRouteGuard.onNavigation]
 class NavigationResolver {
   /// default constructor
-  new(this._router, this._completer, this.route, {this.pendingRoutes = const [], this._isReevaluating = false});
+  new(
+    this._router,
+    this._completer,
+    this.route, {
+    this.pendingRoutes = const [],
+    this._isReevaluating = false,
+  });
   final StackRouter _router;
   final Completer<ResolverResult> _completer;
 
@@ -202,7 +235,8 @@ class NavigationResolver {
   /// is the deprecated way to reject it.
   void next([
     // The old way to reject, kept so existing guards compile until it is removed in 13.0.0.
-    @Deprecated('Call next() to continue or reject() to stop') bool continueNavigation = true,
+    @Deprecated('Call next() to continue or reject() to stop')
+    bool continueNavigation = true,
   ]) => _resolve(continueNavigation: continueNavigation, reevaluateNext: true);
 
   /// Stops the navigation: [route] is not opened.
@@ -231,11 +265,23 @@ class NavigationResolver {
   )
   // The deprecated signature, kept so existing guards compile until it is removed.
   void resolveNext(bool continueNavigation, {bool reevaluateNext = true}) =>
-      _resolve(continueNavigation: continueNavigation, reevaluateNext: reevaluateNext);
+      _resolve(
+        continueNavigation: continueNavigation,
+        reevaluateNext: reevaluateNext,
+      );
 
-  void _resolve({required bool continueNavigation, required bool reevaluateNext}) {
+  void _resolve({
+    required bool continueNavigation,
+    required bool reevaluateNext,
+  }) {
     assert(!isResolved, 'Make sure `resolver.next()` is only called once.');
-    _complete(ResolverResult(continueNavigation: continueNavigation, reevaluateNext: reevaluateNext, route: route));
+    _complete(
+      ResolverResult(
+        continueNavigation: continueNavigation,
+        reevaluateNext: reevaluateNext,
+        route: route,
+      ),
+    );
   }
 
   // The result the guard resolved with, known at once, before [future]
@@ -259,9 +305,20 @@ class NavigationResolver {
     bool reevaluateNext = true,
   }) {
     assert(!isResolved, 'Make sure `resolver.next()` is only called once.');
-    final overrides = RouteOverrides(children: children, args: args, queryParams: queryParams, fragment: fragment);
+    final overrides = RouteOverrides(
+      children: children,
+      args: args,
+      queryParams: queryParams,
+      fragment: fragment,
+    );
     final overriddenRoute = overrides.override(route, _router.matcher);
-    _complete(ResolverResult(continueNavigation: true, reevaluateNext: reevaluateNext, route: overriddenRoute));
+    _complete(
+      ResolverResult(
+        continueNavigation: true,
+        reevaluateNext: reevaluateNext,
+        route: overriddenRoute,
+      ),
+    );
   }
 
   bool _isRedirecting = false;
@@ -285,7 +342,11 @@ class NavigationResolver {
   /// The returned future completes once [route] is closed, whether by
   /// [next] or by a pop, and at once when a redirect is already running or
   /// [route] can't be opened.
-  Future<void> redirectUntil(PageRouteInfo target, {OnNavigationFailure? onFailure, bool replace = false}) async {
+  Future<void> redirectUntil(
+    PageRouteInfo target, {
+    OnNavigationFailure? onFailure,
+    bool replace = false,
+  }) async {
     if (_isRedirecting) return;
     _isRedirecting = true;
     // keep the page being reevaluated under the redirect route so its state is preserved
@@ -298,7 +359,8 @@ class NavigationResolver {
       target,
       onFailure: onFailure,
       replace: replace,
-      onMatch: (scope, match) => unawaited(_removeRedirectOnceResolved(scope, match)),
+      onMatch: (scope, match) =>
+          unawaited(_removeRedirectOnceResolved(scope, match)),
     );
     if (!_completer.isCompleted) {
       reject();
@@ -307,11 +369,16 @@ class NavigationResolver {
 
   // Once this resolver is resolved, the redirect route that [redirectUntil]
   // pushed leaves the stack.
-  Future<void> _removeRedirectOnceResolved(StackRouter scope, RouteMatch<Object?> match) async {
+  Future<void> _removeRedirectOnceResolved(
+    StackRouter scope,
+    RouteMatch<Object?> match,
+  ) async {
     _redirectingResolvers[match.id] = this;
     await _completer.future;
     _isRedirecting = false;
-    final routeData = scope.stackData.firstWhereOrNull((e) => e.matchId == match.id);
+    final routeData = scope.stackData.firstWhereOrNull(
+      (e) => e.matchId == match.id,
+    );
     if (routeData != null) {
       scope
         ..markUrlStateForReplace()
@@ -328,7 +395,9 @@ class NavigationResolver {
   /// replaces the deprecated `nextOrBack(false)`.
   void nextOrBack([
     // The old way to reject, kept so existing guards compile until it is removed in 13.0.0.
-    @Deprecated('Call nextOrBack() to continue or reject(goBack: true) to stop and go back')
+    @Deprecated(
+      'Call nextOrBack() to continue or reject(goBack: true) to stop and go back',
+    )
     bool continueNavigation = true,
   ]) {
     if (continueNavigation) {
@@ -342,9 +411,14 @@ class NavigationResolver {
   // same route earlier in this chain of redirects, which would repeat without end.
   bool _reportRedirectLoop() {
     final chain = <RouteMatch<Object?>>[];
-    for (var by = _redirectingResolvers[route.id]; by != null; by = _redirectingResolvers[by.route.id]) {
+    for (
+      var by = _redirectingResolvers[route.id];
+      by != null;
+      by = _redirectingResolvers[by.route.id]
+    ) {
       chain.insert(0, by.route);
-      final isSame = by.route.name == route.name && by.route.fullPath == route.fullPath;
+      final isSame =
+          by.route.name == route.name && by.route.fullPath == route.fullPath;
       if (isSame) {
         _reportLoop([...chain, route]);
         reject();
@@ -394,7 +468,10 @@ class NavigationResolver {
   /// If there's an ongoing guard check, it waits for it to complete first
   /// before checking the provided [guard]
   /// returns the [ResolverResult] of the guard check
-  Future<ResolverResult> checkGuard(AutoRouteGuard guard, StackRouter router) async {
+  Future<ResolverResult> checkGuard(
+    AutoRouteGuard guard,
+    StackRouter router,
+  ) async {
     if (_reportRedirectLoop()) return await future;
     // Several reevaluations can wait for the same check; each takes its own turn.
     while (_waitingCompleter != null) {
@@ -432,7 +509,10 @@ class RouteOverrides {
   final String? fragment;
 
   /// Builds a new [PageRouteInfo] with the provided overrides
-  RouteMatch<Object?> override(RouteMatch<Object?> route, RouteMatcher matcher) {
+  RouteMatch<Object?> override(
+    RouteMatch<Object?> route,
+    RouteMatcher matcher,
+  ) {
     final matches = <RouteMatch<Object?>>[];
     if (children != null) {
       final coll = matcher.collection.subCollectionOf(route.name);

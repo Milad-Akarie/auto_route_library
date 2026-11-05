@@ -80,7 +80,12 @@ class RouterScope extends InheritedWidget {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty<RoutingController>('controller', controller))
-      ..add(DiagnosticsProperty<NavigatorObserversBuilder>('inheritableObserversBuilder', inheritableObserversBuilder))
+      ..add(
+        DiagnosticsProperty<NavigatorObserversBuilder>(
+          'inheritableObserversBuilder',
+          inheritableObserversBuilder,
+        ),
+      )
       ..add(DiagnosticsProperty<int>('stateHash', stateHash));
   }
 }

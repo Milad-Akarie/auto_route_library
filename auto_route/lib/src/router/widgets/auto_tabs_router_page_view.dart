@@ -31,7 +31,8 @@ class _AutoTabsRouterPageView extends AutoTabsRouter {
   _AutoTabsRouterPageViewState createState() => .new();
 }
 
-class _AutoTabsRouterPageViewState extends AutoTabsRouterState<_AutoTabsRouterPageView>
+class _AutoTabsRouterPageViewState
+    extends AutoTabsRouterState<_AutoTabsRouterPageView>
     with _RouteAwareTabsMixin<_AutoTabsRouterPageView> {
   late PageController _pageController;
   final _pageViewKey = GlobalKey<AutoPageViewState>();
@@ -41,7 +42,10 @@ class _AutoTabsRouterPageViewState extends AutoTabsRouterState<_AutoTabsRouterPa
     assert(_controller != null, 'The tabs controller is not set up yet.');
     _controller!.setupRoutes(widget.routes);
     _updatePageController();
-    _didInitTabRoutes(lazyLoad: widget.lazyLoad, activeIndex: _controller!.activeIndex);
+    _didInitTabRoutes(
+      lazyLoad: widget.lazyLoad,
+      activeIndex: _controller!.activeIndex,
+    );
   }
 
   void _updatePageController() {
@@ -73,7 +77,10 @@ class _AutoTabsRouterPageViewState extends AutoTabsRouterState<_AutoTabsRouterPa
   @override
   void didUpdateWidget(covariant _AutoTabsRouterPageView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!const ListEquality<Object?>().equals(widget.routes, oldWidget.routes)) {
+    if (!const ListEquality<Object?>().equals(
+      widget.routes,
+      oldWidget.routes,
+    )) {
       _controller!.replaceAll(widget.routes, _controller!.activeIndex);
       _tabsHash = const ListEquality<Object?>().hash(widget.routes);
     }
@@ -117,7 +124,11 @@ class _AutoTabsRouterPageViewState extends AutoTabsRouterState<_AutoTabsRouterPa
     );
   }
 
-  Widget _defaultPageViewBuilder(BuildContext _, Widget child, PageController _) {
+  Widget _defaultPageViewBuilder(
+    BuildContext _,
+    Widget child,
+    PageController _,
+  ) {
     return child;
   }
 
@@ -125,5 +136,6 @@ class _AutoTabsRouterPageViewState extends AutoTabsRouterState<_AutoTabsRouterPa
   List<NavigatorObserver> get observers => _navigatorObservers;
 
   @override
-  List<RouteMatch<Object?>> get routes => _controller!.stackData.map((e) => e.route).toList();
+  List<RouteMatch<Object?>> get routes =>
+      _controller!.stackData.map((e) => e.route).toList();
 }

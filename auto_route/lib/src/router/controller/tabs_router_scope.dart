@@ -4,7 +4,12 @@ part of 'controller_scope.dart';
 /// so it can be looked up by any child widget
 class TabsRouterScope extends InheritedWidget {
   /// Default constructor
-  const new({required super.child, required this.stateHash, required this.controller, super.key});
+  const new({
+    required super.child,
+    required this.stateHash,
+    required this.controller,
+    super.key,
+  });
 
   /// The controller to inject
   final TabsRouter controller;

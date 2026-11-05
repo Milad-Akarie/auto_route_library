@@ -53,6 +53,7 @@ class RejectedByGuardFailure extends NavigationFailure {
 
   // coverage:ignore-start
   @override
-  String toString() => '${route.stringMatch} rejected by guard ${guard.runtimeType}';
+  String toString() =>
+      '${route.stringMatch} rejected by guard ${guard.runtimeType}';
   // coverage:ignore-end
 }

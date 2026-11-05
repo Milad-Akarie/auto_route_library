@@ -21,7 +21,11 @@ class _AutoTabsRouterIndexedStack extends AutoTabsRouter {
   final Curve curve;
   final bool lazyLoad;
 
-  static Widget _defaultTransitionBuilder(BuildContext _, Widget child, Animation<double> animation) {
+  static Widget _defaultTransitionBuilder(
+    BuildContext _,
+    Widget child,
+    Animation<double> animation,
+  ) {
     return FadeTransition(opacity: animation, child: child);
   }
 
@@ -29,7 +33,8 @@ class _AutoTabsRouterIndexedStack extends AutoTabsRouter {
   _AutoTabsRouterIndexedStackState createState() => .new();
 }
 
-class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRouterIndexedStack>
+class _AutoTabsRouterIndexedStackState
+    extends AutoTabsRouterState<_AutoTabsRouterIndexedStack>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late CurvedAnimation _curvedAnimation;
@@ -41,8 +46,14 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(vsync: this, duration: widget.duration);
-    _curvedAnimation = CurvedAnimation(parent: _animationController, curve: widget.curve);
+    _animationController = AnimationController(
+      vsync: this,
+      duration: widget.duration,
+    );
+    _curvedAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: widget.curve,
+    );
     _animation = Tween<double>(begin: 0, end: 1).animate(_curvedAnimation);
     _tabsHash = const ListEquality<Object?>().hash(widget.routes);
   }
@@ -81,7 +92,10 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
   @override
   void didUpdateWidget(covariant _AutoTabsRouterIndexedStack oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!const ListEquality<Object?>().equals(widget.routes, oldWidget.routes)) {
+    if (!const ListEquality<Object?>().equals(
+      widget.routes,
+      oldWidget.routes,
+    )) {
       _controller!.replaceAll(widget.routes, _index);
       _tabsHash = const ListEquality<Object?>().hash(widget.routes);
       // didUpdateWidget is always followed by build, so no setState.
@@ -110,7 +124,10 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
                 lazyLoad: widget.lazyLoad,
                 navigatorObservers: _navigatorObservers,
                 itemBuilder: (context, index) {
-                  return KeepAliveTab(key: _tabKeyOf(stack[index]), page: stack[index]);
+                  return KeepAliveTab(
+                    key: _tabKeyOf(stack[index]),
+                    page: stack[index],
+                  );
                 },
                 stack: stack,
               );
@@ -131,7 +148,11 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
                     animation: _animation,
                     child: builderChild,
                     builder: (context, child) {
-                      return widget.transitionBuilder(context, child!, _animation);
+                      return widget.transitionBuilder(
+                        context,
+                        child!,
+                        _animation,
+                      );
                     },
                   ),
                 );

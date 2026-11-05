@@ -123,12 +123,16 @@ class PageRouteInfo<T extends Object?> {
     }
     // Escaped, so a name such as `user$id` matches as it is written. A name runs to the end of its segment,
     // so ':id' is never read out of ':idx'.
-    final paramsRegex = RegExp(":(${params.keys.map(RegExp.escape).join('|')})(?=[/?#]|\$)");
+    final paramsRegex = RegExp(
+      ":(${params.keys.map(RegExp.escape).join('|')})(?=[/?#]|\$)",
+    );
     final path = template.replaceAllMapped(paramsRegex, (match) {
       final value = params[match.group(1)]?.toString();
       // Encoded as a path segment, so a '/', '?' or '#' in the value stays part of it.
       // The leading empty segment keeps a ':' in the value from being escaped as a scheme.
-      return value == null ? '' : Uri(pathSegments: ['', value]).path.substring(1);
+      return value == null
+          ? ''
+          : Uri(pathSegments: ['', value]).path.substring(1);
     });
     return path;
   }
@@ -137,7 +141,10 @@ class PageRouteInfo<T extends Object?> {
   /// e.g if we have = Route1[Route2[Route3]]
   /// the result is [Route1,Route2,Route3]
   List<PageRouteInfo> get flattened {
-    return [this, if (initialChildren case [..., final last]) ...last.flattened];
+    return [
+      this,
+      if (initialChildren case [..., final last]) ...last.flattened,
+    ];
   }
 
   /// Returns a new instance with the provided
@@ -166,7 +173,8 @@ class PageRouteInfo<T extends Object?> {
     // Deprecated in 12.0.0, removed in 13.0.0.
     @Deprecated('A PageRouteInfo holds no path; this is ignored') String? path,
     // Deprecated in 12.0.0, removed in 13.0.0.
-    @Deprecated('A PageRouteInfo holds no match; this is ignored') RouteMatch<Object?>? match,
+    @Deprecated('A PageRouteInfo holds no match; this is ignored')
+    RouteMatch<Object?>? match,
   }) {
     final newPathParams = rawPathParams ?? params;
     final newQueryParams = rawQueryParams ?? queryParams;
@@ -174,11 +182,14 @@ class PageRouteInfo<T extends Object?> {
     if ((name == null || identical(name, _routeName)) &&
         (fragment == null || identical(fragment, this.fragment)) &&
         (args == null || identical(args, this.args)) &&
-        (newPathParams == null || identical(newPathParams, this.rawPathParams)) &&
-        (newQueryParams == null || identical(newQueryParams, this.rawQueryParams)) &&
+        (newPathParams == null ||
+            identical(newPathParams, this.rawPathParams)) &&
+        (newQueryParams == null ||
+            identical(newQueryParams, this.rawQueryParams)) &&
         (newChildren == null || identical(newChildren, this.initialChildren)) &&
         (stringMatch == null || identical(stringMatch, this.stringMatch)) &&
-        (redirectedFrom == null || identical(redirectedFrom, this.redirectedFrom)) &&
+        (redirectedFrom == null ||
+            identical(redirectedFrom, this.redirectedFrom)) &&
         (argsEquality == null || argsEquality == this.argsEquality)) {
       return this;
     }
@@ -224,10 +235,19 @@ class PageRouteInfo<T extends Object?> {
           _routeName == other._routeName &&
           fragment == other.fragment &&
           (!argsEquality || args == other.args) &&
-          const ListEquality<Object?>().equals(initialChildren, other.initialChildren) &&
+          const ListEquality<Object?>().equals(
+            initialChildren,
+            other.initialChildren,
+          ) &&
           // Deep, so params holding equal lists or sets are equal.
-          const DeepCollectionEquality().equals(rawPathParams, other.rawPathParams) &&
-          const DeepCollectionEquality().equals(rawQueryParams, other.rawQueryParams);
+          const DeepCollectionEquality().equals(
+            rawPathParams,
+            other.rawPathParams,
+          ) &&
+          const DeepCollectionEquality().equals(
+            rawQueryParams,
+            other.rawQueryParams,
+          );
 
   @override
   int get hashCode =>
@@ -266,5 +286,9 @@ class NamedRoute<A extends Object?> extends PageRouteInfo<A> {
     Map<String, Object?> params = const {},
     Map<String, Object?> queryParams = const {},
     super.fragment,
-  }) : super(initialChildren: children, rawPathParams: params, rawQueryParams: queryParams);
+  }) : super(
+         initialChildren: children,
+         rawPathParams: params,
+         rawQueryParams: queryParams,
+       );
 }

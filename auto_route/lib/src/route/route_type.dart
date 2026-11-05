@@ -3,7 +3,11 @@ import 'package:material_ui/material_ui.dart';
 
 /// Signature for custom router builder used by
 /// [CustomRouteType]
-typedef CustomRouteBuilder = Route<T> Function<T>(BuildContext context, Widget child, AutoRoutePage<T> page);
+typedef CustomRouteBuilder = Route<T> Function<T>(
+  BuildContext context,
+  Widget child,
+  AutoRoutePage<T> page,
+);
 
 /// An abstraction of route types used by
 /// [AutoRoutePage.onCreateRoute] to decide transition animations
@@ -47,7 +51,10 @@ abstract class RouteType {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is RouteType && runtimeType == other.runtimeType && opaque == other.opaque;
+      identical(this, other) ||
+      other is RouteType &&
+          runtimeType == other.runtimeType &&
+          opaque == other.opaque;
 
   @override
   int get hashCode => opaque.hashCode;
@@ -56,8 +63,10 @@ abstract class RouteType {
 /// Generates a route that uses [MaterialRouteTransitionMixin]
 class MaterialRouteType extends RouteType with PredictiveBackGestureMixin {
   /// Default constructor
-  const new({this.enablePredictiveBackGesture = false, this.predictiveBackPageTransitionsBuilder})
-    : super._(opaque: true);
+  const new({
+    this.enablePredictiveBackGesture = false,
+    this.predictiveBackPageTransitionsBuilder,
+  }) : super._(opaque: true);
 
   @override
   final bool enablePredictiveBackGesture;
@@ -79,8 +88,11 @@ class CupertinoRouteType extends RouteType {
 /// any other platform => [MaterialRouteTransitionMixin]
 class AdaptiveRouteType extends RouteType with PredictiveBackGestureMixin {
   /// Default constructor
-  const new({this.enablePredictiveBackGesture = false, this.predictiveBackPageTransitionsBuilder, super.opaque})
-    : super._();
+  const new({
+    this.enablePredictiveBackGesture = false,
+    this.predictiveBackPageTransitionsBuilder,
+    super.opaque,
+  }) : super._();
 
   @override
   final bool enablePredictiveBackGesture;

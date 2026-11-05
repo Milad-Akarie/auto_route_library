@@ -71,7 +71,8 @@ mixin class AutoRouteAware {
 
 /// a helper mixin to utilises [AutoRouteAware] in a better manner
 /// and reduce boilerplate code
-mixin AutoRouteAwareStateMixin<T extends StatefulWidget> on State<T> implements AutoRouteAware {
+mixin AutoRouteAwareStateMixin<T extends StatefulWidget> on State<T>
+    implements AutoRouteAware {
   AutoRouteObserver? _observer;
 
   @override
@@ -79,10 +80,13 @@ mixin AutoRouteAwareStateMixin<T extends StatefulWidget> on State<T> implements 
     super.didChangeDependencies();
     // RouterScope exposes the list of provided observers
     // including inherited observers
-    _observer = RouterScope.of(context).firstObserverOfType<AutoRouteObserver>();
+    _observer = RouterScope.of(context)
+        .firstObserverOfType<AutoRouteObserver>();
     // A widget shown outside a page, as in a dialog, has no route data to
     // subscribe to, so it hears nothing rather than throwing.
-    final routeData = context.findAncestorWidgetOfExactType<RouteDataScope>()?.routeData;
+    final routeData = context
+        .findAncestorWidgetOfExactType<RouteDataScope>()
+        ?.routeData;
 
     if (routeData != null) {
       // we subscribe to the observer by passing our
@@ -137,11 +141,13 @@ mixin AutoRouteAwareStateMixin<T extends StatefulWidget> on State<T> implements 
 /// will inform subscribed [AutoRouteAware]s whenever the user navigates away from
 /// the current page route to another page route.
 class AutoRouteObserver extends AutoRouterObserver {
-  final Map<LocalKey, Set<AutoRouteAware>> _listeners = <LocalKey, Set<AutoRouteAware>>{};
+  final Map<LocalKey, Set<AutoRouteAware>> _listeners =
+      <LocalKey, Set<AutoRouteAware>>{};
 
   // Subscribers of routes inside nested routers, keyed by the route in this
   // observer's navigator that hosts them, each with the route it subscribed to.
-  final Map<LocalKey, Map<AutoRouteAware, RouteData<Object?>>> _nestedListeners = {};
+  final Map<LocalKey, Map<AutoRouteAware, RouteData<Object?>>>
+  _nestedListeners = {};
 
   // The observers of ancestor navigators each subscriber was added to.
   final Map<AutoRouteAware, Set<AutoRouteObserver>> _ancestorObservers = {};
@@ -156,7 +162,10 @@ class AutoRouteObserver extends AutoRouterObserver {
   /// while [route] shows inside its host route, when the host route is covered,
   /// uncovered or popped in an ancestor navigator that has an [AutoRouteObserver].
   void subscribe(AutoRouteAware routeAware, RouteData<Object?> route) {
-    final subscribers = _listeners.putIfAbsent(route.key, () => <AutoRouteAware>{});
+    final subscribers = _listeners.putIfAbsent(
+      route.key,
+      () => <AutoRouteAware>{},
+    );
     if (subscribers.add(routeAware)) {
       _subscribeToAncestors(routeAware, route);
       final router = route.router;
@@ -166,7 +175,10 @@ class AutoRouteObserver extends AutoRouterObserver {
             ? null
             : router.stackData.elementAtOrNull(previousIndex);
         if (previousIndex != null && previous != null) {
-          final previousRoute = TabPageRoute(routeInfo: previous.route, index: previousIndex);
+          final previousRoute = TabPageRoute(
+            routeInfo: previous.route,
+            index: previousIndex,
+          );
           routeAware.didInitTabRoute(previousRoute);
         } else {
           routeAware.didInitTabRoute(null);
@@ -186,11 +198,20 @@ class AutoRouteObserver extends AutoRouterObserver {
   // that host shows again.
   bool _isCovered(AutoRouteAware routeAware, RouteData<Object?> route) {
     if (_isBelowTop(route)) return true;
-    final ancestorObservers = _ancestorObservers[routeAware] ?? const <AutoRouteObserver>{};
-    for (var host = route.parent; host != null && host.parent != null; host = host.parent) {
+    final ancestorObservers =
+        _ancestorObservers[routeAware] ?? const <AutoRouteObserver>{};
+    for (
+      var host = route.parent;
+      host != null && host.parent != null;
+      host = host.parent
+    ) {
       if (!_isBelowTop(host)) continue;
       final hostKey = host.key;
-      if (ancestorObservers.any((observer) => observer._nestedListeners[hostKey]?.containsKey(routeAware) ?? false)) {
+      if (ancestorObservers.any(
+        (observer) =>
+            observer._nestedListeners[hostKey]?.containsKey(routeAware) ??
+            false,
+      )) {
         return true;
       }
     }
@@ -216,7 +237,9 @@ class AutoRouteObserver extends AutoRouterObserver {
       final subscribers = _listeners[route];
       subscribers?.remove(routeAware);
     }
-    for (final observer in _ancestorObservers.remove(routeAware) ?? const <AutoRouteObserver>{}) {
+    for (final observer
+        in _ancestorObservers.remove(routeAware) ??
+            const <AutoRouteObserver>{}) {
       for (final nestedSubscribers in observer._nestedListeners.values) {
         nestedSubscribers.remove(routeAware);
       }
@@ -225,15 +248,25 @@ class AutoRouteObserver extends AutoRouterObserver {
 
   // Adds [routeAware] to the observers of the navigators that hold the host
   // routes of [route], so it hears when one of them is covered or uncovered.
-  void _subscribeToAncestors(AutoRouteAware routeAware, RouteData<Object?> route) {
+  void _subscribeToAncestors(
+    AutoRouteAware routeAware,
+    RouteData<Object?> route,
+  ) {
     // The root router's own route data has no parent and no navigator around it.
-    for (var host = route.parent; host != null && host.parent != null; host = host.parent) {
+    for (
+      var host = route.parent;
+      host != null && host.parent != null;
+      host = host.parent
+    ) {
       final router = host.router;
       if (router is! StackRouter) continue;
-      final observers = router.navigatorKey.currentState?.widget.observers ?? const <NavigatorObserver>[];
+      final observers =
+          router.navigatorKey.currentState?.widget.observers ??
+          const <NavigatorObserver>[];
       for (final observer in observers.whereType<AutoRouteObserver>()) {
         if (identical(observer, this)) continue;
-        observer._nestedListeners.putIfAbsent(host.key, () => {})[routeAware] = route;
+        observer._nestedListeners.putIfAbsent(host.key, () => {})[routeAware] =
+            route;
         _ancestorObservers.putIfAbsent(routeAware, () => {}).add(observer);
       }
     }
@@ -242,16 +275,24 @@ class AutoRouteObserver extends AutoRouterObserver {
   // Calls [notify] for each subscriber of a route that shows inside the route
   // with [hostKey], skipping those covered in their own router or in an
   // inactive tab.
-  void _notifyNested(LocalKey hostKey, void Function(AutoRouteAware routeAware) notify) {
+  void _notifyNested(
+    LocalKey hostKey,
+    void Function(AutoRouteAware routeAware) notify,
+  ) {
     final nestedSubscribers = _nestedListeners[hostKey];
     if (nestedSubscribers == null) return;
-    for (final MapEntry(key: routeAware, value: route) in nestedSubscribers.entries.toList()) {
+    for (final MapEntry(key: routeAware, value: route)
+        in nestedSubscribers.entries.toList()) {
       if (_showsInHost(route, hostKey)) notify(routeAware);
     }
   }
 
   static bool _showsInHost(RouteData<Object?> route, LocalKey hostKey) {
-    for (RouteData<Object?>? data = route; data != null && data.key != hostKey; data = data.parent) {
+    for (
+      RouteData<Object?>? data = route;
+      data != null && data.key != hostKey;
+      data = data.parent
+    ) {
       if (data.router.currentChild?.matchId != data.matchId) return false;
     }
     return true;
@@ -278,7 +319,8 @@ class AutoRouteObserver extends AutoRouterObserver {
   }
 
   @override
-  void didPop(Route<Object?> route, Route<Object?>? previousRoute) => _notifyPop(route, previousRoute);
+  void didPop(Route<Object?> route, Route<Object?>? previousRoute) =>
+      _notifyPop(route, previousRoute);
 
   @override
   void didRemove(Route<Object?> route, Route<Object?>? previousRoute) {
@@ -291,7 +333,8 @@ class AutoRouteObserver extends AutoRouterObserver {
   }
 
   void _notifyPop(Route<Object?> route, Route<Object?>? previousRoute) {
-    if (route.settings is AutoRoutePage && previousRoute?.settings is AutoRoutePage) {
+    if (route.settings is AutoRoutePage &&
+        previousRoute?.settings is AutoRoutePage) {
       // The page that leaves hears first, then the page that shows again, as
       // on a push, where the covered page hears didPushNext before the new
       // page subscribes and hears didPush.
@@ -319,7 +362,8 @@ class AutoRouteObserver extends AutoRouterObserver {
 
   @override
   void didPush(Route<Object?> route, Route<Object?>? previousRoute) {
-    if (route.settings is AutoRoutePage && previousRoute?.settings is AutoRoutePage) {
+    if (route.settings is AutoRoutePage &&
+        previousRoute?.settings is AutoRoutePage) {
       final previousKey = (previousRoute!.settings as AutoRoutePage).routeKey;
       final previousSubscribers = _listeners[previousKey];
 

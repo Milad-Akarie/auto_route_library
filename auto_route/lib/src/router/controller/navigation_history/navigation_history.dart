@@ -1,5 +1,6 @@
 import 'package:auto_route/src/router/controller/navigation_history/navigation_history_base.dart';
-import 'package:auto_route/src/router/controller/routing_controller.dart' show StackRouter;
+import 'package:auto_route/src/router/controller/routing_controller.dart'
+    show StackRouter;
 
 /// A stub implementation of [NavigationHistory]
 class NavigationHistoryImpl extends NavigationHistory {

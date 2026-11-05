@@ -20,7 +20,8 @@ class _AutoTabsRouterBuilder extends AutoTabsRouter {
   _AutoTabsRouterBuilderState createState() => .new();
 }
 
-class _AutoTabsRouterBuilderState extends AutoTabsRouterState<_AutoTabsRouterBuilder>
+class _AutoTabsRouterBuilderState
+    extends AutoTabsRouterState<_AutoTabsRouterBuilder>
     with _RouteAwareTabsMixin<_AutoTabsRouterBuilder> {
   @override
   void _setupController() {
@@ -34,7 +35,10 @@ class _AutoTabsRouterBuilderState extends AutoTabsRouterState<_AutoTabsRouterBui
 
   void _onTabsChanged() {
     if (_controller!.activeIndex != _controller!.previousIndex) {
-      _didChangeTabRoute(_controller!.activeIndex, _controller!.previousIndex ?? 0);
+      _didChangeTabRoute(
+        _controller!.activeIndex,
+        _controller!.previousIndex ?? 0,
+      );
       widget.onNavigate?.call(_controller!);
     }
   }
@@ -51,7 +55,10 @@ class _AutoTabsRouterBuilderState extends AutoTabsRouterState<_AutoTabsRouterBui
   @override
   void didUpdateWidget(covariant _AutoTabsRouterBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!const ListEquality<Object?>().equals(widget.routes, oldWidget.routes)) {
+    if (!const ListEquality<Object?>().equals(
+      widget.routes,
+      oldWidget.routes,
+    )) {
       _controller!.replaceAll(widget.routes, _controller!.activeIndex);
       widget.onNavigate?.call(_controller!);
     }
@@ -82,7 +89,10 @@ class _AutoTabsRouterBuilderState extends AutoTabsRouterState<_AutoTabsRouterBui
                   context,
                   List.generate(
                     stack.length,
-                    (index) => KeepAliveTab(key: _tabKeyOf(stack[index]), page: stack[index]),
+                    (index) => KeepAliveTab(
+                      key: _tabKeyOf(stack[index]),
+                      page: stack[index],
+                    ),
                   ),
                   _controller!,
                 );
@@ -98,5 +108,6 @@ class _AutoTabsRouterBuilderState extends AutoTabsRouterState<_AutoTabsRouterBui
   List<NavigatorObserver> get observers => _navigatorObservers;
 
   @override
-  List<RouteMatch<Object?>> get routes => _controller!.stackData.map((e) => e.route).toList();
+  List<RouteMatch<Object?>> get routes =>
+      _controller!.stackData.map((e) => e.route).toList();
 }

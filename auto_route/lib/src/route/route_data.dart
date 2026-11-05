@@ -59,8 +59,9 @@ class RouteData<R> {
   /// where it can be used by `CupertinoNavigationBar`
   ///
   /// it can also be used manually by calling [RouteData.title] inside widgets
-  String Function(BuildContext context) get title =>
-      _route.titleBuilder == null ? (_) => _route.name : (context) => _route.titleBuilder!(context, this);
+  String Function(BuildContext context) get title => _route.titleBuilder == null
+      ? (_) => _route.name
+      : (context) => _route.titleBuilder!(context, this);
 
   /// Builds a String value that that's passed to
   /// [AutoRoutePage.restorationId]
@@ -71,7 +72,9 @@ class RouteData<R> {
   @internal
   String get restorationId => _restorationId ?? _baseRestorationId;
 
-  String get _baseRestorationId => _route.restorationId == null ? _route.name : _route.restorationId!(_route);
+  String get _baseRestorationId => _route.restorationId == null
+      ? _route.name
+      : _route.restorationId!(_route);
 
   String? _restorationId;
 
@@ -124,14 +127,20 @@ class RouteData<R> {
     final given = _route.args;
     if (given == null) {
       if (orElse == null) {
-        final messages = ['$T can not be null because the corresponding page has a required parameter'];
+        final messages = [
+          '$T can not be null because the corresponding page has a required parameter',
+        ];
         if (_route.autoFilled) {
           messages
-            ..add('${_route.name} is an auto created ancestor of target route ${_route.flattened.last.name}')
+            ..add(
+              '${_route.name} is an auto created ancestor of target route ${_route.flattened.last.name}',
+            )
             ..add(
               'This usually happens when you try to navigate to a route that is inside of a nested-router\nbefore adding the nested-router to the stack first',
             )
-            ..add('try navigating to ${_route.flattened.map((e) => e.name).join(' -> ')}');
+            ..add(
+              'try navigating to ${_route.flattened.map((e) => e.name).join(' -> ')}',
+            );
         }
         throw MissingRequiredParameterError('\n${messages.join('\n')}\n');
       }
@@ -139,7 +148,9 @@ class RouteData<R> {
     } else if (given case final T typed) {
       return typed;
     }
-    throw MissingRequiredParameterError('Expected [$T],  found [${given.runtimeType}]');
+    throw MissingRequiredParameterError(
+      'Expected [$T],  found [${given.runtimeType}]',
+    );
   }
 
   // The query params and fragment this route was opened with. A route pushed
@@ -185,11 +196,14 @@ class RouteData<R> {
   /// The track to the very first ancestor match
   ///
   /// This can be used to render visual breadcrumbs in UI
-  List<RouteMatch<Object?>> get breadcrumbs => .unmodifiable([...?_parent?.breadcrumbs, _route]);
+  List<RouteMatch<Object?>> get breadcrumbs =>
+      .unmodifiable([...?_parent?.breadcrumbs, _route]);
 
   /// Collects all path params form all previous ancestors
   Parameters get inheritedPathParams {
-    return breadcrumbs.map((e) => e.params).reduce((value, element) => value + element);
+    return breadcrumbs
+        .map((e) => e.params)
+        .reduce((value, element) => value + element);
   }
 
   /// Helper to access [RouteMatch.params]
@@ -240,7 +254,10 @@ class RouteData<R> {
   @internal
   void onPoppedByNavigator() {
     _isPoppedByNavigator = true;
-    if ((router, animation) case (final StackRouter stackRouter, final leaving?)) {
+    if ((router, animation) case (
+      final StackRouter stackRouter,
+      final leaving?,
+    )) {
       stackRouter._addLeavingAnimation(leaving);
     }
   }

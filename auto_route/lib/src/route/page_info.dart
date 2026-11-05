@@ -14,7 +14,10 @@ class PageInfo {
 
   /// Builds a new instance of [PageInfo] with the given parameters
   factory builder(String name, {required WidgetBuilderWithData builder}) {
-    return PageInfo(name, builder: (data) => Builder(builder: (context) => builder(context, data)));
+    return PageInfo(
+      name,
+      builder: (data) => Builder(builder: (context) => builder(context, data)),
+    );
   }
 
   /// The name of the generated [RoutePage]
@@ -30,7 +33,10 @@ class PageInfo {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is PageInfo && runtimeType == other.runtimeType && builder == other.builder && name == other.name;
+      other is PageInfo &&
+          runtimeType == other.runtimeType &&
+          builder == other.builder &&
+          name == other.name;
 
   @override
   int get hashCode => name.hashCode ^ builder.hashCode;

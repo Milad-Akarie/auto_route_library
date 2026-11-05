@@ -19,7 +19,12 @@ typedef DeferredWidgetBuilder = Widget Function();
 /// state as long as closure to create widget stays the same.
 class DeferredWidget extends StatefulWidget {
   /// default constructor
-  const new(this.libraryLoader, this.createWidget, {super.key, this.placeholder});
+  const new(
+    this.libraryLoader,
+    this.createWidget, {
+    super.key,
+    this.placeholder,
+  });
 
   /// Triggers the deferred library loading process
   final LibraryLoader libraryLoader;
@@ -83,7 +88,9 @@ class _DeferredWidgetState extends State<DeferredWidget> {
       _loadedChild = _loadedBuilder!();
     }
 
-    final placeHolder = AutoRouterDelegate.of(context).placeholder?.call(context) ?? const DeferredLoadingPlaceholder();
+    final placeHolder =
+        AutoRouterDelegate.of(context).placeholder?.call(context) ??
+        const DeferredLoadingPlaceholder();
     return _loadedChild ?? placeHolder;
   }
 }

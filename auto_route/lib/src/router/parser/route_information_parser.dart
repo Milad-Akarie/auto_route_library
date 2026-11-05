@@ -4,13 +4,18 @@ import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/matcher/route_matcher.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart' show RouteInformation, RouteInformationParser;
+import 'package:flutter/widgets.dart'
+    show RouteInformation, RouteInformationParser;
 import 'package:path/path.dart' as p;
 
 /// AutoRoute extension of [RouteInformationParser]
 class DefaultRouteParser extends RouteInformationParser<UrlState> {
   /// Default constructor
-  new(this._matcher, {this.includePrefixMatches = false, this.deepLinkTransformer});
+  new(
+    this._matcher, {
+    this.includePrefixMatches = false,
+    this.deepLinkTransformer,
+  });
   final RouteMatcher _matcher;
 
   /// If set to true all paths that's
@@ -29,9 +34,17 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
   final DeepLinkTransformer? deepLinkTransformer;
 
   @override
-  Future<UrlState> parseRouteInformation(RouteInformation routeInformation) async {
-    final resolvedUri = _normalize(await deepLinkTransformer?.call(routeInformation.uri) ?? routeInformation.uri);
-    final matches = _matcher.matchUri(resolvedUri, includePrefixMatches: includePrefixMatches);
+  Future<UrlState> parseRouteInformation(
+    RouteInformation routeInformation,
+  ) async {
+    final resolvedUri = _normalize(
+      await deepLinkTransformer?.call(routeInformation.uri) ??
+          routeInformation.uri,
+    );
+    final matches = _matcher.matchUri(
+      resolvedUri,
+      includePrefixMatches: includePrefixMatches,
+    );
     final state = routeInformation.state;
     final savedRoutes = state is Map ? state[UrlState._savedRoutesKey] : null;
     return await SynchronousFuture(
@@ -39,7 +52,9 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
         routeInformation.uri,
         matches ?? const [],
         // savedRoutes is only set when state is a Map.
-        pathState: state is Map && savedRoutes != null ? state[UrlState._pathStateKey] : state,
+        pathState: state is Map && savedRoutes != null
+            ? state[UrlState._pathStateKey]
+            : state,
         savedRoutes: savedRoutes,
       ),
     );
@@ -49,7 +64,9 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
     final path = uri.path.isEmpty ? '/' : uri.path;
     return Uri(
       path: p.normalize(path),
-      queryParameters: uri.queryParameters.isEmpty ? null : uri.queryParametersAll,
+      queryParameters: uri.queryParameters.isEmpty
+          ? null
+          : uri.queryParametersAll,
       fragment: uri.fragment.isEmpty ? null : uri.fragment,
     );
   }
@@ -63,7 +80,10 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
       replace: configuration.shouldReplace,
       state: configuration.savedRoutes == null
           ? configuration.pathState
-          : {UrlState._savedRoutesKey: configuration.savedRoutes, UrlState._pathStateKey: configuration.pathState},
+          : {
+              UrlState._savedRoutesKey: configuration.savedRoutes,
+              UrlState._pathStateKey: configuration.pathState,
+            },
     );
   }
 }
@@ -73,7 +93,8 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
 /// turns an encoded '#', '&' or '/' inside a param into a real delimiter;
 /// escaping every '%' once more makes it give back [uri] as it was.
 @internal
-Uri escapeForWebEngine(Uri uri) => Uri.parse(uri.toString().replaceAll('%', '%25'));
+Uri escapeForWebEngine(Uri uri) =>
+    Uri.parse(uri.toString().replaceAll('%', '%25'));
 
 /// `uri` as the web engine needs it: its string is escaped for the engine, as
 /// [escapeForWebEngine] does, and its parts are `uri`'s own.
@@ -93,7 +114,8 @@ class _WebEngineUri implements Uri {
   String toString() => _escaped;
 
   @override
-  bool operator ==(Object other) => _uri == (other is _WebEngineUri ? other._uri : other);
+  bool operator ==(Object other) =>
+      _uri == (other is _WebEngineUri ? other._uri : other);
 
   @override
   int get hashCode => _uri.hashCode;
@@ -209,9 +231,15 @@ class _WebEngineUri implements Uri {
 @immutable
 class AutoRouteInformation extends RouteInformation {
   /// Default constructor
-  const new({required Uri super.uri, super.state, this.replace = true}) : appUri = null;
+  const new({required Uri super.uri, super.state, this.replace = true})
+    : appUri = null;
 
-  const new _({required Uri super.uri, required Uri this.appUri, super.state, this.replace = true});
+  const new _({
+    required Uri super.uri,
+    required Uri this.appUri,
+    super.state,
+    this.replace = true,
+  });
 
   /// forces the current location to be replaced with this location
   final bool replace;
@@ -227,7 +255,10 @@ class AutoRouteInformation extends RouteInformation {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is AutoRouteInformation && runtimeType == other.runtimeType && uri == other.uri && state == other.state;
+      other is AutoRouteInformation &&
+          runtimeType == other.runtimeType &&
+          uri == other.uri &&
+          state == other.state;
 
   @override
   int get hashCode => replace.hashCode;
@@ -238,12 +269,27 @@ class AutoRouteInformation extends RouteInformation {
 @immutable
 class UrlState {
   /// Default constructor
-  const new(this.uri, this.segments, {this.shouldReplace = false, this.pathState, @internal this.savedRoutes});
+  const new(
+    this.uri,
+    this.segments, {
+    this.shouldReplace = false,
+    this.pathState,
+    @internal this.savedRoutes,
+  });
 
   /// Builds UrlState from list of
   /// route matches instead of uri
-  factory fromSegments(List<RouteMatch<Object?>> routes, {bool shouldReplace = false, Object? state}) {
-    return UrlState(_buildUri(routes), routes, shouldReplace: shouldReplace, pathState: state);
+  factory fromSegments(
+    List<RouteMatch<Object?>> routes, {
+    bool shouldReplace = false,
+    Object? state,
+  }) {
+    return UrlState(
+      _buildUri(routes),
+      routes,
+      shouldReplace: shouldReplace,
+      pathState: state,
+    );
   }
 
   /// Represents current router uri
@@ -300,7 +346,9 @@ class UrlState {
     if (!encoded.contains('%')) return encoded;
     final queryStart = encoded.indexOf('?');
     final fragmentStart = encoded.indexOf('#');
-    final pathEnd = queryStart >= 0 ? queryStart : (fragmentStart >= 0 ? fragmentStart : encoded.length);
+    final pathEnd = queryStart >= 0
+        ? queryStart
+        : (fragmentStart >= 0 ? fragmentStart : encoded.length);
     final queryEnd = fragmentStart >= 0 ? fragmentStart : encoded.length;
     return _decodeExcept(encoded.substring(0, pathEnd), '/?#%') +
         _decodeExcept(encoded.substring(pathEnd, queryEnd), '&=+#%') +
@@ -312,13 +360,18 @@ class UrlState {
   static String _decodeExcept(String part, String keep) {
     return part.replaceAllMapped(_escapes, (match) {
       final run = match[0]!;
-      final bytes = [for (var i = 0; i < run.length; i += 3) int.parse(run.substring(i + 1, i + 3), radix: 16)];
+      final bytes = [
+        for (var i = 0; i < run.length; i += 3)
+          int.parse(run.substring(i + 1, i + 3), radix: 16),
+      ];
       final out = StringBuffer();
       var i = 0;
       while (i < bytes.length) {
         if (bytes[i] < 0x80) {
           final char = String.fromCharCode(bytes[i]);
-          out.write(keep.contains(char) ? run.substring(i * 3, i * 3 + 3) : char);
+          out.write(
+            keep.contains(char) ? run.substring(i * 3, i * 3 + 3) : char,
+          );
           i++;
           continue;
         }
@@ -347,7 +400,9 @@ class UrlState {
   static RouteMatch<Object?> toHierarchy(List<RouteMatch<Object?>> segments) {
     return switch (segments) {
       [final only] => only,
-      [final first, ...final rest] => first.copyWith(children: [toHierarchy(rest)]),
+      [final first, ...final rest] => first.copyWith(
+        children: [toHierarchy(rest)],
+      ),
       [] => throw StateError('No element'),
     };
   }
@@ -356,7 +411,8 @@ class UrlState {
   /// With the flattened version of [segments]
   /// e.g if segments = [Match1[Match2[Match3]]]
   /// the result is [Match1,Match2,Match3]
-  UrlState get flatten => .fromSegments(segments.last.flattened, state: pathState);
+  UrlState get flatten =>
+      .fromSegments(segments.last.flattened, state: pathState);
 
   @override
   String toString() {
@@ -389,7 +445,11 @@ class UrlState {
 
   /// re
   List<RouteMatch<Object?>> childrenOfSegmentNamed(String routeName) {
-    return _findSegment(segments, (match) => match.name == routeName)?.children ?? const [];
+    return _findSegment(
+          segments,
+          (match) => match.name == routeName,
+        )?.children ??
+        const [];
   }
 
   static Uri _buildUri(List<RouteMatch<Object?>> routes) {
@@ -397,7 +457,9 @@ class UrlState {
     if (lastSegment == null) {
       return Uri(path: '/');
     }
-    final fullPath = p.joinAll(routes.where((e) => e.stringMatch.isNotEmpty).map((e) => e.stringMatch));
+    final fullPath = p.joinAll(
+      routes.where((e) => e.stringMatch.isNotEmpty).map((e) => e.stringMatch),
+    );
     final normalized = p.normalize(fullPath);
     final queryParams = <String, Object?>{};
     if (lastSegment.queryParams.isNotEmpty) {
@@ -415,7 +477,11 @@ class UrlState {
     if (lastSegment.fragment.isNotEmpty) {
       fragment = lastSegment.fragment;
     }
-    return Uri(path: normalized, queryParameters: queryParams.isNotEmpty ? queryParams : null, fragment: fragment);
+    return Uri(
+      path: normalized,
+      queryParameters: queryParams.isNotEmpty ? queryParams : null,
+      fragment: fragment,
+    );
   }
 
   /// Stringify query param value
@@ -442,7 +508,8 @@ class UrlState {
           const ListEquality<Object?>().equals(segments, other.segments);
 
   @override
-  int get hashCode => const ListEquality<Object?>().hash(segments) ^ pathState.hashCode;
+  int get hashCode =>
+      const ListEquality<Object?>().hash(segments) ^ pathState.hashCode;
 
   /// Returns a new [UrlState] instance
   /// with replaced properties

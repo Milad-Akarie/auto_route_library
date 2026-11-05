@@ -1,4 +1,6 @@
-import 'package:flutter/cupertino.dart' as flutter show CupertinoPageTransitionsBuilder;
+import 'package:flutter/cupertino.dart'
+    as flutter
+    show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart'
     as flutter
     show PageTransitionsBuilder, Theme, ThemeData, ZoomPageTransitionsBuilder;
@@ -32,10 +34,15 @@ flutter.ThemeData? flutterMaterialThemeOf(BuildContext context) {
 /// The page transitions builder of [theme] for its platform, or Flutter's
 /// default for that platform when [theme] names none, the way Flutter's
 /// `MaterialPageRoute` picks it.
-flutter.PageTransitionsBuilder flutterPageTransitionsBuilderOf(flutter.ThemeData theme) {
+flutter.PageTransitionsBuilder flutterPageTransitionsBuilderOf(
+  flutter.ThemeData theme,
+) {
   return theme.pageTransitionsTheme.builders[theme.platform] ??
       switch (theme.platform) {
         .iOS || .macOS => const flutter.CupertinoPageTransitionsBuilder(),
-        .android || .fuchsia || .windows || .linux => const flutter.ZoomPageTransitionsBuilder(),
+        .android ||
+        .fuchsia ||
+        .windows ||
+        .linux => const flutter.ZoomPageTransitionsBuilder(),
       };
 }

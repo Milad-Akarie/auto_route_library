@@ -52,7 +52,8 @@ abstract class RootStackRouter extends StackRouter {
     DeepLinkBuilder? deepLinkBuilder,
     String? navRestorationScopeId,
     WidgetBuilder? placeholder,
-    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers =
+        AutoRouterDelegate.defaultNavigatorObserversBuilder,
     bool includePrefixMatches = !kIsWeb,
     bool Function(String? location)? neglectWhen,
     bool rebuildStackOnDeepLink = false,
@@ -126,7 +127,8 @@ abstract class RootStackRouter extends StackRouter {
   AutoRouterDelegate delegate({
     String? navRestorationScopeId,
     WidgetBuilder? placeholder,
-    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers =
+        AutoRouterDelegate.defaultNavigatorObserversBuilder,
     DeepLinkBuilder? deepLinkBuilder,
     bool rebuildStackOnDeepLink = false,
     Listenable? reevaluateListenable,
@@ -183,8 +185,11 @@ abstract class RootStackRouter extends StackRouter {
   RouteCollection? _routeCollection;
 
   @override
-  RouteCollection get routeCollection =>
-      _routeCollection ??= .fromList(routes, root: true, onGeneratePath: onGeneratePath);
+  RouteCollection get routeCollection => _routeCollection ??= .fromList(
+    routes,
+    root: true,
+    onGeneratePath: onGeneratePath,
+  );
 
   // A hot reload may have changed what [routes] returns.
   @override

@@ -38,10 +38,13 @@ class _PredictiveBackGestureDetector extends StatefulWidget {
   final PageRoute<Object?> route;
 
   @override
-  State<_PredictiveBackGestureDetector> createState() => _PredictiveBackGestureDetectorState();
+  State<_PredictiveBackGestureDetector> createState() =>
+      _PredictiveBackGestureDetectorState();
 }
 
-class _PredictiveBackGestureDetectorState extends State<_PredictiveBackGestureDetector> with WidgetsBindingObserver {
+class _PredictiveBackGestureDetectorState
+    extends State<_PredictiveBackGestureDetector>
+    with WidgetsBindingObserver {
   /// True when the predictive back gesture is enabled.
   bool get _isEnabled {
     return widget.route.isCurrent && widget.route.popGestureEnabled;
@@ -93,7 +96,9 @@ class _PredictiveBackGestureDetectorState extends State<_PredictiveBackGestureDe
   void handleUpdateBackGestureProgress(PredictiveBackEvent backEvent) {
     phase = .update;
 
-    widget.route.handleUpdateBackGestureProgress(progress: 1 - backEvent.progress);
+    widget.route.handleUpdateBackGestureProgress(
+      progress: 1 - backEvent.progress,
+    );
     currentBackEvent = backEvent;
   }
 
@@ -130,7 +135,14 @@ class _PredictiveBackGestureDetectorState extends State<_PredictiveBackGestureDe
 
   @override
   Widget build(BuildContext context) {
-    final effectivePhase = widget.route.popGestureInProgress ? phase : _PredictiveBackPhase.idle;
-    return widget.builder(context, effectivePhase, startBackEvent, currentBackEvent);
+    final effectivePhase = widget.route.popGestureInProgress
+        ? phase
+        : _PredictiveBackPhase.idle;
+    return widget.builder(
+      context,
+      effectivePhase,
+      startBackEvent,
+      currentBackEvent,
+    );
   }
 }

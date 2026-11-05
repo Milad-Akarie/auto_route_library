@@ -8,7 +8,8 @@
 // Copied from Flutter: the code stays as Flutter wrote it, so the two can
 // still be compared line by line.
 
-import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoDynamicColor, CupertinoRouteTransitionMixin;
+import 'package:cupertino_ui/cupertino_ui.dart'
+    show CupertinoDynamicColor, CupertinoRouteTransitionMixin;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:material_ui/material_ui.dart';
@@ -24,13 +25,22 @@ const Color kCupertinoModalBarrierColor = CupertinoDynamicColor.withBrightness(
 );
 
 // Offset from offscreen to the right to fully on screen.
-final Animatable<Offset> _kRightMiddleTween = Tween(begin: const Offset(1, 0), end: Offset.zero);
+final Animatable<Offset> _kRightMiddleTween = Tween(
+  begin: const Offset(1, 0),
+  end: Offset.zero,
+);
 
 // Offset from fully on screen to 1/3 offscreen to the left.
-final Animatable<Offset> _kMiddleLeftTween = Tween(begin: Offset.zero, end: const Offset(-1.0 / 3.0, 0));
+final Animatable<Offset> _kMiddleLeftTween = Tween(
+  begin: Offset.zero,
+  end: const Offset(-1.0 / 3.0, 0),
+);
 
 // Offset from offscreen below to fully on screen.
-final Animatable<Offset> _kBottomUpTween = Tween(begin: const Offset(0, 1), end: Offset.zero);
+final Animatable<Offset> _kBottomUpTween = Tween(
+  begin: const Offset(0, 1),
+  end: Offset.zero,
+);
 
 /// A mixin that implements methods and/or parameters of a [PageRoute].
 ///
@@ -96,8 +106,15 @@ class CupertinoPageTransition extends StatelessWidget {
        _primaryShadowAnimation =
            (linearTransition
                    ? primaryRouteAnimation
-                   : CurvedAnimation(parent: primaryRouteAnimation, curve: Curves.linearToEaseOut))
-               .drive(_CupertinoEdgeShadowDecoration.tween(withShadow: linearTransition));
+                   : CurvedAnimation(
+                       parent: primaryRouteAnimation,
+                       curve: Curves.linearToEaseOut,
+                     ))
+               .drive(
+                 _CupertinoEdgeShadowDecoration.tween(
+                   withShadow: linearTransition,
+                 ),
+               );
 
   // When this page is coming in to cover another page.
   final Animation<Offset> _primaryPositionAnimation;
@@ -111,7 +128,10 @@ class CupertinoPageTransition extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    assert(debugCheckHasDirectionality(context), 'A Directionality ancestor is required.');
+    assert(
+      debugCheckHasDirectionality(context),
+      'A Directionality ancestor is required.',
+    );
     final textDirection = Directionality.of(context);
     return SlideTransition(
       position: _secondaryPositionAnimation,
@@ -120,7 +140,10 @@ class CupertinoPageTransition extends StatelessWidget {
       child: SlideTransition(
         position: _primaryPositionAnimation,
         textDirection: textDirection,
-        child: DecoratedBoxTransition(decoration: _primaryShadowAnimation, child: child),
+        child: DecoratedBoxTransition(
+          decoration: _primaryShadowAnimation,
+          child: child,
+        ),
       ),
     );
   }
@@ -136,7 +159,14 @@ class _CupertinoEdgeShadowDecoration extends Decoration {
     begin: const _CupertinoEdgeShadowDecoration._(), // No decoration initially.
     end: _CupertinoEdgeShadowDecoration._(
       // Eyeballed gradient used to mimic a drop shadow on the start side only.
-      withShadow ? const [Color(0x38000000), Color(0x12000000), Color(0x04000000), Color(0x00000000)] : const [],
+      withShadow
+          ? const [
+              Color(0x38000000),
+              Color(0x12000000),
+              Color(0x04000000),
+              Color(0x00000000),
+            ]
+          : const [],
     ),
   );
 
@@ -180,14 +210,25 @@ class _CupertinoEdgeShadowDecoration extends Decoration {
     if (a == null) {
       return bColors == null
           ? b
-          : _CupertinoEdgeShadowDecoration._(bColors.map<Color>((color) => Color.lerp(null, color, t)!).toList());
+          : _CupertinoEdgeShadowDecoration._(
+              bColors
+                  .map<Color>((color) => Color.lerp(null, color, t)!)
+                  .toList(),
+            );
     }
     if (b == null) {
       return aColors == null
           ? a
-          : _CupertinoEdgeShadowDecoration._(aColors.map<Color>((color) => Color.lerp(null, color, 1.0 - t)!).toList());
+          : _CupertinoEdgeShadowDecoration._(
+              aColors
+                  .map<Color>((color) => Color.lerp(null, color, 1.0 - t)!)
+                  .toList(),
+            );
     }
-    assert(bColors != null || aColors != null, 'At least one decoration has colors.');
+    assert(
+      bColors != null || aColors != null,
+      'At least one decoration has colors.',
+    );
     // If it ever becomes necessary, we could allow decorations with different
     // length' here, similarly to how it is handled in [LinearGradient.lerp].
     assert(
@@ -195,7 +236,8 @@ class _CupertinoEdgeShadowDecoration extends Decoration {
       'Both decorations have the same number of colors.',
     );
     return _CupertinoEdgeShadowDecoration._([
-      for (int i = 0; i < bColors!.length; i += 1) Color.lerp(a._colors?[i], bColors[i], t)!,
+      for (int i = 0; i < bColors!.length; i += 1)
+        Color.lerp(a._colors?[i], bColors[i], t)!,
     ]);
   }
 
@@ -274,7 +316,10 @@ class _CupertinoEdgeShadowPainter extends BoxPainter {
     final bandWidth = shadowWidth / (colors.length - 1);
 
     final textDirection = configuration.textDirection;
-    assert(textDirection != null, 'The shadow is painted for a text direction.');
+    assert(
+      textDirection != null,
+      'The shadow is painted for a text direction.',
+    );
     final double start;
     final double shadowDirection; // -1 for ltr, 1 for rtl.
     switch (textDirection!) {
@@ -292,9 +337,16 @@ class _CupertinoEdgeShadowPainter extends BoxPainter {
         bandColorIndex += 1;
       }
       final paint = Paint()
-        ..color = Color.lerp(colors[bandColorIndex], colors[bandColorIndex + 1], (dx % bandWidth) / bandWidth)!;
+        ..color = Color.lerp(
+          colors[bandColorIndex],
+          colors[bandColorIndex + 1],
+          (dx % bandWidth) / bandWidth,
+        )!;
       final x = start + shadowDirection * dx;
-      canvas.drawRect(Rect.fromLTWH(x - 1.0, offset.dy, 1, shadowHeight), paint);
+      canvas.drawRect(
+        Rect.fromLTWH(x - 1.0, offset.dy, 1, shadowHeight),
+        paint,
+      );
     }
   }
 }

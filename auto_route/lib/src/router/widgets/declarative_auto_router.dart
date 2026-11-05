@@ -63,7 +63,9 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
         managedByWidget: true,
         onNavigate: widget.onNavigate,
         navigatorKey: widget.navigatorKey,
-        routeCollection: _parentController.routeCollection.subCollectionOf(parentData.name),
+        routeCollection: _parentController.routeCollection.subCollectionOf(
+          parentData.name,
+        ),
       );
       _parentController.attachChildController(_controller!);
     }

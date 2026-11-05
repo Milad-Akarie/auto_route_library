@@ -12,8 +12,16 @@ class RouteMatcher {
   final RouteCollection collection;
 
   /// Parses a [Uri] from [rawPath] then maps call to [_match]
-  List<RouteMatch<Object?>>? match(String rawPath, {bool includePrefixMatches = false}) {
-    return _match(Uri.parse(rawPath), collection, includePrefixMatches: includePrefixMatches, root: true);
+  List<RouteMatch<Object?>>? match(
+    String rawPath, {
+    bool includePrefixMatches = false,
+  }) {
+    return _match(
+      Uri.parse(rawPath),
+      collection,
+      includePrefixMatches: includePrefixMatches,
+      root: true,
+    );
   }
 
   /// Matches a uri against the config-entries in [collection]
@@ -22,8 +30,16 @@ class RouteMatcher {
   /// will be included in the return list
   ///
   /// returns null if not match is found
-  List<RouteMatch<Object?>>? matchUri(Uri uri, {bool includePrefixMatches = false}) {
-    return _match(uri, collection, includePrefixMatches: includePrefixMatches, root: true);
+  List<RouteMatch<Object?>>? matchUri(
+    Uri uri, {
+    bool includePrefixMatches = false,
+  }) {
+    return _match(
+      uri,
+      collection,
+      includePrefixMatches: includePrefixMatches,
+      root: true,
+    );
   }
 
   List<RouteMatch<Object?>>? _match(
@@ -37,15 +53,25 @@ class RouteMatcher {
     final pathSegments = _split(uri.path);
     final matches = <RouteMatch<Object?>>[];
     for (final config in routeCollection.routes) {
-      var match = _matchByPath(uri, pathSegments, config, redirectedFrom: redirectedFrom);
+      var match = _matchByPath(
+        uri,
+        pathSegments,
+        config,
+        redirectedFrom: redirectedFrom,
+      );
       if (match != null) {
         if (!includePrefixMatches || config.path == '*') {
           matches.clear();
         }
         // handle redirects
         if (config is RedirectRoute) {
-          final redirectToUri = Uri.parse(PageRouteInfo.expandPath(config.redirectTo, match.params.rawMap));
-          final redirectFrom = PageRouteInfo.expandPath(config.path, match.params.rawMap);
+          final redirectToUri = Uri.parse(
+            PageRouteInfo.expandPath(config.redirectTo, match.params.rawMap),
+          );
+          final redirectFrom = PageRouteInfo.expandPath(
+            config.path,
+            match.params.rawMap,
+          );
           if (redirectChain.contains(redirectFrom)) {
             throw FlutterError(
               'Redirect loop detected: ${[...redirectChain, redirectFrom].join(' -> ')}\n'
@@ -58,10 +84,16 @@ class RouteMatcher {
             routesCollection: routeCollection,
             includePrefixMatches: includePrefixMatches,
             redirectTo: redirectToUri.replace(
-              queryParameters: {...redirectToUri.queryParametersAll, ...uri.queryParametersAll},
+              queryParameters: {
+                ...redirectToUri.queryParametersAll,
+                ...uri.queryParametersAll,
+              },
               fragment: uri.fragment,
             ),
-            redirectedFrom: PageRouteInfo.expandPath(config.path, match.params.rawMap),
+            redirectedFrom: PageRouteInfo.expandPath(
+              config.path,
+              match.params.rawMap,
+            ),
           );
         }
 
@@ -69,7 +101,9 @@ class RouteMatcher {
           // has rest
           if (config.hasSubTree) {
             final rest = uri.replace(
-              pathSegments: pathSegments.sublist(match.segments.length).map(Uri.decodeComponent),
+              pathSegments: pathSegments
+                  .sublist(match.segments.length)
+                  .map(Uri.decodeComponent),
             );
             final children = _match(
               rest,
@@ -88,7 +122,10 @@ class RouteMatcher {
           // include empty route if exists
           if (config.hasSubTree && !match.hasChildren) {
             match = match.copyWith(
-              children: _match(uri.replace(path: ''), routeCollection.subCollectionOf(config.name)),
+              children: _match(
+                uri.replace(path: ''),
+                routeCollection.subCollectionOf(config.name),
+              ),
             );
           }
 
@@ -99,7 +136,8 @@ class RouteMatcher {
     }
 
     final last = matches.lastOrNull;
-    if (last == null || (root && _consumedSegments(last) < pathSegments.length)) {
+    if (last == null ||
+        (root && _consumedSegments(last) < pathSegments.length)) {
       return null;
     }
     return matches;
@@ -126,7 +164,9 @@ class RouteMatcher {
   // path made it: then it stands for the segment the redirect matched. So a
   // path no route has doesn't match the '' route of a router.
   static int _consumedSegments(RouteMatch<Object?> match) {
-    final own = match.segments.isEmpty && match.redirectedFrom != null ? 1 : match.segments.length;
+    final own = match.segments.isEmpty && match.redirectedFrom != null
+        ? 1
+        : match.segments.length;
     return own +
         (switch (match.children) {
           [..., final last] => _consumedSegments(last),
@@ -148,7 +188,8 @@ class RouteMatcher {
 
   // Joins segments split by [_split] back into a path.
   static String _join(List<String> segments) {
-    if (segments.isNotEmpty && segments.first == '/') return '/${segments.skip(1).join('/')}';
+    if (segments.isNotEmpty && segments.first == '/')
+      return '/${segments.skip(1).join('/')}';
     return segments.join('/');
   }
 
@@ -157,26 +198,43 @@ class RouteMatcher {
   // path is split once instead of on every match.
   static final _pathParts = Expando<List<String>>('path parts');
 
-  List<String> _partsOf(AutoRoute config) => _pathParts[config] ??= _split(config.path);
+  List<String> _partsOf(AutoRoute config) =>
+      _pathParts[config] ??= _split(config.path);
 
   /// Matches a uri against a route-config [AutoRoute]
   /// and returns a single match result
   ///
   /// returns null if not match is found
-  RouteMatch<Object?>? matchByPath(Uri uri, AutoRoute config, {String? redirectedFrom}) {
+  RouteMatch<Object?>? matchByPath(
+    Uri uri,
+    AutoRoute config, {
+    String? redirectedFrom,
+  }) {
     // Split before decoding, so an encoded '/' stays inside its segment.
-    return _matchByPath(uri, _split(uri.path), config, redirectedFrom: redirectedFrom);
+    return _matchByPath(
+      uri,
+      _split(uri.path),
+      config,
+      redirectedFrom: redirectedFrom,
+    );
   }
 
   // [segments] is the path of [uri], split.
-  RouteMatch<Object?>? _matchByPath(Uri uri, List<String> segments, AutoRoute config, {String? redirectedFrom}) {
+  RouteMatch<Object?>? _matchByPath(
+    Uri uri,
+    List<String> segments,
+    AutoRoute config, {
+    String? redirectedFrom,
+  }) {
     final parts = _partsOf(config);
 
     if (parts.length > segments.length) {
       return null;
     }
 
-    if (config.fullMatch && segments.length > parts.length && parts.lastOrNull != '*') {
+    if (config.fullMatch &&
+        segments.length > parts.length &&
+        parts.lastOrNull != '*') {
       return null;
     }
 
@@ -219,7 +277,10 @@ class RouteMatcher {
     return _matchByRoute(route, collection);
   }
 
-  RouteMatch<Object?>? _matchByRoute(PageRouteInfo route, RouteCollection routes) {
+  RouteMatch<Object?>? _matchByRoute(
+    PageRouteInfo route,
+    RouteCollection routes,
+  ) {
     final config = routes[route.routeName];
     if (config == null) {
       return null;
@@ -229,7 +290,10 @@ class RouteMatcher {
       final subRoutes = routes.subCollectionOf(route.routeName);
       if (route.hasChildren) {
         for (final childRoute in route.initialChildren!) {
-          final match = _matchByRoute(childRoute.copyWith(fragment: route.fragment), subRoutes);
+          final match = _matchByRoute(
+            childRoute.copyWith(fragment: route.fragment),
+            subRoutes,
+          );
           if (match == null) {
             return null;
           }
@@ -238,7 +302,11 @@ class RouteMatcher {
       } else {
         // include default matches if exist
         final defaultMatches = _match(
-          Uri(path: '', queryParameters: _normalizeForUri(route.rawQueryParams), fragment: route.fragment),
+          Uri(
+            path: '',
+            queryParameters: _normalizeForUri(route.rawQueryParams),
+            fragment: route.fragment,
+          ),
           subRoutes,
         );
         if (defaultMatches != null) {
@@ -248,7 +316,10 @@ class RouteMatcher {
     } else if (route.hasChildren) {
       return null;
     }
-    final stringMatch = PageRouteInfo.expandPath(config.path, route.rawPathParams);
+    final stringMatch = PageRouteInfo.expandPath(
+      config.path,
+      route.rawPathParams,
+    );
     return RouteMatch(
       config: config,
       segments: _split(stringMatch),
@@ -284,7 +355,10 @@ class RouteMatcher {
           routes = routes.subCollectionOf(ancestor.name);
         }
         final children = _matchByRoute(route, routes)?.children;
-        final stringMatch = PageRouteInfo.expandPath(config.path, route.rawPathParams);
+        final stringMatch = PageRouteInfo.expandPath(
+          config.path,
+          route.rawPathParams,
+        );
         matches.add(
           RouteMatch(
             config: config,
@@ -304,9 +378,13 @@ class RouteMatcher {
         // page at '' under 'books/:id'; fill it in there too.
         final ancestorParams = {
           for (final entry in route.rawPathParams.entries)
-            if (_split(config.path).contains(':${entry.key}')) entry.key: entry.value,
+            if (_split(config.path).contains(':${entry.key}'))
+              entry.key: entry.value,
         };
-        final stringMatch = PageRouteInfo.expandPath(config.path, ancestorParams);
+        final stringMatch = PageRouteInfo.expandPath(
+          config.path,
+          ancestorParams,
+        );
         matches.add(
           RouteMatch(
             config: config,
@@ -322,7 +400,9 @@ class RouteMatcher {
     return UrlState.toHierarchy(matches);
   }
 
-  Map<String, Object?> _normalizeSingleValues(Map<String, List<String>> queryParametersAll) {
+  Map<String, Object?> _normalizeSingleValues(
+    Map<String, List<String>> queryParametersAll,
+  ) {
     final queryMap = <String, Object?>{};
     for (final key in queryParametersAll.keys) {
       final list = queryParametersAll[key];

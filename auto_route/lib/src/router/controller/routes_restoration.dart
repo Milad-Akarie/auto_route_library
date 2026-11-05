@@ -29,7 +29,12 @@ extension on RoutingController {
     }
     // A route pushed on top shares its query params and fragment with the
     // pages under it, which keep the ones they were opened with apart.
-    return _savedMatch(data.route, queryParams: data._ownQueryParams, fragment: data._ownFragment, children: children);
+    return _savedMatch(
+      data.route,
+      queryParams: data._ownQueryParams,
+      fragment: data._ownFragment,
+      children: children,
+    );
   }
 }
 
@@ -41,7 +46,10 @@ Map<String, Object?> _savedMatch(
 }) {
   queryParams ??= match.queryParams;
   fragment ??= match.fragment;
-  children ??= [for (final child in match.children ?? const <RouteMatch<Object?>>[]) _savedMatch(child)];
+  children ??= [
+    for (final child in match.children ?? const <RouteMatch<Object?>>[])
+      _savedMatch(child),
+  ];
   return {
     'name': match.name,
     if (match.params.isNotEmpty) 'path': _plainValues(match.params.rawMap),
@@ -77,7 +85,9 @@ List<PageRouteInfo>? _restoredRoutes(Object? saved) {
         (fragment != null && fragment is! String)) {
       return null;
     }
-    final restoredChildren = children == null ? null : _restoredRoutes(children);
+    final restoredChildren = children == null
+        ? null
+        : _restoredRoutes(children);
     if (children != null && restoredChildren == null) return null;
     routes.add(
       PageRouteInfo(
@@ -95,7 +105,10 @@ List<PageRouteInfo>? _restoredRoutes(Object? saved) {
 // The restored routes, less those whose page can't be built without the
 // args it was opened with, which aren't saved, and less the routes nested
 // in those. Builds each page once to find out, as the router will.
-List<RouteMatch<Object?>> _buildableMatches(List<RouteMatch<Object?>> matches, RoutingController router) {
+List<RouteMatch<Object?>> _buildableMatches(
+  List<RouteMatch<Object?>> matches,
+  RoutingController router,
+) {
   final buildable = <RouteMatch<Object?>>[];
   for (final match in matches) {
     try {
@@ -111,7 +124,11 @@ List<RouteMatch<Object?>> _buildableMatches(List<RouteMatch<Object?>> matches, R
       continue;
     }
     final children = match.children;
-    buildable.add(children == null ? match : match.copyWith(children: _buildableMatches(children, router)));
+    buildable.add(
+      children == null
+          ? match
+          : match.copyWith(children: _buildableMatches(children, router)),
+    );
   }
   return buildable;
 }

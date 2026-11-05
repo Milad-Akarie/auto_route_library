@@ -28,7 +28,8 @@ class _AutoTabsRouterTabBar extends AutoTabsRouter {
   _AutoTabsRouterTabBarState createState() => .new();
 }
 
-class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabBar>
+class _AutoTabsRouterTabBarState
+    extends AutoTabsRouterState<_AutoTabsRouterTabBar>
     with _RouteAwareTabsMixin<_AutoTabsRouterTabBar>, TickerProviderStateMixin {
   late TabController _tabController;
   final _tabViewKey = GlobalKey<AutoTabViewState>();
@@ -39,14 +40,21 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
     assert(_controller != null, 'The tabs controller is not set up yet.');
     _controller!.setupRoutes(widget.routes);
     _updateTabController();
-    _didInitTabRoutes(lazyLoad: widget.lazyLoad, activeIndex: _controller!.activeIndex);
+    _didInitTabRoutes(
+      lazyLoad: widget.lazyLoad,
+      activeIndex: _controller!.activeIndex,
+    );
     _controller!.addListener(_onTabsChanged);
   }
 
   // Also brings the tab bar back from a tab whose guards kept it out.
   void _onTabsChanged() {
     if (_tabController.index != _controller!.activeIndex) {
-      _tabController.animateTo(_controller!.activeIndex, duration: widget.duration, curve: widget.curve);
+      _tabController.animateTo(
+        _controller!.activeIndex,
+        duration: widget.duration,
+        curve: widget.curve,
+      );
     }
   }
 
@@ -76,10 +84,14 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
   @override
   void didUpdateWidget(covariant _AutoTabsRouterTabBar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!const ListEquality<Object?>().equals(widget.routes, oldWidget.routes)) {
+    if (!const ListEquality<Object?>().equals(
+      widget.routes,
+      oldWidget.routes,
+    )) {
       _controller!.replaceAll(widget.routes, _tabController.index);
       _tabsHash = const ListEquality<Object?>().hash(widget.routes);
-      final oldTabController = _tabController..removeListener(_onTabControllerChanged);
+      final oldTabController = _tabController
+        ..removeListener(_onTabControllerChanged);
       _updateTabController();
       // Stops its animation, whose listener would otherwise reach this router
       // after it is disposed.
@@ -144,7 +156,11 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
     );
   }
 
-  Widget _defaultPageViewBuilder(BuildContext _, Widget child, TabController _) {
+  Widget _defaultPageViewBuilder(
+    BuildContext _,
+    Widget child,
+    TabController _,
+  ) {
     return child;
   }
 
@@ -152,5 +168,6 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
   List<NavigatorObserver> get observers => _navigatorObservers;
 
   @override
-  List<RouteMatch<Object?>> get routes => _controller!.stackData.map((e) => e.route).toList();
+  List<RouteMatch<Object?>> get routes =>
+      _controller!.stackData.map((e) => e.route).toList();
 }

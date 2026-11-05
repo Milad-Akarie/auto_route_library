@@ -121,14 +121,22 @@ class AutoTabViewState extends State<AutoTabView> {
   // are asked once a drag to it ends rather than as it passes.
   bool _isGuarded(int index) {
     if (index == _router.activeIndex) return false;
-    return _router.stack.elementAtOrNull(index)?.routeData.route.guards.isNotEmpty ?? false;
+    return _router.stack
+            .elementAtOrNull(index)
+            ?.routeData
+            .route
+            .guards
+            .isNotEmpty ??
+        false;
   }
 
   @override
   void didUpdateWidget(AutoTabView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.controller != oldWidget.controller) {
-      oldWidget.controller.animation?.removeListener(_handleTabControllerAnimationTick);
+      oldWidget.controller.animation?.removeListener(
+        _handleTabControllerAnimationTick,
+      );
       _controller.animation?.addListener(_handleTabControllerAnimationTick);
       _updateChildren();
       // Load the active tab, it may not have been opened yet.
@@ -163,7 +171,8 @@ class AutoTabViewState extends State<AutoTabView> {
     return stack.elementAtOrNull(index)?.routeData.matchId;
   }
 
-  GlobalKey<KeepAliveTabState>? _tabKeyAt(int index) => _tabKeys[_matchIdAt(index)];
+  GlobalKey<KeepAliveTabState>? _tabKeyAt(int index) =>
+      _tabKeys[_matchIdAt(index)];
 
   void _updateChildren() {
     final stack = _router.stack;
@@ -179,7 +188,10 @@ class AutoTabViewState extends State<AutoTabView> {
         child: ExcludeFocus(
           excluding: !isActive,
           child: KeepAliveTab(
-            key: _tabKeys.putIfAbsent(stack[index].routeData.matchId, GlobalKey.new),
+            key: _tabKeys.putIfAbsent(
+              stack[index].routeData.matchId,
+              GlobalKey.new,
+            ),
             initiallyLoaded: isActive || !widget._lazyLoad,
             page: stack[index],
           ),
@@ -212,7 +224,8 @@ class AutoTabViewState extends State<AutoTabView> {
       return;
     }
     _disposeInactiveChildren();
-    final adjacentDestination = (_currentIndex! - _controller.previousIndex).abs() == 1;
+    final adjacentDestination =
+        (_currentIndex! - _controller.previousIndex).abs() == 1;
     if (adjacentDestination) {
       await _warpToAdjacentTab(_controller.animationDuration);
     } else {
@@ -230,7 +243,11 @@ class AutoTabViewState extends State<AutoTabView> {
     _warpUnderwayCount -= 1;
   }
 
-  Future<void> _animateToPage(int page, {required Duration duration, required Curve curve}) async {
+  Future<void> _animateToPage(
+    int page, {
+    required Duration duration,
+    required Curve curve,
+  }) async {
     _warpUnderwayCount += 1;
     await _pageController.animateToPage(page, duration: duration, curve: curve);
     _warpUnderwayCount -= 1;
@@ -240,17 +257,26 @@ class AutoTabViewState extends State<AutoTabView> {
     if (duration == .zero) {
       _jumpToPage(_currentIndex!);
     } else {
-      await _animateToPage(_currentIndex!, duration: duration, curve: Curves.ease);
+      await _animateToPage(
+        _currentIndex!,
+        duration: duration,
+        curve: Curves.ease,
+      );
     }
   }
 
   Future<void> _warpToNonAdjacentTab(Duration duration) async {
     final previousIndex = _controller.previousIndex;
-    assert((_currentIndex! - previousIndex).abs() > 1, 'Only a jump of more than one tab warps.');
+    assert(
+      (_currentIndex! - previousIndex).abs() > 1,
+      'Only a jump of more than one tab warps.',
+    );
 
     // initialPage defines which page is shown when starting the animation.
     // This page is adjacent to the destination page.
-    final initialPage = _currentIndex! > previousIndex ? _currentIndex! - 1 : _currentIndex! + 1;
+    final initialPage = _currentIndex! > previousIndex
+        ? _currentIndex! - 1
+        : _currentIndex! + 1;
 
     setState(() {
       // Needed for `RenderSliverMultiBoxAdaptor.move` and kept alive children.
@@ -269,7 +295,11 @@ class AutoTabViewState extends State<AutoTabView> {
     if (duration == .zero) {
       _jumpToPage(_currentIndex!);
     } else {
-      await _animateToPage(_currentIndex!, duration: duration, curve: Curves.ease);
+      await _animateToPage(
+        _currentIndex!,
+        duration: duration,
+        curve: Curves.ease,
+      );
     }
   }
 
@@ -282,7 +312,8 @@ class AutoTabViewState extends State<AutoTabView> {
     if (notification.depth != 0) return;
 
     _scrollUnderwayCount += 1;
-    if (notification is ScrollUpdateNotification && !_controller.indexIsChanging) {
+    if (notification is ScrollUpdateNotification &&
+        !_controller.indexIsChanging) {
       if ((_pageController.page! - _controller.index).abs() > 1.0) {
         _controller.index = _pageController.page!.round();
         _currentIndex = _controller.index;
@@ -291,7 +322,10 @@ class AutoTabViewState extends State<AutoTabView> {
       if (!_isGuarded(currentPage)) {
         _controller.index = currentPage;
       }
-      _controller.offset = (_pageController.page! - _controller.index).clamp(-1.0, 1.0);
+      _controller.offset = (_pageController.page! - _controller.index).clamp(
+        -1.0,
+        1.0,
+      );
       final deltaDx = notification.dragDetails?.delta.dx;
       if (deltaDx != null) {
         if (deltaDx > 0 && currentPage > 0) {
@@ -311,7 +345,11 @@ class AutoTabViewState extends State<AutoTabView> {
           scheduleMicrotask(() {
             if (mounted) {
               unawaited(
-                _animateToPage(_router.activeIndex, duration: _controller.animationDuration, curve: Curves.ease),
+                _animateToPage(
+                  _router.activeIndex,
+                  duration: _controller.animationDuration,
+                  curve: Curves.ease,
+                ),
               );
             }
           });
@@ -322,7 +360,10 @@ class AutoTabViewState extends State<AutoTabView> {
       _controller.index = currentPage;
       _currentIndex = _controller.index;
       if (!_controller.indexIsChanging) {
-        _controller.offset = (_pageController.page! - _controller.index).clamp(-1.0, 1.0);
+        _controller.offset = (_pageController.page! - _controller.index).clamp(
+          -1.0,
+          1.0,
+        );
       }
     }
     _scrollUnderwayCount -= 1;
