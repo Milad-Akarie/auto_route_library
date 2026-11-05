@@ -17,11 +17,11 @@ part 'route_leave.dart';
 part 'routes_restoration.dart';
 
 /// Signature of a predicate to select [RouteData]
-typedef RouteDataPredicate = bool Function(RouteData<Object?> route);
+typedef RouteDataPredicate = bool Function(RouteData<dynamic> route);
 
 /// Signature of a callback used by declarative
 typedef OnNestedNavigateCallBack = void Function(
-  List<RouteMatch<Object?>> routes,
+  List<RouteMatch<dynamic>> routes,
 );
 
 /// Signature of a callback used in declarative routing
@@ -31,7 +31,7 @@ typedef RoutesBuilder = List<PageRouteInfo> Function(
 
 /// Signature of a callback to report route pop events
 typedef RoutePopCallBack = void Function(
-  RouteMatch<Object?> route,
+  RouteMatch<dynamic> route,
   Page<Object?> page,
 );
 
@@ -256,7 +256,7 @@ abstract class RoutingController with ChangeNotifier {
   }
 
   /// Returns an unmodifiable lis of current pages stack data
-  List<RouteData<Object?>> get stackData =>
+  List<RouteData<dynamic>> get stackData =>
       .unmodifiable(_pages.map((e) => e.routeData));
 
   /// See [NavigationHistory.isRouteActive]
@@ -265,7 +265,7 @@ abstract class RoutingController with ChangeNotifier {
   }
 
   /// See [NavigationHistory.isRouteDataActive]
-  bool isRouteDataActive(RouteData<Object?> data) {
+  bool isRouteDataActive(RouteData<dynamic> data) {
     return navigationHistory.isRouteDataActive(data);
   }
 
@@ -311,7 +311,7 @@ abstract class RoutingController with ChangeNotifier {
 
   /// Helper to find route match
   /// See [RouteMatcher.matchByRoute]
-  RouteMatch<Object?>? match(PageRouteInfo route) {
+  RouteMatch<dynamic>? match(PageRouteInfo route) {
     return matcher.matchByRoute(route);
   }
 
@@ -613,7 +613,7 @@ abstract class RoutingController with ChangeNotifier {
   RouteMatcher get matcher;
 
   /// The current pages stack of this controller
-  List<AutoRoutePage<Object?>> get stack;
+  List<AutoRoutePage<dynamic>> get stack;
 
   RoutingController? get _parent;
 
@@ -739,29 +739,29 @@ abstract class RoutingController with ChangeNotifier {
   ///
   /// e.g it could be the top-most route of a [StackRouter] or
   /// the child corresponding with activeIndex in [TabsRouter]
-  RouteData<Object?>? get currentChild;
+  RouteData<dynamic>? get currentChild;
 
   /// Returns [currentChild] if it's rendered
   /// otherwise returns parent [routeData]
-  RouteData<Object?> get current;
+  RouteData<dynamic> get current;
 
   /// The top-most rendered route
-  RouteData<Object?> get topRoute => _topMostRouter().current;
+  RouteData<dynamic> get topRoute => _topMostRouter().current;
 
   /// The top-most rendered or pending route match
-  RouteMatch<Object?> get topMatch => topRoute.topMatch;
+  RouteMatch<dynamic> get topMatch => topRoute.topMatch;
 
   /// The data of the parent route
-  RouteData<Object?> get routeData;
+  RouteData<dynamic> get routeData;
 
   /// Updates the value of [routeData]
-  void updateRouteData(RouteData<Object?> data);
+  void updateRouteData(RouteData<dynamic> data);
 
   /// The list of routes consumed by this controller
   RouteCollection get routeCollection;
 
   /// The top-most visible page
-  AutoRoutePage<Object?>? get topPage => _topMostRouter()._pages.lastOrNull;
+  AutoRoutePage<dynamic>? get topPage => _topMostRouter()._pages.lastOrNull;
 
   /// Whether this controller has rendered pages
   bool get hasEntries => _pages.isNotEmpty;
@@ -847,7 +847,7 @@ abstract class RoutingController with ChangeNotifier {
 
   /// Collects the top-most visitable current-child of
   /// every top-most nested controller considering this controller as root
-  List<RouteMatch<Object?>> get currentSegments {
+  List<RouteMatch<dynamic>> get currentSegments {
     final currentData = currentChild;
     final segments = <RouteMatch<Object?>>[];
     if (currentData != null) {
@@ -1032,10 +1032,10 @@ class TabsRouter extends RoutingController {
   bool Function(int index) preload;
 
   @override
-  RouteData<Object?> get routeData => _routeData;
+  RouteData<dynamic> get routeData => _routeData;
 
   @override
-  void updateRouteData(RouteData<Object?> data) {
+  void updateRouteData(RouteData<dynamic> data) {
     _routeData = data;
     for (final page in _pages) {
       page.routeData._parent = data;
@@ -1043,12 +1043,12 @@ class TabsRouter extends RoutingController {
   }
 
   @override
-  RouteData<Object?> get current {
+  RouteData<dynamic> get current {
     return currentChild ?? routeData;
   }
 
   @override
-  RouteData<Object?>? get currentChild {
+  RouteData<dynamic>? get currentChild {
     return _pages.elementAtOrNull(_activeIndex)?.routeData;
   }
 
@@ -1239,7 +1239,7 @@ class TabsRouter extends RoutingController {
   }
 
   @override
-  List<AutoRoutePage<Object?>> get stack => .unmodifiable(_pages);
+  List<AutoRoutePage<dynamic>> get stack => .unmodifiable(_pages);
 
   AutoRoutePage<Object?>? get _activePage {
     return _pages.isEmpty ? null : _pages[_activeIndex];
@@ -1962,10 +1962,10 @@ abstract class StackRouter extends RoutingController {
   }
 
   @override
-  RouteData<Object?> get current => currentChild ?? routeData;
+  RouteData<dynamic> get current => currentChild ?? routeData;
 
   @override
-  RouteData<Object?>? get currentChild {
+  RouteData<dynamic>? get currentChild {
     if (_pages.isNotEmpty) {
       return _pages.last.routeData;
     }
@@ -2021,7 +2021,7 @@ abstract class StackRouter extends RoutingController {
   }
 
   @override
-  RouteData<Object?> get topRoute =>
+  RouteData<dynamic> get topRoute =>
       _topMostRouter(ignorePagelessRoutes: true).current;
 
   /// Whether the top-most route of this controller is page-less
@@ -2132,7 +2132,7 @@ abstract class StackRouter extends RoutingController {
   /// Removes given [route] and any corresponding controllers
   ///
   /// finally calls [notifyAll] if notify is true
-  void removeRoute(RouteData<Object?> route, {bool notify = true}) {
+  void removeRoute(RouteData<dynamic> route, {bool notify = true}) {
     _markLeaving(_pages.where((page) => page.routeData == route), .removed);
     _removeRoute(route._route, notify: notify);
   }
@@ -2191,7 +2191,7 @@ abstract class StackRouter extends RoutingController {
   }
 
   @override
-  List<AutoRoutePage<Object?>> get stack => .unmodifiable(_pages);
+  List<AutoRoutePage<dynamic>> get stack => .unmodifiable(_pages);
 
   /// Adds the corresponding page to given [route] to the [_pages] stack
   ///
@@ -2996,7 +2996,7 @@ abstract class StackRouter extends RoutingController {
   /// if [onFailure] callback is provided, navigation errors will be passed to
   /// it otherwise they'll be thrown
   Future<void> navigateAll(
-    List<RouteMatch<Object?>> routes, {
+    List<RouteMatch<dynamic>> routes, {
     OnNavigationFailure? onFailure,
   }) {
     return _navigateAll(routes, onFailure: onFailure);
@@ -3330,7 +3330,7 @@ class NestedStackRouter extends StackRouter {
     required RouteCollection routeCollection,
     required super.key,
     required super.matchId,
-    required RouteData<Object?> routeData,
+    required RouteData<dynamic> routeData,
     required RoutingController super.parent,
     this.managedByWidget = false,
     super.onNavigate,
@@ -3375,10 +3375,10 @@ class NestedStackRouter extends StackRouter {
   RouteData<Object?> _routeData;
 
   @override
-  RouteData<Object?> get routeData => _routeData;
+  RouteData<dynamic> get routeData => _routeData;
 
   @override
-  void updateRouteData(RouteData<Object?> data) {
+  void updateRouteData(RouteData<dynamic> data) {
     _routeData = data;
     for (final page in _pages) {
       page.routeData._parent = data;
@@ -3473,12 +3473,12 @@ class PendingRoutesHandler {
   bool get hasPendingRoutes => _initialPendingRoutes?.isNotEmpty == true;
 
   /// Reads [_initialPendingRoutes] without deleting it's value
-  List<PageRouteInfo<Object?>>? get peek => _initialPendingRoutes;
+  List<PageRouteInfo<dynamic>>? get peek => _initialPendingRoutes;
 
   /// One time read pending routes
   ///
   /// [_initialPendingRoutes] is deleted after the read
-  List<PageRouteInfo<Object?>>? get initialPendingRoutes {
+  List<PageRouteInfo<dynamic>>? get initialPendingRoutes {
     if (_initialPendingRoutes == null) return null;
     final routes = List.of(_initialPendingRoutes!);
     _initialPendingRoutes = null;

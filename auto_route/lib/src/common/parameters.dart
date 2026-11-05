@@ -8,11 +8,11 @@ import 'package:meta/meta.dart';
 @immutable
 class Parameters {
   /// default construct
-  const new(Map<String, Object?>? params) : _rawMap = params ?? const {};
+  const new(Map<String, dynamic>? params) : _rawMap = params ?? const {};
   final Map<String, Object?> _rawMap;
 
   /// returns the raw map passed to the constructor
-  Map<String, Object?> get rawMap => _rawMap;
+  Map<String, dynamic> get rawMap => _rawMap;
 
   // coverage:ignore-start
   @override

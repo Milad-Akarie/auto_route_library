@@ -50,7 +50,7 @@ class RouteMatch<T> {
   final Parameters queryParams;
 
   /// The list of child matches of this match
-  final List<RouteMatch<Object?>>? children;
+  final List<RouteMatch<dynamic>>? children;
 
   /// The url fragment form [Uri.fragment]
   final String fragment;
@@ -96,7 +96,7 @@ class RouteMatch<T> {
   bool get isBranch => _config.hasSubTree;
 
   /// Helper to access [AutoRoute.meta]
-  Map<String, Object?> get meta => _config.meta;
+  Map<String, dynamic> get meta => _config.meta;
 
   /// Helper to access [AutoRoute.type]
   RouteType? get type => _config.type;
@@ -120,7 +120,7 @@ class RouteMatch<T> {
   TitleBuilder? get titleBuilder => _config.title;
 
   /// Helper to access [AutoRoute.buildPage]
-  AutoRoutePage<R> buildPage<R>(RouteData<Object?> data) =>
+  AutoRoutePage<R> buildPage<R>(RouteData<dynamic> data) =>
       _config.buildPage(data);
 
   /// The unique key of this match
@@ -163,7 +163,7 @@ class RouteMatch<T> {
   /// Returns a flattened list of this match and it's sub-matches
   /// e.g if we have = RouteMatch1[RouteMatch2[RouteMatch3]]
   /// the result is [RouteMatch1,RouteMatch2,RouteMatch3]
-  List<RouteMatch<Object?>> get flattened {
+  List<RouteMatch<dynamic>> get flattened {
     return [this, if (children case [..., final last]) ...last.flattened];
   }
 
@@ -172,13 +172,13 @@ class RouteMatch<T> {
   ///
   /// Each parameter is named after the field it sets; the old name
   /// [pathParams] still works and loses to [params] when both are passed.
-  RouteMatch<Object?> copyWith({
+  RouteMatch<dynamic> copyWith({
     String? stringMatch,
     Parameters? params,
     // Deprecated in 12.0.0, removed in 13.0.0.
     @Deprecated('Use params instead') Parameters? pathParams,
     Parameters? queryParams,
-    List<RouteMatch<Object?>>? children,
+    List<RouteMatch<dynamic>>? children,
     String? fragment,
     List<String>? segments,
     String? redirectedFrom,
@@ -208,7 +208,7 @@ class RouteMatch<T> {
 
   /// Returns a new instance of [RouteMatch]
   /// with the overridden id
-  RouteMatch<Object?> withId(LocalKey newId) {
+  RouteMatch<dynamic> withId(LocalKey newId) {
     return RouteMatch._internal(
       id: newId,
       config: _config,
@@ -312,7 +312,7 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
   final AutoRoutePage<R> currentPage;
 
   /// The original match that was used to create this instance
-  final RouteMatch<Object?> originalMatch;
+  final RouteMatch<dynamic> originalMatch;
 
   @override
   // An override of RouteMatch.copyWith: it changes the original match and keeps
@@ -324,7 +324,7 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
     // Deprecated in 12.0.0, removed in 13.0.0.
     @Deprecated('Use params instead') Parameters? pathParams,
     Parameters? queryParams,
-    List<RouteMatch<Object?>>? children,
+    List<RouteMatch<dynamic>>? children,
     String? fragment,
     List<String>? segments,
     String? redirectedFrom,
@@ -391,7 +391,7 @@ class HierarchySegment {
   final Parameters? queryParams;
 
   /// Returns a pretty json output of this hierarchy
-  Map<String, Object?> toJson() {
+  Map<String, dynamic> toJson() {
     return {
       'name': name,
       if (pathParams?.isNotEmpty == true) 'pathParams': pathParams!.rawMap,

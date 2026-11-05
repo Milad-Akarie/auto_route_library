@@ -9,7 +9,7 @@ class KeepAliveTab extends StatefulWidget {
   final bool initiallyLoaded;
 
   /// The tab page to keep-alive
-  final AutoRoutePage<Object?> page;
+  final AutoRoutePage<dynamic> page;
 
   @override
   State<KeepAliveTab> createState() => KeepAliveTabState();

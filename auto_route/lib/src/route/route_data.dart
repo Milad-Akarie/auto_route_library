@@ -10,10 +10,10 @@ part of '../router/controller/routing_controller.dart';
 class RouteData<R> {
   /// Default constructor
   new({
-    required RouteMatch<Object?> route,
+    required RouteMatch<dynamic> route,
     required this.router,
     required this.stackKey,
-    required List<RouteMatch<Object?>> pendingChildren,
+    required List<RouteMatch<dynamic>> pendingChildren,
     required this.type,
     this._popCompleter,
     this._parent,
@@ -100,12 +100,12 @@ class RouteData<R> {
   /// The pre-matched sub-routes of this route
   ///
   /// These are consumed by the sub-router once it's created
-  List<RouteMatch<Object?>> get pendingChildren => _pendingChildren;
+  List<RouteMatch<dynamic>> get pendingChildren => _pendingChildren;
 
   /// Looks up and returns the scoped instance
   ///
   /// throws an error if it does not find it
-  static RouteData<Object?> of(BuildContext context) {
+  static RouteData<dynamic> of(BuildContext context) {
     return RouteDataScope.of(context).routeData;
   }
 
@@ -170,7 +170,7 @@ class RouteData<R> {
   }
 
   /// Reruns the raw [RouteMatch]
-  RouteMatch<Object?> get route => _route;
+  RouteMatch<dynamic> get route => _route;
 
   /// Helper to access [RouteMatch.name]
   String get name => _route.name;
@@ -181,10 +181,10 @@ class RouteData<R> {
   /// Returns the parent [RouteData] of this instance
   ///
   /// Returns null if this is a root entry
-  RouteData<Object?>? get parent => _parent;
+  RouteData<dynamic>? get parent => _parent;
 
   /// Helper to access [RouteMatch.meta]
-  Map<String, Object?> get meta => _route.meta;
+  Map<String, dynamic> get meta => _route.meta;
 
   /// Helper to access [RouteMatch.args]
   ///
@@ -200,7 +200,7 @@ class RouteData<R> {
   /// The track to the very first ancestor match
   ///
   /// This can be used to render visual breadcrumbs in UI
-  List<RouteMatch<Object?>> get breadcrumbs =>
+  List<RouteMatch<dynamic>> get breadcrumbs =>
       .unmodifiable([...?_parent?.breadcrumbs, _route]);
 
   /// Collects all path params form all previous ancestors
@@ -229,7 +229,7 @@ class RouteData<R> {
   /// Returns the top most [RouteMatch] in the
   /// pending children, if it has not pending children
   /// this [route] is returned
-  RouteMatch<Object?> get topMatch {
+  RouteMatch<dynamic> get topMatch {
     if (pendingChildren case [..., final last]) {
       return _getTopMatch(last);
     }
@@ -283,14 +283,14 @@ class RouteData<R> {
   /// The page's route sets it when it builds, as does the page of a route
   /// built by [CustomRouteType.customRouteBuilder]; [animationCompletion] and
   /// [RoutingController.waitForTransitions] read it.
-  Animation<Object?>? animation;
+  Animation<dynamic>? animation;
 
   /// Sets [animation].
   // Deprecated in 12.0.0, removed in 13.0.0.
   @Deprecated('Set animation instead')
   // The old name, kept as a method so existing calls still compile until it is
   // removed.
-  void setAnimation(Animation<Object?>? value) => animation = value;
+  void setAnimation(Animation<dynamic>? value) => animation = value;
 
   /// Returns the current animation completion future
   /// if the current route is animating

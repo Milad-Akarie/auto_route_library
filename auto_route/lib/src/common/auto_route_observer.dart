@@ -7,7 +7,7 @@ extension RouteX<T> on Route<T> {
   /// Returns RouteData of this page if
   /// it's an [AutoRoutePage] otherwise it
   /// returns null
-  RouteData<Object?>? get data {
+  RouteData<dynamic>? get data {
     if (settings is AutoRoutePage) {
       return (settings as AutoRoutePage).routeData;
     }
@@ -162,7 +162,7 @@ class AutoRouteObserver extends AutoRouterObserver {
   /// while [route] shows inside its host route, when the host route is covered,
   /// uncovered or popped in an ancestor navigator that has an
   /// [AutoRouteObserver].
-  void subscribe(AutoRouteAware routeAware, RouteData<Object?> route) {
+  void subscribe(AutoRouteAware routeAware, RouteData<dynamic> route) {
     final subscribers = _listeners.putIfAbsent(
       route.key,
       () => <AutoRouteAware>{},
@@ -322,11 +322,11 @@ class AutoRouteObserver extends AutoRouterObserver {
   }
 
   @override
-  void didPop(Route<Object?> route, Route<Object?>? previousRoute) =>
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) =>
       _notifyPop(route, previousRoute);
 
   @override
-  void didRemove(Route<Object?> route, Route<Object?>? previousRoute) {
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
     // navigate() and popUntil() remove a page instead of popping it when, for
     // example, a dialog above it is still closing. When that shows the route
     // underneath again, its subscribers hear what a pop would tell them.
@@ -364,7 +364,7 @@ class AutoRouteObserver extends AutoRouterObserver {
   }
 
   @override
-  void didPush(Route<Object?> route, Route<Object?>? previousRoute) {
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     if (route.settings is AutoRoutePage &&
         previousRoute?.settings is AutoRoutePage) {
       final previousKey = (previousRoute!.settings as AutoRoutePage).routeKey;
@@ -387,7 +387,7 @@ class TabPageRoute {
   const new({required this.routeInfo, required this.index});
 
   /// match information of the target tab
-  final RouteMatch<Object?> routeInfo;
+  final RouteMatch<dynamic> routeInfo;
 
   /// index of the target tab
   final int index;

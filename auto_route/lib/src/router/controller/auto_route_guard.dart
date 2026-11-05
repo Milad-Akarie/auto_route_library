@@ -103,7 +103,7 @@ abstract class ReevaluateListenable extends ChangeNotifier {
   new();
 
   /// Builds [ReevaluateListenable] from a stream
-  factory stream(Stream<Object?> stream) = _StreamReevaluateListenable;
+  factory stream(Stream<dynamic> stream) = _StreamReevaluateListenable;
 }
 
 class _StreamReevaluateListenable extends ReevaluateListenable {
@@ -162,13 +162,13 @@ class ResolverResult {
   final bool reevaluateNext;
 
   /// Holds the route to be used in the navigation event
-  final RouteMatch<Object?> route;
+  final RouteMatch<dynamic> route;
 
   //// clones this instance with the provided values
   ResolverResult copyWith({
     bool? continueNavigation,
     bool? reevaluateNext,
-    RouteMatch<Object?>? route,
+    RouteMatch<dynamic>? route,
   }) {
     return ResolverResult(
       continueNavigation: continueNavigation ?? this.continueNavigation,
@@ -207,7 +207,7 @@ class NavigationResolver {
   bool _isReevaluating = false;
 
   /// The route being processing by the guard
-  final RouteMatch<Object?> route;
+  final RouteMatch<dynamic> route;
 
   /// Helper to get [RouteMatch.name]
   String get routeName => route.name;
@@ -221,7 +221,7 @@ class NavigationResolver {
   /// and pending routes will contain [Route2, Route3]
   ///
   /// when we process  Rout2 next pending routes will contain `Route3` only
-  final List<RouteMatch<Object?>> pendingRoutes;
+  final List<RouteMatch<dynamic>> pendingRoutes;
 
   /// returns the navigator context
   ///
@@ -307,7 +307,7 @@ class NavigationResolver {
   void overrideNext({
     List<PageRouteInfo>? children,
     Object? args,
-    Map<String, Object?>? queryParams,
+    Map<String, dynamic>? queryParams,
     String? fragment,
     bool reevaluateNext = true,
   }) {
@@ -520,14 +520,14 @@ class RouteOverrides {
   final Object? args;
 
   /// The override value of [PageRouteInfo.queryParams]
-  final Map<String, Object?>? queryParams;
+  final Map<String, dynamic>? queryParams;
 
   /// The override value of [PageRouteInfo.fragment]
   final String? fragment;
 
   /// Builds a new [PageRouteInfo] with the provided overrides
-  RouteMatch<Object?> override(
-    RouteMatch<Object?> route,
+  RouteMatch<dynamic> override(
+    RouteMatch<dynamic> route,
     RouteMatcher matcher,
   ) {
     final matches = <RouteMatch<Object?>>[];

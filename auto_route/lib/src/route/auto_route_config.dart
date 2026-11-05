@@ -6,24 +6,24 @@ import 'package:meta/meta.dart';
 
 /// A Signature for a function that passes the [RouteData] and returns a
 /// [PageRoute]
-typedef AutoRoutePageBuilder = Widget Function(RouteData<Object?> data);
+typedef AutoRoutePageBuilder = Widget Function(RouteData<dynamic> data);
 
 /// Signature for a function that builds the route title
 /// Used in [AutoRoutePage]
 typedef TitleBuilder = String Function(
   BuildContext context,
-  RouteData<Object?> data,
+  RouteData<dynamic> data,
 );
 
 /// Signature for a function that builds a widget with [RouteData]
 typedef WidgetBuilderWithData = Widget Function(
   BuildContext context,
-  RouteData<Object?> data,
+  RouteData<dynamic> data,
 );
 
 /// Signature for a function that builds the page `restorationId`
 /// Used in [AutoRoutePage]
-typedef RestorationIdBuilder = String Function(RouteMatch<Object?> match);
+typedef RestorationIdBuilder = String Function(RouteMatch<dynamic> match);
 
 /// A route entry configuration used in `RouteMatcher`
 /// to create [RouteMatch]'s from paths and [PageRouteInfo]'s
@@ -37,7 +37,7 @@ class AutoRoute {
     List<AutoRouteGuard> guards = const [],
     bool fullMatch = false,
     RouteType? type,
-    Map<String, Object?> meta = const {},
+    Map<String, dynamic> meta = const {},
     bool maintainState = true,
     bool fullscreenDialog = false,
     List<AutoRoute>? children,
@@ -111,7 +111,7 @@ class AutoRoute {
     bool usesPathAsKey = false,
     bool fullMatch = false,
     RouteType? type,
-    Map<String, Object?> meta = const {},
+    Map<String, dynamic> meta = const {},
     bool maintainState = true,
     bool fullscreenDialog = false,
     List<AutoRoute>? children,
@@ -148,7 +148,7 @@ class AutoRoute {
     bool usesPathAsKey = false,
     bool fullMatch = false,
     RouteType? type,
-    Map<String, Object?> meta = const {},
+    Map<String, dynamic> meta = const {},
     bool maintainState = true,
     bool fullscreenDialog = false,
     List<AutoRoute>? children,
@@ -195,7 +195,7 @@ class AutoRoute {
 
   /// a Map of dynamic data that can be accessed by
   /// [RouteData.meta] when the route is created
-  final Map<String, Object?> meta;
+  final Map<String, dynamic> meta;
 
   /// Indicates what kind of [PageRoute] this route will use
   /// e.g [MaterialRouteType] will create `_PageBasedMaterialPageRoute`
@@ -245,7 +245,7 @@ class AutoRoute {
   AutoRoutePageBuilder get builder => _builder;
 
   /// Builds a [AutoRoutePage] from [RouteData]
-  AutoRoutePage<T> buildPage<T>(RouteData<Object?> data) {
+  AutoRoutePage<T> buildPage<T>(RouteData<dynamic> data) {
     return AutoRoutePage(child: builder(data), routeData: data);
   }
 
@@ -276,7 +276,7 @@ class AutoRoute {
     bool? usesPathAsKey,
     List<AutoRouteGuard>? guards,
     bool? fullMatch,
-    Map<String, Object?>? meta,
+    Map<String, dynamic>? meta,
     bool? maintainState,
     bool? fullscreenDialog,
     List<AutoRoute>? children,

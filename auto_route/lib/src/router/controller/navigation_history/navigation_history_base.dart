@@ -81,7 +81,7 @@ abstract class NavigationHistory with ChangeNotifier {
   /// the top page: there is nothing to navigate to, and navigating to it
   /// again would run its guards again. Always null on native platforms.
   @internal
-  List<RouteMatch<Object?>>? routesOfBrowserEntry(UrlState configuration) =>
+  List<RouteMatch<dynamic>>? routesOfBrowserEntry(UrlState configuration) =>
       null;
 
   /// The page to push, and the stack to push it on, to follow the browser to
@@ -95,7 +95,7 @@ abstract class NavigationHistory with ChangeNotifier {
   /// name, so [AutoRouterDelegate.setNewRoutePath] pushes this page instead.
   /// Null otherwise, and always on native platforms.
   @internal
-  (StackRouter, RouteMatch<Object?>)? pageToPushForBrowserEntry(
+  (StackRouter, RouteMatch<dynamic>)? pageToPushForBrowserEntry(
     UrlState configuration,
   ) => null;
 
@@ -165,7 +165,7 @@ abstract class NavigationHistory with ChangeNotifier {
   ///
   /// Compares the page too, since the same route can be pushed twice with
   /// equal arguments.
-  bool isRouteDataActive(RouteData<Object?> data) {
+  bool isRouteDataActive(RouteData<dynamic> data) {
     return urlState.segments.any(
       (route) => route == data.route && route.id == data.route.id,
     );

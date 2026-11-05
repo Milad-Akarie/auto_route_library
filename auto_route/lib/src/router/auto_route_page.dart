@@ -28,7 +28,7 @@ class AutoRoutePage<T> extends Page<T> {
       );
 
   /// The Route Data that's used to build the page
-  final RouteData<Object?> routeData;
+  final RouteData<dynamic> routeData;
   final Widget _child;
 
   /// Whether to treat the built route as a fullscreenDialog.
@@ -78,7 +78,7 @@ class AutoRoutePage<T> extends Page<T> {
   /// the same [routeKey] is removed from below it, the page must not take the
   /// removed page's route and leave its own to be popped.
   @override
-  bool canUpdate(Page<Object?> other) {
+  bool canUpdate(Page<dynamic> other) {
     final canUpdate =
         other.runtimeType == runtimeType &&
         (other as AutoRoutePage).routeKey == routeKey &&

@@ -9,7 +9,7 @@ class RouteDataScope extends InheritedWidget {
   const new({required this.routeData, required super.child, super.key});
 
   /// The route data to be scoped
-  final RouteData<Object?> routeData;
+  final RouteData<dynamic> routeData;
 
   /// Looks up and returns the scoped [routeData]
   ///
