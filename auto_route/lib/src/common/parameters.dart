@@ -147,7 +147,6 @@ class Parameters {
   /// `queryParams: {'f': true}` or restored from saved state holds. Any other
   /// value is read from its text: 'true' or 'false', in any case.
   // The bool is a default value, placed like getInt(key, 5), not a flag.
-  // ignore: avoid_positional_boolean_parameters
   bool? optBool(String key, [bool? defaultValue]) {
     final param = _rawMap[key];
     if (param is bool) return param;
@@ -164,7 +163,6 @@ class Parameters {
   /// returns the value corresponding with [key] as [bool]
   /// if null returns [defaultValue]
   // The bool is a default value, placed like getInt(key, 5), not a flag.
-  // ignore: avoid_positional_boolean_parameters
   bool getBool(String key, [bool? defaultValue]) {
     final val = optBool(key, defaultValue);
     if (val == null) {

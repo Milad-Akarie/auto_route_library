@@ -1,5 +1,3 @@
-import 'package:cupertino_ui/cupertino_ui.dart';
-
 /// A utility to check whether the given map
 /// is null or empty
 bool mapNullOrEmpty(Map<Object?, Object?>? map) {
@@ -10,14 +8,4 @@ bool mapNullOrEmpty(Map<Object?, Object?>? map) {
 String toKebabCase(String s) {
   // Both groups of the pattern take part in every match, so neither is null.
   return s.replaceAllMapped(RegExp('(.+?)([A-Z])'), (match) => '${match.group(1)!}-${match.group(2)!}'.toLowerCase());
-}
-
-/// A helper assertion method that throws
-/// the giving [message] if [condition] is true
-// A condition first and its message after, read like assert(condition, message).
-// ignore: avoid_positional_boolean_parameters
-void throwIf(bool condition, String message) {
-  if (condition) {
-    throw FlutterError(message);
-  }
 }

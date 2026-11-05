@@ -559,10 +559,11 @@ class RouteCollection {
   /// else if it's created by a parent route-entry it will be false
   factory fromList(List<AutoRoute> routes, {bool root = false, OnGeneratePath onGeneratePath = defaultPathGenerator}) {
     final routesMarkedInitial = routes.where((e) => e.initial);
-    throwIf(
-      routesMarkedInitial.length > 1,
-      'Invalid data\nThere are more than one initial route in this collection\n${routesMarkedInitial.map((e) => e.name)}',
-    );
+    if (routesMarkedInitial.length > 1) {
+      throw FlutterError(
+        'Invalid data\nThere are more than one initial route in this collection\n${routesMarkedInitial.map((e) => e.name)}',
+      );
+    }
 
     final targetInitialPath = root ? '/' : '';
     var routesMap = <String, AutoRoute>{};
@@ -577,11 +578,12 @@ class RouteCollection {
       // ignore: avoid-unnecessary-local-variable
       var routeToUse = r;
       if (r._path != null) {
-        throwIf(!root && r.path.startsWith('/'), 'Sub-paths can not start with a "/": ${r.path}');
-        throwIf(
-          root && !r.path.startsWith(RegExp('[/]|[*]')),
-          'Root-paths must start with a "/" or be a wild-card:  ${r.path}',
-        );
+        if (!root && r.path.startsWith('/')) {
+          throw FlutterError('Sub-paths can not start with a "/": ${r.path}');
+        }
+        if (root && !r.path.startsWith(RegExp('[/]|[*]'))) {
+          throw FlutterError('Root-paths must start with a "/" or be a wild-card:  ${r.path}');
+        }
         routeToUse = r;
       } else {
         final String generatedPath;
@@ -642,7 +644,7 @@ class RouteCollection {
           final named = otherPath == path
               ? '$first and $second have the same path, $path,'
               : '$first, $otherPath, and $second, $path, have the same path,';
-          throwIf(true, '$named so a link to it opens only $first. Give one of them another path.');
+          throw FlutterError('$named so a link to it opens only $first. Give one of them another path.');
         }
         others.add((route, path));
         if (route.hasSubTree) {
