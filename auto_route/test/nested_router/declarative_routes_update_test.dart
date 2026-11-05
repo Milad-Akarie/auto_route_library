@@ -98,11 +98,16 @@ class _HomeRoute extends PageRouteInfo<_HomeRouteArgs> {
   );
 }
 
-class _HomePage extends StatelessWidget {
+class _HomePage extends StatefulWidget {
   const new({required this.id});
 
   final int id;
 
   @override
-  Widget build(BuildContext context) => Text('Home $id');
+  State<_HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<_HomePage> {
+  @override
+  Widget build(BuildContext context) => Text('Home ${widget.id}');
 }

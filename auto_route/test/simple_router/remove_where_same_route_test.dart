@@ -128,11 +128,16 @@ class _InfoRoute extends PageRouteInfo<_InfoRouteArgs> {
   );
 }
 
-class _InfoPage extends StatelessWidget {
+class _InfoPage extends StatefulWidget {
   const new({required this.title, super.key});
 
   final String title;
 
   @override
-  Widget build(BuildContext context) => Scaffold(body: Text(title));
+  State<_InfoPage> createState() => _InfoPageState();
+}
+
+class _InfoPageState extends State<_InfoPage> {
+  @override
+  Widget build(BuildContext context) => Scaffold(body: Text(widget.title));
 }
