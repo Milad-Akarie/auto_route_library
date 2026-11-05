@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 
 import 'support/generate.dart';
 
-const _homePage = '''
+const _kHomePage = '''
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
 
@@ -28,7 +28,7 @@ void main() {
     test('as a part of the router', () async {
       final result = await generateRouter(
         {
-          'lib/home_page.dart': _homePage,
+          'lib/home_page.dart': _kHomePage,
           'lib/router.dart': '''
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
@@ -55,7 +55,7 @@ class AppRouter extends RootStackRouter {
     test('as a library of its own', () async {
       final result = await generateRouter(
         {
-          'lib/home_page.dart': _homePage,
+          'lib/home_page.dart': _kHomePage,
           'lib/router.dart': '''
 import 'package:auto_route/auto_route.dart';
 
@@ -79,7 +79,7 @@ class AppRouter extends RootStackRouter {
     test('and an output that is not Dart is refused', () async {
       expect(
         () => generateRouter(
-          {'lib/home_page.dart': _homePage},
+          {'lib/home_page.dart': _kHomePage},
           routerOptions: {
             'build_extensions': {'^lib/{{}}.dart': 'lib/generated/{{}}.gr.txt'},
           },

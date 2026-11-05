@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 
 import 'support/generate.dart';
 
-const _loginPage = '''
+const _kLoginPage = '''
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
@@ -25,7 +25,7 @@ void main() {
   group('pages from another package (#2326)', () {
     test('are not collected by the app router', () async {
       final result = await generateRouter({
-        'skeleton|lib/src/router/login_page.dart': _loginPage,
+        'skeleton|lib/src/router/login_page.dart': _kLoginPage,
         'skeleton|lib/skeleton.dart': "library skeleton;\n\nexport 'src/router/login_page.dart';\n",
         'lib/home_page.dart': '''
 import 'package:auto_route/auto_route.dart';
@@ -47,7 +47,7 @@ class HomePage extends StatelessWidget {
 
     test("are routed through the package's own router", () async {
       final result = await generateRouter({
-        'skeleton|lib/src/router/login_page.dart': _loginPage,
+        'skeleton|lib/src/router/login_page.dart': _kLoginPage,
         'skeleton|lib/skeleton_router.dart': '''
 import 'package:auto_route/auto_route.dart';
 

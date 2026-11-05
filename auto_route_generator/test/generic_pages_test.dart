@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 
 import 'support/generate.dart';
 
-const _failure = '''
+const _kFailure = '''
 class Failure {}
 
 class IndexCubit<F extends Failure, T> {}
@@ -60,7 +60,7 @@ class PickerPage<T> extends StatelessWidget {
     // library.
     test('keeps each bound, with its import', () async {
       final result = await generateRouter({
-        'lib/failure.dart': _failure,
+        'lib/failure.dart': _kFailure,
         'lib/view_all_page.dart': '''
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
@@ -164,7 +164,7 @@ class DetailScreen<T> extends StatelessWidget {
   // parameters that builds the generic widget with its type.
   test('a page that builds a generic widget with its type compiles (#332)', () async {
     final result = await generateRouter({
-      'lib/failure.dart': _failure,
+      'lib/failure.dart': _kFailure,
       'lib/view_all_page.dart': '''
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';

@@ -4,7 +4,7 @@ import 'package:auto_route_generator/build_utils.dart';
 import 'package:auto_route_generator/src/models/resolved_type.dart';
 import 'package:path/path.dart' as p;
 
-const _unPreferredImports = {'dart:ui'};
+const _kUnPreferredImports = {'dart:ui'};
 
 /// A Helper class that resolves types
 class TypeResolver {
@@ -28,7 +28,7 @@ class TypeResolver {
     for (final lib in libs) {
       if (!_isCoreDartType(lib) && lib.exportNamespace.definedNames2.values.contains(element)) {
         final uri = lib.uri;
-        if (_unPreferredImports.contains(uri.toString())) {
+        if (_kUnPreferredImports.contains(uri.toString())) {
           fallBackImports.add(uri.toString());
           continue;
         }

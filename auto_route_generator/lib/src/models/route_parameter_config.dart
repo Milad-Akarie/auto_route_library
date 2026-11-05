@@ -2,7 +2,7 @@ import 'package:auto_route_generator/src/models/resolved_type.dart';
 import 'package:auto_route_generator/src/models/url_param_type.dart';
 import 'package:code_builder/code_builder.dart' as cb;
 
-const _reservedVarNames = ['children'];
+const _kReservedVarNames = ['children'];
 
 /// holds constructor parameter info to be used
 /// in generating route parameters.
@@ -112,7 +112,7 @@ class ParamConfig {
   ///
   /// otherwise return the name as is
   String getSafeName() {
-    if (_reservedVarNames.contains(name)) {
+    if (_kReservedVarNames.contains(name)) {
       return '${name}0';
     }
     return name;

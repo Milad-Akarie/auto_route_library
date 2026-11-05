@@ -7,7 +7,7 @@ import 'package:auto_route_generator/src/models/route_parameter_config.dart';
 import 'package:auto_route_generator/src/models/router_config.dart';
 import 'package:code_builder/code_builder.dart';
 
-const _collectionsImport = 'package:collection/collection.dart';
+const _kCollectionsImport = 'package:collection/collection.dart';
 
 /// A string literal of [value] as it is: unlike [literalString], a `$` in
 /// it, as in a name such as `venue$id`, is escaped instead of read as an
@@ -51,7 +51,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
   // `const ListEquality<dynamic>()` and the like compare items as dynamic.
   List<ResolvedType> equalityTypes(ParamConfig p) =>
       r.isGeneric ? [for (final _ in p.type.typeArguments) const ResolvedType(name: 'dynamic')] : p.type.typeArguments;
-  final pageInfoRefer = refer('PageInfo', autoRouteImport);
+  final pageInfoRefer = refer('PageInfo', kAutoRouteImport);
   return [
     Class(
       (b) => b
@@ -61,7 +61,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
         ..extend = TypeReference((b) {
           b
             ..symbol = 'PageRouteInfo'
-            ..url = autoRouteImport
+            ..url = kAutoRouteImport
             ..types.add(hasArgs ? typedArgsClassRefer : refer('void'));
         })
         ..fields.addAll([
@@ -70,7 +70,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
               ..modifier = .constant
               ..name = 'name'
               ..static = true
-              ..type = stringRefer
+              ..type = kStringRefer
               ..assignment = _plainString(r.getName(router.replaceInRouteName)).code,
           ),
           Field(
@@ -92,7 +92,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                   (b) => b
                     ..named = true
                     ..name = 'children'
-                    ..type = listRefer(pageRouteType, nullable: true),
+                    ..type = listRefer(kPageRouteType, nullable: true),
                 ),
               ])
               ..initializers.add(
@@ -162,7 +162,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                 ..name = 'toString'
                 ..lambda = false
                 ..annotations.add(refer('override'))
-                ..returns = stringRefer
+                ..returns = kStringRefer
                 ..body = literalString(
                   '${_escapeDollar(r.getName(router.replaceInRouteName))}Args{${nonInheritedParameters.map((p) => '${_escapeDollar(p.name)}: ${_interpolation(p.name)}').join(', ')}}',
                 ).returned.statement,
@@ -193,25 +193,25 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                         ...[
                           for (final p in equatableParams)
                             if (p.type.isList)
-                              _genericRef('ListEquality', equalityTypes(p), _collectionsImport)
+                              _genericRef('ListEquality', equalityTypes(p), _kCollectionsImport)
                                   .constInstance([])
                                   .property('equals')
                                   .call([refer(p.name), refer('other').property(p.name)])
                                   .code
                             else if (p.type.isSet)
-                              _genericRef('SetEquality', equalityTypes(p), _collectionsImport)
+                              _genericRef('SetEquality', equalityTypes(p), _kCollectionsImport)
                                   .constInstance([])
                                   .property('equals')
                                   .call([refer(p.name), refer('other').property(p.name)])
                                   .code
                             else if (p.type.isMap)
-                              _genericRef('MapEquality', equalityTypes(p), _collectionsImport)
+                              _genericRef('MapEquality', equalityTypes(p), _kCollectionsImport)
                                   .constInstance([])
                                   .property('equals')
                                   .call([refer(p.name), refer('other').property(p.name)])
                                   .code
                             else if (p.type.isIterable)
-                              _genericRef('IterableEquality', equalityTypes(p), _collectionsImport)
+                              _genericRef('IterableEquality', equalityTypes(p), _kCollectionsImport)
                                   .constInstance([])
                                   .property('equals')
                                   .call([refer(p.name), refer('other').property(p.name)])
@@ -240,25 +240,25 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                             _genericRef(
                               'ListEquality',
                               equalityTypes(p),
-                              _collectionsImport,
+                              _kCollectionsImport,
                             ).constInstance([]).property('hash').call([refer(p.name)]).code
                           else if (p.type.isSet)
                             _genericRef(
                               'SetEquality',
                               equalityTypes(p),
-                              _collectionsImport,
+                              _kCollectionsImport,
                             ).constInstance([]).property('hash').call([refer(p.name)]).code
                           else if (p.type.isMap)
                             _genericRef(
                               'MapEquality',
                               equalityTypes(p),
-                              _collectionsImport,
+                              _kCollectionsImport,
                             ).constInstance([]).property('hash').call([refer(p.name)]).code
                           else if (p.type.isIterable)
                             _genericRef(
                               'IterableEquality',
                               equalityTypes(p),
-                              _collectionsImport,
+                              _kCollectionsImport,
                             ).constInstance([]).property('hash').call([refer(p.name)]).code
                           else
                             Code('${p.name}.hashCode'),
@@ -347,7 +347,7 @@ Expression _buildMethod(RouteConfig r, RouterConfig router) {
       : _getPageInstance(r, (p) => refer('args').property(p.name));
 
   if (r.hasWrappedRoute == true) {
-    constructedPage = refer('WrappedRoute', autoRouteImport).newInstance([], {'child': constructedPage});
+    constructedPage = refer('WrappedRoute', kAutoRouteImport).newInstance([], {'child': constructedPage});
   }
 
   if ((r.deferredLoading ?? router.deferredLoading) && r.pageType != null) {
@@ -406,7 +406,7 @@ Expression _getDeferredBuilder(RouteConfig r, Expression page) {
   return TypeReference(
     (b) => b
       ..symbol = 'DeferredWidget'
-      ..url = autoRouteImport,
+      ..url = kAutoRouteImport,
   ).newInstance([
     TypeReference(
       (b) => b

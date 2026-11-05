@@ -13,7 +13,7 @@ import 'package:auto_route_generator/utils.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
-const _typeChecker = TypeChecker.typeNamed(RoutePage, inPackage: 'auto_route');
+const _kTypeChecker = TypeChecker.typeNamed(RoutePage, inPackage: 'auto_route');
 
 /// Default location of the routes cache file
 final routesCacheFile = File('.dart_tool/build/cache/auto_routes_cache.json');
@@ -79,7 +79,7 @@ class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
   Future<RoutesList?> onResolve(LibraryReader library, BuildStep buildStep, int stepHash) async {
     final routeResolver = RouteConfigResolver(TypeResolver(await buildStep.resolver.libraries.toList()));
     final routes = <RouteConfig>[];
-    for (final annotatedElement in library.annotatedWith(_typeChecker)) {
+    for (final annotatedElement in library.annotatedWith(_kTypeChecker)) {
       final route = routeResolver.resolve(annotatedElement.element, annotatedElement.annotation);
       routes.add(route);
     }

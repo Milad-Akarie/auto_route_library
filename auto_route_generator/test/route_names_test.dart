@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 
 import 'support/generate.dart';
 
-const _homePage = '''
+const _kHomePage = '''
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
 
@@ -38,7 +38,10 @@ void main() {
   // suffix.
   group('replaceInRouteName (#994)', () {
     test('ignores spaces around its comma', () async {
-      final result = await generateRouter({'lib/home_page.dart': _homePage, 'lib/router.dart': _router('Page, Route')});
+      final result = await generateRouter({
+        'lib/home_page.dart': _kHomePage,
+        'lib/router.dart': _router('Page, Route'),
+      });
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
       expect(result.source, contains('class HomeRoute '));
@@ -46,7 +49,7 @@ void main() {
 
     test('without exactly one comma fails the build naming the option', () async {
       final result = await generateRouter({
-        'lib/home_page.dart': _homePage,
+        'lib/home_page.dart': _kHomePage,
         'lib/router.dart': _router('Page,Route,X'),
       });
       expect(result.errors.join(), contains('replaceInRouteName must be a pattern and its replacement'));
@@ -54,7 +57,10 @@ void main() {
     });
 
     test('with a replacement a name cannot hold fails the build naming the option', () async {
-      final result = await generateRouter({'lib/home_page.dart': _homePage, 'lib/router.dart': _router('Page,Ro ute')});
+      final result = await generateRouter({
+        'lib/home_page.dart': _kHomePage,
+        'lib/router.dart': _router('Page,Ro ute'),
+      });
       expect(result.errors.join(), contains('The replacement in replaceInRouteName'));
       expect(result.errors.join(), contains("'Ro ute'"));
     });

@@ -16,7 +16,7 @@ import 'package:build/build.dart';
 import 'package:glob/glob.dart';
 import 'package:source_gen/source_gen.dart';
 
-const _typeChecker = TypeChecker.typeNamed(AutoRouterConfig, inPackage: 'auto_route');
+const _kTypeChecker = TypeChecker.typeNamed(AutoRouterConfig, inPackage: 'auto_route');
 
 /// Base class for `AutoRouterBuilder` and `AutoRouterModuleBuilder`
 abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
@@ -96,12 +96,12 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
       print('Could not write config routerCache');
     }
 
-    return '$_header\n${generateLibrary(item, routes: routes..sort((a, b) => a.className.compareTo(b.className)), ignoreForFile: ignoreForFile, outputPath: buildStep.allowedOutputs.first.path)}';
+    return '$_kHeader\n${generateLibrary(item, routes: routes..sort((a, b) => a.className.compareTo(b.className)), ignoreForFile: ignoreForFile, outputPath: buildStep.allowedOutputs.first.path)}';
   }
 
   @override
   Future<RouterConfig?> onResolve(LibraryReader library, BuildStep buildStep, int stepHash) async {
-    final annotatedElements = library.annotatedWith(_typeChecker);
+    final annotatedElements = library.annotatedWith(_kTypeChecker);
     if (annotatedElements.isEmpty) return null;
     final element = annotatedElements.first.element;
     final annotation = annotatedElements.first.annotation;
@@ -141,7 +141,7 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
   }
 }
 
-const _header = '''
+const _kHeader = '''
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************

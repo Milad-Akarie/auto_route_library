@@ -8,7 +8,7 @@ import 'package:source_gen/source_gen.dart';
 
 /// A comment configuring `dart_style` to use the default code width so no
 /// configuration discovery is required.
-const dartFormatWidth = '// dart format width=80';
+const kDartFormatWidth = '// dart format width=80';
 
 /// A [Builder] which skips resolving cached files
 abstract class CacheAwareBuilder<T> extends Builder {
@@ -47,7 +47,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
   bool get cacheEnabled;
 
   String _defaultFormatOutput(LibraryLanguageVersion libVersion, String code) {
-    return DartFormatter(languageVersion: libVersion.effective, pageWidth: 80).format('$dartFormatWidth\n$code');
+    return DartFormatter(languageVersion: libVersion.effective, pageWidth: 80).format('$kDartFormatWidth\n$code');
   }
 
   /// Custom ignore for file rules passed from the options

@@ -82,7 +82,7 @@ class RouteConfigResolver {
       throwIf(
         qParam.urlType == null,
         'Parameter [${qParam.name}] is a @QueryParam of type ${type.name}, which a url can not give.\n'
-        'valid types: ${UrlParamType.pathTypeNames}, Object, an enum, or a ${urlCollectionTypes.join(', ')} of those',
+        'valid types: ${UrlParamType.pathTypeNames}, Object, an enum, or a ${kUrlCollectionTypes.join(', ')} of those',
       );
     }
 

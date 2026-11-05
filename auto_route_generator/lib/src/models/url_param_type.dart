@@ -3,7 +3,7 @@ import 'package:code_builder/code_builder.dart';
 
 /// The collections a query param can be, read from its key repeated in the
 /// url.
-const urlCollectionTypes = {'List', 'Set', 'Iterable'};
+const kUrlCollectionTypes = {'List', 'Set', 'Iterable'};
 
 /// How the generated code reads a path or query param of one type from the
 /// url, and writes it back into the url when a route is built in code.
@@ -21,7 +21,7 @@ sealed class UrlParamType {
   /// The entry for [type], or `null` when a url can not give it.
   static UrlParamType? of(ResolvedType type) {
     if (type.isEnum) return const _EnumParam();
-    if (urlCollectionTypes.contains(type.name) && type.typeArguments.length == 1) return const _CollectionParam();
+    if (kUrlCollectionTypes.contains(type.name) && type.typeArguments.length == 1) return const _CollectionParam();
     return _byName[type.name];
   }
 

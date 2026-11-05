@@ -6,10 +6,10 @@ import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
 
 /// The package the test sources live in.
-const testPackage = 'app';
+const kTestPackage = 'app';
 
 /// The router library [generateRouter] adds when the sources hold none.
-const defaultRouterSource = '''
+const kDefaultRouterSource = '''
 import 'package:auto_route/auto_route.dart';
 
 import 'router.gr.dart';
@@ -27,7 +27,7 @@ TestReaderWriter? _packages;
 /// import `package:flutter` and `package:auto_route`.
 Future<TestReaderWriter> _loadPackages() async {
   if (_packages == null) {
-    final readerWriter = TestReaderWriter(rootPackage: testPackage);
+    final readerWriter = TestReaderWriter(rootPackage: kTestPackage);
     await readerWriter.testing.loadIsolateSources();
     _packages = readerWriter;
   }
@@ -59,7 +59,7 @@ class GeneratedRouter {
 /// [sources] maps paths inside the `app` package (`lib/home_page.dart`) to
 /// their content; a path in another package names it first, as in
 /// `skeleton|lib/login_page.dart`. When none of them holds `router.dart`,
-/// [defaultRouterSource] is added as `lib/router.dart`.
+/// [kDefaultRouterSource] is added as `lib/router.dart`.
 ///
 /// [options] go to both builders, as `build.yaml` options of the package;
 /// [routerOptions] go to the router builder alone. [outputPath] is where the
@@ -72,13 +72,14 @@ Future<GeneratedRouter> generateRouter(
   String? outputPath,
 }) async {
   final packages = await _loadPackages();
-  final readerWriter = TestReaderWriter(rootPackage: testPackage);
+  final readerWriter = TestReaderWriter(rootPackage: kTestPackage);
   for (final id in packages.testing.assets) {
     readerWriter.testing.writeBytes(id, packages.testing.readBytes(id));
   }
   final assets = {
-    for (final entry in sources.entries) entry.key.contains('|') ? entry.key : '$testPackage|${entry.key}': entry.value,
-    if (!sources.containsKey(routerPath)) '$testPackage|$routerPath': defaultRouterSource,
+    for (final entry in sources.entries)
+      entry.key.contains('|') ? entry.key : '$kTestPackage|${entry.key}': entry.value,
+    if (!sources.containsKey(routerPath)) '$kTestPackage|$routerPath': kDefaultRouterSource,
   };
   outputPath ??= routerPath.replaceFirst(RegExp(r'\.dart$'), '.gr.dart');
   final result = await testBuilders(
@@ -88,13 +89,13 @@ Future<GeneratedRouter> generateRouter(
       _CompileCheckBuilder(routerPath, outputPath),
     ],
     assets,
-    rootPackage: testPackage,
+    rootPackage: kTestPackage,
     readerWriter: readerWriter,
     flattenOutput: true,
   );
   final files = result.readerWriter.testing;
-  final outputId = AssetId(testPackage, outputPath);
-  final checkId = AssetId(testPackage, routerPath.replaceFirst(RegExp(r'\.dart$'), _compileErrorsExtension));
+  final outputId = AssetId(kTestPackage, outputPath);
+  final checkId = AssetId(kTestPackage, routerPath.replaceFirst(RegExp(r'\.dart$'), _kCompileErrorsExtension));
   return GeneratedRouter(
     files.exists(outputId) ? files.readString(outputId) : null,
     result.errors.toList(),
@@ -102,7 +103,7 @@ Future<GeneratedRouter> generateRouter(
   );
 }
 
-const _compileErrorsExtension = '.compile_errors.txt';
+const _kCompileErrorsExtension = '.compile_errors.txt';
 
 /// Resolves the router library once the router builder wrote its output, and
 /// the output too when it is a library of its own, and writes the analyzer
@@ -114,7 +115,7 @@ class _CompileCheckBuilder implements Builder {
 
   @override
   Map<String, List<String>> get buildExtensions => const {
-    '.dart': [_compileErrorsExtension],
+    '.dart': [_kCompileErrorsExtension],
   };
 
   @override

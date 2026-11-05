@@ -3,7 +3,7 @@ import 'package:test/test.dart';
 import 'support/generate.dart';
 
 /// A value class for ids and its converter, as the issue describes.
-const _userId = '''
+const _kUserId = '''
 import 'package:auto_route/auto_route.dart';
 
 class UserId {
@@ -60,7 +60,7 @@ void main() {
   group('a ParamConverter (#1794)', () {
     test('reads and writes a path param of its type', () async {
       final result = await generateRouter({
-        'lib/user_id.dart': _userId,
+        'lib/user_id.dart': _kUserId,
         'lib/user_page.dart': _userPage("@PathParam('id', userIdConverter) required this.id", 'final UserId id;'),
       });
       expect(result.errors, isEmpty);
@@ -72,7 +72,7 @@ void main() {
 
     test('reads and writes an optional query param, with or without a default', () async {
       final result = await generateRouter({
-        'lib/user_id.dart': _userId,
+        'lib/user_id.dart': _kUserId,
         'lib/user_page.dart': _userPage(
           "@QueryParam('by', userIdConverter) this.by, "
               "@QueryParam('to', userIdConverter) this.to = const UserId('me')",
@@ -90,7 +90,7 @@ void main() {
 
     test('on an inherited path param reads it from the parent', () async {
       final result = await generateRouter({
-        'lib/user_id.dart': _userId,
+        'lib/user_id.dart': _kUserId,
         'lib/user_page.dart': _userPage(
           "@PathParam.inherit('id', userIdConverter) required this.id",
           'final UserId id;',
@@ -131,7 +131,7 @@ const levelConverter = LevelConverter();
 
     test('for another type fails the build naming both', () async {
       final result = await generateRouter({
-        'lib/user_id.dart': _userId,
+        'lib/user_id.dart': _kUserId,
         'lib/user_page.dart': _userPage("@PathParam('id', userIdConverter) required this.id", 'final int id;'),
       });
       expect(result.errors.join(), contains('The converter on id converts UserId, but id is a int.'));
@@ -139,7 +139,7 @@ const levelConverter = LevelConverter();
 
     test('written in the annotation fails the build asking for a top-level constant', () async {
       final result = await generateRouter({
-        'lib/user_id.dart': _userId,
+        'lib/user_id.dart': _kUserId,
         'lib/user_page.dart': _userPage("@PathParam('id', UserIdConverter()) required this.id", 'final UserId id;'),
       });
       expect(result.errors.join(), contains('The converter on id must be a top-level const variable'));
@@ -147,7 +147,7 @@ const levelConverter = LevelConverter();
 
     test('missing on a type a url can not give fails the build asking for one', () async {
       final result = await generateRouter({
-        'lib/user_id.dart': _userId,
+        'lib/user_id.dart': _kUserId,
         'lib/user_page.dart': _userPage("@PathParam('id') required this.id", 'final UserId id;'),
       });
       expect(result.errors.join(), contains('give @PathParam a ParamConverter<UserId>'));

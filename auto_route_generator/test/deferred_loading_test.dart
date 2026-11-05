@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 
 import 'support/generate.dart';
 
-const _shellPage = '''
+const _kShellPage = '''
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
 
@@ -61,7 +61,7 @@ void main() {
   group('a page only inside a child route', () {
     test('is deferred by the router default', () async {
       final result = await generateRouter({
-        'lib/shell_page.dart': _shellPage,
+        'lib/shell_page.dart': _kShellPage,
         'lib/nested_page.dart': _nestedPage(),
         'lib/router.dart': _router(annotation: '@AutoRouterConfig(deferredLoading: true)'),
       });
@@ -74,7 +74,7 @@ void main() {
 
     test('is deferred by its own @RoutePage, and its shell is not', () async {
       final result = await generateRouter({
-        'lib/shell_page.dart': _shellPage,
+        'lib/shell_page.dart': _kShellPage,
         'lib/nested_page.dart': _nestedPage(annotation: '@RoutePage(deferredLoading: true)'),
         'lib/router.dart': _router(),
       });

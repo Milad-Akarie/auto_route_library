@@ -9,16 +9,16 @@ import 'package:dart_style/dart_style.dart';
 import 'package:path/path.dart' as p;
 
 /// AutoRoute imports
-const autoRouteImport = 'package:auto_route/auto_route.dart';
+const kAutoRouteImport = 'package:auto_route/auto_route.dart';
 
 /// Material imports
-const materialImport = 'package:flutter/material.dart';
+const kMaterialImport = 'package:flutter/material.dart';
 
 /// String type reference
-const Reference stringRefer = Reference('String');
+const Reference kStringRefer = Reference('String');
 
 /// PageRouteInfo type reference
-const Reference pageRouteType = Reference('PageRouteInfo', autoRouteImport);
+const Reference kPageRouteType = Reference('PageRouteInfo', kAutoRouteImport);
 
 /// Builds a list type reference of type [reference]
 TypeReference listRefer(Reference reference, {bool nullable = false}) => .new(
