@@ -73,7 +73,7 @@ enum _TabsKind { indexedStack, pageView, tabBar, builder }
 
 _TabsKind _tabsKind = .indexedStack;
 
-final _extraNotifier = ValueNotifier<bool>(false);
+final ValueNotifier<bool> _extraNotifier = ValueNotifier(false);
 
 class _HostRoute extends PageRouteInfo<void> {
   const new() : super(name);

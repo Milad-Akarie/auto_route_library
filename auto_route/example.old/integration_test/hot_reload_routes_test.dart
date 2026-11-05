@@ -33,7 +33,7 @@ void main() {
         path: '',
         builder: (_, _) => _page('Child1Route'),
       );
-      final routes = <AutoRoute>[
+      final routes = [
         NamedRouteDef(
           name: 'HomeRoute',
           path: '/',

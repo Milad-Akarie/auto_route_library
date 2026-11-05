@@ -101,7 +101,7 @@ void main() {
       expectCurrentPage(router, ThirdRoute.name);
       expect(results, {SecondRoute.name: null});
 
-      router.pop<String>('done');
+      router.pop('done');
       await tester.pumpAndSettle();
       expectCurrentPage(router, FirstRoute.name);
       expect(results, {SecondRoute.name: null, ThirdRoute.name: 'done'});

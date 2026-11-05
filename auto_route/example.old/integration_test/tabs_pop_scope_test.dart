@@ -23,40 +23,39 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  final setups =
-      <String, (List<AutoRoute>, {bool scopeAroundTabs, bool pushInTab})>{
-        'around the tabs screen': (
-          [
-            AutoRoute(page: _tab('TabA'), path: 'a'),
-            AutoRoute(page: _tab('TabB'), path: 'b'),
+  final setups = {
+    'around the tabs screen': (
+      [
+        AutoRoute(page: _tab('TabA'), path: 'a'),
+        AutoRoute(page: _tab('TabB'), path: 'b'),
+      ],
+      scopeAroundTabs: true,
+      pushInTab: false,
+    ),
+    "on the active tab's page": (
+      [
+        AutoRoute(page: _tab('TabA'), path: 'a'),
+        AutoRoute(page: _guarded('TabB'), path: 'b'),
+      ],
+      scopeAroundTabs: false,
+      pushInTab: false,
+    ),
+    'on a page pushed into a stack inside a tab': (
+      [
+        AutoRoute(page: _tab('TabA'), path: 'a'),
+        AutoRoute(
+          page: _stackTab,
+          path: 'b',
+          children: [
+            AutoRoute(page: _tab('StackPage1'), path: ''),
+            AutoRoute(page: _guarded('StackPage2'), path: 'two'),
           ],
-          scopeAroundTabs: true,
-          pushInTab: false,
         ),
-        "on the active tab's page": (
-          [
-            AutoRoute(page: _tab('TabA'), path: 'a'),
-            AutoRoute(page: _guarded('TabB'), path: 'b'),
-          ],
-          scopeAroundTabs: false,
-          pushInTab: false,
-        ),
-        'on a page pushed into a stack inside a tab': (
-          [
-            AutoRoute(page: _tab('TabA'), path: 'a'),
-            AutoRoute(
-              page: _stackTab,
-              path: 'b',
-              children: [
-                AutoRoute(page: _tab('StackPage1'), path: ''),
-                AutoRoute(page: _guarded('StackPage2'), path: 'two'),
-              ],
-            ),
-          ],
-          scopeAroundTabs: false,
-          pushInTab: true,
-        ),
-      };
+      ],
+      scopeAroundTabs: false,
+      pushInTab: true,
+    ),
+  };
 
   for (final MapEntry(key: where, value: (tabs, :scopeAroundTabs, :pushInTab))
       in setups.entries) {

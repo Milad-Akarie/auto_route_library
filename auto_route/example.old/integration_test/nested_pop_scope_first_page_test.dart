@@ -27,7 +27,7 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  final routers = <String, Widget Function()>{
+  final routers = {
     'AutoRouter': () => const AutoRouter(),
     'AutoRouter.declarative': () =>
         AutoRouter.declarative(routes: (_) => [const _GuardedRoute()]),
@@ -71,7 +71,7 @@ void main() {
         await tester.pumpAndSettle();
       }
 
-      final backs = <String, Future<void> Function(WidgetTester)>{
+      final backs = {
         'system back': systemBack,
         'the app bar back button': tapAppBarBack,
       };

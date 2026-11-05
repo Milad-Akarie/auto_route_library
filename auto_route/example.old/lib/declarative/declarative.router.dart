@@ -53,7 +53,9 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final _profileNotifier = ValueNotifier<Profile>(const Profile());
+  final ValueNotifier<Profile> _profileNotifier = ValueNotifier(
+    const Profile(),
+  );
 
   @override
   void dispose() {

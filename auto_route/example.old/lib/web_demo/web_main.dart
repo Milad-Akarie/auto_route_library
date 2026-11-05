@@ -20,7 +20,7 @@ class App extends StatefulWidget {
   ///
   /// Throws when there is no [App] above [context].
   static AppState of(BuildContext context) {
-    return context.findAncestorStateOfType<AppState>()!;
+    return context.findAncestorStateOfType()!;
   }
 }
 

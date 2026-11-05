@@ -59,7 +59,7 @@ void main() {
 
 // Flips the layout around the tabs: false keeps them alone, true puts a side
 // panel next to them.
-final _layoutNotifier = ValueNotifier<bool>(false);
+final ValueNotifier<bool> _layoutNotifier = ValueNotifier(false);
 
 class _TabsHostRoute extends PageRouteInfo<void> {
   const new() : super(name);

@@ -22,7 +22,7 @@ class UserDataCollectorPage extends StatefulWidget implements AutoRouteWrapper {
 
   @override
   Widget wrappedRoute(BuildContext context) {
-    return ChangeNotifierProvider<SettingsState>(
+    return ChangeNotifierProvider(
       create: (_) => SettingsState(),
       child: this,
     );

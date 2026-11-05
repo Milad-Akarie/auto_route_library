@@ -40,7 +40,7 @@ class _MyAppState extends State<MyApp> {
       ),
       theme: ThemeData.light(),
       builder: (_, router) {
-        return ChangeNotifierProvider<AuthService>(
+        return ChangeNotifierProvider(
           create: (_) => authService,
           child: BooksDBProvider(child: router!),
         );

@@ -59,9 +59,9 @@ void main() {
   );
 }
 
-final _fourthAddedNotifier = ValueNotifier<bool>(false);
+final ValueNotifier<bool> _fourthAddedNotifier = ValueNotifier(false);
 
-final _showTabsNotifier = ValueNotifier<bool>(true);
+final ValueNotifier<bool> _showTabsNotifier = ValueNotifier(true);
 
 class _TabsHostRoute extends PageRouteInfo<void> {
   const new() : super(name);

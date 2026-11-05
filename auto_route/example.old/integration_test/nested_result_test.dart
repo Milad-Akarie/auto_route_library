@@ -103,7 +103,7 @@ class _ContentRoute extends PageRouteInfo<void> {
         appBar: AppBar(
           leading: GestureDetector(
             child: const Icon(Icons.arrow_back),
-            onTap: () => context.router.pop<bool>(true),
+            onTap: () => context.router.pop(true),
           ),
         ),
         body: Text('Content ${data.inheritedPathParams.getString('index')}'),

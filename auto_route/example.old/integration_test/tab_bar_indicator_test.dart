@@ -43,7 +43,7 @@ void main() {
           .controller!;
 
       Future<List<double>> framesUntilSettled() async {
-        final values = <double>[tabController.animation!.value];
+        final values = [tabController.animation!.value];
         for (var i = 0; i < 40; i++) {
           await tester.pump(const Duration(milliseconds: 16));
           values.add(tabController.animation!.value);
@@ -82,7 +82,7 @@ void main() {
       final swipe = await tester.startGesture(
         tester.getCenter(find.text('${_AllNotesTabRoute.name} 3')),
       );
-      final values = <double>[tabController.animation!.value];
+      final values = [tabController.animation!.value];
       // Drags 60% of the screen width, so the page settles on the next tab.
       final step =
           tester.view.physicalSize.width /

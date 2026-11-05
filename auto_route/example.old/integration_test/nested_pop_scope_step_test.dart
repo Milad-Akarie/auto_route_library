@@ -73,7 +73,7 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  final backs = <String, Future<void> Function(WidgetTester)>{
+  final backs = {
     'system back': systemBack,
     'the app bar back button': tapAppBarBack,
   };

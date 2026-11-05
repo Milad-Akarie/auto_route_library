@@ -190,7 +190,7 @@ Future<bool?> androidSendsBackToFlutter() async {
   // arrive.
   await Future<void>.delayed(const Duration(milliseconds: 300));
   return await const MethodChannel('auto_route_example/system_back')
-      .invokeMethod<bool>('sendsBackToFlutter');
+      .invokeMethod('sendsBackToFlutter');
 }
 
 /// Swipes from the left edge of the screen, the iOS back gesture.
