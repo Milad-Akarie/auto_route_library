@@ -95,8 +95,6 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
     }
     _ancestorTabs = widget.router.isRoot ? const [] : widget.router.ancestorTabsRouters;
     for (final tabs in _ancestorTabs) {
-      // Removed again when the ancestors change and in dispose.
-      // ignore: always-remove-listener
       tabs.addListener(_handleAncestorTabsChanged);
     }
   }
