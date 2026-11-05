@@ -7,7 +7,7 @@ import 'package:material_ui/material_ui.dart';
 import '../router_test_utils.dart';
 
 class _Counter extends StatefulWidget {
-  const _Counter();
+  const new();
 
   @override
   State<_Counter> createState() => _CounterState();

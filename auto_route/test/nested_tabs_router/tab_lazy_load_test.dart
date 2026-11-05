@@ -89,7 +89,7 @@ RootStackRouter _buildRouter(_Kind kind, {bool? lazyLoad}) {
 PageInfo _page(String name) => .new(name, builder: (_) => _TabPage(name));
 
 class _TabPage extends StatefulWidget {
-  const _TabPage(this.name);
+  const new(this.name);
 
   final String name;
 
@@ -120,5 +120,5 @@ class _TabObserver extends AutoRouterObserver {
 }
 
 class _Route extends PageRouteInfo<void> {
-  const _Route(super.name);
+  const new(super.name);
 }

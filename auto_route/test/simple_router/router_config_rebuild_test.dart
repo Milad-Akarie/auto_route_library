@@ -66,7 +66,7 @@ void main() {
 }
 
 class _RebuildsAfterFirstFrame extends StatefulWidget {
-  const _RebuildsAfterFirstFrame({required this.builder});
+  const new({required this.builder});
 
   final Widget Function() builder;
 

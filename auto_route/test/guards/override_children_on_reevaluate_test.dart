@@ -122,28 +122,28 @@ void main() {
 }
 
 class _DashboardRoute extends PageRouteInfo<void> {
-  const _DashboardRoute({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
+  const new({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
 
   static const String name = '_DashboardRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
 }
 
 class _DashboardTabsRoute extends PageRouteInfo<void> {
-  const _DashboardTabsRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_DashboardTabsRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const AutoTabsRouter(routes: [_HomeRoute(), _ProfileRoute()]));
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_HomeRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
 }
 
 class _ProfileRoute extends PageRouteInfo<void> {
-  const _ProfileRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_ProfileRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));

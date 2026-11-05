@@ -55,21 +55,20 @@ void main() {
 }
 
 class _Letter {
-  const _Letter(this.value);
+  const new(this.value);
 
   final String value;
 }
 
 // As the generator writes a route whose page takes a required argument.
 class _ManufacturersByLetterRouteArgs {
-  const _ManufacturersByLetterRouteArgs({required this.letter});
+  const new({required this.letter});
 
   final _Letter letter;
 }
 
 class _ManufacturersByLetterRoute extends PageRouteInfo<_ManufacturersByLetterRouteArgs> {
-  _ManufacturersByLetterRoute({required _Letter letter})
-    : super(name, args: _ManufacturersByLetterRouteArgs(letter: letter));
+  new({required _Letter letter}) : super(name, args: _ManufacturersByLetterRouteArgs(letter: letter));
 
   static const name = 'ManufacturersByLetterRoute';
 
@@ -84,13 +83,13 @@ class _ManufacturersByLetterRoute extends PageRouteInfo<_ManufacturersByLetterRo
 
 // As the generator writes a route whose page takes a @PathParam.
 class _BookRouteArgs {
-  const _BookRouteArgs({required this.id});
+  const new({required this.id});
 
   final int id;
 }
 
 class _BookRoute extends PageRouteInfo<_BookRouteArgs> {
-  _BookRoute({required int id})
+  new({required int id})
     : super(
         name,
         args: _BookRouteArgs(id: id),

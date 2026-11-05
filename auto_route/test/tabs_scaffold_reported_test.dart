@@ -128,7 +128,7 @@ void main() {
 int _initStates = 0;
 
 class _Counting extends StatefulWidget {
-  const _Counting();
+  const new();
 
   @override
   State<_Counting> createState() => _CountingState();

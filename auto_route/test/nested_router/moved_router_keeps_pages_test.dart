@@ -155,7 +155,7 @@ final _homePage = PageInfo('HomeRoute', builder: (_) => const _HomePage());
 PageInfo _tabPage(String name) => .new('${name}Route', builder: (_) => Text('$name tab'));
 
 class _MailPage extends StatelessWidget {
-  const _MailPage();
+  const new();
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +170,7 @@ class _MailPage extends StatelessWidget {
 }
 
 class _InboxPage extends StatelessWidget {
-  const _InboxPage();
+  const new();
 
   @override
   Widget build(BuildContext context) {
@@ -179,7 +179,7 @@ class _InboxPage extends StatelessWidget {
 }
 
 class _MessageList extends StatelessWidget {
-  const _MessageList();
+  const new();
 
   @override
   Widget build(BuildContext context) {
@@ -193,7 +193,7 @@ class _MessageList extends StatelessWidget {
 }
 
 class _HomePage extends StatelessWidget {
-  const _HomePage();
+  const new();
 
   @override
   Widget build(BuildContext context) {

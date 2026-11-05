@@ -89,7 +89,7 @@ class _AsyncStrings {
 }
 
 class _AsyncStringsDelegate extends LocalizationsDelegate<_AsyncStrings> {
-  const _AsyncStringsDelegate();
+  const new();
 
   @override
   bool isSupported(Locale locale) => true;

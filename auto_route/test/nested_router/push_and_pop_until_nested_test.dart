@@ -134,7 +134,7 @@ PageInfo _page(String name) => .new(
 );
 
 class _NamesObserver extends AutoRouterObserver {
-  _NamesObserver(this.events);
+  new(this.events);
 
   final List<String> events;
 

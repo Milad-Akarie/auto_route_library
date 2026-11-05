@@ -58,7 +58,7 @@ void main() {
 }
 
 class _ToSchoolsGuard extends AutoRouteGuard {
-  const _ToSchoolsGuard();
+  const new();
 
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {

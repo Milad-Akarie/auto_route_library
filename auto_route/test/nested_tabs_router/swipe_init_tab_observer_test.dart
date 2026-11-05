@@ -18,7 +18,7 @@ class _TabsObserver extends AutoRouterObserver {
 }
 
 class _Route extends PageRouteInfo<void> {
-  const _Route(super.name);
+  const new(super.name);
 }
 
 PageInfo _tabPage(String name) => .new(name, builder: (_) => Center(child: Text(name)));

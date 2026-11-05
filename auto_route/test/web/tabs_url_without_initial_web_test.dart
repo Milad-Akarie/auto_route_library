@@ -72,14 +72,14 @@ void main() {
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'HomeRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
 }
 
 class _TabsRoute extends PageRouteInfo<void> {
-  const _TabsRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'TabsRoute';
   static PageInfo page = PageInfo(
@@ -99,14 +99,14 @@ class _TabsRoute extends PageRouteInfo<void> {
 }
 
 class _Tab1Route extends PageRouteInfo<void> {
-  const _Tab1Route() : super(name);
+  const new() : super(name);
 
   static const String name = 'Tab1Route';
   static PageInfo page = PageInfo(name, builder: (_) => const Text('Tab 1'));
 }
 
 class _Tab2Route extends PageRouteInfo<void> {
-  const _Tab2Route() : super(name);
+  const new() : super(name);
 
   static const String name = 'Tab2Route';
   static PageInfo page = PageInfo(name, builder: (_) => const Text('Tab 2'));

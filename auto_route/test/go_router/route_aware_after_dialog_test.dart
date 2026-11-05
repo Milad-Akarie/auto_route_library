@@ -78,7 +78,7 @@ void main() {
 }
 
 class _AwarePage extends StatefulWidget {
-  const _AwarePage(this.events);
+  const new(this.events);
 
   final List<String> events;
 

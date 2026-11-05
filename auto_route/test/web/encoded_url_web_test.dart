@@ -138,8 +138,7 @@ void main() {
 }
 
 class _SecondsRoute extends PageRouteInfo<void> {
-  _SecondsRoute({required String id, String? query})
-    : super(name, rawPathParams: {'id': id}, rawQueryParams: {'query': query});
+  new({required String id, String? query}) : super(name, rawPathParams: {'id': id}, rawQueryParams: {'query': query});
 
   static const String name = 'SecondsRoute';
   static PageInfo page = PageInfo(

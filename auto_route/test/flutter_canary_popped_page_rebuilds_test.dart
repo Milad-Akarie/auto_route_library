@@ -62,7 +62,7 @@ void main() {
 }
 
 class _AwarePage extends StatefulWidget {
-  const _AwarePage(this.observer, this.events);
+  const new(this.observer, this.events);
 
   final RouteObserver<ModalRoute<void>> observer;
   final List<String> events;

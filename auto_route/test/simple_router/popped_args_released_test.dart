@@ -10,7 +10,7 @@ import 'package:material_ui/material_ui.dart';
 import '../router_test_utils.dart';
 
 class _DetailArgs {
-  const _DetailArgs(this.counter);
+  const new(this.counter);
 
   final int counter;
 }

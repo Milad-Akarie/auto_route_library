@@ -96,14 +96,14 @@ void main() {
 }
 
 class _BookRoute extends PageRouteInfo<void> {
-  const _BookRoute() : super(pageName);
+  const new() : super(pageName);
 
   static const String pageName = 'BookRoute';
   static PageInfo page = PageInfo(pageName, builder: (data) => Text('Book ${data.inheritedPathParams.getInt('id')}'));
 }
 
 class _PriceRoute extends PageRouteInfo<void> {
-  const _PriceRoute() : super(pageName);
+  const new() : super(pageName);
 
   static const String pageName = 'PriceRoute';
   static PageInfo page = PageInfo(
@@ -113,7 +113,7 @@ class _PriceRoute extends PageRouteInfo<void> {
 }
 
 class _SearchRoute extends PageRouteInfo<void> {
-  const _SearchRoute() : super(pageName);
+  const new() : super(pageName);
 
   static const String pageName = 'SearchRoute';
   static PageInfo page = PageInfo(

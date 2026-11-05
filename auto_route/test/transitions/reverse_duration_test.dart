@@ -73,21 +73,21 @@ void main() {
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'HomeRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
 }
 
 class _SlowRoute extends PageRouteInfo<void> {
-  const _SlowRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'SlowRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Slow')));
 }
 
 class _InstantRoute extends PageRouteInfo<void> {
-  const _InstantRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'InstantRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Instant')));

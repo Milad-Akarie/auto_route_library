@@ -69,5 +69,5 @@ RootStackRouter _router(Widget Function() tabsRouter) => .build(
 );
 
 class _Route extends PageRouteInfo<void> {
-  const _Route(super.name);
+  const new(super.name);
 }

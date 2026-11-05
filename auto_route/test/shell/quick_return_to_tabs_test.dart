@@ -50,7 +50,7 @@ void main() {
 }
 
 class _LoadingPage extends StatefulWidget {
-  const _LoadingPage(this.onGoHome);
+  const new(this.onGoHome);
 
   final VoidCallback onGoHome;
 
@@ -80,5 +80,5 @@ class _LoadingPageState extends State<_LoadingPage> {
 PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
-  const _Route(super.name);
+  const new(super.name);
 }

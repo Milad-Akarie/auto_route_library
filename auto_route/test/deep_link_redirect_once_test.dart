@@ -52,7 +52,7 @@ void main() {
 }
 
 class _CountedPage extends StatefulWidget {
-  const _CountedPage(this.name, this.opened, this.builds);
+  const new(this.name, this.opened, this.builds);
 
   final String name;
   final BuildCounts opened;

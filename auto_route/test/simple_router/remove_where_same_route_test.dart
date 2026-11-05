@@ -66,28 +66,28 @@ void main() {
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'HomeRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
 }
 
 class _FormRoute extends PageRouteInfo<void> {
-  const _FormRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'FormRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Form')));
 }
 
 class _InfoRouteArgs {
-  const _InfoRouteArgs({this.key, this.title = ''});
+  const new({this.key, this.title = ''});
 
   final Key? key;
   final String title;
 }
 
 class _InfoRoute extends PageRouteInfo<_InfoRouteArgs> {
-  _InfoRoute({Key? key, required String title})
+  new({Key? key, required String title})
     : super(
         name,
         args: _InfoRouteArgs(key: key, title: title),
@@ -104,7 +104,7 @@ class _InfoRoute extends PageRouteInfo<_InfoRouteArgs> {
 }
 
 class _InfoPage extends StatefulWidget {
-  const _InfoPage({super.key, required this.title});
+  const new({super.key, required this.title});
 
   final String title;
 

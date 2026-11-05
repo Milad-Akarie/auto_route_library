@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 /// listening when the test ends.
 class DisposalTracker<T extends Object> {
   /// Starts listening to Flutter's object events.
-  DisposalTracker() {
+  new() {
     FlutterMemoryAllocations.instance.addListener(_onEvent);
     addTearDown(() => FlutterMemoryAllocations.instance.removeListener(_onEvent));
   }

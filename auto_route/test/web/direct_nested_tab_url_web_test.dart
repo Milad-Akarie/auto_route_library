@@ -65,7 +65,7 @@ void main() {
 }
 
 class _AllowGuard extends AutoRouteGuard {
-  const _AllowGuard();
+  const new();
 
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) => resolver.next();

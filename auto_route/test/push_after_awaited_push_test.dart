@@ -50,7 +50,7 @@ void main() {
 }
 
 class _PopsItselfPage extends StatefulWidget {
-  const _PopsItselfPage({required this.delay});
+  const new({required this.delay});
 
   final Duration delay;
 

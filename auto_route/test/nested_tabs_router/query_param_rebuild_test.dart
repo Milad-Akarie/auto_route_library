@@ -7,7 +7,7 @@ import 'package:material_ui/material_ui.dart';
 import '../no_op.dart';
 
 class _ParamPage extends StatefulWidget {
-  const _ParamPage({required this.param});
+  const new({required this.param});
 
   final bool param;
 

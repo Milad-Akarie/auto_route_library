@@ -7,7 +7,7 @@ import 'package:material_ui/material_ui.dart';
 import '../router_test_utils.dart';
 
 class _Sauce {
-  const _Sauce(this.name);
+  const new(this.name);
 
   final String name;
 }

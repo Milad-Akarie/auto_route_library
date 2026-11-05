@@ -129,7 +129,7 @@ Future<void> pressBrowserBackOn(WidgetTester tester, RootStackRouter router) asy
 }
 
 class _FormRoute extends PageRouteInfo<void> {
-  const _FormRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'FormRoute';
   static PageInfo page = PageInfo(
@@ -145,7 +145,7 @@ class _FormRoute extends PageRouteInfo<void> {
 }
 
 class _LegacyFormRoute extends PageRouteInfo<void> {
-  const _LegacyFormRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'LegacyFormRoute';
   static PageInfo page = PageInfo(
@@ -165,7 +165,7 @@ class _LegacyFormRoute extends PageRouteInfo<void> {
 final ValueNotifier<bool> _canLeave = ValueNotifier(false);
 
 class _ToggleFormRoute extends PageRouteInfo<void> {
-  const _ToggleFormRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'ToggleFormRoute';
   static PageInfo page = PageInfo(

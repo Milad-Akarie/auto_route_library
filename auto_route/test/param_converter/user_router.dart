@@ -7,7 +7,7 @@ part 'user_router.gr.dart';
 /// the url.
 @immutable
 class UserId {
-  const UserId(this.value);
+  const new(this.value);
 
   final String value;
 
@@ -20,7 +20,7 @@ class UserId {
 
 /// Reads a [UserId] from `u-` and its digits, and refuses any other text.
 class UserIdConverter extends ParamConverter<UserId> {
-  const UserIdConverter();
+  const new();
 
   @override
   UserId? fromParam(String value) => RegExp(r'^u-\d+$').hasMatch(value) ? .new(value.substring(2)) : null;
@@ -42,7 +42,7 @@ class UserRouter extends RootStackRouter {
 
 @RoutePage()
 class UserHomeView extends StatelessWidget {
-  const UserHomeView({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) => const Scaffold(body: Text('Home'));
@@ -50,7 +50,7 @@ class UserHomeView extends StatelessWidget {
 
 @RoutePage()
 class UserProfileView extends StatelessWidget {
-  const UserProfileView({
+  const new({
     super.key,
     @PathParam('id', kUserIdConverter) required this.id,
     @QueryParam('by', kUserIdConverter) this.by,

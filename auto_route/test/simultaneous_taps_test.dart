@@ -68,7 +68,7 @@ void main() {
 }
 
 class _TwoButtons extends StatelessWidget {
-  const _TwoButtons({required this.onA, required this.onB});
+  const new({required this.onA, required this.onB});
 
   final VoidCallback onA;
   final VoidCallback onB;
@@ -87,7 +87,7 @@ class _TwoButtons extends StatelessWidget {
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(pageName);
+  const new() : super(pageName);
 
   static const String pageName = 'HomeRoute';
   static PageInfo page = PageInfo(

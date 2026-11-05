@@ -64,28 +64,28 @@ void main() {
 }
 
 class _ProfileRoute extends PageRouteInfo<void> {
-  const _ProfileRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_ProfileRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const LeadingButtonPage(name));
 }
 
 class _AddressesShellRoute extends PageRouteInfo<void> {
-  const _AddressesShellRoute({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
+  const new({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
 
   static const String name = '_AddressesShellRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
 }
 
 class _ListRoute extends PageRouteInfo<void> {
-  const _ListRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_ListRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const LeadingButtonPage(name));
 }
 
 class _AddRoute extends PageRouteInfo<void> {
-  const _AddRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_AddRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const LeadingButtonPage(name));

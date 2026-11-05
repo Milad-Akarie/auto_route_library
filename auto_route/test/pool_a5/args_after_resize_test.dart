@@ -7,7 +7,7 @@ import 'package:material_ui/material_ui.dart';
 import '../router_test_utils.dart';
 
 class _GameRoute extends PageRouteInfo<_GameArgs> {
-  _GameRoute({required String level, List<PageRouteInfo>? children})
+  new({required String level, List<PageRouteInfo>? children})
     : super(name, args: _GameArgs(level), initialChildren: children);
 
   static const name = 'GameRoute';
@@ -20,7 +20,7 @@ class _GameRoute extends PageRouteInfo<_GameArgs> {
 }
 
 class _GameArgs {
-  const _GameArgs(this.level);
+  const new(this.level);
   final String level;
 }
 

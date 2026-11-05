@@ -87,7 +87,7 @@ enum _TabsKind { indexedStack, pageView, tabBar }
 _TabsKind _tabsKind = .indexedStack;
 
 class _TabsHostRoute extends PageRouteInfo<void> {
-  const _TabsHostRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_TabsHostRoute';
   static PageInfo page = PageInfo(
@@ -104,21 +104,21 @@ class _TabsHostRoute extends PageRouteInfo<void> {
 }
 
 class _FirstTabRoute extends PageRouteInfo<void> {
-  const _FirstTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_FirstTabRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const TitledTabPage('First'));
 }
 
 class _SecondTabRoute extends PageRouteInfo<void> {
-  const _SecondTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_SecondTabRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const TitledTabPage('Second'));
 }
 
 class _ThirdTabRoute extends PageRouteInfo<void> {
-  const _ThirdTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_ThirdTabRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const TitledTabPage('Third'));

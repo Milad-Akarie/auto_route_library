@@ -10,7 +10,7 @@ import '../router_test_utils.dart';
 final _builds = <String, int>{};
 
 class _CountingPage extends StatefulWidget {
-  const _CountingPage(this.label);
+  const new(this.label);
 
   final String label;
 

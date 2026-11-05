@@ -65,7 +65,7 @@ void main() {
 }
 
 class _EditorPage extends StatelessWidget {
-  const _EditorPage({required this.onLeave});
+  const new({required this.onLeave});
 
   final void Function(StackRouter) onLeave;
 

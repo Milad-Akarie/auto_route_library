@@ -82,7 +82,7 @@ PageInfo _page(String name, List<String> disposed) =>
     .new(name, builder: (_) => _DisposeRecorder(() => disposed.add(name), child: Text(name)));
 
 class _DisposeRecorder extends StatefulWidget {
-  const _DisposeRecorder(this.onDispose, {required this.child});
+  const new(this.onDispose, {required this.child});
 
   final VoidCallback onDispose;
   final Widget child;
@@ -103,5 +103,5 @@ class _DisposeRecorderState extends State<_DisposeRecorder> {
 }
 
 class _Route extends PageRouteInfo<void> {
-  const _Route(super.name);
+  const new(super.name);
 }

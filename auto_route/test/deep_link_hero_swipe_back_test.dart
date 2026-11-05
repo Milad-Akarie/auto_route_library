@@ -46,7 +46,7 @@ final _page1 = PageInfo('Page1Route', builder: (_) => const _HeroPage('Page 1', 
 final _page2 = PageInfo('Page2Route', builder: (_) => const _HeroPage('Page 2', .only(left: 100)));
 
 class _HeroPage extends StatelessWidget {
-  const _HeroPage(this.label, this.padding);
+  const new(this.label, this.padding);
 
   final String label;
   final EdgeInsets padding;

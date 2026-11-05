@@ -87,7 +87,7 @@ final _routesNotifier = ValueNotifier<List<PageRouteInfo>>(_kInitialRoutes);
 final ValueNotifier<bool> _showTabsNotifier = ValueNotifier(true);
 
 class _TabsHostRoute extends PageRouteInfo<void> {
-  const _TabsHostRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_TabsHostRoute';
   static PageInfo page = PageInfo(
@@ -103,28 +103,28 @@ class _TabsHostRoute extends PageRouteInfo<void> {
 }
 
 class _FirstTabRoute extends PageRouteInfo<void> {
-  const _FirstTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_FirstTabRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Text(name));
 }
 
 class _SecondTabRoute extends PageRouteInfo<void> {
-  const _SecondTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_SecondTabRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Text(name));
 }
 
 class _ThirdTabRoute extends PageRouteInfo<void> {
-  const _ThirdTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_ThirdTabRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Text(name));
 }
 
 class _FourthTabRoute extends PageRouteInfo<void> {
-  const _FourthTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_FourthTabRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Text(name));

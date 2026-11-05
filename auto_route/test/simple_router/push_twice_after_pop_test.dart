@@ -79,7 +79,7 @@ final _events = <String>[];
 final _counted = PageInfo('B', builder: (_) => const _CountedPage());
 
 class _CountedPage extends StatefulWidget {
-  const _CountedPage();
+  const new();
 
   @override
   State<_CountedPage> createState() => _CountedPageState();

@@ -87,5 +87,5 @@ CustomRoute _fade(PageInfo page, String path, {bool initial = false}) => .new(
 PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
-  const _Route(super.name);
+  const new(super.name);
 }

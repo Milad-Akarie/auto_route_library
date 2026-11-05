@@ -130,7 +130,7 @@ PageInfo _page(String name) => .new(
 );
 
 class _NamesObserver extends NavigatorObserver {
-  _NamesObserver(this.events);
+  new(this.events);
 
   final List<String> events;
 

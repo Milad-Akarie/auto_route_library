@@ -202,7 +202,7 @@ void main() {
 
 @immutable
 class _Number {
-  const _Number(this.value);
+  const new(this.value);
 
   final int value;
 
@@ -214,7 +214,7 @@ class _Number {
 }
 
 class _NumberConverter extends ParamConverter<_Number> {
-  const _NumberConverter();
+  const new();
 
   @override
   _Number? fromParam(String value) {
@@ -227,7 +227,7 @@ class _NumberConverter extends ParamConverter<_Number> {
 }
 
 class _ThrowingConverter extends ParamConverter<_Number> {
-  const _ThrowingConverter();
+  const new();
 
   @override
   _Number fromParam(String value) => throw StateError('broken converter');

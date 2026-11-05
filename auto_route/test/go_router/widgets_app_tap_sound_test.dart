@@ -117,7 +117,7 @@ Future<List<Object?>> _soundsOfTap(WidgetTester tester, Widget app) async {
 }
 
 class _PageRouteBuilderPage extends Page<void> {
-  const _PageRouteBuilderPage(this.child);
+  const new(this.child);
 
   final Widget child;
 

@@ -79,5 +79,5 @@ PageInfo _page(String name) => .new(
 );
 
 class _Route extends PageRouteInfo<void> {
-  const _Route(super.name);
+  const new(super.name);
 }

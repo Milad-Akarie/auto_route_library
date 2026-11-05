@@ -180,35 +180,35 @@ void _expectHeroInFlight(WidgetTester tester) {
 }
 
 class _FromRoute extends PageRouteInfo<void> {
-  const _FromRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'FromRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const HeroBoxPage('from', .bottomLeft));
 }
 
 class _ToRoute extends PageRouteInfo<void> {
-  const _ToRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'ToRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const HeroBoxPage('to', .topRight));
 }
 
 class _ShellRoute extends PageRouteInfo<void> {
-  const _ShellRoute({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
+  const new({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
 
   static const String name = 'ShellRoute';
   static PageInfo page = const PageInfo.emptyShell(name);
 }
 
 class _HeroShellRoute extends PageRouteInfo<void> {
-  const _HeroShellRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'HeroShellRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const _HeroShell());
 }
 
 class _HeroShell extends StatefulWidget {
-  const _HeroShell();
+  const new();
 
   @override
   State<_HeroShell> createState() => _HeroShellState();

@@ -55,7 +55,7 @@ void main() {
 int _attempts = 0;
 
 class _FormRoute extends PageRouteInfo<void> {
-  const _FormRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'PathFormRoute';
   static PageInfo page = PageInfo(

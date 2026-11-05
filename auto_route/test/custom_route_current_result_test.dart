@@ -49,7 +49,7 @@ void main() {
 }
 
 class _ResultRoute<T> extends CupertinoPageRoute<T> {
-  _ResultRoute({required super.builder, required super.settings, required this.result});
+  new({required super.builder, required super.settings, required this.result});
 
   final T result;
 

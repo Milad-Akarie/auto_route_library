@@ -39,7 +39,7 @@ void main() {
 }
 
 class _Recorder extends NavigatorObserver {
-  _Recorder(this.seen);
+  new(this.seen);
 
   final List<String?> seen;
 
@@ -60,9 +60,9 @@ class _PageRoute {
 }
 
 class _OtherRoute extends PageRouteInfo<void> {
-  const _OtherRoute() : super('OtherRoute');
+  const new() : super('OtherRoute');
 }
 
 class _ThirdRoute extends PageRouteInfo<void> {
-  const _ThirdRoute() : super('ThirdRoute');
+  const new() : super('ThirdRoute');
 }

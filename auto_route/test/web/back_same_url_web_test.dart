@@ -134,13 +134,13 @@ void main() {
 }
 
 class _BookArgs {
-  const _BookArgs({this.bookId});
+  const new({this.bookId});
 
   final String? bookId;
 }
 
 class _BookRoute extends PageRouteInfo<_BookArgs> {
-  _BookRoute({String? bookId}) : super(name, args: _BookArgs(bookId: bookId));
+  new({String? bookId}) : super(name, args: _BookArgs(bookId: bookId));
 
   static const String name = 'BookRoute';
   static PageInfo page = PageInfo(

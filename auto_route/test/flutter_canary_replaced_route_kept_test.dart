@@ -64,7 +64,7 @@ void main() {
 }
 
 class _TrackedPage extends StatefulWidget {
-  const _TrackedPage(this.states);
+  const new(this.states);
 
   final List<WeakReference<State>> states;
 
@@ -84,7 +84,7 @@ class _TrackedPageState extends State<_TrackedPage> {
 }
 
 class _PushObserver extends NavigatorObserver {
-  _PushObserver(this.routes);
+  new(this.routes);
 
   final List<WeakReference<Route<Object?>>> routes;
 

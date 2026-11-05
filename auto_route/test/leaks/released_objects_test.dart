@@ -16,7 +16,7 @@ WeakReference<State> _pageState(String label) => _pageStates[label]!;
 /// A page that records a weak reference to its state, to check that nothing
 /// holds the state once the page leaves the stack.
 class _TrackedPage extends StatefulWidget {
-  const _TrackedPage(this.label);
+  const new(this.label);
 
   final String label;
 

@@ -54,14 +54,14 @@ void main() {
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'HomeRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
 }
 
 class _ShellRoute extends PageRouteInfo<void> {
-  const _ShellRoute({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
+  const new({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
 
   static const String name = 'ShellRoute';
   static PageInfo page = PageInfo(
@@ -74,7 +74,7 @@ class _ShellRoute extends PageRouteInfo<void> {
 }
 
 class _DetailsRoute extends PageRouteInfo<void> {
-  const _DetailsRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'DetailsRoute';
   static PageInfo page = PageInfo(

@@ -37,7 +37,7 @@ void main() {
 }
 
 class _ShopRoute extends PageRouteInfo<void> {
-  const _ShopRoute() : super(pageName);
+  const new() : super(pageName);
 
   static const String pageName = 'ShopRoute';
   static PageInfo page = PageInfo(

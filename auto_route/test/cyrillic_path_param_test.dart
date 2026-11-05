@@ -48,14 +48,14 @@ void main() {
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'HomeRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Text('Home'));
 }
 
 class _FavoriteRoute extends PageRouteInfo<void> {
-  _FavoriteRoute({required String name}) : super(pageName, rawPathParams: {'name': name});
+  new({required String name}) : super(pageName, rawPathParams: {'name': name});
 
   static const String pageName = 'FavoriteRoute';
   static PageInfo page = PageInfo(

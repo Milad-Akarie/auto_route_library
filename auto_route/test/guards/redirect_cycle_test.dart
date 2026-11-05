@@ -7,7 +7,7 @@ import 'package:material_ui/material_ui.dart';
 import '../router_test_utils.dart';
 
 class _AppRouter extends RootStackRouter {
-  _AppRouter({this.guards = const [], required this.routes});
+  new({this.guards = const [], required this.routes});
 
   @override
   final List<AutoRouteGuard> guards;

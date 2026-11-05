@@ -2,7 +2,7 @@ import 'package:material_ui/material_ui.dart';
 
 /// A PopScope that blocks every pop and tells [onBlockedPop] about each one it blocked.
 class BlockedPopScope extends StatelessWidget {
-  const BlockedPopScope({required this.onBlockedPop, required this.child, super.key});
+  const new({required this.onBlockedPop, required this.child, super.key});
 
   /// Called when a pop was attempted and blocked.
   final VoidCallback onBlockedPop;

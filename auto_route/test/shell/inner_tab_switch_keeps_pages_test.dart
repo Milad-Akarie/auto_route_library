@@ -65,7 +65,7 @@ PageInfo _counted(String name, Map<String, int> inits, {Widget? child}) =>
     .new(name, builder: (_) => _InitCounter(() => inits[name] = (inits[name] ?? 0) + 1, child: child ?? Text(name)));
 
 class _InitCounter extends StatefulWidget {
-  const _InitCounter(this.onInit, {required this.child});
+  const new(this.onInit, {required this.child});
 
   final VoidCallback onInit;
   final Widget child;
@@ -86,5 +86,5 @@ class _InitCounterState extends State<_InitCounter> {
 }
 
 class _Route extends PageRouteInfo<void> {
-  const _Route(super.name);
+  const new(super.name);
 }

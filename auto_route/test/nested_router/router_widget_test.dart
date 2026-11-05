@@ -338,7 +338,7 @@ class _PopScopeHostRouter extends MainRouter {
 }
 
 class _PopScopeHostRoute extends PageRouteInfo<void> {
-  const _PopScopeHostRoute() : super(_PopScopeHostRoute.name);
+  const new() : super(_PopScopeHostRoute.name);
 
   static const String name = 'PopScopeHostRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const PopScope(canPop: false, child: AutoRouter()));

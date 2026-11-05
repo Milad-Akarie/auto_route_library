@@ -43,21 +43,21 @@ void main() {
 }
 
 class _OrdersWrapperRoute extends PageRouteInfo<void> {
-  const _OrdersWrapperRoute() : super(pageName);
+  const new() : super(pageName);
 
   static const String pageName = 'OrdersWrapperRoute';
   static PageInfo page = PageInfo(pageName, builder: (_) => const AutoRouter());
 }
 
 class _OrdersRoute extends PageRouteInfo<void> {
-  const _OrdersRoute() : super(pageName);
+  const new() : super(pageName);
 
   static const String pageName = 'OrdersRoute';
   static PageInfo page = PageInfo(pageName, builder: (_) => const Text('Orders'));
 }
 
 class _OrderRoute extends PageRouteInfo<void> {
-  _OrderRoute({required String orderId}) : super(pageName, rawPathParams: {'orderId': orderId});
+  new({required String orderId}) : super(pageName, rawPathParams: {'orderId': orderId});
 
   static const String pageName = 'OrderRoute';
   static PageInfo page = PageInfo(
@@ -73,7 +73,7 @@ class _OrderRoute extends PageRouteInfo<void> {
 }
 
 class _OrderPaymentProofRoute extends PageRouteInfo<void> {
-  const _OrderPaymentProofRoute() : super(pageName);
+  const new() : super(pageName);
 
   static const String pageName = 'OrderPaymentProofRoute';
   static PageInfo page = PageInfo(

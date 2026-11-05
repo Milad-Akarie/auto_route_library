@@ -80,7 +80,7 @@ final _tabsPage = PageInfo(
 
 // Lets the app in a moment later, as a guard checking sign-in does.
 class _LateGuard extends AutoRouteGuard {
-  const _LateGuard();
+  const new();
 
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {

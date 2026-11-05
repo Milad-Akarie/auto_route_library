@@ -46,7 +46,7 @@ void main() {
 }
 
 class _AwareText extends StatefulWidget {
-  const _AwareText();
+  const new();
 
   @override
   State<_AwareText> createState() => _AwareTextState();

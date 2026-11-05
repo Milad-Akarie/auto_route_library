@@ -215,7 +215,7 @@ class _RecordingTransitionsBuilder extends PageTransitionsBuilder {
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'HomeRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
@@ -223,7 +223,7 @@ class _HomeRoute extends PageRouteInfo<void> {
 }
 
 class _DetailsRoute extends PageRouteInfo<void> {
-  const _DetailsRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'DetailsRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Details')));

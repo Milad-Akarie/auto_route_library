@@ -72,7 +72,7 @@ void main() {
 }
 
 class MainRoute extends PageRouteInfo<void> {
-  const MainRoute() : super('MainRoute');
+  const new() : super('MainRoute');
 }
 
 // Hands [location] to the app the way the engine does when the platform

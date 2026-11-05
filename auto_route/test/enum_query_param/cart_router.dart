@@ -16,7 +16,7 @@ class CartRouter extends RootStackRouter {
 
 @RoutePage()
 class CartHomeView extends StatelessWidget {
-  const CartHomeView({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) => const Scaffold(body: Text('Home'));
@@ -24,7 +24,7 @@ class CartHomeView extends StatelessWidget {
 
 @RoutePage()
 class MfUserCartView extends StatelessWidget {
-  const MfUserCartView({super.key, @QueryParam('type') required this.userCartType});
+  const new({super.key, @QueryParam('type') required this.userCartType});
 
   final MfUserCartTypes? userCartType;
 

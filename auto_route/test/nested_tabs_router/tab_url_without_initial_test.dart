@@ -8,7 +8,7 @@ import 'package:material_ui/material_ui.dart';
 import '../router_test_utils.dart';
 
 class _Route extends PageRouteInfo<void> {
-  const _Route(super.name);
+  const new(super.name);
 }
 
 // A tabs host whose tabs have no '' path and none is initial: its url, '/tabs',

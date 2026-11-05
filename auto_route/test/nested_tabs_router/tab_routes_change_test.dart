@@ -101,7 +101,7 @@ _TabsKind _tabsKind = .indexedStack;
 final ValueNotifier<bool> _signedInNotifier = ValueNotifier(false);
 
 class _TabsHostRoute extends PageRouteInfo<void> {
-  const _TabsHostRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_TabsHostRoute';
   static PageInfo page = PageInfo(
@@ -129,14 +129,14 @@ class _TabsHostRoute extends PageRouteInfo<void> {
 }
 
 class _FirstTabRoute extends PageRouteInfo<void> {
-  const _FirstTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_FirstTabRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const _CountedPage(name));
 }
 
 class _SecondTabRoute extends PageRouteInfo<void> {
-  const _SecondTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_SecondTabRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const _CountedPage(name));
@@ -144,7 +144,7 @@ class _SecondTabRoute extends PageRouteInfo<void> {
 
 // Counts how often each tab page's state is created and disposed.
 class _CountedPage extends StatefulWidget {
-  const _CountedPage(this.name);
+  const new(this.name);
 
   final String name;
 
@@ -173,14 +173,14 @@ class _CountedPageState extends State<_CountedPage> {
 }
 
 class _SignInTabRoute extends PageRouteInfo<void> {
-  const _SignInTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_SignInTabRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
 }
 
 class _AccountTabRoute extends PageRouteInfo<void> {
-  const _AccountTabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_AccountTabRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));

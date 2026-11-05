@@ -78,7 +78,7 @@ void main() {
 PageInfo _page(String name) => .new(name, builder: (_) => Text(name));
 
 class _SlowGuard extends AutoRouteGuard {
-  const _SlowGuard();
+  const new();
 
   @override
   Future<void> onNavigation(NavigationResolver resolver, StackRouter router) async {

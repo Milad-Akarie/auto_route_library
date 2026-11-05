@@ -68,5 +68,5 @@ final _menuPage = PageInfo('MenuRoute', builder: (_) => const AutoTabsRouter(rou
 PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
-  const _Route(super.name);
+  const new(super.name);
 }

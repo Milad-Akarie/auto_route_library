@@ -81,7 +81,7 @@ void main() {
 }
 
 class _CounterPage extends StatefulWidget {
-  const _CounterPage();
+  const new();
 
   @override
   State<_CounterPage> createState() => _CounterPageState();

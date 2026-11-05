@@ -75,14 +75,14 @@ void main() {
 }
 
 class _ParentRoute extends PageRouteInfo<void> {
-  const _ParentRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'ParentRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const _ParentPage());
 }
 
 class _ParentPage extends AutoRouter implements AutoRouteWrapper {
-  const _ParentPage();
+  const new();
 
   @override
   Widget wrappedRoute(BuildContext context) => _Provided(child: this);
@@ -90,7 +90,7 @@ class _ParentPage extends AutoRouter implements AutoRouteWrapper {
 
 /// Stands for a BlocProvider: counts the states it creates.
 class _Provided extends StatefulWidget {
-  const _Provided({required this.child});
+  const new({required this.child});
 
   final Widget child;
 
@@ -114,7 +114,7 @@ class _ProvidedState extends State<_Provided> {
 PageInfo _aPage = PageInfo('ARoute', builder: (_) => const Scaffold(body: _AChild()));
 
 class _AChild extends StatelessWidget {
-  const _AChild();
+  const new();
 
   @override
   Widget build(BuildContext context) {
@@ -130,14 +130,14 @@ class WrapperRouter extends RootStackRouter {
 }
 
 class WrapperRoute extends PageRouteInfo<void> {
-  const WrapperRoute({List<PageRouteInfo>? children}) : super(WrapperRoute.name, initialChildren: children);
+  const new({List<PageRouteInfo>? children}) : super(WrapperRoute.name, initialChildren: children);
 
   static const String name = 'WrapperRoute';
   static PageInfo page = PageInfo(name, builder: (data) => const WrappedRoute(child: WrapperPage()));
 }
 
 class WrapperPage extends StatelessWidget implements AutoRouteWrapper {
-  const WrapperPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -64,35 +64,35 @@ void main() {
 }
 
 class _SplashRoute extends PageRouteInfo<void> {
-  const _SplashRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'SplashRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Splash')));
 }
 
 class _AppRouterRoute extends PageRouteInfo<void> {
-  const _AppRouterRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'app_router';
   static PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'HomeRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
 }
 
 class _OtherRoute extends PageRouteInfo<void> {
-  const _OtherRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'OtherRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Other')));
 }
 
 class _TestRoute extends PageRouteInfo<void> {
-  const _TestRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'TestRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Test')));

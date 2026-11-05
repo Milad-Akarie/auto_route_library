@@ -56,7 +56,7 @@ void main() {
 }
 
 class _Templates extends StatelessWidget {
-  const _Templates();
+  const new();
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -89,7 +89,7 @@ class _Templates extends StatelessWidget {
 }
 
 class _Nested extends StatelessWidget {
-  const _Nested();
+  const new();
 
   @override
   Widget build(BuildContext context) => Scaffold(

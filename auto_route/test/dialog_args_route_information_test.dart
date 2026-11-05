@@ -10,7 +10,7 @@ import 'router_test_utils.dart';
 
 /// An argument that, like the reporter's ProfileEntity, has no toJson.
 class _Profile {
-  const _Profile(this.name);
+  const new(this.name);
   final String name;
 }
 

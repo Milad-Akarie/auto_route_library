@@ -10,7 +10,7 @@ import '../router_test_utils.dart';
 final _events = <String>[];
 
 class _AwarePage extends StatefulWidget {
-  const _AwarePage({this.child});
+  const new({this.child});
   final Widget? child;
 
   @override
@@ -43,7 +43,7 @@ class _AwarePageState extends State<_AwarePage> with AutoRouteAwareStateMixin<_A
 }
 
 class _Route extends PageRouteInfo<void> {
-  const _Route(super.name);
+  const new(super.name);
 }
 
 PageInfo _awarePage(String name) => .new(name, builder: (_) => const _AwarePage());

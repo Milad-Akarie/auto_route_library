@@ -49,7 +49,7 @@ void main() {
 }
 
 class _Token extends InheritedWidget {
-  const _Token({required this.value, required super.child});
+  const new({required this.value, required super.child});
 
   final String value;
 

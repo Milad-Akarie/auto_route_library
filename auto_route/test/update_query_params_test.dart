@@ -66,14 +66,14 @@ void main() {
 }
 
 class _SearchRoute extends PageRouteInfo<void> {
-  _SearchRoute({String? q}) : super(pageName, rawQueryParams: {'q': q});
+  new({String? q}) : super(pageName, rawQueryParams: {'q': q});
 
   static const String pageName = 'SearchRoute';
   static PageInfo page = PageInfo(pageName, builder: (data) => _SearchPage(q: data.queryParams.optString('q')));
 }
 
 class _SearchPage extends StatefulWidget {
-  const _SearchPage({required this.q});
+  const new({required this.q});
 
   final String? q;
 

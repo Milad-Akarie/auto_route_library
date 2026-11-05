@@ -74,5 +74,5 @@ void main() {
 }
 
 class _TabRoute extends PageRouteInfo<void> {
-  const _TabRoute() : super('TabRoute');
+  const new() : super('TabRoute');
 }

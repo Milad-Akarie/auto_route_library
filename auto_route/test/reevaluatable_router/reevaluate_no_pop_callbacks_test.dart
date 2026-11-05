@@ -22,7 +22,7 @@ class _Observer extends AutoRouterObserver {
 }
 
 class _EditPage extends StatefulWidget {
-  const _EditPage({required this.onPop});
+  const new({required this.onPop});
 
   final VoidCallback onPop;
 

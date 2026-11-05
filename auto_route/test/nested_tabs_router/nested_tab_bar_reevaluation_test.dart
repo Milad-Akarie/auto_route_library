@@ -53,14 +53,14 @@ void main() {
 }
 
 class _SplashRoute extends PageRouteInfo<void> {
-  const _SplashRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_SplashRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
 }
 
 class _HomeWrapperRoute extends PageRouteInfo<void> {
-  const _HomeWrapperRoute({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
+  const new({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
 
   static const String name = '_HomeWrapperRoute';
   static PageInfo page = PageInfo(
@@ -70,7 +70,7 @@ class _HomeWrapperRoute extends PageRouteInfo<void> {
 }
 
 class _FeedRoute extends PageRouteInfo<void> {
-  const _FeedRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_FeedRoute';
   static PageInfo page = PageInfo(
@@ -94,21 +94,21 @@ class _FeedRoute extends PageRouteInfo<void> {
 }
 
 class _ForYouFeedRoute extends PageRouteInfo<void> {
-  const _ForYouFeedRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_ForYouFeedRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Text(name));
 }
 
 class _FollowingFeedRoute extends PageRouteInfo<void> {
-  const _FollowingFeedRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_FollowingFeedRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Text(name));
 }
 
 class _MyProfileRoute extends PageRouteInfo<void> {
-  const _MyProfileRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_MyProfileRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));

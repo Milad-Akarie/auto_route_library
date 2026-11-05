@@ -63,14 +63,14 @@ void main() {
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'HomeRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
 }
 
 class _ChildRoute extends PageRouteInfo<void> {
-  const _ChildRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'ChildRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Child')));

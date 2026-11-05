@@ -61,20 +61,20 @@ void main() {
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_HomeRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
 }
 
 class _ProfileArgs {
-  const _ProfileArgs({required this.userId});
+  const new({required this.userId});
 
   final String userId;
 }
 
 class _ProfileRoute extends PageRouteInfo<_ProfileArgs> {
-  _ProfileRoute({required String userId}) : super(name, args: _ProfileArgs(userId: userId));
+  new({required String userId}) : super(name, args: _ProfileArgs(userId: userId));
 
   static const String name = '_ProfileRoute';
   static PageInfo page = PageInfo(name, builder: (data) => _ProfileView(userId: data.argsAs<_ProfileArgs>().userId));
@@ -83,7 +83,7 @@ class _ProfileRoute extends PageRouteInfo<_ProfileArgs> {
 var _profileStates = 0;
 
 class _ProfileView extends StatefulWidget {
-  const _ProfileView({required this.userId});
+  const new({required this.userId});
 
   final String userId;
 
@@ -103,7 +103,7 @@ class _ProfileViewState extends State<_ProfileView> {
 }
 
 class _SettingsRoute extends PageRouteInfo<void> {
-  const _SettingsRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_SettingsRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));

@@ -79,7 +79,7 @@ void main() {
 }
 
 class _Buttons extends StatelessWidget {
-  const _Buttons();
+  const new();
 
   @override
   Widget build(BuildContext context) => Column(

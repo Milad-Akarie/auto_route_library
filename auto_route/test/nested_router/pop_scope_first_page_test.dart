@@ -128,7 +128,7 @@ var _popAttempts = 0;
 late Widget Function() _nestedRouter;
 
 class _HostRoute extends PageRouteInfo<void> {
-  const _HostRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'HostRoute';
   static PageInfo page = PageInfo(
@@ -141,7 +141,7 @@ class _HostRoute extends PageRouteInfo<void> {
 }
 
 class _GuardedRoute extends PageRouteInfo<void> {
-  const _GuardedRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'GuardedRoute';
   static PageInfo page = PageInfo(

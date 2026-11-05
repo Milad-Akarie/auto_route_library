@@ -65,7 +65,7 @@ void main() {
 }
 
 class _Sub extends StatelessWidget {
-  const _Sub();
+  const new();
 
   @override
   Widget build(BuildContext context) => Scaffold(

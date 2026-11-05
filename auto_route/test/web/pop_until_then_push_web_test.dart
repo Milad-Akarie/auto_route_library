@@ -49,7 +49,7 @@ void main() {
 }
 
 class _Route extends PageRouteInfo<void> {
-  const _Route(super.name);
+  const new(super.name);
 }
 
 PageInfo _page(String name) => .new(name, builder: (_) => Text(name));

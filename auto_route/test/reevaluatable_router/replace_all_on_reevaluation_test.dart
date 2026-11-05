@@ -85,7 +85,7 @@ void main() {
 }
 
 class _LoginRoute extends PageRouteInfo<void> {
-  const _LoginRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'LoginRoute';
   static PageInfo page(_AuthRepo authRepo) => .new(
@@ -105,7 +105,7 @@ class _LoginRoute extends PageRouteInfo<void> {
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'HomeRoute';
   static PageInfo page(_AuthRepo authRepo) => .new(

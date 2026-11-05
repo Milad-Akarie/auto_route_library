@@ -50,7 +50,7 @@ void main() {
 }
 
 class _CmsRoute extends PageRouteInfo<void> {
-  const _CmsRoute() : super(pageName);
+  const new() : super(pageName);
 
   static const String pageName = 'CmsRoute';
   static PageInfo page = PageInfo(

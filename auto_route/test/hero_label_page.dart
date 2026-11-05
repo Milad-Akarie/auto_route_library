@@ -2,7 +2,7 @@ import 'package:material_ui/material_ui.dart';
 
 /// A page whose Hero holds [label], with the tag every page using it shares.
 class HeroLabelPage extends StatelessWidget {
-  const HeroLabelPage(this.label, {super.key});
+  const new(this.label, {super.key});
 
   /// The text inside the Hero.
   final String label;

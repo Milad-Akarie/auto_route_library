@@ -43,7 +43,7 @@ void main() {
 }
 
 class _Recorder extends AutoRouterObserver {
-  _Recorder(this.pushes);
+  new(this.pushes);
 
   final List<String> pushes;
 

@@ -101,7 +101,7 @@ class TabsScaffoldRouter extends RootStackRouter {
 }
 
 class TabsScaffoldRoute extends PageRouteInfo<void> {
-  const TabsScaffoldRoute({List<PageRouteInfo>? children}) : super(TabsScaffoldRoute.name, initialChildren: children);
+  const new({List<PageRouteInfo>? children}) : super(TabsScaffoldRoute.name, initialChildren: children);
 
   static const String name = 'TabsScaffoldRoute';
   static PageInfo page = PageInfo(
@@ -125,7 +125,7 @@ class TabsScaffoldRoute extends PageRouteInfo<void> {
 }
 
 class TabsScaffoldDefaultRoute extends PageRouteInfo<void> {
-  const TabsScaffoldDefaultRoute() : super(TabsScaffoldDefaultRoute.name);
+  const new() : super(TabsScaffoldDefaultRoute.name);
 
   static const String name = 'TabsScaffoldDefaultRoute';
   static PageInfo page = PageInfo(name, builder: (data) => const AutoTabsScaffold());
@@ -134,7 +134,7 @@ class TabsScaffoldDefaultRoute extends PageRouteInfo<void> {
 // A test route: PageRouteInfo's == is the one under test.
 // ignore: prefer-overriding-parent-equality
 class TabPageWithRequiredArgument extends PageRouteInfo<void> {
-  const TabPageWithRequiredArgument({required this.argument}) : super(TabPageWithRequiredArgument.name);
+  const new({required this.argument}) : super(TabPageWithRequiredArgument.name);
 
   static const String name = 'TabPageWithRequiredArgument';
   static PageInfo page = PageInfo(

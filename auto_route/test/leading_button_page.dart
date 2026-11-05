@@ -3,7 +3,7 @@ import 'package:material_ui/material_ui.dart';
 
 /// A page with an automatic leading button in its app bar, showing [name].
 class LeadingButtonPage extends StatelessWidget {
-  const LeadingButtonPage(this.name, {super.key});
+  const new(this.name, {super.key});
 
   /// The text the page shows.
   final String name;

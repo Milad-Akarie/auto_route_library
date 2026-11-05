@@ -95,28 +95,28 @@ void main() {
 }
 
 class _DashboardRoute extends PageRouteInfo<void> {
-  const _DashboardRoute({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
+  const new({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
 
   static const String name = 'DashboardRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
 }
 
 class _VendorsRoute extends PageRouteInfo<void> {
-  const _VendorsRoute({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
+  const new({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
 
   static const String name = 'VendorsRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
 }
 
 class _VendorListRoute extends PageRouteInfo<void> {
-  const _VendorListRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'VendorListRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Text('Vendors'));
 }
 
 class _EditVendorRoute extends PageRouteInfo<void> {
-  _EditVendorRoute({required String vendorId, List<PageRouteInfo>? children})
+  new({required String vendorId, List<PageRouteInfo>? children})
     : super(name, rawPathParams: {'vendor-id': vendorId}, initialChildren: children);
 
   static const String name = 'EditVendorRoute';
@@ -136,7 +136,7 @@ class _EditVendorRoute extends PageRouteInfo<void> {
 }
 
 class _VendorBranchesRoute extends PageRouteInfo<void> {
-  const _VendorBranchesRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'VendorBranchesRoute';
   static PageInfo page = PageInfo(
@@ -147,7 +147,7 @@ class _VendorBranchesRoute extends PageRouteInfo<void> {
 }
 
 class _SettingsRoute extends PageRouteInfo<void> {
-  const _SettingsRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'SettingsRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Text('Settings'));

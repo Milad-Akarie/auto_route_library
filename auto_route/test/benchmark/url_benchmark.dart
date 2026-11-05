@@ -51,7 +51,7 @@ void main() {
 
 /// Runs [onRun] against [matcher], reporting microseconds per run.
 class _Benchmark extends BenchmarkBase {
-  const _Benchmark(super.name, this.matcher, this.onRun);
+  const new(super.name, this.matcher, this.onRun);
 
   final RouteMatcher matcher;
   final Object? Function(RouteMatcher matcher) onRun;

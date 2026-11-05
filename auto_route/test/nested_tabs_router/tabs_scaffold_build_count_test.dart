@@ -39,7 +39,7 @@ void main() {
 var _bottomNavigationBuilds = 0;
 
 class _NavigationRoute extends PageRouteInfo<void> {
-  const _NavigationRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_NavigationRoute';
   static PageInfo page = PageInfo(
@@ -63,14 +63,14 @@ class _NavigationRoute extends PageRouteInfo<void> {
 }
 
 class _UsersRoute extends PageRouteInfo<void> {
-  const _UsersRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_UsersRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Text(name));
 }
 
 class _PostsRoute extends PageRouteInfo<void> {
-  const _PostsRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_PostsRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Text(name));

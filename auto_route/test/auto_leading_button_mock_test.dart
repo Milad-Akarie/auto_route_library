@@ -49,7 +49,7 @@ void main() {
 }
 
 class _MockStackRouter extends Fake implements StackRouter {
-  _MockStackRouter({required this.canPopValue});
+  new({required this.canPopValue});
 
   final bool canPopValue;
   int maybePopTopCalls = 0;

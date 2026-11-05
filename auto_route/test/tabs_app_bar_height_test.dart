@@ -31,7 +31,7 @@ void main() {
 }
 
 class _HostRoute extends PageRouteInfo<void> {
-  const _HostRoute({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
+  const new({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
 
   static const String name = 'HostRoute';
   static PageInfo page = PageInfo(
@@ -51,7 +51,7 @@ class _HostRoute extends PageRouteInfo<void> {
 }
 
 class _TabRoute extends PageRouteInfo<void> {
-  const _TabRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'TabRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Text('Tab'));

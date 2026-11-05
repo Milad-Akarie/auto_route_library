@@ -63,7 +63,7 @@ void main() {
 }
 
 class _SecondPage extends StatefulWidget {
-  const _SecondPage();
+  const new();
 
   @override
   State<_SecondPage> createState() => _SecondPageState();

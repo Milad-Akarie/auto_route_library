@@ -61,13 +61,13 @@ void main() {
 }
 
 class _SignInArgs {
-  const _SignInArgs(this.email);
+  const new(this.email);
 
   final String email;
 }
 
 class _SignInRoute extends PageRouteInfo<_SignInArgs> {
-  _SignInRoute({required String email}) : super(name, args: _SignInArgs(email));
+  new({required String email}) : super(name, args: _SignInArgs(email));
 
   static const String name = 'SignInRoute';
   static PageInfo page = PageInfo(

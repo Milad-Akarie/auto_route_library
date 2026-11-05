@@ -5,7 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../router_test_utils.dart';
 
 class _HomePage extends StatefulWidget {
-  const _HomePage();
+  const new();
 
   @override
   State<_HomePage> createState() => _HomePageState();

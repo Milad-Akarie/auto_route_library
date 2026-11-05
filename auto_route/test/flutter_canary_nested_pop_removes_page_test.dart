@@ -65,7 +65,7 @@ void main() {
 }
 
 class _PushObserver extends NavigatorObserver {
-  _PushObserver(this.pushed);
+  new(this.pushed);
 
   final List<String?> pushed;
 

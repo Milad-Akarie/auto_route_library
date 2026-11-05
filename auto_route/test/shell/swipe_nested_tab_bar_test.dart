@@ -68,5 +68,5 @@ void main() {
 PageInfo _page(String name) => .new(name, builder: (_) => Center(child: Text('$name page')));
 
 class _Route extends PageRouteInfo<void> {
-  const _Route(super.name);
+  const new(super.name);
 }

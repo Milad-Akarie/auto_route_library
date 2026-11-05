@@ -90,7 +90,7 @@ void main() {
 }
 
 class _TextConverter extends ParamConverter<String> {
-  const _TextConverter();
+  const new();
 
   @override
   String fromParam(String value) => value;

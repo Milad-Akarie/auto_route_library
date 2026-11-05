@@ -42,7 +42,7 @@ void main() {
 }
 
 class _DetailPage extends StatefulWidget {
-  const _DetailPage(this.events);
+  const new(this.events);
 
   final List<String> events;
 

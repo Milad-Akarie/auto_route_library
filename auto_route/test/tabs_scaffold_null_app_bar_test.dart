@@ -43,7 +43,7 @@ void main() {
 }
 
 class _TabsRoute extends PageRouteInfo<void> {
-  const _TabsRoute({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
+  const new({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
 
   static const String name = '_TabsRoute';
   static PageInfo page = PageInfo(
@@ -57,14 +57,14 @@ class _TabsRoute extends PageRouteInfo<void> {
 }
 
 class _ListRoute extends PageRouteInfo<void> {
-  const _ListRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_ListRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Text(name));
 }
 
 class _DetailRoute extends PageRouteInfo<void> {
-  const _DetailRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_DetailRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Text(name));

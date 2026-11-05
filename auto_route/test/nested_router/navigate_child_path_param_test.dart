@@ -89,14 +89,14 @@ PageInfo _page(String name) => .new(name, builder: (_) => Text(name));
 PageInfo _shell(String name) => .new(name, builder: (_) => const AutoRouter());
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'HomeRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Text('Home'));
 }
 
 class _AccountRoute extends PageRouteInfo<void> {
-  _AccountRoute({required String accountId, List<PageRouteInfo>? children})
+  new({required String accountId, List<PageRouteInfo>? children})
     : super(pageName, rawPathParams: {'accountId': accountId}, initialChildren: children);
 
   static const String pageName = 'AccountRoute';
@@ -112,7 +112,7 @@ class _AccountRoute extends PageRouteInfo<void> {
 }
 
 class _ContactRoute extends PageRouteInfo<void> {
-  _ContactRoute({required String contactId}) : super(pageName, rawPathParams: {'contactId': contactId});
+  new({required String contactId}) : super(pageName, rawPathParams: {'contactId': contactId});
 
   static const String pageName = 'ContactRoute';
   static PageInfo page = PageInfo(

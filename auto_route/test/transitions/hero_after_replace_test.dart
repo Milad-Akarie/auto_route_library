@@ -9,7 +9,7 @@ import '../no_op.dart';
 import '../router_test_utils.dart';
 
 class _Route extends PageRouteInfo<void> {
-  const _Route(super.name);
+  const new(super.name);
 }
 
 RootStackRouter _buildRouter() => .build(

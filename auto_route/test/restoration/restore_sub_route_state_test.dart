@@ -63,7 +63,7 @@ void main() {
 final _signUpPage = PageInfo('SignUpRoute', builder: (_) => const _SignUpPage());
 
 class _SignUpPage extends StatefulWidget {
-  const _SignUpPage();
+  const new();
 
   @override
   State<_SignUpPage> createState() => _SignUpPageState();

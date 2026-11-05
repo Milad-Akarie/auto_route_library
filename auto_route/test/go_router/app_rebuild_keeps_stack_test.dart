@@ -71,7 +71,7 @@ void main() {
 }
 
 class _AppSettings {
-  const _AppSettings({this.showPerformanceOverlay = false, this.showSemanticsDebugger = false, this.wrap = false});
+  const new({this.showPerformanceOverlay = false, this.showSemanticsDebugger = false, this.wrap = false});
 
   final bool showPerformanceOverlay;
   final bool showSemanticsDebugger;
@@ -79,7 +79,7 @@ class _AppSettings {
 }
 
 class _CountingPage extends StatefulWidget {
-  const _CountingPage({required this.onCreate});
+  const new({required this.onCreate});
 
   final VoidCallback onCreate;
 

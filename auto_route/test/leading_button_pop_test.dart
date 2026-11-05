@@ -89,7 +89,7 @@ void main() {
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_HomeRoute';
   static PageInfo page = PageInfo(
@@ -102,7 +102,7 @@ class _HomeRoute extends PageRouteInfo<void> {
 }
 
 class _VerifyRoute extends PageRouteInfo<void> {
-  const _VerifyRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_VerifyRoute';
   static PageInfo page = PageInfo(
@@ -115,7 +115,7 @@ class _VerifyRoute extends PageRouteInfo<void> {
 }
 
 class _UserRoute extends PageRouteInfo<void> {
-  const _UserRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_UserRoute';
   static PageInfo page = PageInfo(
@@ -128,7 +128,7 @@ class _UserRoute extends PageRouteInfo<void> {
 }
 
 class _ProfileRoute extends PageRouteInfo<void> {
-  const _ProfileRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_ProfileRoute';
   static PageInfo page = PageInfo(
@@ -145,7 +145,7 @@ class _ProfileRoute extends PageRouteInfo<void> {
 }
 
 class _PostsRoute extends PageRouteInfo<void> {
-  const _PostsRoute() : super(name);
+  const new() : super(name);
 
   static const String name = '_PostsRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Text(name));

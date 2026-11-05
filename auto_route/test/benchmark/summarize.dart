@@ -40,7 +40,7 @@ Map<String, List<double>> _read(List<String> paths) {
 }
 
 class _Stats {
-  _Stats(List<double> values)
+  new(List<double> values)
     : median = _median(values),
       lowest = values.reduce((a, b) => a < b ? a : b),
       highest = values.reduce((a, b) => a > b ? a : b),

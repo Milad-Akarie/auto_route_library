@@ -71,9 +71,9 @@ void main() {
 }
 
 class _ATab extends PageRouteInfo<void> {
-  const _ATab() : super('ATab');
+  const new() : super('ATab');
 }
 
 class _BTab extends PageRouteInfo<void> {
-  const _BTab() : super('BTab');
+  const new() : super('BTab');
 }

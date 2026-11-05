@@ -61,7 +61,7 @@ void main() {
 }
 
 class _HostRoute extends PageRouteInfo<void> {
-  const _HostRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'HostRoute';
   static PageInfo page = PageInfo(
@@ -79,19 +79,19 @@ class _HostRoute extends PageRouteInfo<void> {
 }
 
 class _ChannelRoute extends PageRouteInfo<_ChannelArgs> {
-  _ChannelRoute({required String channel}) : super(name, args: _ChannelArgs(channel));
+  new({required String channel}) : super(name, args: _ChannelArgs(channel));
 
   static const String name = 'ChannelRoute';
   static PageInfo page = PageInfo(name, builder: (data) => Text('Channel ${data.argsAs<_ChannelArgs>().channel}'));
 }
 
 class _ChannelArgs {
-  const _ChannelArgs(this.channel);
+  const new(this.channel);
   final String channel;
 }
 
 class _SelectionRoute extends PageRouteInfo<void> {
-  const _SelectionRoute() : super(name);
+  const new() : super(name);
 
   static const String name = 'SelectionRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const Text('Selection'));

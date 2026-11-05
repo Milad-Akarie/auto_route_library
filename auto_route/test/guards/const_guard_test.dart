@@ -17,7 +17,7 @@ void main() {
 }
 
 class _ConstGuard extends AutoRouteGuard {
-  const _ConstGuard();
+  const new();
 
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) => resolver.next();
