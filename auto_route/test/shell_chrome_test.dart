@@ -13,8 +13,8 @@ import 'router_test_utils.dart';
 // of the shell was wrong after push and pop.
 // Setup: a shell '/app' with a nav bar and nested pages 'users' > ':id', and
 // a sibling page '/settings' outside the shell.
-// Steps: push pages in the shell's router, replace one, push from the root,
-// pop each, and open the shell from '/settings'.
+// Steps: push pages in the shell's router, replace one, push from the
+// root, pop each, and open the shell from '/settings'.
 // Should: pages in the shell's router show the bar, pages pushed on the root
 // cover it, a replace in the shell keeps it, and the route data matches the
 // visible page every time.

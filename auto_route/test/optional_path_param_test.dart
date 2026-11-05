@@ -6,8 +6,8 @@ import 'package:material_ui/material_ui.dart';
 
 import 'router_test_utils.dart';
 
-// flutter/flutter#106014: go_router_builder force-cast a nullable path param,
-// `consoleId!`, to build the location of a route pushed without it, and
+// flutter/flutter#106014: go_router_builder force-cast a nullable path
+// param, `consoleId!`, to build the location of a route pushed without it, and
 // crashed. auto_route reads a nullable `@PathParam() int? consoleId` with
 // `pathParams.optInt` and leaves a missing one out of the url. A path
 // segment can't be optional (go_router's `:id?`): a link without it doesn't

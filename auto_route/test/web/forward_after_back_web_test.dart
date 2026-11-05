@@ -15,8 +15,8 @@ void main() {
   useRealBrowserHistory();
   setUp(rewindBrowserHistory);
 
-  // flutter/flutter#147229: in go_router, with pushes reflected in the url,
-  // the browser's forward button after back threw "Location cannot be
+  // flutter/flutter#147229: in go_router, with pushes reflected in the
+  // url, the browser's forward button after back threw "Location cannot be
   // empty". auto_route always puts a pushed page in the url.
   // Steps: push SecondHostRoute, push SecondNested2Route in its nested
   // router, press the browser's back button, then its forward button.

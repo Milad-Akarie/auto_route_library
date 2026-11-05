@@ -15,8 +15,8 @@ import '../router_test_utils.dart';
 // Steps, on iOS so pages slide: open Home, then a shell whose nested router holds S1 and S2. From
 // inside the nested router, call pushAndPopUntil(Done, scopedPopUntil: false)
 // with Done a root route.
-// Should: with a predicate that keeps Home, the nested pages and the shell go,
-// leaving Home and Done. With one that keeps S1, only S2 goes: the root keeps
+// Should: with a predicate that keeps Home, the nested pages and the shell
+// go, leaving Home and Done. With one that keeps S1, only S2 goes: the root keeps
 // Home and the shell, which holds S1, and Done goes on top. Back retraces it.
 // Happened: S2 animated out and observers heard it popped, not removed; and
 // when the shell went too, its nested router was emptied first, so one frame

@@ -7,8 +7,8 @@ import 'package:material_ui/material_ui.dart';
 import '../router_test_utils.dart';
 
 // https://github.com/Milad-Akarie/auto_route_library/issues/1088
-// Steps: push a native route with router.pushNativeRoute over the root page,
-// then call navigate to the root page.
+// Steps: push a native route with router.pushNativeRoute over the root
+// page, then call navigate to the root page.
 // Reported: nothing happens, and the native route stays.
 // Should: the native route goes and the root page shows. popTop pops it too.
 void main() {

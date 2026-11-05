@@ -7,8 +7,8 @@ import 'package:material_ui/material_ui.dart';
 import '../router_test_utils.dart';
 
 // Found while moving the package to very_good_analysis; no upstream issue.
-// Steps: start on HomeRoute, then `await router.pushAll([ListRoute(),
-// CheckoutRoute()])`, where CheckoutRoute's guard decides later, such as
+// Steps: start on HomeRoute, then `await
+// router.pushAll([ListRoute(), CheckoutRoute()])`, where CheckoutRoute's guard decides later, such as
 // after a sign-in check.
 // Happens: the future completes at once, before the guard has decided, so
 // code after the await sees the old stack and can't tell whether the routes

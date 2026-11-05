@@ -18,8 +18,8 @@ import 'no_op.dart';
 // back: the flicker. auto_route worked around it by removing the page from
 // its stack as soon as the pop was invoked, in AutoRoutePage.onPopInvoked
 // (lib/src/router/auto_route_page.dart). Flutter fixed it in 3.44.0
-// (flutter/flutter#182315): onDidRemovePage now runs during the pop itself,
-// so the workaround is gone and AutoRouteNavigator's onDidRemovePage removes
+// (flutter/flutter#182315): onDidRemovePage now runs during the pop
+// itself, so the workaround is gone and AutoRouteNavigator's onDidRemovePage removes
 // the page. This test pins that fix. If it fails after a Flutter upgrade, the
 // bug is back: restore the workaround, calling `router.onPopPage(this)` from
 // onPopInvoked when the router is a StackRouter.

@@ -14,8 +14,8 @@ void main() {
   // Steps: push ItemRoute with args 'first'; its guard either calls
   // overrideNext(args: 'override') or redirects with redirectUntil(LoginRoute)
   // and lets ItemRoute through once LoginRoute calls next().
-  // Should: overrideNext builds ItemRoute with 'override'; after the redirect,
-  // ItemRoute builds with its own args 'first'.
+  // Should: overrideNext builds ItemRoute with 'override'; after the
+  // redirect, ItemRoute builds with its own args 'first'.
   testWidgets('overrideNext(args:) builds the page with the new args (flutter/flutter#146616)', (tester) async {
     final router = RootStackRouter.build(
       routes: [

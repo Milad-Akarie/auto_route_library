@@ -12,8 +12,8 @@ import '../router_test_utils.dart';
 // flutter/flutter#118856: on Android, with a Router nested in a page of the
 // root Router, pressing the hardware back button twice quickly gave another
 // result than pressing it twice slowly.
-// Steps: a host page whose nested router has [A, B, C]; press back twice,
-// once with no frame between the presses (each press its own platform
+// Steps: a host page whose nested router has [A, B, C]; press back
+// twice, once with no frame between the presses (each press its own platform
 // message, as Android sends them) and once letting each settle.
 // Should: both pop B and C, leaving A in the nested router and the host page
 // open.

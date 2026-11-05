@@ -26,8 +26,8 @@ RootStackRouter _router(Widget Function(List<PageRouteInfo> routes) tabs) {
 }
 
 // https://github.com/Milad-Akarie/auto_route_library/issues/1149 and #1150
-// Steps: build AutoTabsRouter.pageView or .tabBar with scrollDirection,
-// physics or a zero duration, then drag or go to another tab.
+// Steps: build AutoTabsRouter.pageView or .tabBar with
+// scrollDirection, physics or a zero duration, then drag or go to another tab.
 // Reported: the options were missing, or animatePageTransition did nothing.
 // Should: scrollDirection and physics reach the view, and a zero duration
 // shows the new tab at once, without an animation.

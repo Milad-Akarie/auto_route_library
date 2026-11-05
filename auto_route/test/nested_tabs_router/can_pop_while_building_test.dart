@@ -6,8 +6,8 @@ import 'package:material_ui/material_ui.dart';
 
 import '../router_test_utils.dart';
 
-// flutter/flutter#119677: canPop() called while the shell builds its app bar,
-// on the first frame, threw "Unexpected null value".
+// flutter/flutter#119677: canPop() called while the shell builds its app
+// bar, on the first frame, threw "Unexpected null value".
 // Steps: the first page is an AutoTabsScaffold whose appBarBuilder calls
 // canPop on the tabs router and on the root router. canPop should return
 // false on a lone tab page without throwing, and true once a page is pushed

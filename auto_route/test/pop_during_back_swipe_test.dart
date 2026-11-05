@@ -14,8 +14,8 @@ import 'back_test_utils.dart';
 // Steps: on iOS, stack [P1, P2, P3]; start a swipe from the left edge on
 // P3 and hold it; the app pops (maybePop, pop, or a system back); let go of
 // the swipe short of or past the middle; then swipe back once more.
-// Should: the held swipe and the pop together pop one page, nothing throws,
-// and the next swipe pops P2.
+// Should: the held swipe and the pop together pop one page, nothing
+// throws, and the next swipe pops P2.
 void main() {
   final pops = <String, void Function(WidgetTester, StackRouter)>{
     'maybePop': (_, router) => unawaited(router.maybePop()),

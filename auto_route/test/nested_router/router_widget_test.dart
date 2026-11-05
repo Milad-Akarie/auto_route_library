@@ -226,8 +226,8 @@ void main() {
   );
 
   // Reproduction for https://github.com/Milad-Akarie/auto_route_library/pull/2086
-  // Steps: push SecondHostRoute (its nested router shows SecondNested1Route),
-  // remove that last nested page so the nested router has no pages left,
+  // Steps: push SecondHostRoute (its nested router shows
+  // SecondNested1Route), remove that last nested page so the nested router has no pages left,
   // then call maybePop on the nested router (what a back press does).
   // Happens: maybePop returns false and SecondHostRoute stays on screen, so a
   // back press would close the app.

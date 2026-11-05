@@ -9,8 +9,8 @@ import '../router_test_utils.dart';
 // flutter/flutter#157298: a stateful shell route inside another did not
 // keep the inner branches' state when the outer branch changed.
 // Setup: outer tabs A and B; B hosts inner tabs C and D.
-// Steps: in B, open D and push a page in it; switch the outer tab to A,
-// then back to B.
+// Steps: in B, open D and push a page in it; switch the outer tab to
+// A, then back to B.
 // Should: D is still the inner tab, the pushed page is still above it, and
 // nothing was built a second time.
 void main() {

@@ -8,8 +8,8 @@ import '../router_test_utils.dart';
 
 // https://github.com/flutter/flutter/issues/148768
 // Setup: a home page holding tabs and a loading page, both at the root.
-// Steps: the home page replaces the stack with the loading page; 50 ms later,
-// while the home page is still animating out, the loading page goes back to
+// Steps: the home page replaces the stack with the loading page; 50 ms
+// later, while the home page is still animating out, the loading page goes back to
 // the home page.
 // Should: no duplicate GlobalKey error; the home page and its tab show again.
 void main() {

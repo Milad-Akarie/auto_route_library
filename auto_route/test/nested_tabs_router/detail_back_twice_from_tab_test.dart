@@ -10,12 +10,9 @@ import '../router_test_utils.dart';
 
 void main() {
   // https://github.com/Milad-Akarie/auto_route_library/issues/1404
-  // Reported: opening a detail page from a tab and going back worked once;
-  // the second time back ended on '/home' with an empty page.
-  // Steps: guarded HomeRoute '/home' (maintainState) hosts LibraryRoute,
-  // whose tabs are Tab1Route and Tab2Route, both reached through
-  // RedirectRoutes; a guarded root route
-  // '/home/library/:libraryType/meetings/:meetingId' with usesPathAsKey.
+  // Reported: opening a detail page from a tab and going back worked once, the second time back ended on '/home' with an empty page.
+  // Steps: guarded HomeRoute '/home' (maintainState) hosts LibraryRoute, whose tabs are Tab1Route and Tab2Route, both reached through
+  // RedirectRoutes, and a guarded root route '/home/library/:libraryType/meetings/:meetingId' with usesPathAsKey.
   // From Tab1Route navigate to the detail page and back() three times.
   // Should: each back shows Tab1Route at '/home/library/tab1'.
   testWidgets('Going back from a detail page opened from a tab returns to the tab every time', (tester) async {

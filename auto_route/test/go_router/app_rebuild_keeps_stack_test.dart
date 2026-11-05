@@ -16,8 +16,8 @@ void main() {
   };
 
   for (final MapEntry(key: change, value: settings) in changes.entries) {
-    // Steps: MaterialApp.router(routerConfig:) shows ARoute; push BRoute;
-    // rebuild the app with $change changed, then back again.
+    // Steps: MaterialApp.router(routerConfig:) shows ARoute; push
+    // BRoute; rebuild the app with $change changed, then back again.
     // Should: the stack stays [ARoute, BRoute], ARoute's state is not
     // created again, and going back shows ARoute.
     testWidgets('changing MaterialApp.router $change keeps the stack', (tester) async {

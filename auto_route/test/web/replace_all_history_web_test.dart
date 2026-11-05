@@ -15,8 +15,8 @@ void main() {
 
   setUp(rewindBrowserHistory);
 
-  // flutter/flutter#169481: on an iPhone home screen web app, the edge swipe,
-  // the browser's back step, went back to the page left with go().
+  // flutter/flutter#169481: on an iPhone home screen web app, the edge
+  // swipe, the browser's back step, went back to the page left with go().
   // Open FirstRoute, replaceAll with SecondRoute, then replaceAll with
   // FirstRoute: each replaces the browser's entry, so no back step leads to
   // the page left. navigate() adds an entry, as a link does.

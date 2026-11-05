@@ -43,8 +43,8 @@ void main() {
       tabsRouter.stackRouterOfIndex(i)?.stack.map((p) => p.name).join(', ') ?? '-',
   ];
 
-  // Found while settling https://github.com/Milad-Akarie/auto_route_library/issues/1874;
-  // no upstream report of its own.
+  // Found while settling
+  // https://github.com/Milad-Akarie/auto_route_library/issues/1874; no upstream report of its own.
   // Steps: /dashboard has the children tests (a nested router holding test1
   // and test2) and test3. Its AutoTabsRouter has routes [Test1Route(),
   // Test2Route(), Test3Route()], so the first two tabs are both the tests
@@ -103,8 +103,8 @@ void main() {
     expect(find.text(_Test2Route.name), findsOneWidget);
     expect(router.urlState.url, '/dashboard/tests/test2');
     expect(tabStacks(), [_Test1Route.name, _Test2Route.name, '-']);
-    // On web, back moves the browser, whose history this runner doesn't keep;
-    // the integration test goes back there with the browser's back button.
+    // On web, back moves the browser, whose history this runner doesn't
+    // keep; the integration test goes back there with the browser's back button.
   }, skip: kIsWeb);
 }
 

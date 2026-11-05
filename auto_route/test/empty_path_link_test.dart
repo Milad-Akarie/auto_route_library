@@ -8,8 +8,8 @@ import 'router_test_utils.dart';
 import 'simple_router/router.dart';
 import 'universal_link_test.dart' show sendPlatformLink;
 
-// flutter/flutter#132044: a link with no path, such as myapp://com.example.app,
-// threw while the app was in the background, where the reporter wanted the
+// flutter/flutter#132044: a link with no path, such as
+// myapp://com.example.app, threw while the app was in the background, where the reporter wanted the
 // app brought to the front where it was.
 // Open FirstRoute, push SecondRoute, then send myapp://com.example.app from
 // the platform. It opens '/', as a link to myapp://com.example.app/ does, with

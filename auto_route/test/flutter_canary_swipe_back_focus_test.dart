@@ -7,8 +7,8 @@ import 'package:material_ui/material_ui.dart';
 import 'router_test_utils.dart';
 
 // Canary for Flutter bug https://github.com/flutter/flutter/issues/95656.
-// Setup, as in the Flutter report, on iOS: HomeRoute has a TextField;
-// SecondRoute and NextRoute have none. Plain Flutter behaves the same.
+// Setup, as in the Flutter report, on iOS: HomeRoute has a
+// TextField; SecondRoute and NextRoute have none. Plain Flutter behaves the same.
 // Steps: tap the field, push SecondRoute, push NextRoute, then swipe back
 // from the left edge to SecondRoute.
 // Today, once the swipe starts, the top route stops accepting focus, and

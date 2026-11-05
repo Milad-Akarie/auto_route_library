@@ -119,7 +119,7 @@ void main() {
     expect(expected, ['HomeRoute']);
     expect(await stackAfterPush((r) => r.nextOrBack(false)), expected);
     expect(await stackAfterPush((r) => r.nextOrBack()), ['HomeRoute', 'ListRoute', 'GuardedRoute']);
-    // On web, back() asks the browser to go back, which the headless test page never follows;
-    // test/web/history_before_app_web_test.dart covers back() there.
+    // On web, back() asks the browser to go back, which the headless test page never
+    // follows; test/web/history_before_app_web_test.dart covers back() there.
   }, skip: kIsWeb);
 }

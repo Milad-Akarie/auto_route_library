@@ -19,8 +19,8 @@ import 'main_router.dart';
 // Should: it runs once per back, with didPop true when the page is popped
 // and false when PopScope blocks it.
 // Already works on dev, on every way back. The report came from auto_route
-// 9, whose Navigator took pops through the deprecated onPopPage callback;
-// dev uses onDidRemovePage (since upstream 7dbb9b4). That change is the
+// 9, whose Navigator took pops through the deprecated onPopPage
+// callback; dev uses onDidRemovePage (since upstream 7dbb9b4). That change is the
 // likely fix, not a confirmed one.
 void main() {
   late RootStackRouter router;

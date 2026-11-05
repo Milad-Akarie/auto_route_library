@@ -7,8 +7,8 @@ import '../main_router.dart';
 import '../router_test_utils.dart';
 import 'router.dart';
 
-// flutter/flutter#172026: an app widget that rebuilt after its first frame,
-// as one under a state management scope does, lost the page the browser was
+// flutter/flutter#172026: an app widget that rebuilt after its first
+// frame, as one under a state management scope does, lost the page the browser was
 // refreshed on: the router went back to its first page.
 void main() {
   // The app keeps one router and calls router.config() in every build.

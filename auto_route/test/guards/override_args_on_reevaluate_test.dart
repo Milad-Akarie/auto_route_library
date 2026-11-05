@@ -13,8 +13,8 @@ import '../router_test_utils.dart';
 // resolver.overrideNext(args: ProfileArgs(userId: 'guest')).
 // Was: the profile page still showed 'u-1'. The re-check added the page back
 // as it was, built from the old args.
-// Should: the profile page shows 'guest', in its place under SettingsRoute,
-// and keeps its state.
+// Should: the profile page shows 'guest', in its place under
+// SettingsRoute, and keeps its state.
 void main() {
   setUp(() => _profileStates = 0);
 

@@ -53,8 +53,8 @@ void main() {
     semantics.dispose();
   });
 
-  // https://github.com/flutter/flutter/issues/78692: in MaterialApp.router,
-  // two labeled Semantics in a Stack merged into one node when the delegate
+  // https://github.com/flutter/flutter/issues/78692: in
+  // MaterialApp.router, two labeled Semantics in a Stack merged into one node when the delegate
   // built them without a Navigator around them.
   // Steps: a page of a Stack holding Semantics(label: 'c1') and
   // Semantics(label: 'c2'), shown through auto_route's delegate.

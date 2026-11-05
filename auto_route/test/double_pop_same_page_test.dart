@@ -14,8 +14,8 @@ void main() {
   // Steps: push FirstRoute, SecondRoute and ThirdRoute; in one frame pop
   // ThirdRoute with Navigator.pop('swipe') and report its pop again with
   // onPopInvoked('again').
-  // Should: no error, ThirdRoute's push future completes once with 'swipe',
-  // and only ThirdRoute closes.
+  // Should: no error, ThirdRoute's push future completes once with
+  // 'swipe', and only ThirdRoute closes.
   testWidgets('Two pops of the same page in one frame complete its push future once (flutter/flutter#187326)', (
     tester,
   ) async {

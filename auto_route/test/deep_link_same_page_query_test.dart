@@ -9,8 +9,8 @@ import 'universal_link_test.dart' show sendPlatformLink;
 
 void main() {
   // https://github.com/Milad-Akarie/auto_route_library/issues/608
-  // Reported: a deep link to the page already open, with new query params,
-  // as '/login?otp=1' then '/login?otp=2', had no effect.
+  // Reported: a deep link to the page already open, with new query
+  // params, as '/login?otp=1' then '/login?otp=2', had no effect.
   // Steps: send '/login?otp=1', then '/login?otp=2' from the platform, then
   // navigatePath('/login?otp=3').
   // Should: the open LoginRoute shows each new otp and the url carries it.

@@ -10,8 +10,8 @@ import 'back_test_utils.dart';
 // flutter/flutter#83183: on Android, with a theme whose page transitions are
 // CupertinoPageTransitionsBuilder, an edge swipe back made the next page
 // transitions fall back to Flutter's default for Android.
-// Steps: Android theme with the Cupertino builder for every platform; push P2,
-// swipe back from the left edge, then push P2 again.
+// Steps: Android theme with the Cupertino builder for every platform; push
+// P2, swipe back from the left edge, then push P2 again.
 // Should: the swipe pops P2, and the second push slides in with the
 // Cupertino transition again.
 void main() {

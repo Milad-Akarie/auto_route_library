@@ -11,8 +11,8 @@ void main() {
   // Reported: calling router.pushAndPopUntil(LoginRoute(), predicate: (_) =>
   // false) from a guard on cold start, before any page showed, threw
   // "setState() or markNeedsBuild() called during build".
-  // Steps: the first page's guard calls pushAndPopUntil(LoginRoute(),
-  // predicate: (_) => false) and leaves its resolver waiting.
+  // Steps: the first page's guard calls
+  // pushAndPopUntil(LoginRoute(), predicate: (_) => false) and leaves its resolver waiting.
   // Should: no error, and LoginRoute shows alone.
   testWidgets('pushAndPopUntil from the guard of the first page on cold start shows the page', (tester) async {
     final router = RootStackRouter.build(

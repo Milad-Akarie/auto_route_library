@@ -8,8 +8,8 @@ void main() {
   // https://github.com/Milad-Akarie/auto_route_library/issues/1061
   // Reported: with AutoTabsRouter.tabBar and a BottomNavigationBar, taps on
   // the bar during the tab animation were ignored until it ended.
-  // Steps: tap the second item, 50ms later the fourth, 50ms later the third;
-  // then the first and, 30ms later, the second.
+  // Steps: tap the second item, 50ms later the fourth, 50ms later the
+  // third; then the first and, 30ms later, the second.
   // Should: each time the last tap wins: its tab is active and on screen.
   testWidgets('Taps on a bottom bar while the tab bar animates switch to the last tapped tab', (tester) async {
     const names = ['Tab1Route', 'Tab2Route', 'Tab3Route', 'Tab4Route'];

@@ -4,8 +4,8 @@ import 'package:material_ui/material_ui.dart';
 
 import 'router_test_utils.dart';
 
-// flutter/flutter#93295: a link whose query holds an unencoded url,
-// demoapp://dl.demo.app/passwordless?token=abc123&targetRoute=demoapp://dl.demo.app/passwordless.
+// flutter/flutter#93295: a link whose query holds an unencoded
+// url, demoapp://dl.demo.app/passwordless?token=abc123&targetRoute=demoapp://dl.demo.app/passwordless.
 // On an Android cold start the engine handed the Router four links, cut
 // after 'demoapp:', 'demoapp:/', 'demoapp://dl.demo.app' and in full, and
 // the app stacked four pages. That split is Android's, before Dart sees the

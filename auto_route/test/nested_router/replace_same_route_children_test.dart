@@ -39,8 +39,8 @@ void main() {
   // Reported by the c3 triage chat while it wrote guard tests for go_router
   // issues. Steps: at '/', push AppRoute(children: [UsersRoute]); then replace
   // it with AppRoute(children: [OtherRoute]).
-  // Reported: the shell stays on UsersRoute and the url on '/app/users',
-  // while push, navigate and replaceAll open '/app/other'. Once #1363 opened
+  // Reported: the shell stays on UsersRoute and the url on
+  // '/app/users', while push, navigate and replaceAll open '/app/other'. Once #1363 opened
   // the new children, UsersRoute stayed in the shell under OtherRoute.
   // Should: the shell shows OtherRoute alone, as a new shell would, and the
   // url is '/app/other'.

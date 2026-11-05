@@ -26,8 +26,8 @@ PageInfo _pushing(String name, {String? to}) => .new(
 // pushed itself again.
 // Steps: a tab page pushes SearchRoute, which lives outside the tabs; the
 // search page pushes SearchRoute again.
-// Should: both searches are in the root stack above the tabs, no exception,
-// and back returns to the tabs.
+// Should: both searches are in the root stack above the tabs, no
+// exception, and back returns to the tabs.
 void main() {
   testWidgets('A tab page pushes a page outside the tabs, which pushes itself again (flutter/flutter#156585)', (
     tester,

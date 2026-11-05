@@ -8,8 +8,8 @@ import '../router_test_utils.dart';
 // Setup: a page holds swipeable tabs, each tab with its own stack, none but
 // the first opened yet.
 // Steps: drag the tab view toward the second tab, then let go.
-// Should: the second tab's page shows while dragging and after the swipe,
-// never blank space.
+// Should: the second tab's page shows while dragging and after the
+// swipe, never blank space.
 void main() {
   for (final (kind, tabsRouter) in [
     ('AutoTabsRouter.tabBar', () => AutoTabsRouter.tabBar(routes: _kTabs, builder: (context, child, _) => child)),

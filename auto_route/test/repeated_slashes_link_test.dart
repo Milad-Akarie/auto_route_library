@@ -5,8 +5,8 @@ import 'package:material_ui/material_ui.dart';
 import 'build_counts.dart';
 import 'universal_link_test.dart' show sendPlatformLink;
 
-// flutter/flutter#150666: a link with repeated slashes, such as /items///1,
-// matched no route.
+// flutter/flutter#150666: a link with repeated slashes, such as
+// /items///1, matched no route.
 // Open the app at /items///1, and send /items//1// while it runs: each opens
 // the item page for '1', at the url /items/1.
 void main() {

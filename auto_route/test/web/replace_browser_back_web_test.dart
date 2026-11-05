@@ -19,8 +19,8 @@ void main() {
   // a page left with pushReplacement. go_router closed it as intended: its
   // replace adds a browser entry. auto_route's replace takes the browser entry
   // of the page it replaces.
-  // Steps: open FirstRoute, push SecondRoute, replace it with ThirdRoute,
-  // then press the browser back button.
+  // Steps: open FirstRoute, push SecondRoute, replace it with
+  // ThirdRoute, then press the browser back button.
   // Should: back shows FirstRoute, not SecondRoute.
   testWidgets('On web, the browser back button after replace skips the replaced page (flutter/flutter#128334)', (
     tester,
@@ -43,8 +43,8 @@ void main() {
   // then go() home, the browser back button returned to the second page.
   // go_router closed it as intended: go() adds a browser entry, as
   // auto_route's navigate() does. replaceAll() takes the current entry.
-  // Steps: open FirstRoute, push SecondRoute, replaceAll with FirstRoute,
-  // then press the browser back button.
+  // Steps: open FirstRoute, push SecondRoute, replaceAll with
+  // FirstRoute, then press the browser back button.
   // Should: back stays on FirstRoute at '/'; SecondRoute doesn't come back.
   testWidgets('On web, the browser back button after replaceAll home skips the page left (flutter/flutter#149585)', (
     tester,

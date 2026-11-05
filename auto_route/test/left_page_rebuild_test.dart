@@ -43,8 +43,8 @@ void main() {
     ('navigate', () => router.navigate(const SecondRoute())),
     ('push', () => router.push(const SecondRoute())),
   ]) {
-    // Steps: open A, whose build reads context.routeData and context.router,
-    // then go to B with [label].
+    // Steps: open A, whose build reads context.routeData and
+    // context.router, then go to B with [label].
     // Should: A is not built again once B is shown.
     testWidgets('A page reading the router in build is not built again after $label to another page', (tester) async {
       await pumpRouterApp(tester, router);

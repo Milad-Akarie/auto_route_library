@@ -39,8 +39,8 @@ void main() {
     expect(builds, {'ParentRoute': 1, 'ChildRoute': 1});
   });
 
-  // Steps: with maintainState: false on the parent, open the app at '/1',
-  // then go back.
+  // Steps: with maintainState: false on the parent, open the app at
+  // '/1', then go back.
   // Should: the parent is in the stack but does not build until back shows
   // it, then builds once.
   testWidgets('A deep link does not build a parent with maintainState false until back shows it', (tester) async {

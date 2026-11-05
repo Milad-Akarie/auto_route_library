@@ -9,8 +9,8 @@ import 'router_test_utils.dart';
 
 void main() {
   // Reproduces flutter/flutter#99577 in auto_route terms.
-  // Steps: open Home, push Modal1, then Modal2, both full screen dialogs;
-  // press Android back.
+  // Steps: open Home, push Modal1, then Modal2, both full screen
+  // dialogs; press Android back.
   // Happens in go_router: Modal1 and Modal2 build again on the back.
   // Should: Modal2 closes; Home and Modal1 don't build again.
   testWidgets('System back over two modal pages builds none of them again (flutter/flutter#99577)', (tester) async {

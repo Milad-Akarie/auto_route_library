@@ -12,8 +12,8 @@ import '../back_test_utils.dart';
 // app's first page holds an AutoTabsRouter with a books tab and a profile
 // tab, each with its own stack (a list and a details page, a profile and a
 // my-books page).
-// Steps: push a page in one tab, switch tabs, and go back: system back,
-// Android's predictive back gesture, or the iOS edge swipe.
+// Steps: push a page in one tab, switch tabs, and go back: system
+// back, Android's predictive back gesture, or the iOS edge swipe.
 // Happens: back acts on a hidden tab. On a tab at its first page, Flutter
 // tells Android the app handles back, and back pops the other tab's page
 // out of sight instead of leaving the app; predictive back on a tab with a

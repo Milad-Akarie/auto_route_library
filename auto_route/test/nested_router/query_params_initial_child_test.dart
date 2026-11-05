@@ -8,8 +8,8 @@ import '../router_test_utils.dart';
 
 void main() {
   // https://github.com/Milad-Akarie/auto_route_library/issues/1089
-  // Reported: the query params of a url reached the parent route,
-  // 'comments/:objectId', but not its initial child.
+  // Reported: the query params of a url reached the parent
+  // route, 'comments/:objectId', but not its initial child.
   // Steps: CommentsRoutedRoute 'comments/:objectId' hosts a router whose
   // initial child is CommentsRoute; navigatePath('/comments/5?objectType=spot').
   // Should: CommentsRoute gets objectType 'spot' and the path param 5.

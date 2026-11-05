@@ -11,8 +11,8 @@ import '../router_test_utils.dart';
 // page with an id.
 // Steps: push details 1 in tab 0; in the same frame pop it and switch to tab
 // 1; switch back to tab 0; push details 2, then pop it.
-// Should: tab 0 shows its home page each time; details 1 never comes back;
-// each push future completes once, with no "Future already completed".
+// Should: tab 0 shows its home page each time; details 1 never comes
+// back; each push future completes once, with no "Future already completed".
 void main() {
   for (final (how, pop) in [
     ('Navigator.pop', (WidgetTester tester) => Navigator.of(tester.element(find.text('Details 1'))).pop()),

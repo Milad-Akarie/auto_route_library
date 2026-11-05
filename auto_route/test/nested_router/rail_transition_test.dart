@@ -8,8 +8,8 @@ import '../router_test_utils.dart';
 
 // flutter/flutter#112565: with a shell route around a NavigationRail, the
 // page transition animated over the rail instead of beside it.
-// Steps: a host page with a rail on the left and a nested router beside it;
-// navigate from 'library' to 'settings' and look at the frames in between.
+// Steps: a host page with a rail on the left and a nested router beside
+// it; navigate from 'library' to 'settings' and look at the frames in between.
 // Should: the nested navigator stays right of the rail and clips its pages
 // there, and the rail doesn't move.
 void main() {

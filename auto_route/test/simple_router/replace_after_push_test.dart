@@ -9,8 +9,8 @@ import '../router_test_utils.dart';
 // flutter/flutter#111356: after a page was pushed, replacing it with itself
 // played a page transition.
 // Steps: push DayRoute(1), then replace it with DayRoute(2).
-// Should: the page updates in place: same page, no second page in the tree,
-// no transition.
+// Should: the page updates in place: same page, no second page in the
+// tree, no transition.
 void main() {
   testWidgets('Replacing a pushed page with itself updates it in place', (tester) async {
     final router = RootStackRouter.build(

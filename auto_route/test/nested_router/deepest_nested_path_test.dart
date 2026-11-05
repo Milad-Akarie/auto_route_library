@@ -14,8 +14,8 @@ void main() {
   // popped it after a few seconds.
   // Steps: AuthWrapperRoute '/home_screen' is a router; its child
   // DrugDatabaseRoute hosts a router of AddDrugTemplateRoute and
-  // AddCriTemplateRoute. navigatePath to the deepest page, wait 3 seconds;
-  // then pushPath to its sibling and wait again.
+  // AddCriTemplateRoute. navigatePath to the deepest page, wait 3
+  // seconds; then pushPath to its sibling and wait again.
   // Should: each page stays, with its full path in the url.
   testWidgets('A page three levels deep stays open with its full path', (tester) async {
     final router = RootStackRouter.build(

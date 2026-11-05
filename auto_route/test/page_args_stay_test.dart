@@ -11,8 +11,8 @@ import 'router_test_utils.dart';
 // after a tab branch rebuilt, or was lost when a refresh ran the redirect.
 // Setup: a shell route with two nested pages that take args, and a tabs
 // router whose tab B takes args.
-// Steps: open the parent with args 'p', push the child with args 'c', go back;
-// open tab B with args, switch to tab A and back, and run the guards again.
+// Steps: open the parent with args 'p', push the child with args 'c', go
+// back; open tab B with args, switch to tab A and back, and run the guards again.
 // Should: each page keeps its own args, and the tab page is built once.
 final _builds = <String>[];
 

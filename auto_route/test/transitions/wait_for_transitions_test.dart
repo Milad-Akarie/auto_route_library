@@ -66,8 +66,8 @@ Future<double> _pumpUntilDone(WidgetTester tester, Future<void> done, String nam
 
 void main() {
   // https://github.com/flutter/flutter/issues/162789, asked of go_router.
-  // Asked: code that pushes a page can wait until its transition has ended,
-  // for example to open a bottom sheet over it, which a transition still
+  // Asked: code that pushes a page can wait until its transition has
+  // ended, for example to open a bottom sheet over it, which a transition still
   // running would close. The push future completes only when the page is
   // popped.
   // Steps: push ARoute without awaiting it, then await

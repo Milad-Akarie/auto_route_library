@@ -9,8 +9,8 @@ void main() {
   // In go_router, a DropdownMenu on a page inside a ShellRoute whose builder
   // put a 300 px side nav beside the shell's navigator opened its menu 300 px
   // to the left of the field.
-  // Steps: ShellRoute shows a 300 px side nav beside its nested AutoRouter;
-  // the nested router's page holds a DropdownMenu; open it.
+  // Steps: ShellRoute shows a 300 px side nav beside its nested
+  // AutoRouter; the nested router's page holds a DropdownMenu; open it.
   // Should: the menu opens under the field, aligned with its left edge.
   testWidgets('A DropdownMenu in a nested router beside a side nav opens under its field (flutter/flutter#161893)', (
     tester,

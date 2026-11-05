@@ -9,8 +9,8 @@ import 'router.dart';
 
 // These tests check the native history, whose length shrinks when an entry is
 // dropped. On web the history is the browser's own, which keeps every entry and
-// isn't connected in the default headless test setup, so they're skipped there;
-// test/web/pop_and_back_web_test.dart covers #1839 against the real browser history.
+// isn't connected in the default headless test setup, so they're skipped
+// there; test/web/pop_and_back_web_test.dart covers #1839 against the real browser history.
 void main() {
   late SimpleRouter router;
   setUp(() {

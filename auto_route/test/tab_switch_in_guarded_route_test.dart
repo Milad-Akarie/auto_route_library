@@ -8,8 +8,8 @@ import 'router_test_utils.dart';
 
 // flutter/flutter#117680: in go_router, context.go from a tab inside a shell
 // ran the top-level redirect again and sent the user to the wrong place.
-// Setup: a signed-in app whose '/app' route has a guard that lets the user in,
-// and tabs 'home' and 'profile' inside it.
+// Setup: a signed-in app whose '/app' route has a guard that lets the user
+// in, and tabs 'home' and 'profile' inside it.
 // Steps: open '/app', switch tabs with navigate and with setActiveIndex.
 // Should: each switch shows the tab asked for, at its url, and no redirect
 // takes the user elsewhere. A navigate to a url inside '/app' asks its guard

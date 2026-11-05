@@ -35,8 +35,8 @@ const List<PageRouteInfo> _kTabs = [NamedRoute('Tab1Route'), NamedRoute('Tab2Rou
 void main() {
   // Steps: push TabsHostRoute, whose page holds an AutoTabsRouter.tabBar
   // showing an AutoTabView, switch tabs, then pop the host.
-  // Happened: the PageController the AutoTabView creates stayed undisposed,
-  // one more on each visit.
+  // Happened: the PageController the AutoTabView creates stayed
+  // undisposed, one more on each visit.
   // Should: popping the host disposes it.
   testWidgets('Popping an AutoTabView disposes its PageController', (tester) async {
     final router = _buildRouter(
@@ -71,10 +71,9 @@ void main() {
     expect(pageControllers.undisposed, 0);
   });
 
-  // Steps: push TabsHostRoute, whose page holds an AutoTabsRouter.pageView,
-  // swipe to the second tab, then pop the host.
-  // Happened: the PageController the tabs router creates stayed undisposed,
-  // one more on each visit.
+  // Steps: push TabsHostRoute, whose page holds an AutoTabsRouter.pageView, swipe to the second tab, then
+  // pop the host.
+  // Happened: the PageController the tabs router creates stayed undisposed, one more on each visit.
   // Should: popping the host disposes it.
   testWidgets('Popping an AutoTabsRouter.pageView disposes its PageController', (tester) async {
     final router = _buildRouter(() => const AutoTabsRouter.pageView(routes: _kTabs));

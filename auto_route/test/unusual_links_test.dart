@@ -58,8 +58,8 @@ void main() {
     expect(find.text('NotFoundRoute'), findsOneWidget);
   });
 
-  // flutter/flutter#184109: the browser's '#foo' reaches the router as 'foo',
-  // which tripped an assertion in go_router's matcher.
+  // flutter/flutter#184109: the browser's '#foo' reaches the router as
+  // 'foo', which tripped an assertion in go_router's matcher.
   testWidgets('A path without a leading "/" does not assert (flutter/flutter#184109)', (tester) async {
     await _openAt(tester, 'foo');
     expect(tester.takeException(), isNull);

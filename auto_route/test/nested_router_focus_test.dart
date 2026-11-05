@@ -61,8 +61,8 @@ void main() {
     expect(FocusManager.instance.primaryFocus, same(outerFocus));
   });
 
-  // https://github.com/flutter/flutter/issues/94249: with a nested Navigator,
-  // after the user focused a field on its page and tapped outside to close
+  // https://github.com/flutter/flutter/issues/94249: with a nested
+  // Navigator, after the user focused a field on its page and tapped outside to close
   // the keyboard, pushing the next page in the nested Navigator opened the
   // keyboard and closed it again at once.
   // Steps: HostRoute's nested AutoRouter shows a page with a TextField. Tap

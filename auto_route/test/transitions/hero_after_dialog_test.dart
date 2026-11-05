@@ -10,8 +10,8 @@ void main() {
   // https://github.com/flutter/flutter/issues/158136
   // In go_router, going back to a page with a Hero right after closing a
   // dialog left that page's Hero invisible. A Navigator alone didn't.
-  // Steps: Home and Detail share a Hero; push Detail, open a dialog on it,
-  // close the dialog and, as soon as its future completes, while it still
+  // Steps: Home and Detail share a Hero; push Detail, open a dialog on
+  // it, close the dialog and, as soon as its future completes, while it still
   // fades out, go to Home with [label].
   // Should: the Hero flies back and shows on Home.
   for (final (label, goHome) in [

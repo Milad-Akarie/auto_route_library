@@ -13,8 +13,8 @@ import 'router_test_utils.dart';
 // Setup: an outer shell '/outer' whose first page is an inner shell 'inner'
 // that holds 'first' and 'second'.
 // Steps: open the app on 'first', then push 'second' and press back.
-// Should: while 'second' is on top, Flutter tells Android it handles back;
-// on 'first', it tells Android it doesn't, so Android closes the app.
+// Should: while 'second' is on top, Flutter tells Android it handles
+// back; on 'first', it tells Android it doesn't, so Android closes the app.
 void main() {
   testWidgets('Back on the first page of a shell inside a shell lets Android close the app', (tester) async {
     final router = RootStackRouter.build(

@@ -10,8 +10,8 @@ void main() {
   // https://github.com/flutter/flutter/issues/133985
   // In go_router, a redirect run by refreshListenable got the state of the
   // bottom page of the stack, not of the page the user was on.
-  // Steps: a global guard records the name and path of each route it checks;
-  // open HomeRoute, push SecondRoute, then fire reevaluateListenable.
+  // Steps: a global guard records the name and path of each route it
+  // checks; open HomeRoute, push SecondRoute, then fire reevaluateListenable.
   // Should: the re-check runs for each page with its own route and path.
   testWidgets('A reevaluation checks each page with its own route and path (flutter/flutter#133985)', (tester) async {
     final user = ValueNotifier(0);
@@ -49,12 +49,9 @@ void main() {
   });
 
   // https://github.com/flutter/flutter/issues/162735
-  // In go_router, after a push, refreshListenable redirected with the state of
-  // the page below.
-  // Steps: guards on HomeRoute and SecondRoute record the route they check;
-  // open HomeRoute, push SecondRoute, then fire reevaluateListenable.
-  // Should: each guard checks its own page, and the stack stays HomeRoute,
-  // SecondRoute with SecondRoute on screen.
+  // In go_router, after a push, refreshListenable redirected with the state of the page below.
+  // Steps: guards on HomeRoute and SecondRoute record the route they check, then open HomeRoute, push SecondRoute, then fire reevaluateListenable.
+  // Should: each guard checks its own page, and the stack stays HomeRoute and SecondRoute with SecondRoute on screen.
   testWidgets('After a push, a reevaluation checks each page and keeps the stack (flutter/flutter#162735)', (
     tester,
   ) async {

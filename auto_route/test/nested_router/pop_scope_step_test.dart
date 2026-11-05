@@ -17,8 +17,8 @@ import '../router_test_utils.dart';
 // a type, then go back twice.
 // Happened (reported on auto_route 8): the step's PopScope was ignored and
 // back left the step.
-// Should: the first back stays on the ID step and shows the choice again;
-// the second goes back to the first step, inside the host.
+// Should: the first back stays on the ID step and shows the choice
+// again; the second goes back to the first step, inside the host.
 // Not a router bug on dev; this test documents how PopScope works. The
 // reporter guessed that a PopScope registers with the top route, and so
 // missed steps pushed after it. Flutter registers a PopScope with the route

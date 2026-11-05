@@ -7,8 +7,8 @@ import 'package:material_ui/material_ui.dart';
 // home router holding a feed router, which starts on a feed listing page
 // with a drawer and an AutoLeadingButton in its app bar, and holds a feed
 // details page; a comments page beside the feed, as a fullscreen dialog.
-// Steps: show the app, then rebuild the MaterialApp with another theme,
-// then another locale, then with a new key, as apps do on a setting change.
+// Steps: show the app, then rebuild the MaterialApp with another
+// theme, then another locale, then with a new key, as apps do on a setting change.
 // Happened: after the rebuild the app bar showed a back button instead of
 // the drawer icon.
 // Should: the drawer icon shows every time, and there's no back button.

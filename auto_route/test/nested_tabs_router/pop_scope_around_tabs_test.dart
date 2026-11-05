@@ -11,8 +11,8 @@ import '../router_test_utils.dart';
 // every back, with didPop true when the page is popped and false when
 // PopScope(canPop: false) keeps it. pop_scope_once_test.dart checks this for
 // flat and nested stacks; this is the tabs variant.
-// Steps: from Home, push a page that holds an AutoTabsRouter [TabA, TabB],
-// wrapped in a PopScope; go back by system back, the predictive back
+// Steps: from Home, push a page that holds an AutoTabsRouter
+// [TabA, TabB], wrapped in a PopScope; go back by system back, the predictive back
 // gesture, the app bar back button or the iOS swipe.
 void main() {
   late RootStackRouter router;

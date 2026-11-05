@@ -11,8 +11,8 @@ void main() {
   // https://github.com/flutter/flutter/issues/146045
   // In go_router, with a dialog open over a page pushed in a tab, Android
   // back popped the tab's page first and left the dialog open.
-  // Steps: the app's first page holds an AutoTabsRouter with tab A and tab B;
-  // tab A has DetailsA and DetailsC. Push DetailsC in tab A, open a dialog
+  // Steps: the app's first page holds an AutoTabsRouter with tab A and tab
+  // B; tab A has DetailsA and DetailsC. Push DetailsC in tab A, open a dialog
   // from it with showDialog, which uses the root navigator, then press
   // system back twice.
   // Should: the first back closes the dialog and DetailsC stays; the second

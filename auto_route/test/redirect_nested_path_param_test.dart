@@ -5,8 +5,8 @@ import 'package:material_ui/material_ui.dart';
 import 'router_test_utils.dart';
 
 // https://github.com/Milad-Akarie/auto_route_library/issues/1231
-// Setup: RedirectRoute(path: '/two/:slug', redirectTo: '/tabs/two/:slug'),
-// where '/tabs' is a page with the children 'one' and 'two/:slug'.
+// Setup: RedirectRoute(path: '/two/:slug', redirectTo:
+// '/tabs/two/:slug'), where '/tabs' is a page with the children 'one' and 'two/:slug'.
 // Steps: open the link '/two/0', with and without a guard on '/tabs'.
 // Should: the url is '/tabs/two/0', not '/tabs/two/0/two/0', and the page
 // reads slug 0.

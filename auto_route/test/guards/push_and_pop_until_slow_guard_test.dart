@@ -11,8 +11,8 @@ import '../router_test_utils.dart';
 // page's guards let it through. These tests pin what happens while a slow
 // guard decides, the case flutter/flutter#193950 raises for go_router: a pop
 // loop that something async interrupts.
-// Steps: open Home, A and B, then call pushAndPopUntil(C, predicate: isHome),
-// where C's guard decides only when the test completes its future.
+// Steps: open Home, A and B, then call pushAndPopUntil(C, predicate:
+// isHome), where C's guard decides only when the test completes its future.
 void main() {
   // Made in each test, so it completes on the test's fake clock.
   late Completer<bool> decision;

@@ -14,8 +14,8 @@ void main() {
   // https://github.com/flutter/flutter/issues/158259
   // In go_router, a redirect ran twice when the url was typed in the
   // address bar.
-  // Steps: open the app at /login, as typing it in the address bar does;
-  // LoginRoute's guard counts its calls and lets the user through.
+  // Steps: open the app at /login, as typing it in the address bar
+  // does; LoginRoute's guard counts its calls and lets the user through.
   // Should: the guard runs once, LoginRoute shows and the url stays /login.
   testWidgets('On web, opening a guarded url runs its guard once (flutter/flutter#158259)', (tester) async {
     var guardCalls = 0;

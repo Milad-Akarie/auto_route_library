@@ -72,8 +72,8 @@ void main() {
   // flutter/flutter#160173: pushNamed the same route again and again, each
   // push built every page of that route in the stack again.
   // Steps: push DetailRoute twice, then a third time; count the builds.
-  // Should: a page built under a newer one is not built again by the push,
-  // and each keeps its own State.
+  // Should: a page built under a newer one is not built again by the
+  // push, and each keeps its own State.
   testWidgets('Pushing a route again does not build the earlier copies again (flutter/flutter#160173)', (tester) async {
     final r = router();
     await pumpRouterApp(tester, r);
