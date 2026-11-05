@@ -44,7 +44,9 @@ class ItemsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    body: Text('ids $ids prices $prices flags $flags sorts ${sorts?.map((s) => s.name).toList()} picked $picked'),
+    body: Text(
+      'ids ${ids ?? 'null'} prices ${prices ?? 'null'} flags ${flags ?? 'null'} sorts ${sorts?.map((s) => s.name).toList() ?? 'null'} picked $picked',
+    ),
   );
 }
 
@@ -59,6 +61,7 @@ class TagsView extends StatelessWidget {
   final Set<Sort>? sorts;
 
   @override
-  Widget build(BuildContext context) =>
-      Scaffold(body: Text('tags $tags ids ${ids?.toList()} sorts ${sorts?.map((s) => s.name).toList()}'));
+  Widget build(BuildContext context) => Scaffold(
+    body: Text('tags $tags ids ${ids?.toList() ?? 'null'} sorts ${sorts?.map((s) => s.name).toList() ?? 'null'}'),
+  );
 }

@@ -42,7 +42,8 @@ class _ShopRoute extends PageRouteInfo<void> {
   static const String pageName = 'ShopRoute';
   static PageInfo page = PageInfo(
     pageName,
-    builder: (data) =>
-        Text('Shop color=${data.queryParams.optString('color')} src=${data.queryParams.optString('src')}'),
+    builder: (data) => Text(
+      'Shop color=${data.queryParams.optString('color') ?? 'null'} src=${data.queryParams.optString('src') ?? 'null'}',
+    ),
   );
 }

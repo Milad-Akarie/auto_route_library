@@ -20,7 +20,7 @@ PageInfo _argsPage(String name) => .new(
   name,
   builder: (data) {
     _builds.add(name);
-    return Text('$name ${data.args}');
+    return Text('$name ${data.args ?? 'null'}');
   },
 );
 

@@ -20,7 +20,7 @@ void main() {
     final router = RootStackRouter.build(
       guards: [
         AutoRouteGuard.simple((resolver, _) {
-          seen.add('${resolver.routeName} ${resolver.route.params.optString('username')}');
+          seen.add('${resolver.routeName} ${resolver.route.params.optString('username') ?? 'null'}');
           resolver.next();
         }),
       ],

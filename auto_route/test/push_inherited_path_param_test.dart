@@ -63,8 +63,8 @@ PageInfo _page(String name) => .new(
   name,
   builder: (data) => Scaffold(
     body: Text(
-      '$name id ${data.inheritedPathParams.optString('id')} '
-      'reviewId ${data.inheritedPathParams.optString('reviewId')}',
+      '$name id ${data.inheritedPathParams.optString('id') ?? 'null'} '
+      'reviewId ${data.inheritedPathParams.optString('reviewId') ?? 'null'}',
     ),
   ),
 );

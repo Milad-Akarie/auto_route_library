@@ -14,7 +14,7 @@ void main() {
       routes: [
         AutoRoute(page: FirstRoute.page, path: '/', initial: true),
         AutoRoute(
-          page: PageInfo('HomeRoute', builder: (data) => Text('test ${data.queryParams.optString('test')}')),
+          page: PageInfo('HomeRoute', builder: (data) => Text('test ${data.queryParams.optString('test') ?? 'null'}')),
           path: '/home',
         ),
         AutoRoute(

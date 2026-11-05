@@ -129,11 +129,14 @@ class _NamesObserver extends NavigatorObserver {
   final List<String> events;
 
   @override
-  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) => events.add('push ${route.settings.name}');
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) =>
+      events.add('push ${route.settings.name ?? 'null'}');
 
   @override
-  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) => events.add('pop ${route.settings.name}');
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) =>
+      events.add('pop ${route.settings.name ?? 'null'}');
 
   @override
-  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) => events.add('remove ${route.settings.name}');
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) =>
+      events.add('remove ${route.settings.name ?? 'null'}');
 }

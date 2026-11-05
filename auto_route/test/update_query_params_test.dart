@@ -97,7 +97,7 @@ class _SearchPageState extends State<_SearchPage> {
     builds++;
     return Column(
       children: [
-        Text('q ${widget.q}, count $_count'),
+        Text('q ${widget.q ?? 'null'}, count $_count'),
         TextButton(onPressed: () => setState(() => _count++), child: const Text('count')),
       ],
     );

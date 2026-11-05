@@ -10,10 +10,12 @@ class _Observer extends AutoRouterObserver {
   final events = <String>[];
 
   @override
-  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) => events.add('didPop ${route.settings.name}');
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) =>
+      events.add('didPop ${route.settings.name ?? 'null'}');
 
   @override
-  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) => events.add('didRemove ${route.settings.name}');
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) =>
+      events.add('didRemove ${route.settings.name ?? 'null'}');
 
   @override
   void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) => events.add('didReplace');

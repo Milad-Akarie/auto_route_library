@@ -10,7 +10,7 @@ final _tabEvents = <String>[];
 class _TabsObserver extends AutoRouterObserver {
   @override
   void didInitTabRoute(TabPageRoute route, TabPageRoute? previousRoute) =>
-      _tabEvents.add('didInitTabRoute ${route.name} from ${previousRoute?.name}');
+      _tabEvents.add('didInitTabRoute ${route.name} from ${previousRoute?.name ?? 'null'}');
 
   @override
   void didChangeTabRoute(TabPageRoute route, TabPageRoute previousRoute) =>

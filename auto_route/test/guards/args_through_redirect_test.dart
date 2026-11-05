@@ -7,7 +7,7 @@ import 'package:material_ui/material_ui.dart';
 import '../router_test_utils.dart';
 
 void main() {
-  Widget argsPage(String name, RouteData<dynamic> data) => Scaffold(body: Text('$name ${data.args}'));
+  Widget argsPage(String name, RouteData<dynamic> data) => Scaffold(body: Text('$name ${data.args ?? 'null'}'));
 
   // https://github.com/flutter/flutter/issues/146616
   // In go_router, the extra of a route was null once a redirect had run.

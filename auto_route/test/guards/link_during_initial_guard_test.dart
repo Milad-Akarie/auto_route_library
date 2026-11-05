@@ -43,7 +43,7 @@ void main() {
               resolver.next();
             }),
           ],
-          builder: (_, data) => _page('InfoRoute ${data.queryParams.optString('id')}'),
+          builder: (_, data) => _page('InfoRoute ${data.queryParams.optString('id') ?? 'null'}'),
         ),
       ],
     );

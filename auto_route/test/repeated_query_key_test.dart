@@ -49,7 +49,7 @@ void main() {
           path: '/products',
           page: PageInfo(
             'ProductsRoute',
-            builder: (data) => Scaffold(body: Text('Tag ${data.queryParams.optString('tag')}')),
+            builder: (data) => Scaffold(body: Text('Tag ${data.queryParams.optString('tag') ?? 'null'}')),
           ),
         ),
       ],

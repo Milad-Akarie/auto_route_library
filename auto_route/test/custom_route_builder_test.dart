@@ -8,7 +8,7 @@ import 'router_test_utils.dart';
 
 PageInfo _productsPage = PageInfo(
   'ProductsRoute',
-  builder: (data) => Scaffold(body: Text('Products page ${data.queryParams.optString('page')}')),
+  builder: (data) => Scaffold(body: Text('Products page ${data.queryParams.optString('page') ?? 'null'}')),
 );
 
 void main() {

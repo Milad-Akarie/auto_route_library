@@ -145,6 +145,6 @@ class _SecondsRoute extends PageRouteInfo<void> {
   static PageInfo page = PageInfo(
     name,
     builder: (data) =>
-        Text('id ${data.inheritedPathParams.getString('id')}, query ${data.queryParams.optString('query')}'),
+        Text('id ${data.inheritedPathParams.getString('id')}, query ${data.queryParams.optString('query') ?? 'null'}'),
   );
 }

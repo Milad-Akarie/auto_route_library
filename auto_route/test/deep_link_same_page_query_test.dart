@@ -21,7 +21,7 @@ void main() {
         NamedRouteDef(
           name: 'LoginRoute',
           path: '/login',
-          builder: (_, data) => _page('otp ${data.queryParams.optString('otp')}'),
+          builder: (_, data) => _page('otp ${data.queryParams.optString('otp') ?? 'null'}'),
         ),
       ],
     );

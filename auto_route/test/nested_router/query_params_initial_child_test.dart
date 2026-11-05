@@ -31,8 +31,8 @@ void main() {
               path: '',
               builder: (_, data) => Scaffold(
                 body: Text(
-                  'type ${data.queryParams.optString('objectType')} '
-                  'id ${data.inheritedPathParams.optInt('objectId')}',
+                  'type ${data.queryParams.optString('objectType') ?? 'null'} '
+                  'id ${data.inheritedPathParams.optInt('objectId') ?? 'null'}',
                 ),
               ),
             ),

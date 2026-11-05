@@ -116,5 +116,8 @@ class _SearchRoute extends PageRouteInfo<void> {
   const _SearchRoute() : super(pageName);
 
   static const String pageName = 'SearchRoute';
-  static PageInfo page = PageInfo(pageName, builder: (data) => Text('Search ${data.queryParams.optInt('n')}'));
+  static PageInfo page = PageInfo(
+    pageName,
+    builder: (data) => Text('Search ${data.queryParams.optInt('n') ?? 'null'}'),
+  );
 }

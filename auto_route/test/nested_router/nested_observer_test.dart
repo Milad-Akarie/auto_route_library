@@ -48,5 +48,5 @@ class _Recorder extends AutoRouterObserver {
   final List<String> pushes;
 
   @override
-  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) => pushes.add('${route.settings.name}');
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) => pushes.add(route.settings.name ?? 'null');
 }

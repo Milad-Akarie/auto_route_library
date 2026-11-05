@@ -60,5 +60,5 @@ class UserProfileView extends StatelessWidget {
   final UserId? by;
 
   @override
-  Widget build(BuildContext context) => Scaffold(body: Text('User ${id.value} by ${by?.value}'));
+  Widget build(BuildContext context) => Scaffold(body: Text('User ${id.value} by ${by?.value ?? 'null'}'));
 }

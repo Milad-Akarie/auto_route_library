@@ -14,7 +14,7 @@ import '../router_test_utils.dart';
 // page builder reads data.queryParams.optBool('f').
 // Should: the page shows the flag, without NoSuchMethodError on toLowerCase.
 void main() {
-  final flagPage = PageInfo('FlagRoute', builder: (data) => Text('Flag ${data.queryParams.optBool('f')}'));
+  final flagPage = PageInfo('FlagRoute', builder: (data) => Text('Flag ${data.queryParams.optBool('f') ?? 'null'}'));
 
   RootStackRouter buildRouter() => .build(
     routes: [

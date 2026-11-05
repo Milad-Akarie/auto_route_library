@@ -22,7 +22,10 @@ void main() {
       ),
       AutoRoute(
         path: '/retro-games/:consoleId',
-        page: PageInfo('Games', builder: (data) => Text('console ${data.inheritedPathParams.optInt('consoleId')}')),
+        page: PageInfo(
+          'Games',
+          builder: (data) => Text('console ${data.inheritedPathParams.optInt('consoleId') ?? 'null'}'),
+        ),
       ),
     ],
   );
