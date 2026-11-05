@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -46,7 +48,7 @@ void main() {
       }
 
       await expectHomeInPlaceHalfway(() => router.push(const PageRouteInfo('Menu')));
-      await expectHomeInPlaceHalfway(router.maybePop);
+      await expectHomeInPlaceHalfway(() => unawaited(router.maybePop()));
     });
   }
 }

@@ -84,7 +84,7 @@ class _SecondPageState extends State<_SecondPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: OutlinedButton(onPressed: _save, child: const Text('save')),
+      body: OutlinedButton(onPressed: () => unawaited(_save()), child: const Text('save')),
       floatingActionButton: _saving ? null : FloatingActionButton(onPressed: () {}, child: const Text('second button')),
     );
   }

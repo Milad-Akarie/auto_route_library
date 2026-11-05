@@ -64,26 +64,25 @@ class _FormPage extends StatelessWidget {
   // Stands for the reporter's cubit call that takes 5 seconds.
   Future<void> _callAsyncCubitMethod() => .delayed(const Duration(seconds: 5));
 
+  Future<void> _closeForm(BuildContext context) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => Dialog(
+        child: ElevatedButton(onPressed: () => context.router.maybePop(true), child: const Text('Confirm')),
+      ),
+    );
+
+    unawaited(_callAsyncCubitMethod());
+
+    if (result == true && context.mounted) {
+      unawaited(context.router.maybePop(true));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ElevatedButton(
-        child: const Text('Close form'),
-        onPressed: () async {
-          final result = await showDialog<bool>(
-            context: context,
-            builder: (context) => Dialog(
-              child: ElevatedButton(onPressed: () => context.router.maybePop(true), child: const Text('Confirm')),
-            ),
-          );
-
-          unawaited(_callAsyncCubitMethod());
-
-          if (result == true && context.mounted) {
-            unawaited(context.router.maybePop(true));
-          }
-        },
-      ),
+      body: ElevatedButton(child: const Text('Close form'), onPressed: () => unawaited(_closeForm(context))),
     );
   }
 }

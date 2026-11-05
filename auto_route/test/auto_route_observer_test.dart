@@ -221,10 +221,7 @@ class ConfirmRoute extends PageRouteInfo<void> {
             builder: (dialogContext) => AlertDialog(
               actions: [
                 TextButton(
-                  onPressed: () async {
-                    await dialogContext.maybePop();
-                    if (context.mounted) unawaited(context.navigateTo(const FirstRoute()));
-                  },
+                  onPressed: () => unawaited(_closeDialogAndGoBack(dialogContext, context)),
                   child: const Text('Close and go back'),
                 ),
               ],
@@ -235,6 +232,11 @@ class ConfirmRoute extends PageRouteInfo<void> {
       ),
     ),
   );
+}
+
+Future<void> _closeDialogAndGoBack(BuildContext dialogContext, BuildContext context) async {
+  await dialogContext.maybePop();
+  if (context.mounted) unawaited(context.navigateTo(const FirstRoute()));
 }
 
 class TabsRoute extends PageRouteInfo<void> {
