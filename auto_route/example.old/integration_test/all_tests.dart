@@ -68,6 +68,7 @@ import 'navigate_nested_update_test.dart' as navigate_nested_update;
 import 'navigate_over_pageless_route_test.dart' as navigate_over_pageless_route;
 import 'navigate_root_from_nested_test.dart' as navigate_root_from_nested;
 import 'navigate_to_non_tab_test.dart' as navigate_to_non_tab;
+import 'nested_absolute_redirect_test.dart' as nested_absolute_redirect;
 import 'nested_back_test.dart' as nested_back;
 import 'nested_browser_back_test.dart' as nested_browser_back;
 import 'nested_did_pop_test.dart' as nested_did_pop;
@@ -265,6 +266,7 @@ void main() {
   navigate_over_pageless_route.main();
   navigate_root_from_nested.main();
   navigate_to_non_tab.main();
+  nested_absolute_redirect.main();
   nested_back.main();
   nested_browser_back.main();
   nested_did_pop.main();

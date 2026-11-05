@@ -16,11 +16,9 @@ class RouteMatcher {
     String rawPath, {
     bool includePrefixMatches = false,
   }) {
-    return _match(
+    return _matchFromTop(
       Uri.parse(rawPath),
-      collection,
-      includePrefixMatches: includePrefixMatches,
-      root: true,
+      shouldIncludePrefixMatches: includePrefixMatches,
     );
   }
 
@@ -34,12 +32,28 @@ class RouteMatcher {
     Uri uri, {
     bool includePrefixMatches = false,
   }) {
-    return _match(
+    return _matchFromTop(uri, shouldIncludePrefixMatches: includePrefixMatches);
+  }
+
+  // Matches [uri] against [collection], the top of this matcher.
+  //
+  // A RedirectRoute among a parent's children whose redirectTo is absolute,
+  // such as '/auth', names a url from the top, which no child path can
+  // match. So that url is matched again from the top, as a redirect there
+  // would be, and its matches stand for the whole url.
+  List<RouteMatch<Object?>>? _matchFromTop(
+    Uri uri, {
+    required bool shouldIncludePrefixMatches,
+  }) {
+    final topRedirect = _TopRedirect();
+    final matches = _match(
       uri,
       collection,
-      includePrefixMatches: includePrefixMatches,
+      includePrefixMatches: shouldIncludePrefixMatches,
       root: true,
+      topRedirect: topRedirect,
     );
+    return topRedirect.isFollowed ? topRedirect.matches : matches;
   }
 
   List<RouteMatch<Object?>>? _match(
@@ -48,7 +62,8 @@ class RouteMatcher {
     bool includePrefixMatches = false,
     bool root = false,
     String? redirectedFrom,
-    List<String> redirectChain = const [],
+    List<_Redirect> redirectChain = const [],
+    _TopRedirect? topRedirect,
   }) {
     final pathSegments = _split(uri.path);
     final matches = <RouteMatch<Object?>>[];
@@ -72,31 +87,51 @@ class RouteMatcher {
             config.path,
             match.params.rawMap,
           );
-          if (redirectChain.contains(redirectFrom)) {
+          // The same RedirectRoute matching the same path again. Its config
+          // tells it from another parent's route of the same relative path.
+          if (redirectChain.any(
+            (r) => identical(r.route, config) && r.path == redirectFrom,
+          )) {
+            final steps = [...redirectChain.map((r) => r.path), redirectFrom];
             throw FlutterError(
-              'Redirect loop detected: '
-              '${[...redirectChain, redirectFrom].join(' -> ')}\n'
+              'Redirect loop detected: ${steps.join(' -> ')}\n'
               'The RedirectRoutes above send the url back to one that was '
               'already redirected. '
               'Change the redirectTo of one of them so the chain ends at a '
               'page.',
             );
           }
+          final target = redirectToUri.replace(
+            queryParameters: {
+              ...redirectToUri.queryParametersAll,
+              ...uri.queryParametersAll,
+            },
+            fragment: uri.fragment,
+          );
+          final chain = [...redirectChain, (route: config, path: redirectFrom)];
+          if (topRedirect != null &&
+              target.path.startsWith('/') &&
+              !identical(routeCollection, collection)) {
+            topRedirect.settle(
+              _match(
+                target,
+                collection,
+                includePrefixMatches: includePrefixMatches,
+                root: true,
+                redirectedFrom: redirectFrom,
+                redirectChain: chain,
+                topRedirect: topRedirect,
+              ),
+            );
+            return null;
+          }
           return _handleRedirect(
-            redirectChain: [...redirectChain, redirectFrom],
+            redirectChain: chain,
             routesCollection: routeCollection,
             includePrefixMatches: includePrefixMatches,
-            redirectTo: redirectToUri.replace(
-              queryParameters: {
-                ...redirectToUri.queryParametersAll,
-                ...uri.queryParametersAll,
-              },
-              fragment: uri.fragment,
-            ),
-            redirectedFrom: PageRouteInfo.expandPath(
-              config.path,
-              match.params.rawMap,
-            ),
+            redirectTo: target,
+            redirectedFrom: redirectFrom,
+            topRedirect: topRedirect,
           );
         }
 
@@ -112,7 +147,10 @@ class RouteMatcher {
               rest,
               routeCollection.subCollectionOf(config.name),
               includePrefixMatches: includePrefixMatches,
+              redirectChain: redirectChain,
+              topRedirect: topRedirect,
             );
+            if (topRedirect?.isFollowed ?? false) return null;
             match = match.copyWith(children: children);
           }
           matches.add(match);
@@ -124,12 +162,14 @@ class RouteMatcher {
           //
           // include empty route if exists
           if (config.hasSubTree && !match.hasChildren) {
-            match = match.copyWith(
-              children: _match(
-                uri.replace(path: ''),
-                routeCollection.subCollectionOf(config.name),
-              ),
+            final children = _match(
+              uri.replace(path: ''),
+              routeCollection.subCollectionOf(config.name),
+              redirectChain: redirectChain,
+              topRedirect: topRedirect,
             );
+            if (topRedirect?.isFollowed ?? false) return null;
+            match = match.copyWith(children: children);
           }
 
           matches.add(match);
@@ -151,10 +191,12 @@ class RouteMatcher {
     required bool includePrefixMatches,
     required Uri redirectTo,
     required String redirectedFrom,
-    required List<String> redirectChain,
+    required List<_Redirect> redirectChain,
+    required _TopRedirect? topRedirect,
   }) {
     return _match(
       redirectChain: redirectChain,
+      topRedirect: topRedirect,
       redirectTo,
       routesCollection,
       includePrefixMatches: includePrefixMatches,
@@ -428,5 +470,27 @@ class RouteMatcher {
       queryMap[key] = UrlState.normalizeQueryParamValue(queryParameters[key]);
     }
     return queryMap;
+  }
+}
+
+// A RedirectRoute followed while matching a url, with the path it matched.
+typedef _Redirect = ({AutoRoute route, String path});
+
+// What a RedirectRoute among a parent's children with an absolute redirectTo
+// matched from the top of the matcher, which stands for the whole url.
+class _TopRedirect {
+  // Whether such a redirect was followed.
+  bool isFollowed = false;
+
+  // What it matched, null when nothing did.
+  List<RouteMatch<Object?>>? matches;
+
+  // Keeps [found], the matches of a redirect followed from the top, unless
+  // one followed from there already settled: the last redirect of a chain
+  // settles first, and its matches stand.
+  void settle(List<RouteMatch<Object?>>? found) {
+    if (isFollowed) return;
+    matches = found;
+    isFollowed = true;
   }
 }
