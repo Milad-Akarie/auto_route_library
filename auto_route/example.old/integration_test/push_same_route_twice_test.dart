@@ -41,10 +41,7 @@ void main() {
       'back() returns to the same route pushed with equal arguments',
       (tester) async {
         await pushSecondTwice(tester);
-        final secondEntry = browserEntryIndex();
-
-        router.back();
-        if (kIsWeb) await expectBrowserEntry(secondEntry! - 1);
+        await expectBrowserEntryAfter(-1, router.back);
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
         expect(router.current.name, SecondRoute.name);

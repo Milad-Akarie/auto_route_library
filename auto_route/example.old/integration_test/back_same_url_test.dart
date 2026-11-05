@@ -46,10 +46,7 @@ void main() {
       'back() returns to a page with the same url as the current one',
       (tester) async {
         await pushTwoBooks(tester);
-        final secondBookEntry = browserEntryIndex();
-
-        router.back();
-        if (kIsWeb) await expectBrowserEntry(secondBookEntry! - 1);
+        await expectBrowserEntryAfter(-1, router.back);
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
         expect(router.current.name, _BookRoute.name);
@@ -65,15 +62,14 @@ void main() {
       'Going back returns to a page with the same url as the current one',
       (tester) async {
         await pushTwoBooks(tester);
-        final secondBookEntry = browserEntryIndex();
-
-        if (kIsWeb) {
-          pressBrowserBack();
-          await expectBrowserEntry(secondBookEntry! - 1);
-          await tester.pumpAndSettle();
-        } else {
-          await systemBack(tester);
-        }
+        await expectBrowserEntryAfter(-1, () async {
+          if (kIsWeb) {
+            pressBrowserBack();
+          } else {
+            await systemBack(tester);
+          }
+        });
+        if (kIsWeb) await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
         expect(router.current.name, _BookRoute.name);
         expect(find.text('Book some-id'), findsOneWidget);

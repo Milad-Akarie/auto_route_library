@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -213,6 +215,19 @@ Future<void> expectBrowserUrl(String expected) async {
     await Future<void>.delayed(const Duration(milliseconds: 100));
   }
   expect(browser.browserUrl(), expected, reason: 'the browser address bar');
+}
+
+/// Runs [step], then waits until the browser's history entry is [change]
+/// entries from where it was before [step], as [expectBrowserEntry] does.
+///
+/// Does nothing but run [step] off the web.
+Future<void> expectBrowserEntryAfter(
+  int change,
+  FutureOr<void> Function() step,
+) async {
+  final before = browser.browserEntryIndex();
+  await step();
+  if (before != null) await expectBrowserEntry(before + change);
 }
 
 /// Waits until the browser's current history entry is [expected], as

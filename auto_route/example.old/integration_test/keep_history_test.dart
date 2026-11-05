@@ -35,13 +35,12 @@ void main() {
       (tester) async {
         await pumpRouterApp(tester, router);
         await expectBrowserUrl('/');
-        final entryBefore = browserEntryIndex();
-
-        unawaited(router.push(const SecondRoute()));
-        await tester.pumpAndSettle();
-        expect(router.stack.map((p) => p.name), [SecondRoute.name]);
-        await expectBrowserUrl('/second');
-        if (kIsWeb) expect(browserEntryIndex(), entryBefore);
+        await expectBrowserEntryAfter(0, () async {
+          unawaited(router.push(const SecondRoute()));
+          await tester.pumpAndSettle();
+          expect(router.stack.map((p) => p.name), [SecondRoute.name]);
+          await expectBrowserUrl('/second');
+        });
       },
     );
 
@@ -53,13 +52,12 @@ void main() {
     ) async {
       await pumpRouterApp(tester, router);
       await expectBrowserUrl('/');
-      final entryBefore = browserEntryIndex();
-
-      unawaited(router.replaceAll([const SecondRoute()]));
-      await tester.pumpAndSettle();
-      expect(router.stack.map((p) => p.name), [SecondRoute.name]);
-      await expectBrowserUrl('/second');
-      if (kIsWeb) expect(browserEntryIndex(), entryBefore);
+      await expectBrowserEntryAfter(0, () async {
+        unawaited(router.replaceAll([const SecondRoute()]));
+        await tester.pumpAndSettle();
+        expect(router.stack.map((p) => p.name), [SecondRoute.name]);
+        await expectBrowserUrl('/second');
+      });
     });
   });
 }
