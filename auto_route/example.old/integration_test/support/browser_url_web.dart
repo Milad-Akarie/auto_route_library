@@ -33,7 +33,7 @@ void pressBrowserForward() => _history.forward();
 ///
 /// The entry keeps its serial number, so [browserEntryIndex] stays the same,
 /// and is marked as the browser's until the app writes it; see
-/// [appWroteBrowserEntry].
+/// [didAppWriteBrowserEntry].
 void openBrowserAt(String path) {
   final serialCount = browserEntryIndex() ?? 0;
   _history.replaceState(
@@ -64,7 +64,7 @@ const _kOpenedByBrowser = 'openedByBrowser';
 
 /// Whether the app has written the browser's current entry since
 /// [openBrowserAt] made it, as it does when it reports its route.
-bool appWroteBrowserEntry() {
+bool didAppWriteBrowserEntry() {
   final state = _history.state.dartify();
   return !(state is Map && state[_kOpenedByBrowser] == true);
 }

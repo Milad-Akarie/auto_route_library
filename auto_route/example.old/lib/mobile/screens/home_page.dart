@@ -55,10 +55,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   /// Shows or hides the settings tab in the bottom bar.
   void toggleSettingsTap() => setState(() {
-    _showSettingsTap = !_showSettingsTap;
+    _shouldShowSettingsTap = !_shouldShowSettingsTap;
   });
 
-  bool _showSettingsTap = true;
+  bool _shouldShowSettingsTap = true;
 
   @override
   Widget build(BuildContext context) {
@@ -128,8 +128,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   // The signature of AutoTabsScaffold's bottomNavigationBuilder.
   // ignore: avoid-unused-parameters
   Widget buildBottomNav(BuildContext context, TabsRouter tabsRouter) {
-    final hideBottomNav = tabsRouter.topMatch.meta['hideBottomNav'] == true;
-    return hideBottomNav
+    final shouldHideBottomNav =
+        tabsRouter.topMatch.meta['hideBottomNav'] == true;
+    return shouldHideBottomNav
         ? const SizedBox.shrink()
         : BottomNavigationBar(
             currentIndex: tabsRouter.activeIndex,
@@ -143,7 +144,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 icon: Icon(Icons.person),
                 label: 'Profile',
               ),
-              if (_showSettingsTap)
+              if (_shouldShowSettingsTap)
                 const BottomNavigationBarItem(
                   icon: Icon(Icons.settings),
                   label: 'Settings',

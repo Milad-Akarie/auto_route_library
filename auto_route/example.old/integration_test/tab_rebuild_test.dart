@@ -69,12 +69,12 @@ class _TabsHostRoute extends PageRouteInfo<void> {
     name,
     builder: (_) => ValueListenableBuilder<bool>(
       valueListenable: _layoutNotifier,
-      builder: (context, withSidePanel, _) {
+      builder: (context, hasSidePanel, _) {
         final tabs = AutoTabsRouter.tabBar(
           routes: const [_FirstTabRoute(), _SecondTabRoute()],
           builder: (context, child, _) => child,
         );
-        if (!withSidePanel) return tabs;
+        if (!hasSidePanel) return tabs;
         return Row(
           children: [
             const SafeArea(child: Text('Side panel')),

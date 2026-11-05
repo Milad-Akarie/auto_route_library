@@ -24,9 +24,11 @@ void main() {
     'future (#2251)',
     (tester) async {
       await pumpRouterApp(tester, router);
-      var completed = false;
+      var isCompleted = false;
       unawaited(
-        router.push<String>(const SecondRoute()).then((_) => completed = true),
+        router
+            .push<String>(const SecondRoute())
+            .then((_) => isCompleted = true),
       );
       await tester.pumpAndSettle();
 
@@ -38,7 +40,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expectCurrentPage(router, FirstRoute.name);
-      expect(completed, isTrue);
+      expect(isCompleted, isTrue);
     },
   );
 }

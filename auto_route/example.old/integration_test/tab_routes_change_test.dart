@@ -91,11 +91,11 @@ class _TabsHostRoute extends PageRouteInfo<void> {
     name,
     builder: (_) => ValueListenableBuilder<bool>(
       valueListenable: _signedInNotifier,
-      builder: (context, signedIn, _) {
+      builder: (context, isSignedIn, _) {
         final routes = [
           const _FirstTabRoute(),
           const _SecondTabRoute(),
-          if (signedIn) const _AccountTabRoute() else const _SignInTabRoute(),
+          if (isSignedIn) const _AccountTabRoute() else const _SignInTabRoute(),
         ];
         return switch (_tabsKind) {
           .indexedStack => AutoTabsRouter(routes: routes),

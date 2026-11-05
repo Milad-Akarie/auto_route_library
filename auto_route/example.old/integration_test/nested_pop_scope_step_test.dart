@@ -56,16 +56,16 @@ void main() {
     expect(find.text(_kNumberForm), findsOneWidget);
   }
 
-  void expectOnIdStep({required bool showingForm}) {
+  void expectOnIdStep({required bool isShowingForm}) {
     expect(router.current.name, _OnboardingRoute.name);
     expect(router.topRoute.name, _IdStepRoute.name);
     expect(
       find.text(_kNumberForm),
-      showingForm ? findsOneWidget : findsNothing,
+      isShowingForm ? findsOneWidget : findsNothing,
     );
     expect(
       find.text(_kChooseType),
-      showingForm ? findsNothing : findsOneWidget,
+      isShowingForm ? findsNothing : findsOneWidget,
     );
   }
 
@@ -91,7 +91,7 @@ void main() {
         await openIdNumberForm(tester);
 
         await back(tester);
-        expectOnIdStep(showingForm: false);
+        expectOnIdStep(isShowingForm: false);
         expect(_popAttempts, 1);
 
         await back(tester);
@@ -109,7 +109,7 @@ void main() {
       await openIdNumberForm(tester, theme: ThemeData(platform: .iOS));
 
       await swipeBack(tester);
-      expectOnIdStep(showingForm: true);
+      expectOnIdStep(isShowingForm: true);
 
       await tester.tap(find.text(_kBackToChoice));
       await tester.pumpAndSettle();
@@ -159,13 +159,13 @@ class _IdStep extends StatefulWidget {
 }
 
 class _IdStepState extends State<_IdStep> {
-  var _showingForm = false;
+  var _isShowingForm = false;
 
   @override
   Widget build(BuildContext context) {
-    if (!_showingForm) {
+    if (!_isShowingForm) {
       return TextButton(
-        onPressed: () => setState(() => _showingForm = true),
+        onPressed: () => setState(() => _isShowingForm = true),
         child: const Text(_kChooseType),
       );
     }
@@ -174,13 +174,13 @@ class _IdStepState extends State<_IdStep> {
       onPopInvokedWithResult: (didPop, _) {
         if (didPop) return;
         _popAttempts++;
-        setState(() => _showingForm = false);
+        setState(() => _isShowingForm = false);
       },
       child: Column(
         children: [
           const Text(_kNumberForm),
           TextButton(
-            onPressed: () => setState(() => _showingForm = false),
+            onPressed: () => setState(() => _isShowingForm = false),
             child: const Text(_kBackToChoice),
           ),
         ],

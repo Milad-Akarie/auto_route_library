@@ -20,8 +20,8 @@ void main() {
   // the button on the Experience page, outside its nested router, that calls
   // context.router.navigatePath('/') or replacePath('/').
   // Should: Empty, the default child of '/', shows, not Sessions.
-  for (final replace in [false, true]) {
-    final call = replace ? 'replacePath' : 'navigatePath';
+  for (final shouldReplace in [false, true]) {
+    final call = shouldReplace ? 'replacePath' : 'navigatePath';
     testWidgets(
       "$call('/') from a page above a nested router shows the default child of '/'",
       (tester) async {
@@ -40,7 +40,8 @@ void main() {
                   path: 'experience',
                   page: PageInfo(
                     'ExperienceRoute',
-                    builder: (_) => _ExperiencePage(replace: replace),
+                    builder: (_) =>
+                        _ExperiencePage(shouldReplace: shouldReplace),
                   ),
                   children: [
                     AutoRoute(path: '', page: _page('SessionsRoute')),
@@ -75,9 +76,9 @@ PageInfo _page(String name) => .new(
 );
 
 class _ExperiencePage extends StatelessWidget {
-  const new({required this.replace});
+  const new({required this.shouldReplace});
 
-  final bool replace;
+  final bool shouldReplace;
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +87,7 @@ class _ExperiencePage extends StatelessWidget {
         children: [
           const Text('ExperienceRoute'),
           TextButton(
-            onPressed: () => replace
+            onPressed: () => shouldReplace
                 ? context.router.replacePath('/')
                 : context.router.navigatePath('/'),
             child: const Text('Go to the root'),

@@ -107,7 +107,7 @@ Future<void> expectAppWroteDeepLinkEntry(int index) async {
     reason: 'the browser history entry',
   );
   expect(
-    browser.appWroteBrowserEntry(),
+    browser.didAppWriteBrowserEntry(),
     isTrue,
     reason: 'the app reported its route',
   );
@@ -184,7 +184,7 @@ Future<void> systemBack(WidgetTester tester) async {
 /// where the app should close, since [systemBack] fails the test there. Pump
 /// the app with [pumpRouterApp] or [pumpRouterConfigApp] first, as for
 /// [systemBack].
-Future<bool?> androidSendsBackToFlutter() async {
+Future<bool?> doesAndroidSendBackToFlutter() async {
   if (kIsWeb || defaultTargetPlatform != .android) return null;
   // Flutter tells Android through a separate platform message; give it time to
   // arrive.

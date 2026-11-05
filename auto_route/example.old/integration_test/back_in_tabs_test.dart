@@ -103,7 +103,7 @@ void main() {
       await pushInTab(tester, tabs, 0, 'BookDetailsRoute');
       await showTab(tester, tabs, 1);
 
-      expect(await androidSendsBackToFlutter(), anyOf(isNull, isFalse));
+      expect(await doesAndroidSendBackToFlutter(), anyOf(isNull, isFalse));
       expect(stackOf(tabs, 0), ['BookListRoute', 'BookDetailsRoute']);
     },
   );

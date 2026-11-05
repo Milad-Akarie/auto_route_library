@@ -118,7 +118,7 @@ void main() {
   testWidgets(
     'Removing a login flow resumes a guard awaiting its push future (#2307)',
     (tester) async {
-      var guardResumed = false;
+      var didGuardResume = false;
       final guardedRouter = RootStackRouter.build(
         routes: [
           AutoRoute(page: FirstRoute.page, initial: true),
@@ -128,7 +128,7 @@ void main() {
             page: FourthRoute.page,
             onNavigation: (resolver, guardRouter) async {
               await guardRouter.push(const SecondRoute());
-              guardResumed = true;
+              didGuardResume = true;
               resolver.next();
             },
           ),
@@ -147,7 +147,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(guardResumed, isTrue);
+      expect(didGuardResume, isTrue);
       expectCurrentPage(guardedRouter, FourthRoute.name);
     },
   );

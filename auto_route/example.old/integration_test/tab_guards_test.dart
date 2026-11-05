@@ -23,7 +23,7 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  setUp(() => _signedIn = false);
+  setUp(() => _isSignedIn = false);
 
   testWidgets('tapping a tab whose guard rejects keeps the current tab', (
     tester,
@@ -103,7 +103,7 @@ void main() {
     testWidgets(
       'swiping to a tab whose guard lets it in in a ${kind.name} shows it',
       (tester) async {
-        _signedIn = true;
+        _isSignedIn = true;
         final router = _buildRouter(kind, _rejectingGuard);
         await pumpRouterApp(tester, router);
 
@@ -118,14 +118,14 @@ void main() {
 
 enum _Tabs { indexedStack, pageView, tabBar }
 
-var _signedIn = false;
+var _isSignedIn = false;
 
 final _rejectingGuard = AutoRouteGuard.simple(
-  (resolver, _) => _signedIn ? resolver.next() : resolver.reject(),
+  (resolver, _) => _isSignedIn ? resolver.next() : resolver.reject(),
 );
 
 final _loginGuard = AutoRouteGuard.simple((resolver, _) {
-  if (_signedIn) {
+  if (_isSignedIn) {
     resolver.next();
   } else {
     unawaited(resolver.redirectUntil(const NamedRoute('LoginRoute')));
@@ -188,7 +188,7 @@ RootStackRouter _buildRouter(_Tabs kind, AutoRouteGuard guard) {
                   const Text('LoginRoute'),
                   TextButton(
                     onPressed: () {
-                      _signedIn = true;
+                      _isSignedIn = true;
                       unawaited(data.router.root.reevaluateGuards());
                     },
                     child: const Text('Sign in'),

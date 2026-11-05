@@ -108,11 +108,14 @@ class HomeRoute extends _i8.PageRouteInfo<void> {
 class LoginRoute extends _i8.PageRouteInfo<LoginRouteArgs> {
   LoginRoute({
     _i9.Key? key,
-    bool showBackButton = true,
+    bool shouldShowBackButton = true,
     List<_i8.PageRouteInfo>? children,
   }) : super(
          LoginRoute.name,
-         args: LoginRouteArgs(key: key, showBackButton: showBackButton),
+         args: LoginRouteArgs(
+           key: key,
+           shouldShowBackButton: shouldShowBackButton,
+         ),
          initialChildren: children,
        );
 
@@ -124,32 +127,36 @@ class LoginRoute extends _i8.PageRouteInfo<LoginRouteArgs> {
       final args = data.argsAs<LoginRouteArgs>(
         orElse: () => const LoginRouteArgs(),
       );
-      return _i4.LoginPage(key: args.key, showBackButton: args.showBackButton);
+      return _i4.LoginPage(
+        key: args.key,
+        shouldShowBackButton: args.shouldShowBackButton,
+      );
     },
   );
 }
 
 class LoginRouteArgs {
-  const LoginRouteArgs({this.key, this.showBackButton = true});
+  const LoginRouteArgs({this.key, this.shouldShowBackButton = true});
 
   final _i9.Key? key;
 
-  final bool showBackButton;
+  final bool shouldShowBackButton;
 
   @override
   String toString() {
-    return 'LoginRouteArgs{key: $key, showBackButton: $showBackButton}';
+    return 'LoginRouteArgs{key: $key, shouldShowBackButton: $shouldShowBackButton}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! LoginRouteArgs) return false;
-    return key == other.key && showBackButton == other.showBackButton;
+    return key == other.key &&
+        shouldShowBackButton == other.shouldShowBackButton;
   }
 
   @override
-  int get hashCode => key.hashCode ^ showBackButton.hashCode;
+  int get hashCode => key.hashCode ^ shouldShowBackButton.hashCode;
 }
 
 /// generated route for

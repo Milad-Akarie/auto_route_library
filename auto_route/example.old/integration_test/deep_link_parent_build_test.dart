@@ -18,16 +18,17 @@ void main() {
   final builds = <String, int>{};
   setUp(builds.clear);
 
-  RootStackRouter buildRouter({bool maintainParentState = true}) => .build(
-    routes: [
-      AutoRoute(
-        path: '/',
-        page: _countedPage('ParentRoute', builds),
-        maintainState: maintainParentState,
-      ),
-      AutoRoute(path: '/:id', page: _countedPage('ChildRoute', builds)),
-    ],
-  );
+  RootStackRouter buildRouter({bool shouldMaintainParentState = true}) =>
+      .build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: _countedPage('ParentRoute', builds),
+            maintainState: shouldMaintainParentState,
+          ),
+          AutoRoute(path: '/:id', page: _countedPage('ChildRoute', builds)),
+        ],
+      );
 
   Future<void> openAt(
     WidgetTester tester,
@@ -92,7 +93,7 @@ void main() {
     'With prefix matches, a parent with maintainState false builds only on '
     'back',
     (tester) async {
-      final router = buildRouter(maintainParentState: false);
+      final router = buildRouter(shouldMaintainParentState: false);
       await openAt(tester, router, includePrefixMatches: true);
       expect(router.stack.map((page) => page.name), [
         'ParentRoute',

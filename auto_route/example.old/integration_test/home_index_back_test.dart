@@ -51,7 +51,7 @@ void main() {
     expect(tabs.activeIndex, 0);
     final [newsTab, ...] = _kTabNames;
     expect(find.text(newsTab), findsOneWidget);
-    expect(await androidSendsBackToFlutter(), anyOf(isNull, isFalse));
+    expect(await doesAndroidSendBackToFlutter(), anyOf(isNull, isFalse));
   });
 
   testWidgets(

@@ -52,12 +52,12 @@ void main() {
     tester,
   ) async {
     await pumpRouterAppWithConfig(tester, router);
-    bool? result;
-    var completed = false;
+    bool? isConfirmed;
+    var isCompleted = false;
     unawaited(
-      router.push<bool>(_ContentRoute('1')).then((value) {
-        result = value;
-        completed = true;
+      router.push<bool>(_ContentRoute('1')).then((isAccepted) {
+        isConfirmed = isAccepted;
+        isCompleted = true;
       }),
     );
     await tester.pumpAndSettle();
@@ -69,8 +69,8 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.text('Content 1'), findsNothing);
     expect(find.text('Home'), findsOneWidget);
-    expect(completed, isTrue);
-    expect(result, isTrue);
+    expect(isCompleted, isTrue);
+    expect(isConfirmed, isTrue);
     await expectBrowserUrl('/home');
   });
 }

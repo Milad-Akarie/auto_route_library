@@ -45,11 +45,11 @@ void main() {
 
   Future<void> openCountedPage(
     WidgetTester tester, {
-    required bool nested,
+    required bool isNested,
     ThemeData? theme,
   }) async {
     await pumpRouterApp(tester, router, theme: theme);
-    if (nested) {
+    if (isNested) {
       unawaited(router.push(const _HostRoute()));
       await tester.pumpAndSettle();
       unawaited(
@@ -105,13 +105,13 @@ void main() {
     },
   );
 
-  for (final nested in [false, true]) {
-    final where = nested ? 'in a nested router' : 'in a flat route';
+  for (final isNested in [false, true]) {
+    final where = isNested ? 'in a nested router' : 'in a flat route';
     for (final MapEntry(key: name, value: (back, theme)) in backs.entries) {
       testWidgets(
         '$name $where calls onPopInvokedWithResult once',
         (tester) async {
-          await openCountedPage(tester, nested: nested, theme: theme);
+          await openCountedPage(tester, isNested: isNested, theme: theme);
 
           await back(tester);
 
@@ -127,7 +127,7 @@ void main() {
         '$name $where with PopScope(canPop: false) calls it once per back',
         (tester) async {
           _canPop = false;
-          await openCountedPage(tester, nested: nested, theme: theme);
+          await openCountedPage(tester, isNested: isNested, theme: theme);
 
           await back(tester);
           expect(_heard, [false]);

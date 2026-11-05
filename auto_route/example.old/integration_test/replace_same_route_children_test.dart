@@ -17,14 +17,14 @@ void main() {
   // pushAndPopUntil down to HomeRoute. Then go back.
   // Should: the shell shows OtherRoute alone and the url is '/app/other', in
   // the browser's address bar too on web, and back leaves the shell.
-  for (final (how, replace) in [
+  for (final (how, shouldReplace) in [
     ('replace()', true),
     ('pushAndPopUntil()', false),
   ]) {
     testWidgets('$how with the same parent route shows only its new children', (
       tester,
     ) async {
-      final router = _buildRouter(replace: replace);
+      final router = _buildRouter(shouldReplace: shouldReplace);
       await pumpRouterApp(tester, router);
       await tester.tap(find.text('Open users'));
       await tester.pumpAndSettle();
@@ -53,7 +53,7 @@ const _kOther = _Route('AppRoute', children: [_Route('OtherRoute')]);
 
 // HomeRoute's button pushes [_kUsers]; UsersRoute's button puts [_kOther] over
 // the shell's page with replace, or with pushAndPopUntil down to HomeRoute.
-RootStackRouter _buildRouter({required bool replace}) => .build(
+RootStackRouter _buildRouter({required bool shouldReplace}) => .build(
   routes: [
     AutoRoute(
       path: '/',
@@ -72,7 +72,7 @@ RootStackRouter _buildRouter({required bool replace}) => .build(
           page: _page(
             'UsersRoute',
             label: 'Show other',
-            onPressed: (router) => replace
+            onPressed: (router) => shouldReplace
                 ? router.replace(_kOther)
                 : router.pushAndPopUntil(
                     _kOther,

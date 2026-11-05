@@ -39,10 +39,10 @@ void main() {
       await tester.pumpAndSettle();
       expect(nested.stack, isEmpty);
 
-      final popped = await nested.maybePop();
+      final wasPopped = await nested.maybePop();
       await tester.pumpAndSettle();
 
-      expect(popped, isTrue);
+      expect(wasPopped, isTrue);
       expectTopPage(router, FirstRoute.name);
       expect(router.childControllers, isEmpty);
     },

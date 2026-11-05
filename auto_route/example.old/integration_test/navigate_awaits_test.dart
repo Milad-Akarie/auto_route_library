@@ -21,25 +21,25 @@ void main() {
     (tester) async {
       final router = buildSimpleRouter();
       await pumpRouterApp(tester, router);
-      var completed = false;
+      var isCompleted = false;
       Object? result;
       unawaited(
         router.navigate(const SecondRoute()).then((value) {
-          completed = true;
+          isCompleted = true;
           result = value;
         }),
       );
       await tester.pumpAndSettle();
       expectCurrentPage(router, SecondRoute.name);
       expect(
-        completed,
+        isCompleted,
         isFalse,
         reason: 'navigate() completed before the page was popped',
       );
 
       router.pop('done');
       await tester.pumpAndSettle();
-      expect(completed, isTrue);
+      expect(isCompleted, isTrue);
       expect(result, 'done');
     },
   );

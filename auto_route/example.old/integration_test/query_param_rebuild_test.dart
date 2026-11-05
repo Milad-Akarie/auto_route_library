@@ -42,7 +42,7 @@ void main() {
                     page: PageInfo(
                       'ParamRoute',
                       builder: (data) => _ParamPage(
-                        param: data.queryParams.getBool('param', false),
+                        isParamSet: data.queryParams.getBool('param', false),
                       ),
                     ),
                   ),
@@ -84,9 +84,9 @@ void main() {
 }
 
 class _ParamPage extends StatefulWidget {
-  const new({required this.param});
+  const new({required this.isParamSet});
 
-  final bool param;
+  final bool isParamSet;
 
   @override
   State<_ParamPage> createState() => _ParamPageState();
@@ -105,6 +105,6 @@ class _ParamPageState extends State<_ParamPage> {
   @override
   Widget build(BuildContext context) {
     builds++;
-    return Scaffold(body: SafeArea(child: Text('param ${widget.param}')));
+    return Scaffold(body: SafeArea(child: Text('param ${widget.isParamSet}')));
   }
 }

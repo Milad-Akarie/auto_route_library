@@ -37,7 +37,7 @@ void main() {
           transitionsBuilder: TransitionsBuilders.fadeIn,
           duration: const Duration(milliseconds: 200),
           children: [
-            _fade(_page('HomeRoute'), 'home', initial: true),
+            _fade(_page('HomeRoute'), 'home', isInitial: true),
             _fade(_page('ActivityRoute'), 'activity'),
           ],
         ),
@@ -67,15 +67,15 @@ void main() {
 
       await systemBack(tester);
       expectTopPage(router, 'HomeRoute');
-      expect(await androidSendsBackToFlutter(), anyOf(isNull, isFalse));
+      expect(await doesAndroidSendBackToFlutter(), anyOf(isNull, isFalse));
     },
   );
 }
 
-CustomRoute _fade(PageInfo page, String path, {bool initial = false}) => .new(
+CustomRoute _fade(PageInfo page, String path, {bool isInitial = false}) => .new(
   page: page,
   path: path,
-  initial: initial,
+  initial: isInitial,
   transitionsBuilder: TransitionsBuilders.fadeIn,
   duration: const Duration(milliseconds: 200),
 );

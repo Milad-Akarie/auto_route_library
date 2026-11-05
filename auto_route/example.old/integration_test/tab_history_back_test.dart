@@ -24,11 +24,11 @@ void main() {
 
   Future<TabsRouter> pumpApp(
     WidgetTester tester, {
-    bool overFirstPage = false,
+    bool isOverFirstPage = false,
   }) async {
-    final router = buildTabHistoryRouter(overFirstPage: overFirstPage);
+    final router = buildTabHistoryRouter(isOverFirstPage: isOverFirstPage);
     await pumpRouterApp(tester, router);
-    if (overFirstPage) {
+    if (isOverFirstPage) {
       unawaited(router.push(kTabHistoryTabsRoute));
       await tester.pumpAndSettle();
     }
@@ -51,7 +51,7 @@ void main() {
     'system back after tabs 0, 2, 1 shows 2, then 0, then the page under the '
     'tabs',
     (tester) async {
-      final tabs = await pumpApp(tester, overFirstPage: true);
+      final tabs = await pumpApp(tester, isOverFirstPage: true);
 
       await systemBack(tester);
       expectTab(tabs, 2);
@@ -69,14 +69,14 @@ void main() {
     'lets the app close',
     (tester) async {
       final tabs = await pumpApp(tester);
-      expect(await androidSendsBackToFlutter(), anyOf(isNull, isTrue));
+      expect(await doesAndroidSendBackToFlutter(), anyOf(isNull, isTrue));
 
       await systemBack(tester);
       expectTab(tabs, 2);
-      expect(await androidSendsBackToFlutter(), anyOf(isNull, isTrue));
+      expect(await doesAndroidSendBackToFlutter(), anyOf(isNull, isTrue));
       await systemBack(tester);
       expectTab(tabs, 0);
-      expect(await androidSendsBackToFlutter(), anyOf(isNull, isFalse));
+      expect(await doesAndroidSendBackToFlutter(), anyOf(isNull, isFalse));
     },
   );
 }

@@ -18,16 +18,16 @@ const kTabHistoryFirstPageName = 'FirstRoute';
 /// The route name of the page holding the tabs.
 const kTabHistoryTabsName = 'TabsRoute';
 
-/// A router whose tabs page is the first page, or, with [overFirstPage],
+/// A router whose tabs page is the first page, or, with [isOverFirstPage],
 /// sits at `/tabs` over a first page at `/`.
-RootStackRouter buildTabHistoryRouter({bool overFirstPage = false}) {
+RootStackRouter buildTabHistoryRouter({bool isOverFirstPage = false}) {
   return RootStackRouter.build(
     routes: [
-      if (overFirstPage)
+      if (isOverFirstPage)
         AutoRoute(page: _page(kTabHistoryFirstPageName), path: '/'),
       AutoRoute(
         page: _tabsPage,
-        path: overFirstPage ? '/tabs' : '/',
+        path: isOverFirstPage ? '/tabs' : '/',
         children: [
           for (final name in kTabHistoryTabNames)
             AutoRoute(page: _page(name), path: name),

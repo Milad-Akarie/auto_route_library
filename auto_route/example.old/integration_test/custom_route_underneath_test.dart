@@ -41,31 +41,31 @@ void main() {
       // finish it between two frames. Read Home on every frame until the Menu
       // page is open or gone instead of at one moment.
       Future<void> expectHomeInPlaceUntil({
-        required bool menuOpen,
+        required bool isMenuOpen,
         required void Function() action,
       }) async {
         action();
         for (var frame = 0; frame < 300; frame++) {
           await tester.pump(const Duration(milliseconds: 16));
           expect(tester.getTopLeft(home).dx, restingX);
-          if (menu.evaluate().isNotEmpty == menuOpen &&
+          if (menu.evaluate().isNotEmpty == isMenuOpen &&
               !tester.binding.hasScheduledFrame) {
             return;
           }
         }
         fail(
-          'The Menu page did not ${menuOpen ? 'open' : 'close'} within 300 '
+          'The Menu page did not ${isMenuOpen ? 'open' : 'close'} within 300 '
           'frames.',
         );
       }
 
       await expectHomeInPlaceUntil(
-        menuOpen: true,
+        isMenuOpen: true,
         action: () => unawaited(router.push(const PageRouteInfo('Menu'))),
       );
       expect(find.text('Menu'), findsOneWidget);
       await expectHomeInPlaceUntil(
-        menuOpen: false,
+        isMenuOpen: false,
         action: () => unawaited(router.maybePop()),
       );
       expect(find.text('Menu'), findsNothing);

@@ -74,7 +74,7 @@ void main() {
       expect(find.text('ProductsRoute'), findsOneWidget);
       await systemBack(tester);
       expect(find.text('HomeRoute'), findsOneWidget);
-      expect(await androidSendsBackToFlutter(), anyOf(isNull, isFalse));
+      expect(await doesAndroidSendBackToFlutter(), anyOf(isNull, isFalse));
     },
     skip: kIsWeb,
   );

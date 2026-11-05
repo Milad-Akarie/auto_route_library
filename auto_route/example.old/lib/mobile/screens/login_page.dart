@@ -7,18 +7,18 @@ import 'package:provider/provider.dart';
 /// [AuthService] above it.
 @RoutePage()
 class LoginPage extends StatelessWidget {
-  /// Takes [showBackButton].
-  const new({super.key, this.showBackButton = true});
+  /// Takes [shouldShowBackButton].
+  const new({super.key, this.shouldShowBackButton = true});
 
   /// Whether the app bar may show a back button; defaults to `true`.
-  final bool showBackButton;
+  final bool shouldShowBackButton;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login page'),
-        automaticallyImplyLeading: showBackButton,
+        automaticallyImplyLeading: shouldShowBackButton,
       ),
       body: Center(
         child: ElevatedButton(

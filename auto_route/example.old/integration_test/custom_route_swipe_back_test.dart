@@ -24,7 +24,7 @@ void main() {
   ) async {
     final router = pageKindsRouter(
       customTransitionsBuilder: TransitionsBuilders.fadeIn,
-      customCupertinoBackGesture: true,
+      hasCustomCupertinoBackGesture: true,
     );
     await pumpRouterApp(tester, router);
     unawaited(router.push(const NamedRoute('CustomKindRoute')));
@@ -34,11 +34,11 @@ void main() {
     await swipeBack(tester);
 
     // In a browser, the platform is the computer's, so a Mac swipes too.
-    final swipes =
+    final isSwipeBack =
         defaultTargetPlatform == .iOS || defaultTargetPlatform == .macOS;
     expect(
       router.stack.map((page) => page.name),
-      swipes ? ['HomeRoute'] : ['HomeRoute', 'CustomKindRoute'],
+      isSwipeBack ? ['HomeRoute'] : ['HomeRoute', 'CustomKindRoute'],
     );
   });
 }

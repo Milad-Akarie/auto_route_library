@@ -94,10 +94,10 @@ class _TabsHostRoute extends PageRouteInfo<void> {
     name,
     builder: (_) => ValueListenableBuilder<bool>(
       valueListenable: _secondRemovedNotifier,
-      builder: (context, secondRemoved, _) {
+      builder: (context, isSecondRemoved, _) {
         final routes = [
           const _FirstTabRoute(),
-          if (!secondRemoved) const _SecondTabRoute(),
+          if (!isSecondRemoved) const _SecondTabRoute(),
           const _ThirdTabRoute(),
         ];
         return switch (_tabsKind) {

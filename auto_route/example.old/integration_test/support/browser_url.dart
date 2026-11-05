@@ -25,7 +25,7 @@ void openBrowserAt(String path) =>
 /// Whether the app has written the browser's current entry since
 /// [openBrowserAt] made it;
 /// only the web has one.
-bool appWroteBrowserEntry() =>
+bool didAppWriteBrowserEntry() =>
     throw UnsupportedError('Only the web has a browser history.');
 
 /// Makes the browser's current entry hold [path] and a state the app saved

@@ -75,22 +75,22 @@ void main() {
         decision = Completer<bool>();
         final router = buildRouter();
         await pumpRouterApp(tester, router);
-        var completed = false;
+        var isCompleted = false;
         unawaited(
           router
               .pushAll(const [
                 NamedRoute('ListRoute'),
                 NamedRoute('CheckoutRoute'),
               ])
-              .then((_) => completed = true),
+              .then((_) => isCompleted = true),
         );
         await tester.pumpAndSettle();
-        expect(completed, isFalse);
+        expect(isCompleted, isFalse);
 
         expect(find.text('HomeRoute'), findsOneWidget);
         await tester.tap(find.text(allow ? 'Allow' : 'Deny'));
         await tester.pumpAndSettle();
-        expect(completed, isTrue);
+        expect(isCompleted, isTrue);
         expect(
           find.text('CheckoutRoute'),
           allow ? findsOneWidget : findsNothing,

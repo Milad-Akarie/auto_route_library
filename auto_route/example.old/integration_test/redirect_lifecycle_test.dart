@@ -11,15 +11,15 @@ import 'package:material_ui/material_ui.dart';
 // auto_route/test/reevaluatable_router/redirect_lifecycle_test.dart
 /// The reporter's notifier of the login and subscription state.
 class GuardChangeNotifier extends ChangeNotifier {
-  bool connected = false;
+  bool isConnected = false;
   bool hasProSubscription = false;
   void connect() {
-    connected = true;
+    isConnected = true;
     notifyListeners();
   }
 
   void disconnect() {
-    connected = false;
+    isConnected = false;
     notifyListeners();
   }
 }
@@ -37,7 +37,7 @@ void main() {
     (tester) async {
       final n = GuardChangeNotifier();
       final login = AutoRouteGuard.simple((resolver, router) {
-        if (n.connected) {
+        if (n.isConnected) {
           resolver.nextOrBack();
         } else {
           unawaited(resolver.redirectUntil(const NamedRoute('SignInRoute')));
@@ -45,7 +45,7 @@ void main() {
       });
       final anonymous = AutoRouteGuard.simple(
         (resolver, router) =>
-            n.connected ? resolver.reject(goBack: true) : resolver.next(),
+            n.isConnected ? resolver.reject(goBack: true) : resolver.next(),
       );
       final noPro = AutoRouteGuard.simple(
         (resolver, router) => n.hasProSubscription

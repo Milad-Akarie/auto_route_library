@@ -64,17 +64,17 @@ class _Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<_Splash> {
-  var _ready = false;
+  var _isReady = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback(
-      (_) => setState(() => _ready = true),
+      (_) => setState(() => _isReady = true),
     );
   }
 
   @override
   Widget build(BuildContext context) =>
-      _ready ? widget.builder() : const SizedBox();
+      _isReady ? widget.builder() : const SizedBox();
 }

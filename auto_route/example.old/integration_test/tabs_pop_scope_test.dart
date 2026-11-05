@@ -64,7 +64,7 @@ void main() {
       'page',
       (tester) async {
         _popAttempts = 0;
-        _scopeAroundTabs = scopeAroundTabs;
+        _hasScopeAroundTabs = scopeAroundTabs;
         final router = RootStackRouter.build(
           routes: [AutoRoute(page: _tabsScreen, path: '/', children: tabs)],
         );
@@ -95,7 +95,7 @@ void main() {
 }
 
 var _popAttempts = 0;
-var _scopeAroundTabs = false;
+var _hasScopeAroundTabs = false;
 
 /// Blocks every pop of [child] and counts the attempts in [_popAttempts].
 class _BlockingPopScope extends StatelessWidget {
@@ -119,7 +119,7 @@ final _tabsScreen = PageInfo(
   'TabsScreenRoute',
   builder: (_) {
     const tabs = AutoTabsRouter(routes: [_Route('TabA'), _Route('TabB')]);
-    return _scopeAroundTabs ? const _BlockingPopScope(child: tabs) : tabs;
+    return _hasScopeAroundTabs ? const _BlockingPopScope(child: tabs) : tabs;
   },
 );
 
