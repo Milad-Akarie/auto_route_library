@@ -31,7 +31,7 @@ void main() {
           page: _tabsPage,
           path: '/',
           initial: true,
-          guards: [_LateGuard()],
+          guards: const [_LateGuard()],
           children: [
             AutoRoute(page: _page('HomeRoute'), path: 'home'),
             AutoRoute(
@@ -81,6 +81,8 @@ final _tabsPage = PageInfo(
 );
 
 class _LateGuard extends AutoRouteGuard {
+  const new();
+
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
     unawaited(

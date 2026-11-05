@@ -74,24 +74,24 @@ class BooksDBProvider extends InheritedWidget {
 class UsersDB {
   /// The sample users.
   final List<User> users = [
-    User(
+    const User(
       id: 1,
       name: 'User one',
       email: 'userone@email.com',
       books: [
-        const Book(id: 1, genre: 'Fiction', name: 'Anna Karenina'),
-        const Book(id: 2, genre: 'Fiction', name: 'The Great Gatsby'),
-        const Book(id: 3, genre: 'Comic', name: 'Amazing Spider-Man'),
+        Book(id: 1, genre: 'Fiction', name: 'Anna Karenina'),
+        Book(id: 2, genre: 'Fiction', name: 'The Great Gatsby'),
+        Book(id: 3, genre: 'Comic', name: 'Amazing Spider-Man'),
       ],
     ),
-    User(
+    const User(
       id: 2,
       name: 'User two',
       email: 'usertwo@email.com',
       books: [
-        const Book(id: 5, genre: 'Comic', name: 'The Incredible Hulk'),
-        const Book(id: 6, genre: 'Fiction', name: 'The Big Sleep'),
-        const Book(id: 7, genre: 'Fiction', name: 'Woman in White'),
+        Book(id: 5, genre: 'Comic', name: 'The Incredible Hulk'),
+        Book(id: 6, genre: 'Fiction', name: 'The Big Sleep'),
+        Book(id: 7, genre: 'Fiction', name: 'Woman in White'),
       ],
     ),
   ];
@@ -111,7 +111,7 @@ class UsersDB {
 class User {
   /// All fields are required; [id] must be unique among the users of a
   /// [UsersDB].
-  new({
+  const new({
     required this.id,
     required this.name,
     required this.email,

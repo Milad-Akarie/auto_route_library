@@ -9,7 +9,7 @@ import 'package:example/web_demo/web_main.dart';
 /// through.
 class AuthGuard extends AutoRouteGuard {
   /// Takes the [AuthService] to ask.
-  new(this.authService);
+  const new(this.authService);
 
   /// The sign-in state this guard checks.
   final AuthService authService;

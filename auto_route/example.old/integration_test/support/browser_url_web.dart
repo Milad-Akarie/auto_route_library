@@ -6,7 +6,7 @@ external _Location get _location;
 @JS('history')
 external _History get _history;
 
-extension type _History(JSObject _) implements JSObject {
+extension type const _History(JSObject _) implements JSObject {
   external void back();
   external void forward();
   external JSAny? get state;
@@ -71,7 +71,7 @@ bool appWroteBrowserEntry() {
 /// without reloading the page.
 void typeBrowserUrl(String path) => _location.hash = path;
 
-extension type _Location(JSObject _) implements JSObject {
+extension type const _Location(JSObject _) implements JSObject {
   external String get hash;
   external set hash(String value);
   external String get pathname;

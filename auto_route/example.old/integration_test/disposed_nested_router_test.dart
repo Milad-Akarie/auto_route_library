@@ -26,7 +26,7 @@ void main() {
             AutoRoute(
               path: 'wallet',
               page: _page('WalletRoute'),
-              guards: [_SlowGuard()],
+              guards: const [_SlowGuard()],
             ),
           ],
         ),
@@ -95,6 +95,8 @@ PageInfo _page(String name) => .new(
 );
 
 class _SlowGuard extends AutoRouteGuard {
+  const new();
+
   static const delay = Duration(seconds: 2);
 
   @override

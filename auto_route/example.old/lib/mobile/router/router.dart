@@ -71,7 +71,7 @@ const ProfileTab = EmptyShellRoute('ProfileTab');
 /// A named route that can build its own page.
 abstract class RouteDef {
   /// Takes the route [name] and, optionally, its [path].
-  new(this.name, {this.path});
+  const new(this.name, {this.path});
 
   /// The name of this route.
   final String name;
@@ -80,11 +80,11 @@ abstract class RouteDef {
   final String? path;
 
   /// Builds the page for this route from its [data].
-  Widget build(BuildContext context, RouteData<dynamic> data);
+  Widget build(BuildContext context, RouteData<Object?> data);
 
   /// Returns the definition that matches the route [data], which is this one
   /// unless a subclass overrides it.
-  RouteDef buildFromData(RouteData<dynamic> data) {
+  RouteDef buildFromData(RouteData<Object?> data) {
     // A route that does not depend on its data is its own definition.
     // ignore: avoid_returning_this
     return this;
