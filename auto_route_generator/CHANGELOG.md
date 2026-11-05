@@ -1,3 +1,12 @@
+## 11.3.0
+- **BREAKING CHANGE**: `throwIf` from `build_utils.dart` takes the message first and its condition by name:
+  `throwIf(message, shouldThrow: condition)`.
+- **CHANGE**: generated routers read a bool query or path param's default by name, `getBool('key', defaultValue: x)`,
+  and an inherited path param from `PathParam.inherited`; they need auto_route 12.3.0.
+- **CHANGE**: the builders' warnings go through build_runner's logger instead of `print`, so they show as warnings.
+- **CHORE**: every analyzer and DCM rule is on, with no rule switched off and no ignore; the code is formatted at 80
+  columns.
+
 ## 11.1.0
 - **FEAT**: a `ParamConverter` on `@PathParam` or `@QueryParam` reads and writes a param of any type; a custom type
   without one fails the build saying how to give one (#1794).
