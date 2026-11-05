@@ -115,14 +115,15 @@ abstract class RoutingController with ChangeNotifier {
     return _childControllers.lastWhereOrNull((c) => c.key == routeKey);
   }
 
-  // The nested router of the page [data] belongs to. Found by the page's
-  // match id first, because two pages can share a route: two AutoTabsRouter
-  // tabs do when both are children of the same parent route. Then by route
-  // key, for a nested router kept when its page was replaced.
+  // The nested router of the page [data] belongs to, found by the page's
+  // match id: two pages can share a route key, as two AutoTabsRouter tabs do
+  // when both are children of the same parent route, and as a page does with
+  // the one it replaced while that one still animates out with its own nested
+  // router. A page that takes over the nested router of the page it replaced
+  // takes over its match id too.
   RoutingController? _innerControllerOfPage(RouteData<Object?>? data) {
     if (data == null) return null;
-    return _innerControllerOfMatch(data.matchId) ??
-        _topInnerControllerOf(data.key);
+    return _innerControllerOfMatch(data.matchId);
   }
 
   RoutingController? _innerControllerOfMatch(Key matchKey) {
