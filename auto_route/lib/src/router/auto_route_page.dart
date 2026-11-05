@@ -252,8 +252,10 @@ mixin _FlutterMaterialThemeTransitionMixin<T>
   @override
   DelegatedTransitionBuilder? get delegatedTransition {
     final navigator = this.navigator;
-    if (navigator == null || flutterMaterialThemeOf(navigator.context) == null)
+    if (navigator == null ||
+        flutterMaterialThemeOf(navigator.context) == null) {
       return super.delegatedTransition;
+    }
     return _flutterThemeDelegatedTransition;
   }
 
@@ -288,13 +290,14 @@ mixin _FlutterMaterialThemeTransitionMixin<T>
     Widget child,
   ) {
     final theme = flutterMaterialThemeOf(context);
-    if (theme == null)
+    if (theme == null) {
       return super.buildTransitions(
         context,
         animation,
         secondaryAnimation,
         child,
       );
+    }
     return theme.pageTransitionsTheme.buildTransitions(
       this,
       context,
@@ -435,8 +438,9 @@ mixin _CustomPageRouteTransitionMixin<T> on _PageRoute<T> {
     final platform =
         flutterMaterialThemeOf(context)?.platform ?? Theme.of(context).platform;
     if (!routeType.enableCupertinoBackGesture ||
-        (platform != .iOS && platform != .macOS))
+        (platform != .iOS && platform != .macOS)) {
       return transitions;
+    }
     // Flutter's iOS back gesture comes only with its slide transition, which
     // moves nothing when its animations stand still. The gesture drives this
     // route's own animation, so the page follows the finger through its

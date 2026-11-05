@@ -188,8 +188,9 @@ class RouteMatcher {
 
   // Joins segments split by [_split] back into a path.
   static String _join(List<String> segments) {
-    if (segments.isNotEmpty && segments.first == '/')
+    if (segments.isNotEmpty && segments.first == '/') {
       return '/${segments.skip(1).join('/')}';
+    }
     return segments.join('/');
   }
 

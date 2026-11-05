@@ -142,8 +142,9 @@ class AutoPageViewState extends State<AutoPageView> {
             .route
             .guards
             .isNotEmpty ??
-        false)
+        false) {
       return;
+    }
     if (_tabKeyAt(index)?.currentState?.preload() != true) return;
     _draggedInTabs.add(_matchIdAt(index)!);
     if (mounted) {

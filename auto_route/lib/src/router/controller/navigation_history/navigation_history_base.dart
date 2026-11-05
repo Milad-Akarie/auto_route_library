@@ -184,8 +184,9 @@ abstract class NavigationHistory with ChangeNotifier {
     RoutingController? controller,
   ]) {
     controller ??= router;
-    if (controller.stackData.any((data) => data.route.id == pageId))
+    if (controller.stackData.any((data) => data.route.id == pageId)) {
       return controller;
+    }
     for (final child in controller.childControllers) {
       final holder = controllerOfPage(pageId, child);
       if (holder != null) return holder;
@@ -201,8 +202,9 @@ abstract class NavigationHistory with ChangeNotifier {
   @protected
   void removePagesAbove(LocalKey pageId) {
     final holder = controllerOfPage(pageId);
-    if (holder is StackRouter)
+    if (holder is StackRouter) {
       holder.removeUntil((data) => data.route.id == pageId);
+    }
   }
 
   /// Whether the change being reported now opens a new browser entry although

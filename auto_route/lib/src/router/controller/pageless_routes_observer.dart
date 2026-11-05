@@ -84,8 +84,9 @@ class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
     final pageUnder = _pageUnder.remove(oldRoute);
     if (newRoute != null) {
       _routes.add(newRoute);
-      if (pageUnder != null && newRoute.settings is! Page)
+      if (pageUnder != null && newRoute.settings is! Page) {
         _pageUnder[newRoute] = pageUnder;
+      }
     }
   }
 

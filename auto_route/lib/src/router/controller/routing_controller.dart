@@ -498,8 +498,9 @@ abstract class RoutingController with ChangeNotifier {
       final top = router.stackData.lastOrNull;
       if (top == null ||
           top.name != match.name ||
-          top.match != match.stringMatch)
+          top.match != match.stringMatch) {
         break;
+      }
       final child = router._topInnerControllerOf(top.key);
       if (child is! StackRouter) break;
       router = child;
@@ -619,8 +620,9 @@ abstract class RoutingController with ChangeNotifier {
   bool get isInActiveTabs {
     var child = this;
     for (var parent = _parent; parent != null; parent = parent._parent) {
-      if (parent is TabsRouter && parent.currentChild?.key != child.key)
+      if (parent is TabsRouter && parent.currentChild?.key != child.key) {
         return false;
+      }
       child = parent;
     }
     return true;
@@ -690,12 +692,14 @@ abstract class RoutingController with ChangeNotifier {
         (animation) => !animation.isAnimating,
       );
       if (stack._landingPushes.isNotEmpty ||
-          stack._leavingAnimations.isNotEmpty)
+          stack._leavingAnimations.isNotEmpty) {
         return true;
+      }
       if (stack._pages.any(
         (page) => page.routeData.animation?.isAnimating ?? false,
-      ))
+      )) {
         return true;
+      }
     }
     return router._childControllers.any(_hasTransitionIn);
   }
@@ -1051,8 +1055,9 @@ class TabsRouter extends RoutingController {
       'Tab index $index is out of range for ${_pages.length} tabs.',
     );
     // A change waits on the tab's guards when it has any; nothing here waits for it.
-    if (_changeTab(index, notify: notify) case final Future<void> change)
+    if (_changeTab(index, notify: notify) case final Future<void> change) {
       unawaited(change);
+    }
   }
 
   // The latest change of the active tab, and the tab of one whose guards are
@@ -1240,8 +1245,9 @@ class TabsRouter extends RoutingController {
   @optionalTypeArgs
   Future<bool> maybePop<T extends Object?>([T? result]) {
     final shown = _showTabOnBack();
-    if (shown is bool)
+    if (shown is bool) {
       return shown ? SynchronousFuture(true) : _maybePopParent(result);
+    }
     return shown.then(
       (wasShown) => wasShown ? true : _maybePopParent<T>(result),
     );
@@ -1348,8 +1354,9 @@ class TabsRouter extends RoutingController {
       _pendingTab = index;
       _pendingChange = guarding.then((result) {
         // The tab takes the first one's place in the url.
-        if (result.continueNavigation && change == _tabChanges)
+        if (result.continueNavigation && change == _tabChanges) {
           markUrlStateForReplace();
+        }
         return _endTabChange(change, index, match, result, update: true);
       });
     }
@@ -2248,8 +2255,9 @@ abstract class StackRouter extends RoutingController {
     while (kept < matches.length - 1 && start + kept < _pages.length) {
       final data = _pages[start + kept].routeData;
       if (data._route != matches[kept] ||
-          _innerControllerOfMatch(data.matchId) != null)
+          _innerControllerOfMatch(data.matchId) != null) {
         break;
+      }
       kept++;
     }
     if (kept == 0) return 0;
@@ -2762,8 +2770,9 @@ abstract class StackRouter extends RoutingController {
       } else {
         // A page its guard now closes leaves its history entry to the page
         // below, as a pop does; a new entry would lead back to the guard.
-        if (match is ReevaluatableRouteMatch)
+        if (match is ReevaluatableRouteMatch) {
           _markLeaving([match.currentPage], .removed);
+        }
         if (match is ReevaluatableRouteMatch<Object?, Object?> &&
             _pages.remove(match.currentPage)) {
           markUrlStateForReplace();
@@ -3172,8 +3181,9 @@ abstract class StackRouter extends RoutingController {
     for (var i = 0; i < count; i++) {
       final shownRoute = pagelessRoutesObserver.routeOf(_pages.last);
       final shownNavigator = shownRoute?.navigator;
-      if (!withPush && shownRoute != null)
+      if (!withPush && shownRoute != null) {
         shownNavigator?.removeRoute(shownRoute);
+      }
       _removeLast(notify: false);
       if (shownRoute != null) {
         // drops the removed page's history entry, as a pop does

@@ -125,8 +125,9 @@ class NavigationHistoryImpl extends NavigationHistory {
     final entry = _entries[_currentIndex];
     if (entry == null ||
         !entry.hasSegments ||
-        !_isSameUrl(entry.url, configuration.url))
+        !_isSameUrl(entry.url, configuration.url)) {
       return null;
+    }
     final pageId = entry.topMatch?.id;
     // The entry's page may still be under the current one with the same route
     // name, as when the same route was pushed twice, with the same params or
@@ -135,8 +136,9 @@ class NavigationHistoryImpl extends NavigationHistory {
       removePagesAbove(pageId);
       // The same page can show another url, as when its query params changed
       // in place; then the entry still needs to be shown.
-      if (router.topMatch.id == pageId && _isSameUrl(urlState.url, entry.url))
+      if (router.topMatch.id == pageId && _isSameUrl(urlState.url, entry.url)) {
         return const [];
+      }
     }
     return [UrlState.toHierarchy(entry.segments)];
   }
@@ -153,13 +155,16 @@ class NavigationHistoryImpl extends NavigationHistory {
     if (appIndex == null ||
         index != appIndex + 1 ||
         page == null ||
-        currentPageId == null)
+        currentPageId == null) {
       return null;
+    }
     if (!_isSameUrl(entry!.url, configuration.url) ||
-        !_isSameUrl(urlState.url, entry.url))
+        !_isSameUrl(urlState.url, entry.url)) {
       return null;
-    if (page.id == currentPageId || controllerOfPage(page.id) != null)
+    }
+    if (page.id == currentPageId || controllerOfPage(page.id) != null) {
       return null;
+    }
     final holder = controllerOfPage(currentPageId);
     return holder is StackRouter ? (holder, page) : null;
   }
