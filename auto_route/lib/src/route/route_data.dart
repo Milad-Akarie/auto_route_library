@@ -73,9 +73,18 @@ class RouteData<R> {
 
   String get _baseRestorationId => _route.restorationId == null ? _route.name : _route.restorationId!(_route);
 
-  // Assigned in routing_controller.dart, a part of this library.
-  // ignore: avoid-unassigned-fields
   String? _restorationId;
+
+  // Takes the base restoration id, or the first of 'id#1', 'id#2' and so on
+  // that no id in [taken] already is.
+  void _takeRestorationIdApartFrom(Set<String?> taken) {
+    final base = _baseRestorationId;
+    var id = base;
+    for (var i = 1; taken.contains(id); i++) {
+      id = '$base#$i';
+    }
+    _restorationId = id;
+  }
 
   /// Whether is route is in the visible url-segments
   bool get isActive => router.isRouteActive(name);

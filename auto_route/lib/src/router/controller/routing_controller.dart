@@ -274,11 +274,7 @@ abstract class RoutingController with ChangeNotifier {
       for (final page in _pages)
         if (page.routeData.matchId != created.matchId) page.restorationId,
     };
-    final restorationId = created._baseRestorationId;
-    created._restorationId = restorationId;
-    for (var i = 1; takenRestorationIds.contains(created._restorationId); i++) {
-      created._restorationId = '$restorationId#$i';
-    }
+    created._takeRestorationIdApartFrom(takenRestorationIds);
     for (final ctr in _childControllers) {
       if (ctr._markedForDataUpdate && ctr.key == created.key) {
         ctr
