@@ -4,8 +4,8 @@
 # example app's integration tests (auto_route/example/integration_test) on an
 # Android emulator, an iOS simulator, web through `flutter drive`, and macOS
 # desktop.
-# Every job's work stops within 15 minutes, so Android, iOS and Chrome each
-# run their suite in two halves, one job each. The macOS jobs run on arm64
+# Every job's work stops within 15 minutes, so the headless tests, Android
+# and iOS each run their suite in parts, one job each. The macOS jobs run on arm64
 # runners; Intel macOS isn't supported. Those runners are often short, so the
 # macOS jobs may wait up to 30 minutes for one (see the ios job).
 name: tests
@@ -25,8 +25,8 @@ env:
   FLUTTER_VERSION: 3.47.9
 
 jobs:
-  analyze-and-headless:
-    name: Analyze and headless tests (VM)
+  analyze:
+    name: Analyze, and the committed routers regenerate unchanged
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -42,49 +42,18 @@ jobs:
       - name: Analyze the example app and its integration tests
         working-directory: auto_route/example
         run: flutter analyze
-      - name: Committed routers regenerate unchanged
-        if: success() || failure()
-        run: .github/scripts/check_generated_routers.sh
-      - name: Headless tests on the VM
-        working-directory: auto_route
-        # bash adds pipefail, so the step fails with the tests despite tee.
-        shell: bash
-        run: flutter test --reporter github --file-reporter "json:$RUNNER_TEMP/test-results.json" 2>&1 | tee "$RUNNER_TEMP/test-output.txt"
-      # The job logs need a sign-in; annotations and the summary don't.
-      - name: Name each failed test
-        if: failure()
-        working-directory: auto_route
-        run: python3 ../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/test-output.txt"
       - name: Analyze the generator
         if: success() || failure()
         working-directory: auto_route_generator
         run: flutter pub get && dart analyze
-      - name: Generator tests
-        id: generator-tests
+      - name: Committed routers regenerate unchanged
         if: success() || failure()
-        working-directory: auto_route_generator
-        shell: bash
-        run: dart test --reporter github --file-reporter "json:$RUNNER_TEMP/generator-results.json" 2>&1 | tee "$RUNNER_TEMP/generator-output.txt"
-      # Only when the generator tests failed: a failure of the steps above has its own report.
-      - name: Name each failed generator test
-        if: failure() && steps.generator-tests.outcome == 'failure'
-        working-directory: auto_route_generator
-        run: python3 ../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/generator-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/generator-output.txt"
+        run: .github/scripts/check_generated_routers.sh
 
-  headless-chrome:
-    name: Headless tests in Chrome (half ${{ matrix.half }} of 2)
+  generator:
+    name: Generator tests
     runs-on: ubuntu-24.04
     timeout-minutes: 15
-    # The whole suite took 695 s and then 757 s here, too close to the job's
-    # limit, so two jobs each run half of it.
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - half: 1
-            shard-index: 0
-          - half: 2
-            shard-index: 1
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: subosito/flutter-action@v2.23.0
@@ -95,13 +64,54 @@ jobs:
       # The step stops two minutes before the job's limit, so a run that
       # doesn't fit fails instead of being canceled, and the next step names
       # the test it was on.
-      - name: Headless tests in Chrome
+      - name: Generator tests
+        working-directory: auto_route_generator
+        timeout-minutes: 13
+        shell: bash
+        run: flutter pub get && dart test --reporter github --file-reporter "json:$RUNNER_TEMP/test-results.json" 2>&1 | tee "$RUNNER_TEMP/test-output.txt"
+      # The job logs need a sign-in; annotations and the summary don't.
+      - name: Name each failed test
+        if: failure()
+        working-directory: auto_route_generator
+        run: python3 ../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/test-output.txt"
+
+  headless:
+    name: Headless tests on ${{ matrix.platform-name }} (part ${{ matrix.part }} of ${{ matrix.parts }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    # Each job runs a share of the test files (see test_files_for_shard.sh).
+    # In Chrome a file costs about 4.6 s on CI, almost all of it loading, so
+    # its 407 files take about 31 minutes in all: 5 parts of about 6 minutes.
+    # The VM runs files side by side, 379 s for all of them: 2 parts.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { platform: tester, platform-name: the VM, part: 1, parts: 2 }
+          - { platform: tester, platform-name: the VM, part: 2, parts: 2 }
+          - { platform: chrome, platform-name: Chrome, part: 1, parts: 5 }
+          - { platform: chrome, platform-name: Chrome, part: 2, parts: 5 }
+          - { platform: chrome, platform-name: Chrome, part: 3, parts: 5 }
+          - { platform: chrome, platform-name: Chrome, part: 4, parts: 5 }
+          - { platform: chrome, platform-name: Chrome, part: 5, parts: 5 }
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: subosito/flutter-action@v2.23.0
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      # The step stops two minutes before the job's limit, so a run that
+      # doesn't fit fails instead of being canceled, and the next step names
+      # the test it was on.
+      - name: Headless tests
         working-directory: auto_route
         timeout-minutes: 13
         shell: bash
-        run: >-
-          flutter test --reporter github --platform chrome --file-reporter "json:$RUNNER_TEMP/test-results.json"
-          --total-shards 2 --shard-index ${{ matrix.shard-index }} 2>&1 | tee "$RUNNER_TEMP/test-output.txt"
+        run: |
+          files=$(../.github/scripts/test_files_for_shard.sh $(( ${{ matrix.part }} - 1 )) ${{ matrix.parts }})
+          flutter test --reporter github --platform ${{ matrix.platform }} --file-reporter "json:$RUNNER_TEMP/test-results.json" \
+            $files 2>&1 | tee "$RUNNER_TEMP/test-output.txt"
       # The job logs need a sign-in; annotations and the summary don't.
       - name: Name each failed test
         if: failure()
@@ -182,7 +192,7 @@ jobs:
         run: python3 ../../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/test-output.txt"
 
   ios:
-    name: Integration tests on iOS (half ${{ matrix.half }} of 2)
+    name: Integration tests on iOS (part ${{ matrix.part }} of 3)
     runs-on: macos-26
     # GitHub seems to stop looking for a runner when the job's time limit runs out:
     # in 40 runs, every macOS job that never got one was canceled 900 to 902 s
@@ -190,15 +200,21 @@ jobs:
     # canceled job fails the run despite continue-on-error. So these jobs may
     # wait 30 minutes, and their steps keep the work itself within 15.
     timeout-minutes: 30
-    # Two jobs, each running half of the suite in one launch of the app.
+    # Three jobs, each running a third of the suite in one launch of the app.
+    # With 271 tests, half of them took 451 s to build and run on one runner,
+    # while on a slower one, whose Xcode build took 266 s instead of 99 s and
+    # whose simulator took 244 s to boot, half ran out of time after 13 tests.
+    # A third leaves room for a slow runner.
     strategy:
       fail-fast: false
       matrix:
         include:
-          - half: 1
+          - part: 1
             shard-index: 0
-          - half: 2
+          - part: 2
             shard-index: 1
+          - part: 3
+            shard-index: 2
     # GitHub never picked up an arm64 macOS runner in five runs; the maintainer's Mac runs iOS and macOS before every merge.
     continue-on-error: true
     steps:
@@ -239,7 +255,7 @@ jobs:
         # keep their start.
         run: >-
           flutter test -v --reporter github --file-reporter "json:$RUNNER_TEMP/test-results.json"
-          integration_test/all_tests.dart --total-shards 2 --shard-index ${{ matrix.shard-index }} -d "$SIMULATOR_UDID" 2>&1
+          integration_test/all_tests.dart --total-shards 3 --shard-index ${{ matrix.shard-index }} -d "$SIMULATOR_UDID" 2>&1
           | perl -MPOSIX -pe 'BEGIN { $| = 1 } print strftime("[%H:%M:%S] ", gmtime) unless /^::/'
           | tee "$RUNNER_TEMP/test-output.txt"
       # The job logs need a sign-in; annotations and the summary don't.
