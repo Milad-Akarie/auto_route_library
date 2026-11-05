@@ -1,15 +1,8 @@
 import 'package:auto_route_generator/src/models/resolved_type.dart';
+import 'package:auto_route_generator/src/models/url_param_type.dart';
 import 'package:code_builder/code_builder.dart' as cb;
 
 const _reservedVarNames = ['children'];
-
-/// A list of valid path param types
-/// that can be parsed from a path string
-const validPathParamTypes = ['String', 'int', 'double', 'num', 'bool', 'dynamic'];
-
-/// The collections a query param can be, read from its key repeated in the
-/// url.
-const urlCollectionTypes = {'List', 'Set', 'Iterable'};
 
 /// holds constructor parameter info to be used
 /// in generating route parameters.
@@ -119,40 +112,9 @@ class ParamConfig {
     return name;
   }
 
-  /// Whether this is a `List`, `Set` or `Iterable` of one item type, the
-  /// collections a query param reads from its key repeated in the url.
-  bool get isUrlCollection => urlCollectionTypes.contains(type.name) && type.typeArguments.length == 1;
-
-  /// The type of the items when this is a `List`, `Set` or `Iterable` of a
-  /// type the url gives as text and the generated code converts, such as
-  /// `int`, otherwise `null`.
-  ResolvedType? get listItemType {
-    if (!isUrlCollection) return null;
-    final item = type.typeArguments.single;
-    return item.isEnum || const {'int', 'double', 'num', 'bool'}.contains(item.name) ? item : null;
-  }
-
-  /// Return the getter function name
-  /// based on the type of the parameter
-  String get getterMethodName {
-    switch (type.name) {
-      case 'String':
-        return type.isNullable ? 'optString' : 'getString';
-      case 'int':
-        return type.isNullable ? 'optInt' : 'getInt';
-      case 'double':
-        return type.isNullable ? 'optDouble' : 'getDouble';
-      case 'num':
-        return type.isNullable ? 'optNum' : 'getNum';
-      case 'bool':
-        return type.isNullable ? 'optBool' : 'getBool';
-
-      case 'List':
-        return type.isNullable ? 'optList' : 'getList';
-      default:
-        return 'get';
-    }
-  }
+  /// How the generated code reads this param from the url and writes it
+  /// back, or `null` when a url can not give its type.
+  UrlParamType? get urlType => UrlParamType.of(type);
 
   /// Returns the alias if exists otherwise the name
   String get paramName => alias ?? name;

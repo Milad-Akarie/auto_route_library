@@ -2,6 +2,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:auto_route_generator/build_utils.dart';
 import 'package:auto_route_generator/src/models/route_config.dart';
 import 'package:auto_route_generator/src/models/route_parameter_config.dart';
+import 'package:auto_route_generator/src/models/url_param_type.dart';
 import 'package:auto_route_generator/src/resolvers/route_parameter_resolver.dart';
 import 'package:auto_route_generator/src/resolvers/type_resolver.dart';
 import 'package:source_gen/source_gen.dart';
@@ -81,16 +82,16 @@ class RouteConfigResolver {
     for (final qParam in parameters.where((p) => p.isQueryParam && readsUrl)) {
       final type = qParam.type;
       throwIf(
-        !validPathParamTypes.contains(type.name) && type.name != 'Object' && !type.isEnum && !qParam.isUrlCollection,
+        qParam.urlType == null,
         'Parameter [${qParam.name}] is a @QueryParam of type ${type.name}, which a url can not give.\n'
-        'valid types: $validPathParamTypes, Object, an enum, or a ${urlCollectionTypes.join(', ')} of those',
+        'valid types: ${UrlParamType.pathTypeNames}, Object, an enum, or a ${urlCollectionTypes.join(', ')} of those',
       );
     }
 
     for (final pParam in pathParameters) {
       throwIf(
-        !validPathParamTypes.contains(pParam.type.name),
-        "Parameter [${pParam.name}] must be of a type that can be parsed from a [String] because it will also obtain it's value from a path\nvalid types: $validPathParamTypes",
+        !(pParam.urlType?.inPath ?? false),
+        "Parameter [${pParam.name}] must be of a type that can be parsed from a [String] because it will also obtain it's value from a path\nvalid types: ${UrlParamType.pathTypeNames}",
       );
     }
     return RouteConfig(

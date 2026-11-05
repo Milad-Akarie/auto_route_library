@@ -5,6 +5,7 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route_generator/build_utils.dart';
 import 'package:auto_route_generator/src/models/route_parameter_config.dart';
+import 'package:auto_route_generator/src/models/url_param_type.dart';
 import 'package:auto_route_generator/src/resolvers/type_resolver.dart';
 import 'package:source_gen/source_gen.dart';
 
@@ -75,10 +76,10 @@ class RouteParameterResolver {
     final isUrlParam = pathParamAnnotation != null || queryParamAnnotation != null;
     if (isUrlParam && urlCollectionTypes.contains(type.name) && type.typeArguments.length == 1) {
       final item = type.typeArguments.single;
-      final isText = const {'String', 'Object', 'dynamic'}.contains(item.name);
+      final itemType = UrlParamType.of(item);
+      final isText = itemType?.isTextItem ?? false;
       // Only a query param converts its items.
-      final isConverted =
-          queryParamAnnotation != null && (const {'int', 'double', 'num', 'bool'}.contains(item.name) || item.isEnum);
+      final isConverted = queryParamAnnotation != null && (itemType?.isListItem ?? false);
       final kind = queryParamAnnotation != null ? 'query' : 'path';
       throwIf(
         !isText && !isConverted,

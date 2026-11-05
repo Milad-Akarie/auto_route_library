@@ -397,86 +397,19 @@ Expression _getPageInstance(RouteConfig r) {
 }
 
 Expression _getUrlPartAssignment(ParamConfig p) {
-  if (p.isPathParam) {
-    return refer('pathParams')
-        .property(p.getterMethodName)
-        .call([_plainString(p.paramName), if (p.defaultValueCode != null) _defaultValue(p)]);
-  } else if (p.isQueryParam && p.type.isEnum) {
-    // An enum is read by its name, the form [_getUrlPartValue] writes.
-    final value = refer(p.type.name, p.type.import)
-        .property('values')
-        .property('asNameMap')
-        .call([])
-        .index(refer('queryParams').property('optString').call([_plainString(p.paramName)]));
-    if (p.defaultValueCode == null) return value;
-    return value.ifNullThen(_defaultValue(p));
-  } else if (p.isQueryParam && p.isUrlCollection && (p.listItemType != null || !p.type.isList)) {
-    // `optList` reads the items as text, so each is converted to its type:
-    // a number or bool by parsing it, an enum by its name, as the single enum
-    // above. An item that doesn't convert is left out. A Set is made of the
-    // items; a List of text needs nothing more, and takes `getterMethodName`
-    // below.
-    final item = p.listItemType;
-    var value = refer('queryParams').property('optList').call([_plainString(p.paramName)]);
-    if (item != null) {
-      final itemType = refer(item.name, item.import);
-      value = value.nullSafeProperty('map').call([_listItemParser(item, itemType)]).property('whereType').call([], {}, [
-        itemType,
-      ]);
-    }
-    if (p.type.isSet) {
-      value = (item == null ? value.nullSafeProperty('toSet') : value.property('toSet')).call([]);
-    } else if (item != null) {
-      value = value.property('toList').call([]);
-    }
-    if (p.defaultValueCode == null) return value;
-    return value.ifNullThen(_defaultValue(p));
-  } else if (p.isQueryParam) {
-    return refer('queryParams')
-        .property(p.getterMethodName)
-        .call([_plainString(p.paramName), if (p.defaultValueCode != null) _defaultValue(p)]);
-  }
-  return refer('data').property('fragment');
+  if (!p.isPathParam && !p.isQueryParam) return refer('data').property('fragment');
+  final params = refer(p.isPathParam ? 'pathParams' : 'queryParams');
+  final key = _plainString(p.paramName);
+  final defaultValue = p.defaultValueCode == null ? null : _defaultValue(p);
+  final urlType = p.urlType;
+  // A type a url can not give is read as it is, for a route that a required
+  // argument keeps links out of.
+  if (urlType == null) return params.property('get').call([key, ?defaultValue]);
+  return urlType.read(params, key, p.type, defaultValue);
 }
 
-/// The function that converts the text of one list item to [item].
-Expression _listItemParser(ResolvedType item, Expression itemType) {
-  if (item.isEnum) {
-    return Method(
-      (b) => b
-        ..requiredParameters.add(Parameter((b) => b..name = 'name'))
-        ..lambda = true
-        ..body = itemType.property('values').property('asNameMap').call([]).index(refer('name')).code,
-    ).closure;
-  }
-  return switch (item.name) {
-    'bool' => const CodeExpression(
-      Code("(text) => text.toLowerCase() == 'true' ? true : text.toLowerCase() == 'false' ? false : null"),
-    ),
-    _ => itemType.property('tryParse'),
-  };
-}
-
-/// The value a url parameter puts in the url: an enum by its name, any other
-/// value as it is.
-Expression _getUrlPartValue(ParamConfig p) {
-  final value = refer(p.name);
-  if (p.listItemType?.isEnum == true) {
-    final item = p.listItemType!;
-    final name = Method(
-      (b) => b
-        ..requiredParameters.add(Parameter((b) => b..name = 'item'))
-        ..lambda = true
-        ..body = (item.isNullable ? refer('item').nullSafeProperty('name') : refer('item').property('name')).code,
-    ).closure;
-    return (p.type.isNullable ? value.nullSafeProperty('map') : value.property('map'))
-        .call([name])
-        .property('toList')
-        .call([]);
-  }
-  if (!p.type.isEnum) return value;
-  return p.type.isNullable ? value.nullSafeProperty('name') : value.property('name');
-}
+/// The value a url parameter puts in the url.
+Expression _getUrlPartValue(ParamConfig p) => p.urlType?.write(refer(p.name), p.type) ?? refer(p.name);
 
 extension _IterableX<T> on Iterable<T> {
   Iterable<T> insertBetween(T element) sync* {
