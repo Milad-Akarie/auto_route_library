@@ -15,9 +15,11 @@ final _shownPages = Expando<bool>();
 class AutoRoutePage<T> extends Page<T> {
   /// Default constructor
   new({required this.routeData, required Widget child})
-    // A false positive: a widget can implement AutoRouteWrapper.
-    // ignore: avoid-unrelated-type-assertions, avoid-unrelated-type-casts
-    : _child = child is AutoRouteWrapper ? WrappedRoute(child: child as AutoRouteWrapper) : child,
+    // A page widget can implement AutoRouteWrapper to wrap itself.
+    : _child = switch (child) {
+        final AutoRouteWrapper wrapper => WrappedRoute(child: wrapper),
+        _ => child,
+      },
       super(
         restorationId: routeData.restorationId,
         name: routeData.name,
