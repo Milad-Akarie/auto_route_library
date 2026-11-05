@@ -20,7 +20,7 @@ void main() {
     ], root: true),
   );
 
-  RouteMatch<dynamic> matchOf(String url) => matcher.matchUri(Uri.parse(url))!.single;
+  RouteMatch<Object?> matchOf(String url) => matcher.matchUri(Uri.parse(url))!.single;
 
   test('the root is its own segment', () {
     final match = matchOf('/');

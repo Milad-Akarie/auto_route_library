@@ -24,7 +24,7 @@ void main() {
   // The analyzer reads flutter_web_plugins' stub, whose type is not a ui_web.UrlStrategy and whose
   // constructor is const; the web build's is the reverse of both, hence the cast and the ignore.
   // ignore: prefer_const_constructors
-  ui_web.debugDefaultUrlStrategyOverride = (PathUrlStrategy() as dynamic) as ui_web.UrlStrategy?;
+  ui_web.debugDefaultUrlStrategyOverride = (PathUrlStrategy() as Object?) as ui_web.UrlStrategy?;
 
   late RootStackRouter router;
   setUp(() async {

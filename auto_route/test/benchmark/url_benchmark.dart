@@ -92,13 +92,13 @@ List<AutoRoute> _level(int depth) => [
 
 final _deepUrl = '/${[for (var depth = 0; depth < _kDepth; depth++) 'level$depth-${_kSiblings - 1}/$depth'].join('/')}';
 
-final List<RouteMatch<dynamic>> _deepMatches = _deepMatcher.match(_deepUrl)!.last.flattened;
+final List<RouteMatch<Object?>> _deepMatches = _deepMatcher.match(_deepUrl)!.last.flattened;
 
 const _kQuery =
     'search=blue%20shoes&page=2&sort=price&order=asc&size=9&color=blue&brand=acme&tag=new&tag=sale'
     '&min=10&max=90&ref=home';
 
-final List<RouteMatch<dynamic>> _queryMatches = _flatMatcher(10).match('/page9?$_kQuery')!;
+final List<RouteMatch<Object?>> _queryMatches = _flatMatcher(10).match('/page9?$_kQuery')!;
 
 PageRouteInfo _deepRouteFrom(int depth) => .new(
   'Level$depth-${_kSiblings - 1}',

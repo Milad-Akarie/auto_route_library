@@ -8,7 +8,7 @@ import '../centered_named_page.dart';
 import '../router_test_utils.dart';
 
 void main() {
-  Widget person(BuildContext _, RouteData<dynamic> data) => Scaffold(
+  Widget person(BuildContext _, RouteData<Object?> data) => Scaffold(
     body: Center(child: Text('person ${data.inheritedPathParams.getString('fid')}/${data.params.getString('pid')}')),
   );
 

@@ -21,7 +21,7 @@ import 'no_op.dart';
 // a replaced page releases its RouteData, and drop this canary.
 void main() {
   testWidgets('a page replaced in Navigator.pages releases its State, but its route stays reachable', (tester) async {
-    final routes = <WeakReference<Route<dynamic>>>[];
+    final routes = <WeakReference<Route<Object?>>>[];
     final states = <WeakReference<State>>[];
     var pages = <Page<void>>[
       const MaterialPage(key: ValueKey('home'), child: Text('home')),
@@ -86,8 +86,8 @@ class _TrackedPageState extends State<_TrackedPage> {
 class _PushObserver extends NavigatorObserver {
   _PushObserver(this.routes);
 
-  final List<WeakReference<Route<dynamic>>> routes;
+  final List<WeakReference<Route<Object?>>> routes;
 
   @override
-  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) => routes.add(WeakReference(route));
+  void didPush(Route<Object?> route, Route<Object?>? previousRoute) => routes.add(WeakReference(route));
 }

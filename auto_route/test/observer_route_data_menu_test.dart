@@ -10,7 +10,7 @@ class _ReadingObserver extends AutoRouterObserver {
   final found = <String>[];
 
   @override
-  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+  void didPush(Route<Object?> route, Route<Object?>? previousRoute) {
     if (route is! PopupRoute) return;
     try {
       found.add(RouteData.of(route.navigator!.context).name);

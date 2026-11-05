@@ -42,7 +42,7 @@ void main() {
     final router = PickerRouter();
     await pumpRouterApp(tester, router, initialLink: '/picker?title=Colors');
     expect(tester.takeException(), isNull);
-    expect(find.byType(PickerView<dynamic>), findsOneWidget);
+    expect(find.byType(PickerView), findsOneWidget);
     expect(find.text('Colors from 0'), findsOneWidget);
   });
 }

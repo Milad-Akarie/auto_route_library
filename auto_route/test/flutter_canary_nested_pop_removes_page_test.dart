@@ -70,5 +70,5 @@ class _PushObserver extends NavigatorObserver {
   final List<String?> pushed;
 
   @override
-  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) => pushed.add(route.settings.name);
+  void didPush(Route<Object?> route, Route<Object?>? previousRoute) => pushed.add(route.settings.name);
 }

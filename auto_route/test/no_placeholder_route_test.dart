@@ -44,13 +44,13 @@ class _Recorder extends NavigatorObserver {
   final List<String?> seen;
 
   @override
-  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) => seen.add(route.settings.name);
+  void didPush(Route<Object?> route, Route<Object?>? previousRoute) => seen.add(route.settings.name);
 
   @override
-  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) => seen.add(newRoute?.settings.name);
+  void didReplace({Route<Object?>? newRoute, Route<Object?>? oldRoute}) => seen.add(newRoute?.settings.name);
 
   @override
-  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) => seen.add(previousRoute?.settings.name);
+  void didPop(Route<Object?> route, Route<Object?>? previousRoute) => seen.add(previousRoute?.settings.name);
 }
 
 class _PageRoute {

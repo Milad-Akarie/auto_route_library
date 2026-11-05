@@ -16,7 +16,7 @@ void main() {
   // built by customRouteBuilder. Should: every name is recorded, none null.
   testWidgets('NavigatorObserver.didPush gets the route name for every route type', (tester) async {
     final observer = _NameRecorder();
-    Widget page(RouteData<dynamic> _) => const Text('page');
+    Widget page(RouteData<Object?> _) => const Text('page');
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(
@@ -53,5 +53,5 @@ class _NameRecorder extends NavigatorObserver {
   final pushed = <String?>[];
 
   @override
-  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) => pushed.add(route.settings.name);
+  void didPush(Route<Object?> route, Route<Object?>? previousRoute) => pushed.add(route.settings.name);
 }

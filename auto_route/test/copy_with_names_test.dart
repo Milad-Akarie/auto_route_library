@@ -42,7 +42,7 @@ void main() {
   });
 
   test('RouteMatch.copyWith sets params and id, and still takes pathParams', () {
-    final match = RouteMatch<dynamic>(
+    final match = RouteMatch<Object?>(
       config: AutoRoute(
         page: PageInfo('BookRoute', builder: (_) => const SizedBox()),
         path: '/books/:id',

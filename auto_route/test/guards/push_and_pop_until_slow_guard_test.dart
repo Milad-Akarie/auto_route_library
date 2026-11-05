@@ -42,7 +42,7 @@ void main() {
     );
   });
 
-  bool isHome(Route<dynamic> route) => route.settings.name == 'Home';
+  bool isHome(Route<Object?> route) => route.settings.name == 'Home';
 
   List<String> names() => router.stack.map((page) => page.routeData.name).toList();
 
@@ -129,14 +129,14 @@ class _NamesObserver extends NavigatorObserver {
   final List<String> events;
 
   @override
-  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) =>
+  void didPush(Route<Object?> route, Route<Object?>? previousRoute) =>
       events.add('push ${route.settings.name ?? 'null'}');
 
   @override
-  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) =>
+  void didPop(Route<Object?> route, Route<Object?>? previousRoute) =>
       events.add('pop ${route.settings.name ?? 'null'}');
 
   @override
-  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) =>
+  void didRemove(Route<Object?> route, Route<Object?>? previousRoute) =>
       events.add('remove ${route.settings.name ?? 'null'}');
 }

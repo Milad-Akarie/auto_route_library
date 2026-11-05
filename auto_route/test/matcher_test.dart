@@ -119,7 +119,7 @@ void main() {
     });
     test('call RouteMatch.fromRedirect should return true', () {
       expect(
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(
           config: routeA,
           segments: const ['a'],
           redirectedFrom: '/',
@@ -132,7 +132,7 @@ void main() {
 
     test('call RouteMatch.hasEmptyPath should return true', () {
       expect(
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(
           config: TestRoute('A', path: ''),
           segments: const [''],
           stringMatch: '',
@@ -155,7 +155,7 @@ void main() {
 
     test('Should return one match [B]', () {
       final expectedMatches = [
-        RouteMatch<dynamic>(config: routeB, key: const ValueKey('B'), stringMatch: '/b', segments: const ['/', 'b']),
+        RouteMatch<Object?>(config: routeB, key: const ValueKey('B'), stringMatch: '/b', segments: const ['/', 'b']),
       ];
       expect(match('/b'), expectedMatches);
     });
@@ -166,7 +166,7 @@ void main() {
 
     test('Should return one match with one nested match [C/C1]', () {
       final expectedMatches = [
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(
           config: routeC,
           stringMatch: '/c',
           key: const ValueKey('C'),
@@ -200,16 +200,16 @@ void main() {
 
     test('Should return two matches [A,B]', () {
       final expectedMatches = [
-        RouteMatch<dynamic>(config: routeA, stringMatch: '/', key: const ValueKey('A'), segments: const ['/']),
-        RouteMatch<dynamic>(config: routeB, stringMatch: '/b', key: const ValueKey('B'), segments: const ['/', 'b']),
+        RouteMatch<Object?>(config: routeA, stringMatch: '/', key: const ValueKey('A'), segments: const ['/']),
+        RouteMatch<Object?>(config: routeB, stringMatch: '/b', key: const ValueKey('B'), segments: const ['/', 'b']),
       ];
       expect(match('/b', includePrefixMatches: true), expectedMatches);
     });
 
     test('Should return two prefix matches with one nested match [A, C/C1]', () {
       final expectedMatches = [
-        RouteMatch<dynamic>(config: routeA, stringMatch: '/', key: const ValueKey('A'), segments: const ['/']),
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(config: routeA, stringMatch: '/', key: const ValueKey('A'), segments: const ['/']),
+        RouteMatch<Object?>(
           config: routeC,
           stringMatch: '/c',
           key: const ValueKey('C'),
@@ -224,8 +224,8 @@ void main() {
 
     test('Should return two prefix matches with one nested match [A, D/D0]', () {
       final expectedMatches = [
-        RouteMatch<dynamic>(config: routeA, stringMatch: '/', key: const ValueKey('A'), segments: const ['/']),
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(config: routeA, stringMatch: '/', key: const ValueKey('A'), segments: const ['/']),
+        RouteMatch<Object?>(
           config: routeD,
           stringMatch: '/d',
           key: const ValueKey('D'),
@@ -238,8 +238,8 @@ void main() {
 
     test('Should return two matches with two nested matches including empty path [A, D/D0/D1]', () {
       final expectedMatches = [
-        RouteMatch<dynamic>(config: routeA, stringMatch: '/', key: const ValueKey('A'), segments: const ['/']),
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(config: routeA, stringMatch: '/', key: const ValueKey('A'), segments: const ['/']),
+        RouteMatch<Object?>(
           config: routeD,
           stringMatch: '/d',
           key: const ValueKey('D'),
@@ -259,9 +259,9 @@ void main() {
 
     test('Should return two prefix matches and one full match [A, B, B/B1]', () {
       final expectedMatches = [
-        RouteMatch<dynamic>(config: routeA, key: const ValueKey('A'), stringMatch: '/', segments: const ['/']),
-        RouteMatch<dynamic>(config: routeB, key: const ValueKey('B'), stringMatch: '/b', segments: const ['/', 'b']),
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(config: routeA, key: const ValueKey('A'), stringMatch: '/', segments: const ['/']),
+        RouteMatch<Object?>(config: routeB, key: const ValueKey('B'), stringMatch: '/b', segments: const ['/', 'b']),
+        RouteMatch<Object?>(
           config: routeB1,
           key: const ValueKey('B1'),
           stringMatch: '/b/b1',
@@ -285,7 +285,7 @@ void main() {
 
     test('Should match wildcard [WC]', () {
       final expectedMatches = [
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(
           config: wcRoute,
           key: const ValueKey('WC'),
           stringMatch: '/x/y',
@@ -297,7 +297,7 @@ void main() {
 
     test('Incomplete match should return [WC]', () {
       final expectedMatches = [
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(
           config: wcRoute,
           key: const ValueKey('WC'),
           stringMatch: '/c/c1/x',
@@ -309,7 +309,7 @@ void main() {
 
     test('Should match prefixed wildcard route [PWC]', () {
       final expectedMatches = [
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(
           config: prefixedWcRoute,
           key: const ValueKey('PWC'),
           stringMatch: '/d/x/y',
@@ -334,7 +334,7 @@ void main() {
 
     test('Should match route [A]', () {
       final expectedMatches = [
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(
           config: routeA,
           key: const ValueKey('A'),
           stringMatch: '/a',
@@ -347,7 +347,7 @@ void main() {
 
     test('Should match route [C/C1]', () {
       final expectedMatches = [
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(
           config: routeC,
           key: const ValueKey('C'),
           stringMatch: '/c',
@@ -381,7 +381,7 @@ void main() {
 
     test('Should match route [A/A1] subRedirect to empty path', () {
       final expectedMatches = [
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(
           config: routeA,
           key: const ValueKey('A'),
           stringMatch: '/a',
@@ -405,7 +405,7 @@ void main() {
         RouteCollection.fromList([RedirectRoute(path: '/', redirectTo: '/a?foo=bar'), routeA], root: true),
       ).match;
       final expectedMatches = [
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(
           config: routeA,
           key: const ValueKey('A'),
           stringMatch: '/a',
@@ -423,7 +423,7 @@ void main() {
         RouteCollection.fromList([RedirectRoute(path: '/x/:id', redirectTo: '/a/:id'), routeWithId], root: true),
       ).match;
       final expectedMatches = [
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(
           config: routeWithId,
           key: const ValueKey('A'),
           stringMatch: '/a/foo',
@@ -448,7 +448,7 @@ void main() {
 
     test('Should match route [A] and extract path param {id:1}', () {
       final expectedMatches = [
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(
           config: routeA,
           key: const ValueKey('A'),
           stringMatch: '/a/1',
@@ -461,7 +461,7 @@ void main() {
 
     test('Should match route [B] and extract path params {id:1, type:none}', () {
       final expectedMatches = [
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(
           config: routeB,
           key: const ValueKey('B'),
           stringMatch: '/b/1/n/none',
@@ -474,7 +474,7 @@ void main() {
 
     test('Should match route [C]', () {
       final expectedMatches = [
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(
           config: routeC,
           key: const ValueKey('C'),
           stringMatch: '/c',
@@ -506,7 +506,7 @@ void main() {
 
     test('Should match route [A] and extract query param {foo:bar}', () {
       final expectedMatches = [
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(
           key: const ValueKey('A'),
           stringMatch: '/a',
           config: routeA,
@@ -519,14 +519,14 @@ void main() {
 
     test('Should match routes [B,B1] and extract query params {foo:bar, bar:baz} for both', () {
       final expectedMatches = [
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(
           key: const ValueKey('B'),
           stringMatch: '/b',
           config: routeB,
           segments: const ['/', 'b'],
           queryParams: const Parameters({'foo': 'bar', 'bar': 'baz'}),
         ),
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(
           key: const ValueKey('B1'),
           stringMatch: '/b/b1',
           config: routeB1,
@@ -539,7 +539,7 @@ void main() {
 
     test('Should match route [C/C1] and extract query parameters {foo:bar} for parent and child', () {
       final expectedMatches = [
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(
           config: routeC,
           stringMatch: '/c',
           key: const ValueKey('C'),
@@ -561,7 +561,7 @@ void main() {
 
     test('Should match route [A] and extract query param {foo:[bar,baz]}', () {
       final expectedMatches = [
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(
           key: const ValueKey('A'),
           stringMatch: '/a',
           config: routeA,
@@ -600,7 +600,7 @@ void main() {
 
     test('Should return correct match for /c', () {
       final expectedMatches = [
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(
           config: root,
           key: const ValueKey('Root'),
           stringMatch: '/',
@@ -621,7 +621,7 @@ void main() {
 
     test('Should return correct match for /d', () {
       final expectedMatches = [
-        RouteMatch<dynamic>(
+        RouteMatch<Object?>(
           config: root,
           key: const ValueKey('Root'),
           stringMatch: '/',

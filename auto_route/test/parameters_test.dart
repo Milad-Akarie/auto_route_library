@@ -5,7 +5,7 @@ import 'package:meta/meta.dart';
 void main() {
   test('Calling Parameters.get on a any-type value should return a <dynamic>', () {
     const params = Parameters({'key': 'str'});
-    expect(params.get('key'), isA<dynamic>());
+    expect(params.get('key'), isA<Object?>());
   });
 
   test('Calling Parameters.getString on a string value should return a <string>', () {
@@ -122,7 +122,7 @@ void main() {
     const params = Parameters({
       'key': ['1', '2'],
     });
-    expect(params.getList('key'), isA<List<dynamic>>());
+    expect(params.getList('key'), isA<List<Object?>>());
     expect(params.optList('key2'), null);
   });
 

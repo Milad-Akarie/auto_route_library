@@ -10,15 +10,15 @@ class _Observer extends AutoRouterObserver {
   final events = <String>[];
 
   @override
-  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) =>
+  void didPop(Route<Object?> route, Route<Object?>? previousRoute) =>
       events.add('didPop ${route.settings.name ?? 'null'}');
 
   @override
-  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) =>
+  void didRemove(Route<Object?> route, Route<Object?>? previousRoute) =>
       events.add('didRemove ${route.settings.name ?? 'null'}');
 
   @override
-  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) => events.add('didReplace');
+  void didReplace({Route<Object?>? newRoute, Route<Object?>? oldRoute}) => events.add('didReplace');
 }
 
 class _EditPage extends StatefulWidget {

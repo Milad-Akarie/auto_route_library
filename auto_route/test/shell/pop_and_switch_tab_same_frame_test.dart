@@ -78,7 +78,7 @@ void main() {
   }
 }
 
-PageInfo _page(String name, String Function(RouteData<dynamic> data) text) =>
+PageInfo _page(String name, String Function(RouteData<Object?> data) text) =>
     .new(name, builder: (data) => Scaffold(body: Text(text(data))));
 
 class _Route extends PageRouteInfo<void> {
