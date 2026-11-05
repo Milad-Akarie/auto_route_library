@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'autocomplete_state_field.dart';
 import 'router_test_utils.dart';
 
 void main() {
@@ -99,6 +100,97 @@ void main() {
 
     expect(find.bySemanticsLabel('c1'), findsOneWidget);
     expect(find.bySemanticsLabel('c2'), findsOneWidget);
+    semantics.dispose();
+  });
+  // Reproduces https://github.com/flutter/flutter/issues/194873 in
+  // auto_route. Steps: with semantics on, a page beside a semantics container
+  // shows an AutoRouter, which shows another AutoRouter, which shows an
+  // Autocomplete text field. Focus the field (its options open), type a
+  // letter no option holds (they close), then delete it (they open again).
+  // Happened: the field's semantics node changed parents each time the
+  // options opened or closed. The web engine then moves the focused <input>
+  // in the DOM, which blurs it: Chrome took no typing, Firefox lost focus on
+  // the first non-matching letter. The container node auto_route put around
+  // each nested Navigator for flutter/flutter#150978 grew an extra child
+  // node while the options showed, and dropped it when they closed.
+  // Should: the field keeps the same semantics parents throughout.
+  testWidgets('A text field in a nested router keeps its semantics parents', (
+    tester,
+  ) async {
+    final semantics = tester.ensureSemantics();
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          path: '/',
+          page: PageInfo(
+            'OuterShellRoute',
+            builder: (_) => Scaffold(
+              body: Row(
+                children: [
+                  Semantics(
+                    container: true,
+                    label: 'Shell navigation',
+                    child: const SizedBox(width: 80, child: Text('Nav')),
+                  ),
+                  const Expanded(child: AutoRouter()),
+                ],
+              ),
+            ),
+          ),
+          children: [
+            AutoRoute(
+              path: '',
+              page: PageInfo(
+                'InnerShellRoute',
+                builder: (_) => const AutoRouter(),
+              ),
+              children: [
+                AutoRoute(
+                  path: '',
+                  page: PageInfo(
+                    'StateFieldRoute',
+                    builder: (_) => const AutocompleteStateField(),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+    await pumpRouterApp(tester, router);
+
+    List<int> fieldParents() {
+      final parents = <int>[];
+      for (
+        var node = tester.getSemantics(find.byType(EditableText)).parent;
+        node != null;
+        node = node.parent
+      ) {
+        parents.add(node.id);
+      }
+      return parents;
+    }
+
+    final unfocused = fieldParents();
+    Future<void> expectSameParents(
+      String step, {
+      required bool areOptionsShown,
+    }) async {
+      await tester.pump();
+      expect(
+        find.text('Texas'),
+        areOptionsShown ? findsOneWidget : findsNothing,
+      );
+      expect(fieldParents(), unfocused, reason: step);
+    }
+
+    await tester.tap(find.byType(TextField));
+    await expectSameParents('options opened', areOptionsShown: true);
+    await tester.enterText(find.byType(TextField), 'q');
+    await expectSameParents('options closed', areOptionsShown: false);
+    await tester.enterText(find.byType(TextField), '');
+    await expectSameParents('options opened again', areOptionsShown: true);
     semantics.dispose();
   });
 }

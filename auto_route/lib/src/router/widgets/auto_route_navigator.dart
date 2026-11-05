@@ -214,8 +214,17 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
         // Flutter drops the semantics of widgets painted before a nested
         // Navigator when their common parent merges its nodes upward
         // (flutter/flutter#150978). A container node of its own keeps the
-        // Navigator's route from blocking them.
-        child: Semantics(container: true, child: navigator),
+        // Navigator's route from blocking them. Its child nodes stay
+        // explicit: otherwise the container gains and drops a node as an
+        // overlay entry such as Autocomplete's options opens and closes, a
+        // focused text field changes semantics parents, and the web engine
+        // moves its <input> in the DOM, which blurs it
+        // (flutter/flutter#194873).
+        child: Semantics(
+          container: true,
+          explicitChildNodes: true,
+          child: navigator,
+        ),
       ),
     );
   }

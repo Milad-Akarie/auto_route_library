@@ -78,6 +78,8 @@ import 'nested_result_test.dart' as nested_result;
 import 'nested_route_aware_test.dart' as nested_route_aware;
 import 'nested_route_fragment_test.dart' as nested_route_fragment;
 import 'nested_router_semantics_test.dart' as nested_router_semantics;
+import 'nested_router_text_field_focus_test.dart'
+    as nested_router_text_field_focus;
 import 'nested_shell_back_test.dart' as nested_shell_back;
 import 'nested_tab_bar_reevaluation_test.dart' as nested_tab_bar_reevaluation;
 import 'non_ascii_url_test.dart' as non_ascii_url;
@@ -279,6 +281,7 @@ void main() {
   nested_route_aware.main();
   nested_route_fragment.main();
   nested_router_semantics.main();
+  nested_router_text_field_focus.main();
   nested_shell_back.main();
   nested_tab_bar_reevaluation.main();
   non_ascii_url.main();
