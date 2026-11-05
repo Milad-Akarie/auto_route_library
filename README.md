@@ -613,7 +613,7 @@ context.navigateTo(
 // with only [BookDetailsRoute(id: 1)] it would hold that page alone
 ```
 
-A route is looked up from the router you call it on, up through its parents. A route that lives in a sibling router, such as another tab, isn't found from there and fails with `Failed to navigate to ...`, so give its parent as well, as above. When you call from the root router, or from a place without a context, give the whole chain, `MainRoute(children: [BooksTab(children: [...])])`.
+A route is looked up from the router you call it on, up through its parents. A route that lives in a sibling router, such as another tab, isn't found from there and fails with `Can not navigate to BookDetailsRoute: no route matches it.`, followed by the app's routes by full path, so give its parent as well, as above. When you call from the root router, or from a place without a context, give the whole chain, `MainRoute(children: [BooksTab(children: [...])])`.
 
 ### Panes side by side
 
