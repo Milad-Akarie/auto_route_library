@@ -26,7 +26,7 @@ class RouteParameterResolver {
     final paramType = parameterElement.type;
     throwIf(
       _holdsInvalidType(paramType),
-      'The type of ${parameterElement.displayName} in ${parameterElement.enclosingElement?.enclosingElement?.displayName} '
+      'The type of ${parameterElement.displayName} in ${parameterElement.enclosingElement?.enclosingElement?.displayName ?? 'its declaration'} '
       'could not be resolved. '
       'If it is declared in a file another builder generates, make that builder run before auto_route_generator, '
       'with runs_before in its build.yaml or global_options in yours.',
@@ -150,7 +150,7 @@ class RouteParameterResolver {
       convertedType == null ||
           !typeSystem.isSubtypeOf(convertedType, paramType) ||
           !typeSystem.isSubtypeOf(paramType, convertedType),
-      'The converter on $name converts ${convertedType?.getDisplayString()}, '
+      'The converter on $name converts ${convertedType?.getDisplayString() ?? 'nothing'}, '
       'but $name is a ${paramType.getDisplayString()}.',
       element: parameterElement,
     );

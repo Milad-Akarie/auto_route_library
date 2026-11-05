@@ -94,7 +94,7 @@ class ResolvedType {
   final bool isEnum;
 
   /// the unique identity of the type
-  String get identity => '$import#$name';
+  String get identity => '${import ?? ''}#$name';
 
   /// whether the type is for a named record field
   bool get isNamedRecordField => nameInRecord != null;

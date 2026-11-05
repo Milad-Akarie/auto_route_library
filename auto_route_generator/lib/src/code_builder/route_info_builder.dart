@@ -55,7 +55,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
   return [
     Class(
       (b) => b
-        ..docs.addAll(['/// generated route for \n/// [${_pageClassRefer(r)?.accept(emitter)}]'])
+        ..docs.addAll(['/// generated route for \n/// [${_pageClassRefer(r)?.accept(emitter) ?? 'null'}]'])
         ..name = r.getName(router.replaceInRouteName)
         ..types.addAll(r.typeParameters.map((t) => t.declaration))
         ..extend = TypeReference((typeReferenceBuilder) {

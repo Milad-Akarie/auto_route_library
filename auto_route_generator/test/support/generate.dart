@@ -50,7 +50,7 @@ class GeneratedRouter {
   final List<String> compileErrors;
 
   @override
-  String toString() => 'build errors: $errors\ncompile errors: $compileErrors\n$source';
+  String toString() => 'build errors: $errors\ncompile errors: $compileErrors\n${source ?? 'no source'}';
 }
 
 /// Runs the route builder and then the router builder over [sources], the
@@ -133,7 +133,7 @@ class _CompileCheckBuilder implements Builder {
         final result = await library.session.getErrors(fragment.source.fullName);
         if (result is ErrorsResult) {
           for (final e in result.diagnostics.where((diagnostic) => diagnostic.severity == .error)) {
-            errors.add('${fragment.source.uri.pathSegments.lastOrNull}: ${e.message}');
+            errors.add('${fragment.source.shortName}: ${e.message}');
           }
         }
       }

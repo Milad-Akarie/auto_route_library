@@ -25,10 +25,10 @@ class DeferredPagesAllocator implements Allocator {
 
   @override
   String allocate(Reference reference) {
-    final symbol = reference.symbol;
+    final symbol = reference.symbol!;
     final url = reference.url;
     if (url == null || _doNotPrefix.contains(url)) {
-      return symbol!;
+      return symbol;
     }
     return '_i${_imports.putIfAbsent(url, _nextKey)}.$symbol';
   }
@@ -36,12 +36,13 @@ class DeferredPagesAllocator implements Allocator {
   int _nextKey() => _keys++;
 
   @override
-  Iterable<Directive> get imports => _imports.keys.map((importPath) {
+  Iterable<Directive> get imports => _imports.entries.map((entry) {
+    final importPath = entry.key;
     final uri = _importUri(importPath);
     if (routes.isDeferred(importPath, defaultDeferredLoading: defaultDeferredLoading)) {
-      return Directive.importDeferredAs(uri, '_i${_imports[importPath]}');
+      return Directive.importDeferredAs(uri, '_i${entry.value}');
     }
-    return Directive.import(uri, as: '_i${_imports[importPath]}');
+    return Directive.import(uri, as: '_i${entry.value}');
   });
 
   String _importUri(String importPath) {
