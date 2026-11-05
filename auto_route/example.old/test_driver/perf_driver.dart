@@ -21,9 +21,9 @@ Future<void> _summarize(Map<String, dynamic>? data) async {
     final timeline = TimelineSummary.summarize(
       Timeline.fromJson(value as Map<String, dynamic>),
     ).summaryJson;
-    final buildTimes = (timeline['frame_build_times'] as List<dynamic>)
+    final buildTimes = (timeline['frame_build_times'] as List<Object?>)
         .cast<int>();
-    final rasterTimes = (timeline['frame_rasterizer_times'] as List<dynamic>)
+    final rasterTimes = (timeline['frame_rasterizer_times'] as List<Object?>)
         .cast<int>();
     summary[key] = {
       'frames': timeline['frame_count'] as int,
