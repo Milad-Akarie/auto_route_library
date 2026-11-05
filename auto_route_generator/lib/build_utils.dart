@@ -4,7 +4,6 @@ import 'package:source_gen/source_gen.dart';
 
 /// Helper to through flutter errors if [condition] is true
 // A condition first and its message after, read like assert(condition, message).
-// ignore: avoid_positional_boolean_parameters
 void throwIf(bool condition, String message, {Element? element}) {
   if (condition) {
     throwError(message, element: element);
