@@ -37,7 +37,7 @@ class RouteParameterResolver {
   ParamConfig resolve(FormalParameterElement parameterElement) {
     final paramType = parameterElement.type;
     throwIf(
-      _holdsInvalidType(paramType),
+      _isInvalidType(paramType),
       'The type of ${parameterElement.displayName} in ${parameterElement.enclosingElement?.enclosingElement?.displayName ?? 'its declaration'} '
       'could not be resolved. '
       'If it is declared in a file another builder generates, make that builder run before auto_route_generator, '
@@ -71,7 +71,7 @@ class RouteParameterResolver {
         isUrlFragment;
     final type = _typeResolver.resolveType(
       paramType,
-      skipAlias: isParsedFromUrl,
+      shouldSkipAlias: isParsedFromUrl,
     );
 
     if (pathParamAnnotation != null) {
@@ -99,7 +99,7 @@ class RouteParameterResolver {
             isUrlFragment,
             pathParamAnnotation != null,
             queryParamAnnotation != null,
-          ].where((e) => e).length >
+          ].where((isSet) => isSet).length >
           1,
       '${parameterElement.displayName} can only be annotated with one of @PathParam, @QueryParam or @urlFragment',
       element: parameterElement,
@@ -214,15 +214,15 @@ class RouteParameterResolver {
   /// Whether [type] or a type inside it is one the analyzer could not
   /// resolve, such as a class from a generated file that isn't written yet.
   /// Written out, such a type is the undefined name `InvalidType`.
-  static bool _holdsInvalidType(DartType type) => switch (type) {
+  static bool _isInvalidType(DartType type) => switch (type) {
     InvalidType() => true,
-    InterfaceType(:final typeArguments) => typeArguments.any(_holdsInvalidType),
+    InterfaceType(:final typeArguments) => typeArguments.any(_isInvalidType),
     FunctionType(:final returnType, :final formalParameters) =>
-      _holdsInvalidType(returnType) ||
-          formalParameters.any((p) => _holdsInvalidType(p.type)),
+      _isInvalidType(returnType) ||
+          formalParameters.any((p) => _isInvalidType(p.type)),
     RecordType(:final positionalFields, :final namedFields) =>
-      positionalFields.any((f) => _holdsInvalidType(f.type)) ||
-          namedFields.any((f) => _holdsInvalidType(f.type)),
+      positionalFields.any((f) => _isInvalidType(f.type)) ||
+          namedFields.any((f) => _isInvalidType(f.type)),
     _ => false,
   };
 

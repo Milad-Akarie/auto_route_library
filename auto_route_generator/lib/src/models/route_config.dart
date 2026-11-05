@@ -14,7 +14,7 @@ class RouteConfig {
     required this.parameters,
     required this.hasWrappedRoute,
     required this.hasConstConstructor,
-    required this.deferredLoading,
+    required this.isDeferredLoading,
     required this.typeParameters,
     this._pathParams = const [],
   });
@@ -53,7 +53,7 @@ class RouteConfig {
       parameters: parameters,
       hasWrappedRoute: map['hasWrappedRoute'] as bool?,
       hasConstConstructor: map['hasConstConstructor'] as bool,
-      deferredLoading: map['deferredLoading'] as bool?,
+      isDeferredLoading: map['deferredLoading'] as bool?,
     );
   }
 
@@ -79,7 +79,7 @@ class RouteConfig {
   final bool hasConstConstructor;
 
   /// whether the route is deferred
-  final bool? deferredLoading;
+  final bool? isDeferredLoading;
 
   /// The type parameters of the page class, which the route and its args
   /// class take too; empty for a page that has none.
@@ -134,7 +134,7 @@ class RouteConfig {
       parameters: parameters,
       hasWrappedRoute: hasWrappedRoute,
       hasConstConstructor: hasConstConstructor,
-      deferredLoading: isDeferred,
+      isDeferredLoading: isDeferred,
     );
   }
 
@@ -148,7 +148,7 @@ class RouteConfig {
       'parameters': parameters.map((e) => e.toJson()).toList(),
       'hasWrappedRoute': hasWrappedRoute,
       'hasConstConstructor': hasConstConstructor,
-      'deferredLoading': deferredLoading,
+      'deferredLoading': isDeferredLoading,
       if (isGeneric)
         'typeParameters': typeParameters.map((e) => e.toJson()).toList(),
     };

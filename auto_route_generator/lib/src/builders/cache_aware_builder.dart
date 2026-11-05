@@ -18,7 +18,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
     required this.annotationName,
     this._generatedExtension = '.g.dart',
     List<String> additionalOutputExtensions = const [],
-    this._allowSyntaxErrors = false,
+    this._isSyntaxErrorAllowed = false,
     this.options,
   }) : buildExtensions = _validatedBuildExtensionsFrom(
          options != null ? Map.of(options.config) : null,
@@ -46,13 +46,13 @@ abstract class CacheAwareBuilder<T> extends Builder {
   final String _generatedExtension;
 
   /// Whether to allow syntax errors in input libraries.
-  final bool _allowSyntaxErrors;
+  final bool _isSyntaxErrorAllowed;
 
   /// The name of the annotation to look for.
   final String annotationName;
 
   /// Whether to enable cache
-  bool get cacheEnabled;
+  bool get isCacheEnabled;
 
   String _defaultFormatOutput(LibraryLanguageVersion libVersion, String code) {
     return DartFormatter(
@@ -80,7 +80,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
     if (!await resolver.isLibrary(buildStep.inputId)) return;
     final unit = await resolver.compilationUnitFor(
       buildStep.inputId,
-      allowSyntaxErrors: _allowSyntaxErrors,
+      allowSyntaxErrors: _isSyntaxErrorAllowed,
     );
     if (!(await _hasAnyTopLevelAnnotations(
       buildStep.inputId,
@@ -91,7 +91,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
     }
 
     var cacheHash = 0;
-    if (cacheEnabled) {
+    if (isCacheEnabled) {
       cacheHash = calculateUpdatableHash(unit);
       final cached = await loadFromCache(buildStep, cacheHash);
       if (cached != null) {
@@ -103,7 +103,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
 
     final lib = await resolver.libraryFor(
       buildStep.inputId,
-      allowSyntaxErrors: _allowSyntaxErrors,
+      allowSyntaxErrors: _isSyntaxErrorAllowed,
     );
     final generated = await onResolve(LibraryReader(lib), buildStep, cacheHash);
     if (generated == null) return;

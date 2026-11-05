@@ -92,11 +92,13 @@ class RouteConfigResolver {
     // the page from being opened by one, so its type must be one the url
     // gives; any other was read as `dynamic` and threw when a link opened
     // the page.
-    final readsUrl = !parameters.any(
+    final isReadFromUrl = !parameters.any(
       (p) =>
           (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam,
     );
-    for (final qParam in parameters.where((p) => p.isQueryParam && readsUrl)) {
+    for (final qParam in parameters.where(
+      (p) => p.isQueryParam && isReadFromUrl,
+    )) {
       final type = qParam.type;
       throwIf(
         qParam.urlType == null,
@@ -107,7 +109,7 @@ class RouteConfigResolver {
 
     for (final pParam in pathParameters) {
       throwIf(
-        !(pParam.urlType?.inPath ?? false),
+        !(pParam.urlType?.isInPath ?? false),
         "Parameter [${pParam.name}] must be of a type that can be parsed from a [String] because it will also obtain it's value from a path\nvalid types: ${UrlParamType.pathTypeNames}\n"
         'For any other type, give @PathParam a ParamConverter<${pParam.type.name}>, '
         "as in @PathParam('${pParam.paramName}', ${_lowerFirst(pParam.type.name)}Converter).",
@@ -120,7 +122,7 @@ class RouteConfigResolver {
       parameters: parameters,
       hasConstConstructor: hasConstConstructor,
       pageType: pageType,
-      deferredLoading: isDeferred,
+      isDeferredLoading: isDeferred,
       typeParameters: typeParameters,
     );
   }

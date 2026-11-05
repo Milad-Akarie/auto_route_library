@@ -17,7 +17,7 @@ class RouterConfigResolver {
     required bool isPartOfLibrary,
     required int cacheHash,
   }) {
-    final deferredLoading =
+    final isDeferredLoading =
         autoRouter.peek('deferredLoading')?.boolValue ?? false;
     final replaceInRouteName = autoRouter
         .peek('replaceInRouteName')
@@ -25,7 +25,7 @@ class RouterConfigResolver {
     if (replaceInRouteName != null) {
       _checkReplaceInRouteName(replaceInRouteName, clazz);
     }
-    final argsEquality = autoRouter.peek('argsEquality')?.boolValue ?? false;
+    final hasArgsEquality = autoRouter.peek('argsEquality')?.boolValue ?? false;
     final generateForDir = autoRouter
         .read('generateForDir')
         .listValue
@@ -34,12 +34,12 @@ class RouterConfigResolver {
     return RouterConfig(
       routerClassName: clazz.displayName,
       replaceInRouteName: replaceInRouteName,
-      deferredLoading: deferredLoading,
+      isDeferredLoading: isDeferredLoading,
       isPartOfLibrary: isPartOfLibrary,
       path: input.path,
       cacheHash: cacheHash,
       generateForDir: List.of(generateForDir),
-      argsEquality: argsEquality,
+      hasArgsEquality: hasArgsEquality,
     );
   }
 

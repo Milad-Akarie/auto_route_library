@@ -19,12 +19,13 @@ const Reference kStringRefer = Reference('String');
 const Reference kPageRouteType = Reference('PageRouteInfo', kAutoRouteImport);
 
 /// Builds a list type reference of type [reference]
-TypeReference listRefer(Reference reference, {required bool nullable}) => .new(
-  (b) => b
-    ..symbol = 'List'
-    ..isNullable = nullable
-    ..types.add(reference),
-);
+TypeReference listRefer(Reference reference, {required bool isNullable}) =>
+    .new(
+      (b) => b
+        ..symbol = 'List'
+        ..isNullable = isNullable
+        ..types.add(reference),
+    );
 
 /// Throws when a route in a part file gets the name of a page class.
 ///
@@ -57,7 +58,7 @@ String generateLibrary(
   required Set<String> ignoreForFile,
   required String outputPath,
 }) {
-  if (router.isPartOfLibrary && router.deferredLoading) {
+  if (router.isPartOfLibrary && router.isDeferredLoading) {
     throw ArgumentError(
       'Part-file approach will not work with deferred loading because allocator needs to mark all deferred imports!',
     );
@@ -68,7 +69,7 @@ String generateLibrary(
         ? .none
         : DeferredPagesAllocator(
             routes,
-            defaultDeferredLoading: router.deferredLoading,
+            isDeferredLoadingDefault: router.isDeferredLoading,
             outputPath: outputPath,
           ),
     orderDirectives: true,
@@ -79,7 +80,7 @@ String generateLibrary(
     _throwOnRouteNamedLikePage(router, routes);
   }
 
-  final deferredRoutes = routes.where((r) => r.deferredLoading == true);
+  final deferredRoutes = routes.where((r) => r.isDeferredLoading == true);
 
   if (router.isPartOfLibrary && deferredRoutes.isNotEmpty) {
     throw ArgumentError(
@@ -93,18 +94,18 @@ String generateLibrary(
   final deferredByImport = <String?, bool>{};
   for (final route in routes) {
     final import = route.pageType?.import;
-    final current = deferredByImport[import];
-    if (current != true && route.deferredLoading != null) {
-      deferredByImport[import] = route.deferredLoading!;
+    final isCurrentlyDeferred = deferredByImport[import];
+    if (isCurrentlyDeferred != true && route.isDeferredLoading != null) {
+      deferredByImport[import] = route.isDeferredLoading!;
     }
   }
   for (var i = 0; i < routes.length; i++) {
     final route = routes[i];
-    final deferredLoading = deferredByImport[route.pageType?.import];
+    final isDeferredLoading = deferredByImport[route.pageType?.import];
     if (route.pageType != null &&
-        deferredLoading != null &&
-        route.deferredLoading != deferredLoading) {
-      routes[i] = route.withDeferredLoading(isDeferred: deferredLoading);
+        isDeferredLoading != null &&
+        route.isDeferredLoading != isDeferredLoading) {
+      routes[i] = route.withDeferredLoading(isDeferred: isDeferredLoading);
     }
   }
 

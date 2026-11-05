@@ -7,7 +7,7 @@ class DeferredPagesAllocator implements Allocator {
   /// Default constructor
   new(
     this._routes, {
-    required this._defaultDeferredLoading,
+    required this._isDeferredLoadingDefault,
     required this._outputPath,
   });
   static const _doNotPrefix = ['dart:core'];
@@ -19,7 +19,7 @@ class DeferredPagesAllocator implements Allocator {
   final List<RouteConfig> _routes;
 
   /// The default deferred loading value
-  final bool _defaultDeferredLoading;
+  final bool _isDeferredLoadingDefault;
 
   /// Where the router is written, as a path inside its package.
   ///
@@ -45,7 +45,7 @@ class DeferredPagesAllocator implements Allocator {
     final uri = _importUri(importPath);
     if (_routes.isDeferred(
       importPath,
-      defaultDeferredLoading: _defaultDeferredLoading,
+      isDeferredLoadingDefault: _isDeferredLoadingDefault,
     )) {
       return Directive.importDeferredAs(uri, '_i${entry.value}');
     }
@@ -64,21 +64,21 @@ class DeferredPagesAllocator implements Allocator {
 }
 
 extension _RouteConfigList on List<RouteConfig> {
-  bool isDeferred(String importPath, {required bool defaultDeferredLoading}) {
+  bool isDeferred(String importPath, {required bool isDeferredLoadingDefault}) {
     return mapRouteToDeferredType(
           importPath,
-          defaultDeferredLoading: defaultDeferredLoading,
+          isDeferredLoadingDefault: isDeferredLoadingDefault,
         ) ==
         .deferred;
   }
 
   _DeferredStatus mapRouteToDeferredType(
     String importPath, {
-    required bool defaultDeferredLoading,
+    required bool isDeferredLoadingDefault,
   }) {
     for (final routeConfig in this) {
       if (routeConfig.pageType?.import == importPath) {
-        return (routeConfig.deferredLoading ?? defaultDeferredLoading)
+        return (routeConfig.isDeferredLoading ?? isDeferredLoadingDefault)
             ? .deferred
             : .none;
       }

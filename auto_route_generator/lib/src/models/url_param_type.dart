@@ -29,23 +29,23 @@ sealed class UrlParamType {
   }
 
   static const _byName = <String, UrlParamType>{
-    'String': _GetterParam('String', inPath: true),
-    'int': _GetterParam('Int', inPath: true, parsesItems: true),
-    'double': _GetterParam('Double', inPath: true, parsesItems: true),
-    'num': _GetterParam('Num', inPath: true, parsesItems: true),
-    'bool': _GetterParam('Bool', inPath: true, parsesItems: true),
-    'dynamic': _GetterParam(null, inPath: true),
+    'String': _GetterParam('String', isInPath: true),
+    'int': _GetterParam('Int', isInPath: true, hasParsedItems: true),
+    'double': _GetterParam('Double', isInPath: true, hasParsedItems: true),
+    'num': _GetterParam('Num', isInPath: true, hasParsedItems: true),
+    'bool': _GetterParam('Bool', isInPath: true, hasParsedItems: true),
+    'dynamic': _GetterParam(null, isInPath: true),
     'Object': _GetterParam(null),
   };
 
   /// The names of the types a path segment can give, for build errors.
   static final List<String> pathTypeNames = [
     for (final entry in _byName.entries)
-      if (entry.value.inPath) entry.key,
+      if (entry.value.isInPath) entry.key,
   ];
 
   /// Whether a path segment can give the type, not only a query param.
-  bool get inPath => false;
+  bool get isInPath => false;
 
   /// Whether a `List`, `Set` or `Iterable` query param can hold items of the
   /// type: the url gives each item as text, as it is ([isTextItem]) or for
@@ -78,22 +78,22 @@ sealed class UrlParamType {
 /// A type `Parameters` has a pair of readers for, `opt<name>` for a nullable
 /// type and `get<name>` for the rest, or `get` alone when [name] is `null`.
 final class _GetterParam extends UrlParamType {
-  const new(this.name, {this.inPath = false, this.parsesItems = false})
+  const new(this.name, {this.isInPath = false, this.hasParsedItems = false})
     : super._();
 
   final String? name;
 
   @override
-  final bool inPath;
+  final bool isInPath;
 
   /// Whether a list item of the type is parsed from its text.
-  final bool parsesItems;
+  final bool hasParsedItems;
 
   @override
   bool get isListItem => true;
 
   @override
-  bool get isTextItem => !parsesItems;
+  bool get isTextItem => !hasParsedItems;
 
   @override
   Expression read(
@@ -172,9 +172,9 @@ final class _CollectionParam extends UrlParamType {
   ) {
     final [item] = type.typeArguments;
     final itemType = UrlParamType.of(item);
-    final parses =
+    final isParsed =
         itemType != null && itemType.isListItem && !itemType.isTextItem;
-    if (type.isList && !parses) {
+    if (type.isList && !isParsed) {
       // A List of text is what `optList` and `getList` give.
       return params.property(type.isNullable ? 'optList' : 'getList').call([
         key,
@@ -185,7 +185,7 @@ final class _CollectionParam extends UrlParamType {
     // a number or bool by parsing it, an enum by its name. An item that
     // doesn't convert is left out. A Set is made of the items.
     var value = params.property('optList').call([key]);
-    if (parses) {
+    if (isParsed) {
       final itemRefer = refer(item.name, item.import);
       value = value
           .nullSafeProperty('map')
@@ -195,9 +195,9 @@ final class _CollectionParam extends UrlParamType {
     }
     if (type.isSet) {
       value =
-          (parses ? value.property('toSet') : value.nullSafeProperty('toSet'))
+          (isParsed ? value.property('toSet') : value.nullSafeProperty('toSet'))
               .call([]);
-    } else if (parses) {
+    } else if (isParsed) {
       value = value.property('toList').call([]);
     }
     return defaultValue == null ? value : value.ifNullThen(defaultValue);
@@ -232,7 +232,7 @@ final class _ConverterParam extends UrlParamType {
   final String? import;
 
   @override
-  bool get inPath => true;
+  bool get isInPath => true;
 
   @override
   Expression read(

@@ -83,12 +83,16 @@ class AppRouter extends RootStackRouter {
     test(
       'imports its pages by relative path and keeps package: for lib/',
       () async {
-        final result = await generateRouter({
+        final sources = {
           'integration_test/router.dart': router,
           'integration_test/home_page.dart': _page('HomePage'),
           'integration_test/pages/detail_page.dart': _page('DetailPage'),
           'lib/shared_page.dart': _page('SharedPage'),
-        }, routerPath: 'integration_test/router.dart');
+        };
+        final result = await generateRouter(
+          sources,
+          routerPath: 'integration_test/router.dart',
+        );
         expect(result.errors, isEmpty);
         expect(result.source, isNot(contains('asset:')));
         expect(result.source, contains("import 'home_page.dart' as _i"));
@@ -109,13 +113,13 @@ class AppRouter extends RootStackRouter {
   // route is declared in the library that imports the page, so it shadowed
   // the page and the build left a router that does not compile.
   group('a page the default replacement does not rename (#1870)', () {
-    String router({required bool part}) =>
+    String router({required bool isPart}) =>
         '''
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
 
 import 'costs_tab.dart';
-${part ? "\npart 'router.gr.dart';\n" : ''}
+${isPart ? "\npart 'router.gr.dart';\n" : ''}
 @AutoRouterConfig()
 class AppRouter extends RootStackRouter {
   @override
@@ -125,7 +129,7 @@ class AppRouter extends RootStackRouter {
 
     test('fails the build with the fix in a part file', () async {
       final result = await generateRouter({
-        'lib/router.dart': router(part: true),
+        'lib/router.dart': router(isPart: true),
         'lib/costs_tab.dart': _page('CostsTab'),
       });
       expect(result.errors, hasLength(1));
@@ -140,7 +144,7 @@ class AppRouter extends RootStackRouter {
 
     test('compiles in a part file once the page is named', () async {
       final result = await generateRouter({
-        'lib/router.dart': router(part: true),
+        'lib/router.dart': router(isPart: true),
         'lib/costs_tab.dart': _page('CostsTab')
             .replaceFirst('@RoutePage()', "@RoutePage(name: 'CostsTabRoute')"),
       });
@@ -153,7 +157,7 @@ class AppRouter extends RootStackRouter {
       'compiles in its own library, where the page is imported with a prefix',
       () async {
         final result = await generateRouter({
-          'lib/router.dart': router(part: false),
+          'lib/router.dart': router(isPart: false),
           'lib/costs_tab.dart': _page('CostsTab'),
         });
         expect(result.errors, isEmpty);

@@ -113,13 +113,13 @@ List<Class> buildRouteInfoAndArgs(
                 ..._buildArgParams(
                   nonInheritedParameters,
                   emitter,
-                  toThis: false,
+                  isToThis: false,
                 ),
                 Parameter(
                   (parameterBuilder) => parameterBuilder
                     ..named = true
                     ..name = 'children'
-                    ..type = listRefer(kPageRouteType, nullable: true),
+                    ..type = listRefer(kPageRouteType, isNullable: true),
                 ),
               ])
               ..initializers.add(
@@ -168,7 +168,7 @@ List<Class> buildRouteInfoAndArgs(
                         if (fragmentParam != null)
                           'fragment': refer(fragmentParam.name),
                         'initialChildren': refer('children'),
-                        if (!router.argsEquality)
+                        if (!router.hasArgsEquality)
                           'argsEquality': literalBool(false),
                       },
                     )
@@ -202,7 +202,7 @@ List<Class> buildRouteInfoAndArgs(
                   _buildArgParams(
                     nonInheritedParameters,
                     emitter,
-                    useSafeName: false,
+                    isNameSafe: false,
                   ),
                 ),
             ),
@@ -219,7 +219,7 @@ List<Class> buildRouteInfoAndArgs(
                   '${_escapeDollar(r.getName(router.replaceInRouteName))}Args{${nonInheritedParameters.map((p) => '${_escapeDollar(p.name)}: ${_interpolation(p.name)}').join(', ')}}',
                 ).returned.statement,
             ),
-            if (router.argsEquality)
+            if (router.hasArgsEquality)
               Method(
                 (methodBuilder) => methodBuilder
                   ..name = 'operator =='
@@ -289,7 +289,7 @@ List<Class> buildRouteInfoAndArgs(
                       ]),
                   ),
               ),
-            if (router.argsEquality)
+            if (router.hasArgsEquality)
               Method(
                 (methodBuilder) => methodBuilder
                   ..name = 'hashCode'
@@ -381,8 +381,8 @@ Expression _defaultValue(ParamConfig p, [String? code]) {
 Iterable<Parameter> _buildArgParams(
   List<ParamConfig> parameters,
   DartEmitter emitter, {
-  bool toThis = true,
-  bool useSafeName = true,
+  bool isToThis = true,
+  bool isNameSafe = true,
 }) {
   return parameters.map(
     (p) => Parameter((b) {
@@ -403,12 +403,12 @@ Iterable<Parameter> _buildArgParams(
         }
       }
       b
-        ..name = useSafeName ? p.getSafeName() : p.name
+        ..name = isNameSafe ? p.getSafeName() : p.name
         ..named = true
-        ..toThis = toThis
+        ..toThis = isToThis
         ..required = p.isRequired || p.isPositional
         ..defaultTo = defaultCode;
-      if (!toThis) {
+      if (!isToThis) {
         b.type = p is FunctionParamConfig ? p.funRefer : p.type.refer;
       }
     }),
@@ -416,9 +416,10 @@ Iterable<Parameter> _buildArgParams(
 }
 
 Expression _buildMethod(RouteConfig r, RouterConfig router) {
-  final useConsConstructor =
-      r.hasConstConstructor && !(r.deferredLoading ?? router.deferredLoading);
-  var constructedPage = useConsConstructor
+  final shouldUseConst =
+      r.hasConstConstructor &&
+      !(r.isDeferredLoading ?? router.isDeferredLoading);
+  var constructedPage = shouldUseConst
       ? r.pageType!.refer.constInstance([])
       : r.isGeneric
       ? refer('args').property('buildPage').call([], {
@@ -436,7 +437,7 @@ Expression _buildMethod(RouteConfig r, RouterConfig router) {
     ).newInstance([], {'child': constructedPage});
   }
 
-  if ((r.deferredLoading ?? router.deferredLoading) && r.pageType != null) {
+  if ((r.isDeferredLoading ?? router.isDeferredLoading) && r.pageType != null) {
     constructedPage = _getDeferredBuilder(r, constructedPage);
   }
   final inheritedParameters = r.parameters.where((p) => p.isInheritedPathParam);

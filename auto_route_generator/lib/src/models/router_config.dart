@@ -7,9 +7,9 @@ class RouterConfig {
     required this._cacheHash,
     required this.generateForDir,
     required this.replaceInRouteName,
-    required this.deferredLoading,
+    required this.isDeferredLoading,
     required this.isPartOfLibrary,
-    required this.argsEquality,
+    required this.hasArgsEquality,
   });
 
   /// Deserializes a map to an instance of [RouterConfig]
@@ -17,12 +17,12 @@ class RouterConfig {
     return RouterConfig(
       routerClassName: map['routerClassName'] as String,
       replaceInRouteName: map['replaceInRouteName'] as String?,
-      deferredLoading: map['deferredLoading'] as bool,
+      isDeferredLoading: map['deferredLoading'] as bool,
       isPartOfLibrary: map['usesPartBuilder'] as bool,
       path: map['path'] as String,
       cacheHash: map['cacheHash'] as int?,
       generateForDir: (map['generateForDir'] as List<Object?>).cast(),
-      argsEquality: map['argsEquality'] as bool,
+      hasArgsEquality: map['argsEquality'] as bool,
     );
   }
 
@@ -33,7 +33,7 @@ class RouterConfig {
   final String? replaceInRouteName;
 
   /// Whether the router should use deferred loading
-  final bool deferredLoading;
+  final bool isDeferredLoading;
 
   /// Whether the router should use part builder
   final bool isPartOfLibrary;
@@ -48,19 +48,19 @@ class RouterConfig {
   final List<String> generateForDir;
 
   /// Whether to generate equality operator and hashCode for route args
-  final bool argsEquality;
+  final bool hasArgsEquality;
 
   /// Serializes this instance to a map
   Map<String, dynamic> toJson() {
     return {
       'routerClassName': _routerClassName,
       'replaceInRouteName': replaceInRouteName,
-      'deferredLoading': deferredLoading,
+      'deferredLoading': isDeferredLoading,
       'usesPartBuilder': isPartOfLibrary,
       'path': path,
       'cacheHash': _cacheHash,
       'generateForDir': generateForDir,
-      'argsEquality': argsEquality,
+      'argsEquality': hasArgsEquality,
     };
   }
 }

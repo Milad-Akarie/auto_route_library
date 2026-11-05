@@ -7,7 +7,7 @@ class AutoRouterBuilder extends AutoRouterBuilderBase {
     : super(
         // gr stands for generated router.
         generatedExtension: '.gr.dart',
-        allowSyntaxErrors: true,
+        isSyntaxErrorAllowed: true,
         annotationName: 'AutoRouterConfig',
       );
 }

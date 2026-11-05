@@ -35,12 +35,12 @@ class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
   new({super.options})
     : super(
         generatedExtension: '.route.json',
-        allowSyntaxErrors: true,
+        isSyntaxErrorAllowed: true,
         annotationName: 'RoutePage',
       );
 
   @override
-  bool get cacheEnabled => options?.config['enable_cached_builds'] == true;
+  bool get isCacheEnabled => options?.config['enable_cached_builds'] == true;
 
   @override
   Future<RoutesList?> loadFromCache(BuildStep buildStep, int stepHash) async {

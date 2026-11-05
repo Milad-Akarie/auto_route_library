@@ -27,21 +27,20 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
   /// Default constructor
   new({
     required super.generatedExtension,
-    required super.allowSyntaxErrors,
+    required super.isSyntaxErrorAllowed,
     required super.annotationName,
     super.options,
   });
 
   @override
-  bool get cacheEnabled => options?.config['enable_cached_builds'] == true;
+  bool get isCacheEnabled => options?.config['enable_cached_builds'] == true;
 
   @override
   Future<RouterConfig?> loadFromCache(BuildStep buildStep, int stepHash) async {
-    final cachedRouterFile = _buildRouterFile(buildStep, toCache: true);
+    final cachedRouterFile = _buildRouterFile(buildStep, isForCache: true);
     if (cachedRouterFile.existsSync()) {
-      final json = jsonDecode(
-        await cachedRouterFile.readAsString(),
-      ) as Map<String, dynamic>;
+      final cachedJson = await cachedRouterFile.readAsString();
+      final json = jsonDecode(cachedJson) as Map<String, dynamic>;
       if (json['cacheHash'] == stepHash) {
         return RouterConfig.fromJson(json);
       }
@@ -96,8 +95,8 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
     }
     try {
       _writeRouterFile(buildStep, item);
-      if (cacheEnabled) {
-        _writeRouterFile(buildStep, item, toCache: true);
+      if (isCacheEnabled) {
+        _writeRouterFile(buildStep, item, isForCache: true);
         if (!routesCacheFile.existsSync()) {
           routesCacheFile.createSync(recursive: true);
         }
@@ -147,19 +146,19 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
   void _writeRouterFile(
     BuildStep buildStep,
     RouterConfig router, {
-    bool toCache = false,
+    bool isForCache = false,
   }) {
-    final routerFile = _buildRouterFile(buildStep, toCache: toCache);
+    final routerFile = _buildRouterFile(buildStep, isForCache: isForCache);
     if (!routerFile.existsSync()) {
       routerFile.createSync(recursive: true);
     }
     routerFile.writeAsStringSync(jsonEncode(router.toJson()));
   }
 
-  File _buildRouterFile(BuildStep buildStep, {required bool toCache}) {
+  File _buildRouterFile(BuildStep buildStep, {required bool isForCache}) {
     final path = [
       '.dart_tool/build',
-      if (toCache) 'cache' else 'generated',
+      if (isForCache) 'cache' else 'generated',
       buildStep.inputId.package,
       buildStep.inputId.changeExtension('.router_config.json').path,
     ].join('/');
