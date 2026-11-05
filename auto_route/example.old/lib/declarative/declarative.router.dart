@@ -113,7 +113,7 @@ class _NameInputScreenState extends State<NameInputScreen> {
       color: Colors.white,
       child: Center(
         child: Padding(
-          padding: const .all(16.0),
+          padding: const .all(16),
           child: Column(
             children: [
               const Text('Enter your name'),
@@ -158,7 +158,7 @@ class _AgeInputScreenState extends State<AgeInputScreen> {
       color: Colors.white,
       child: Center(
         child: Padding(
-          padding: const .all(16.0),
+          padding: const .all(16),
           child: Column(
             children: [
               const Text('Enter your age'),
@@ -190,7 +190,7 @@ class ResultScreen extends StatelessWidget {
       color: Colors.white,
       child: Center(
         child: Padding(
-          padding: const .all(16.0),
+          padding: const .all(16),
           child: Column(
             children: [
               Text('Name: ${profile.name}'),
