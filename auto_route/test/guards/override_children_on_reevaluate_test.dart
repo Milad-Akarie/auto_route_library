@@ -122,7 +122,7 @@ void main() {
 }
 
 class _DashboardRoute extends PageRouteInfo<void> {
-  const new({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
+  const new({required List<PageRouteInfo> children}) : super(name, initialChildren: children);
 
   static const String name = '_DashboardRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());

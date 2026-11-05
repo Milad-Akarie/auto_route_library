@@ -60,7 +60,7 @@ class _SplashRoute extends PageRouteInfo<void> {
 }
 
 class _HomeWrapperRoute extends PageRouteInfo<void> {
-  const new({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
+  const new({required List<PageRouteInfo> children}) : super(name, initialChildren: children);
 
   static const String name = '_HomeWrapperRoute';
   static PageInfo page = PageInfo(

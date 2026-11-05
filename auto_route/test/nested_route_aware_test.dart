@@ -36,7 +36,7 @@ class _AwarePageState extends State<_AwarePage> with AutoRouteAwareStateMixin<_A
 }
 
 class _Route extends PageRouteInfo<void> {
-  const new(super.name, {List<PageRouteInfo>? children}) : super(initialChildren: children);
+  const new(super.name);
 }
 
 PageInfo _awarePage(String name) => .new(name, builder: (_) => const _AwarePage());

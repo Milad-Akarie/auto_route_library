@@ -77,15 +77,14 @@ class _HomeRoute extends PageRouteInfo<void> {
 }
 
 class _ListDetailRouter extends PageRouteInfo<void> {
-  const new({List<PageRouteInfo>? children}) : super(pageName, initialChildren: children);
+  const new({required List<PageRouteInfo> children}) : super(pageName, initialChildren: children);
 
   static const String pageName = 'ListDetailRouter';
   static PageInfo page = PageInfo(pageName, builder: (_) => const AutoRouter());
 }
 
 class _ListDetailRoute extends PageRouteInfo<void> {
-  new({required String id, List<PageRouteInfo>? children})
-    : super(pageName, rawPathParams: {'id': id}, initialChildren: children);
+  new({required String id}) : super(pageName, rawPathParams: {'id': id});
 
   static const String pageName = 'ListDetailRoute';
   static PageInfo page = PageInfo(

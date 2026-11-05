@@ -120,7 +120,7 @@ void main() {
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const new({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
+  const new({required List<PageRouteInfo> children}) : super(name, initialChildren: children);
 
   static const String name = 'HomeRoute';
   static PageInfo page = PageInfo(

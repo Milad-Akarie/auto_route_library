@@ -194,21 +194,21 @@ class ObserverRouter extends RootStackRouter {
 }
 
 class FirstRoute extends PageRouteInfo<void> {
-  const new({List<PageRouteInfo>? children}) : super(FirstRoute.name, initialChildren: children);
+  const new() : super(FirstRoute.name);
 
   static const String name = 'FirstRoute';
   static PageInfo page = PageInfo(name, builder: (data) => const AutoRouteAwareTestPage(key: ValueKey('first')));
 }
 
 class SecondRoute extends PageRouteInfo<void> {
-  const new({List<PageRouteInfo>? children}) : super(SecondRoute.name, initialChildren: children);
+  const new() : super(SecondRoute.name);
 
   static const String name = 'SecondRoute';
   static PageInfo page = PageInfo(name, builder: (data) => const Scaffold(body: Text('Second Page')));
 }
 
 class ConfirmRoute extends PageRouteInfo<void> {
-  const new({List<PageRouteInfo>? children}) : super(ConfirmRoute.name, initialChildren: children);
+  const new() : super(ConfirmRoute.name);
 
   static const String name = 'ConfirmRoute';
   static PageInfo page = PageInfo(
@@ -240,21 +240,21 @@ Future<void> _closeDialogAndGoBack(BuildContext dialogContext, BuildContext cont
 }
 
 class TabsRoute extends PageRouteInfo<void> {
-  const new({List<PageRouteInfo>? children}) : super(TabsRoute.name, initialChildren: children);
+  const new() : super(TabsRoute.name);
 
   static const String name = 'TabsRoute';
   static PageInfo page = PageInfo(name, builder: (data) => const AutoTabsRouter(routes: [Tab1Route(), Tab2Route()]));
 }
 
 class Tab1Route extends PageRouteInfo<void> {
-  const new({List<PageRouteInfo>? children}) : super(Tab1Route.name, initialChildren: children);
+  const new() : super(Tab1Route.name);
 
   static const String name = 'Tab1Route';
   static PageInfo page = PageInfo(name, builder: (data) => const AutoRouteAwareTestPage(key: ValueKey('tab1')));
 }
 
 class Tab2Route extends PageRouteInfo<void> {
-  const new({List<PageRouteInfo>? children}) : super(Tab2Route.name, initialChildren: children);
+  const new() : super(Tab2Route.name);
 
   static const String name = 'Tab2Route';
   static PageInfo page = PageInfo(name, builder: (data) => const Scaffold(body: Text('Tab 2')));

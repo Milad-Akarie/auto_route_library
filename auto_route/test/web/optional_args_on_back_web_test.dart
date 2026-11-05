@@ -59,7 +59,7 @@ class _BookArgs {
 }
 
 class _BookRoute extends PageRouteInfo<_BookArgs> {
-  new({String? bookId}) : super(name, args: _BookArgs(bookId: bookId));
+  new({required String bookId}) : super(name, args: _BookArgs(bookId: bookId));
 
   static const String name = 'BookRoute';
   static PageInfo page = PageInfo(
@@ -70,7 +70,7 @@ class _BookRoute extends PageRouteInfo<_BookArgs> {
 }
 
 class _ChapterRoute extends PageRouteInfo<_BookArgs> {
-  new({String? bookId}) : super(name, args: _BookArgs(bookId: bookId));
+  new({required String bookId}) : super(name, args: _BookArgs(bookId: bookId));
 
   static const String name = 'ChapterRoute';
   static PageInfo page = PageInfo(

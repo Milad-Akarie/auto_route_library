@@ -110,7 +110,7 @@ class _BookShellRoute extends PageRouteInfo<void> {
 
 class _BookRoute extends PageRouteInfo<void> {
   // As generated for @PathParam('id') and @queryParam someQueryParam.
-  new({required int id, int? someQueryParam})
+  new({required int id, required int someQueryParam})
     : super(pageName, rawPathParams: {'id': id}, rawQueryParams: {'someQueryParam': someQueryParam});
 
   static const String pageName = 'BookRoute';

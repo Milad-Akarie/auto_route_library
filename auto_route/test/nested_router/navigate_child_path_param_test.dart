@@ -96,7 +96,7 @@ class _HomeRoute extends PageRouteInfo<void> {
 }
 
 class _AccountRoute extends PageRouteInfo<void> {
-  new({required String accountId, List<PageRouteInfo>? children})
+  new({required String accountId, required List<PageRouteInfo> children})
     : super(pageName, rawPathParams: {'accountId': accountId}, initialChildren: children);
 
   static const String pageName = 'AccountRoute';

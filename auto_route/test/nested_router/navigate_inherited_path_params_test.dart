@@ -95,14 +95,14 @@ void main() {
 }
 
 class _DashboardRoute extends PageRouteInfo<void> {
-  const new({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
+  const new({required List<PageRouteInfo> children}) : super(name, initialChildren: children);
 
   static const String name = 'DashboardRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
 }
 
 class _VendorsRoute extends PageRouteInfo<void> {
-  const new({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
+  const new({required List<PageRouteInfo> children}) : super(name, initialChildren: children);
 
   static const String name = 'VendorsRoute';
   static PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
@@ -116,8 +116,7 @@ class _VendorListRoute extends PageRouteInfo<void> {
 }
 
 class _EditVendorRoute extends PageRouteInfo<void> {
-  new({required String vendorId, List<PageRouteInfo>? children})
-    : super(name, rawPathParams: {'vendor-id': vendorId}, initialChildren: children);
+  new({required String vendorId}) : super(name, rawPathParams: {'vendor-id': vendorId});
 
   static const String name = 'EditVendorRoute';
   static PageInfo page = PageInfo(

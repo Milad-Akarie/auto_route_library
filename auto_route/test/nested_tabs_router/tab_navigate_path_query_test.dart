@@ -58,7 +58,7 @@ class _DashboardRoute extends PageRouteInfo<void> {
 
 @immutable
 class _SettingsTabArgs {
-  const new({this.query = 'none'});
+  const new({required this.query});
 
   final String query;
 
