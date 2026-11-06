@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show PredictiveBackEvent;
 import 'package:material_ui/material_ui.dart';
 
-part 'transitions/predictive_back_phase.dart';
+part 'transitions/predictive_back_gesture_detector.dart';
 
 // The pages a navigator has shown; see [AutoRoutePage.markShown].
 final _shownPages = Expando<bool>();

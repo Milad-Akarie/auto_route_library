@@ -2,35 +2,6 @@ part of '../auto_route_page.dart';
 
 /// This is the exact copy of the original file from the flutter repository
 
-typedef _PredictiveBackGestureDetectorWidgetBuilder = Widget Function(
-  BuildContext context,
-  _PredictiveBackPhase phase,
-  PredictiveBackEvent? startBackEvent,
-  PredictiveBackEvent? currentBackEvent,
-);
-
-/// The phases of a predictive back gesture.
-enum _PredictiveBackPhase {
-  /// There is no active predictive back gesture in progress.
-  idle,
-
-  /// The user pointer has contacted the screen.
-  start,
-
-  /// The user pointer has moved.
-  update,
-
-  /// The user pointer has released in a position in which Android has
-  /// determined that the back gesture is successful and the current route
-  /// should be popped.
-  commit,
-
-  /// The user pointer has released in a position in which Android has
-  /// determined that the back gesture should be canceled and the original route
-  /// should be shown.
-  cancel,
-}
-
 class _PredictiveBackGestureDetector extends StatefulWidget {
   const new({required this.route, required this.builder});
 
@@ -145,4 +116,33 @@ class _PredictiveBackGestureDetectorState
       currentBackEvent,
     );
   }
+}
+
+typedef _PredictiveBackGestureDetectorWidgetBuilder = Widget Function(
+  BuildContext context,
+  _PredictiveBackPhase phase,
+  PredictiveBackEvent? startBackEvent,
+  PredictiveBackEvent? currentBackEvent,
+);
+
+/// The phases of a predictive back gesture.
+enum _PredictiveBackPhase {
+  /// There is no active predictive back gesture in progress.
+  idle,
+
+  /// The user pointer has contacted the screen.
+  start,
+
+  /// The user pointer has moved.
+  update,
+
+  /// The user pointer has released in a position in which Android has
+  /// determined that the back gesture is successful and the current route
+  /// should be popped.
+  commit,
+
+  /// The user pointer has released in a position in which Android has
+  /// determined that the back gesture should be canceled and the original route
+  /// should be shown.
+  cancel,
 }

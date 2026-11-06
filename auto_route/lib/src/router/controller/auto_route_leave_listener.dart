@@ -1,42 +1,5 @@
 part of 'routing_controller.dart';
 
-/// How the user, or the app, left a page.
-///
-/// [AutoRouteLeaveListener] reports one of these each time the page it sits
-/// in stops being the top page of its router.
-enum RouteLeaveKind {
-  /// The page was popped: by the back button, system back, a back swipe, the
-  /// browser's back button, or a call such as [StackRouter.pop],
-  /// [StackRouter.maybePop] or [StackRouter.popUntil].
-  ///
-  /// The only kind an app can block: a [PopScope] that refuses the pop keeps
-  /// the page, and nothing is reported.
-  popped,
-
-  /// A page was pushed over this one, which stays in the stack under it.
-  ///
-  /// The page is on top again once the pages over it are popped, and is
-  /// reported again if another page covers it later.
-  covered,
-
-  /// The page was taken off the stack for the page that took its place, by
-  /// [StackRouter.replace], [StackRouter.replaceAll],
-  /// [StackRouter.pushAndPopUntil] or a push over a route with
-  /// `keepHistory: false`.
-  replaced,
-
-  /// The page was taken off the stack without a pop: by a navigation to a
-  /// page below it or elsewhere, such as [RoutingController.navigate] or a
-  /// deep link, by [StackRouter.removeRoute], [StackRouter.removeWhere],
-  /// [StackRouter.removeUntil] or [StackRouter.removeLast], or by a guard
-  /// that closes it when the guards are reevaluated.
-  removed,
-}
-
-/// Signature of [AutoRouteLeaveListener.onLeave]: [kind] says how the page
-/// was left.
-typedef RouteLeaveCallback = void Function(RouteLeaveKind kind);
-
 /// Calls [onLeave] each time the page this widget sits in is left, with how
 /// it was left.
 ///
@@ -111,3 +74,40 @@ class _AutoRouteLeaveListenerState extends State<AutoRouteLeaveListener> {
   @override
   Widget build(BuildContext context) => widget.child;
 }
+
+/// How the user, or the app, left a page.
+///
+/// [AutoRouteLeaveListener] reports one of these each time the page it sits
+/// in stops being the top page of its router.
+enum RouteLeaveKind {
+  /// The page was popped: by the back button, system back, a back swipe, the
+  /// browser's back button, or a call such as [StackRouter.pop],
+  /// [StackRouter.maybePop] or [StackRouter.popUntil].
+  ///
+  /// The only kind an app can block: a [PopScope] that refuses the pop keeps
+  /// the page, and nothing is reported.
+  popped,
+
+  /// A page was pushed over this one, which stays in the stack under it.
+  ///
+  /// The page is on top again once the pages over it are popped, and is
+  /// reported again if another page covers it later.
+  covered,
+
+  /// The page was taken off the stack for the page that took its place, by
+  /// [StackRouter.replace], [StackRouter.replaceAll],
+  /// [StackRouter.pushAndPopUntil] or a push over a route with
+  /// `keepHistory: false`.
+  replaced,
+
+  /// The page was taken off the stack without a pop: by a navigation to a
+  /// page below it or elsewhere, such as [RoutingController.navigate] or a
+  /// deep link, by [StackRouter.removeRoute], [StackRouter.removeWhere],
+  /// [StackRouter.removeUntil] or [StackRouter.removeLast], or by a guard
+  /// that closes it when the guards are reevaluated.
+  removed,
+}
+
+/// Signature of [AutoRouteLeaveListener.onLeave]: [kind] says how the page
+/// was left.
+typedef RouteLeaveCallback = void Function(RouteLeaveKind kind);

@@ -1,20 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
 
-/// Adds auto-route data getter
-/// to [Route]
-extension RouteX<T> on Route<T> {
-  /// Returns RouteData of this page if
-  /// it's an [AutoRoutePage] otherwise it
-  /// returns null
-  RouteData<Object?>? get data {
-    if (settings is AutoRoutePage) {
-      return (settings as AutoRoutePage).routeData;
-    }
-    return null;
-  }
-}
-
 /// An extended version of  [NavigatorObserver] to support
 /// Tab-int and tab-change events observation
 class AutoRouterObserver extends NavigatorObserver {
@@ -400,4 +386,18 @@ class TabPageRoute {
 
   /// helper getter to access [RouteMatch.stringMatch]
   String get match => routeInfo.stringMatch;
+}
+
+/// Adds auto-route data getter
+/// to [Route]
+extension RouteX<T> on Route<T> {
+  /// Returns RouteData of this page if
+  /// it's an [AutoRoutePage] otherwise it
+  /// returns null
+  RouteData<Object?>? get data {
+    if (settings is AutoRoutePage) {
+      return (settings as AutoRoutePage).routeData;
+    }
+    return null;
+  }
 }

@@ -13,7 +13,7 @@ part '../../route/route_data.dart';
 part 'auto_route_guard.dart';
 part 'auto_router_delegate.dart';
 part 'root_stack_router.dart';
-part 'route_leave_kind.dart';
+part 'auto_route_leave_listener.dart';
 part 'routes_restoration.dart';
 
 /// Signature of a predicate to select [RouteData]

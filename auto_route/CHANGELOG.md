@@ -37,11 +37,11 @@
 - **BREAKING CHANGE**: each file in `lib/src` is named after the first type it declares. Only imports of
   `package:auto_route/src/...` change; every name an app writes stays. Old → new, all under `src/`:
   `common/auto_route_annotations.dart` → `common/auto_router_config.dart`,
-  `common/auto_route_observer.dart` → `common/route_x.dart`,
+  `common/auto_route_observer.dart` → `common/auto_router_observer.dart`,
   `route/auto_route_config.dart` → `route/auto_route.dart`,
   `route/errors.dart` → `route/missing_required_parameter_error.dart`,
   `router/controller/controller_scope.dart` → `router/controller/router_scope.dart`,
-  `router/controller/route_leave.dart` → `router/controller/route_leave_kind.dart`,
+  `router/controller/route_leave.dart` → `router/controller/auto_route_leave_listener.dart`,
   `router/controller/navigation_history/navigation_history.dart` →
   `router/controller/navigation_history/stub/navigation_history_impl.dart`,
   `router/controller/navigation_history/native_navigation_history.dart` →
@@ -52,7 +52,7 @@
   `router/controller/navigation_history/navigation_history.dart`,
   `router/parser/route_information_parser.dart` → `router/parser/default_route_parser.dart`,
   `router/transitions/custom_page_route.dart` → `router/transitions/auto_page_route_builder.dart`,
-  `router/transitions/predictive_back_page_detector.dart` → `router/transitions/predictive_back_phase.dart`,
+  `router/transitions/predictive_back_page_detector.dart` → `router/transitions/predictive_back_gesture_detector.dart`,
   `router/widgets/custom_cupertino_transitions_builder.dart` →
   `router/widgets/cupertino_route_transition_override_mixin.dart`.
 
