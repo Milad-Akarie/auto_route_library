@@ -1,10 +1,11 @@
-## Unreleased
+## 11.4.0
 - **CHANGE**: a generic route's args compare their items with `const ListEquality<Object?>()` and its kin, no longer
   `ListEquality<dynamic>()`; the comparison is the same. Regenerate routers to pick it up.
 - **BREAKING CHANGE**: the generator's two extensions are filed and spelled by name: `IterableExtenstion` (sic) from
   `utils.dart` is `IterableExtension` in `iterable_extension.dart`, and `DartTypeX` from `build_utils.dart` is in
   `dart_type_x.dart`. Only code that imports `package:auto_route_generator/utils.dart` or `build_utils.dart` for one of
   them changes its import; generated routers are the same.
+- **CHORE**: depends on auto_route 12.4.0, the version its tests run against.
 
 ## 11.3.0
 - **BREAKING CHANGE**: `throwIf` from `build_utils.dart` takes the message first and its condition by name:

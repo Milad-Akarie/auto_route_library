@@ -1,4 +1,4 @@
-## Unreleased
+## 12.4.0
 - **FEAT**: `AutoRouter` and `AutoRouter.declarative` take a `heroControllerBuilder`, so Heroes fly between two pages
   of a nested router: pass `MaterialApp.createMaterialHeroController` or `CupertinoApp.createCupertinoHeroController`,
   and the router disposes the controller it creates. Left out, `AutoRouter` flies none, as before (#372,
@@ -55,6 +55,8 @@
   `router/transitions/predictive_back_page_detector.dart` → `router/transitions/predictive_back_gesture_detector.dart`,
   `router/widgets/custom_cupertino_transitions_builder.dart` →
   `router/widgets/cupertino_route_transition_override_mixin.dart`.
+- **CHORE**: DCM's `prefer-boolean-prefixes` and `prefer-correct-callback-field-name` are switched off for now, so
+  the package's own booleans and callback fields keep their names; every other analyzer and DCM rule stays on.
 
 ## 12.3.0
 - **BREAKING CHANGE**: `Parameters.optBool` and `getBool` take their default by name:

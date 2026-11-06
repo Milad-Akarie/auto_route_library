@@ -88,10 +88,10 @@ Add the following dependencies to your `pubspec.yaml` file:
 
  ```yaml
 dependencies:
-  auto_route: ^12.3.0
+  auto_route: ^12.4.0
 
 dev_dependencies:
-  auto_route_generator: ^11.3.0
+  auto_route_generator: ^11.4.0
   build_runner:
 ```
 
