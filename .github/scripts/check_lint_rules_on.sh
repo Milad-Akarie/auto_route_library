@@ -63,7 +63,7 @@ found=$(
 )
 
 if [ -z "$found" ]; then
-  echo "Every lint rule is on and nothing is ignored."
+  echo "Every lint rule is on except the two Phil switched off (prefer-boolean-prefixes, prefer-correct-callback-field-name), and nothing is ignored."
   exit 0
 fi
 

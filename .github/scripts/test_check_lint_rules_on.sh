@@ -75,7 +75,8 @@ cat >> "$work/clean/analysis_options.yaml" <<YAML
     - prefer-correct-callback-field-name: false
 YAML
 git -C "$work/clean" add -A
-check clean 0
+check clean 0 \
+  'Every lint rule is on except the two Phil switched off (prefer-boolean-prefixes, prefer-correct-callback-field-name), and nothing is ignored.'
 check dirty 1 \
   'analysis_options.yaml:7: rule public_member_api_docs is set to false' \
   'rule prefer-trailing-comma is set to false' \
