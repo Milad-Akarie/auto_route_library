@@ -1,10 +1,10 @@
 import 'package:auto_route_generator/build_utils.dart';
+import 'package:auto_route_generator/iterable_extension.dart';
 import 'package:auto_route_generator/src/code_builder/deferred_pages_allocator.dart';
 import 'package:auto_route_generator/src/code_builder/emit_source.dart';
 import 'package:auto_route_generator/src/code_builder/route_info_builder.dart';
 import 'package:auto_route_generator/src/models/route_config.dart';
 import 'package:auto_route_generator/src/models/router_config.dart';
-import 'package:auto_route_generator/utils.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:path/path.dart' as p;

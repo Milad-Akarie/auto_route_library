@@ -1,7 +1,7 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart'
     show DartType, FunctionType, ParameterizedType, RecordType;
-import 'package:auto_route_generator/build_utils.dart';
+import 'package:auto_route_generator/dart_type_x.dart';
 import 'package:auto_route_generator/src/models/resolved_type.dart';
 
 const _kUnPreferredImports = {'dart:ui'};

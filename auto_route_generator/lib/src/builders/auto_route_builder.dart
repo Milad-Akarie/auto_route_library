@@ -4,12 +4,12 @@ import 'dart:io';
 
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:auto_route/annotations.dart';
+import 'package:auto_route_generator/iterable_extension.dart';
 import 'package:auto_route_generator/src/builders/cache_aware_builder.dart';
 import 'package:auto_route_generator/src/models/route_config.dart';
 import 'package:auto_route_generator/src/models/routes_list.dart';
 import 'package:auto_route_generator/src/resolvers/route_config_resolver.dart';
 import 'package:auto_route_generator/src/resolvers/type_resolver.dart';
-import 'package:auto_route_generator/utils.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 

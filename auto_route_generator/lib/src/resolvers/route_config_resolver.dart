@@ -1,5 +1,6 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:auto_route_generator/build_utils.dart';
+import 'package:auto_route_generator/dart_type_x.dart';
 import 'package:auto_route_generator/src/models/param_config.dart';
 import 'package:auto_route_generator/src/models/route_config.dart';
 import 'package:auto_route_generator/src/models/url_param_type.dart';
