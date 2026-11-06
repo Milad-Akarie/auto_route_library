@@ -67,7 +67,8 @@ dart_code_metrics:
     - prefer-trailing-comma
     - unnecessary-trailing-comma
     - avoid-inferrable-type-arguments
-    - prefer-boolean-prefixes
+    # Phil, 2026-11-06: "lets do without var renaming as it is too much of a change, we can disable this rule for now."
+    - prefer-boolean-prefixes: false
     - avoid-unsafe-collection-methods
     - avoid-dynamic
     - avoid-duplicate-constant-values
@@ -91,7 +92,8 @@ dart_code_metrics:
     - avoid-default-tostring
     - prefer-null-aware-spread
     - no-empty-block
-    - prefer-correct-callback-field-name
+    # Phil, 2026-11-06: "lets do without var renaming as it is too much of a change, we can disable this rule for now."
+    - prefer-correct-callback-field-name: false
     # Left on, unlike the template: its reason was Riverpod's fixed
     # signatures, and DCM already skips overrides.
     - avoid-unused-parameters: true

@@ -11,6 +11,9 @@
 # `exclude:` lists for build output and generated code, and `metrics-exclude:`,
 # are left alone.
 #
+# Exactly two rules may be false, Phil's recorded exception (see `allowed`
+# below). Any other rule set to false still fails.
+#
 # Usage, from anywhere inside the repository:
 # check_lint_rules_on.sh [folder]
 # `folder` defaults to the repository root; only files tracked by git under it
@@ -18,7 +21,13 @@
 
 cd "${1:-$(git rev-parse --show-toplevel)}" || exit 1
 
+# Phil, 2026-11-06: "lets do without var renaming as it is too much of a
+# change, we can disable this rule for now." Both rules would rename the
+# package's own booleans and callback fields.
+allowed="prefer-boolean-prefixes prefer-correct-callback-field-name"
+
 options_program='
+  BEGIN { n = split(allow, names, " "); for (i = 1; i <= n; i++) ok[names[i]] = 1 }
   function indent(s) { match(s, /^ */); return RLENGTH }
   FNR == 1 { section = ""; in_rules = 0 }
   /^[[:space:]]*(#.*)?$/ { next }
@@ -36,6 +45,7 @@ options_program='
     sub(/^[[:space:]]*(- )?/, "", line)
     if (line ~ /^[A-Za-z0-9_-]+:[[:space:]]*false[[:space:]]*(#.*)?$/) {
       name = line; sub(/:.*/, "", name)
+      if (name in ok) next
       printf "OFF %s:%d: rule %s is set to false\n", FILENAME, FNR, name
     } else if (section == "dcm" && line ~ /^exclude:/) {
       printf "EXCLUDE %s:%d: a rule has its own exclude\n", FILENAME, FNR
@@ -45,7 +55,7 @@ options_program='
 
 found=$(
   {
-    git ls-files -z -- '*analysis_options.yaml' | xargs -0 awk "$options_program"
+    git ls-files -z -- '*analysis_options.yaml' | xargs -0 awk -v allow="$allowed" "$options_program"
     git ls-files -z -- '*.dart' ':!:*.gr.dart' ':!:*.g.dart' ':!:*.mocks.dart' |
       xargs -0 grep -HnE '//[[:space:]]*ignore(_for_file)?:' |
       sed -E 's/^/IGNORE /; s/^(IGNORE [^:]*:[0-9]+:)/\1 ignore comment:/'

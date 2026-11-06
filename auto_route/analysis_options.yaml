@@ -76,7 +76,8 @@ dart_code_metrics:
     - unnecessary-trailing-comma
     - avoid-inferrable-type-arguments
     - no-boolean-literal-compare: true
-    - prefer-boolean-prefixes
+    # Phil, 2026-11-06: "lets do without var renaming as it is too much of a change, we can disable this rule for now."
+    - prefer-boolean-prefixes: false
     - double-literal-format: true
     - avoid-unsafe-collection-methods
     - avoid-returning-widgets
@@ -110,7 +111,8 @@ dart_code_metrics:
     - avoid-default-tostring
     - prefer-null-aware-spread
     - no-empty-block
-    - prefer-correct-callback-field-name
+    # Phil, 2026-11-06: "lets do without var renaming as it is too much of a change, we can disable this rule for now."
+    - prefer-correct-callback-field-name: false
     - banned-usage:
         entries:
           - type: Widget

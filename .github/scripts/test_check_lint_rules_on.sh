@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Tests check_lint_rules_on.sh on two small sample repositories: a clean one,
-# which must pass, and one with a rule set to false, a per-rule exclude and an
-# ignore comment, which must fail and name each of them.
+# which must pass even though it sets the two rules Phil allowed to false, and
+# one with another rule set to false, a per-rule exclude and an ignore comment,
+# which must fail and name each of them.
 #
 # Usage: test_check_lint_rules_on.sh
 
@@ -68,6 +69,12 @@ rm "$work/dirty/analysis_options.yaml.bak"
 printf 'void main() {\n  // ignore: avoid_print\n  print(1);\n}\n' > "$work/dirty/lib/main.dart"
 git -C "$work/dirty" add -A
 
+# The two rules Phil switched off pass.
+cat >> "$work/clean/analysis_options.yaml" <<YAML
+    - prefer-boolean-prefixes: false
+    - prefer-correct-callback-field-name: false
+YAML
+git -C "$work/clean" add -A
 check clean 0
 check dirty 1 \
   'analysis_options.yaml:7: rule public_member_api_docs is set to false' \
