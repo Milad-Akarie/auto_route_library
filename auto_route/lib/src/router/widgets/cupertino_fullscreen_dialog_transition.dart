@@ -1,4 +1,4 @@
-part of 'custom_cupertino_transitions_builder.dart';
+part of 'cupertino_route_transition_override_mixin.dart';
 
 /// An iOS-style transition used for summoning fullscreen dialogs.
 ///

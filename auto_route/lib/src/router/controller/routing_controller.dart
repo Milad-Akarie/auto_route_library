@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/matcher/route_matcher.dart';
-import 'package:auto_route/src/route/auto_route_config.dart';
-import 'package:auto_route/src/router/transitions/custom_page_route.dart';
+import 'package:auto_route/src/route/auto_route.dart';
+import 'package:auto_route/src/router/transitions/auto_page_route_builder.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
@@ -13,7 +13,7 @@ part '../../route/route_data.dart';
 part 'auto_route_guard.dart';
 part 'auto_router_delegate.dart';
 part 'root_stack_router.dart';
-part 'route_leave.dart';
+part 'route_leave_kind.dart';
 part 'routes_restoration.dart';
 
 /// Signature of a predicate to select [RouteData]

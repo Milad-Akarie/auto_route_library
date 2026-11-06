@@ -34,6 +34,27 @@
 - **BREAKING CHANGE**: `Parameters.get` takes and returns `Object?`, not `dynamic`, and
   `UrlState.normalizeQueryParamValue` does the same. Read a typed value with `getString`, `getInt` and their kin, or
   cast, `params.get('id') as String?`.
+- **BREAKING CHANGE**: each file in `lib/src` is named after the first type it declares. Only imports of
+  `package:auto_route/src/...` change; every name an app writes stays. Old → new, all under `src/`:
+  `common/auto_route_annotations.dart` → `common/auto_router_config.dart`,
+  `common/auto_route_observer.dart` → `common/route_x.dart`,
+  `route/auto_route_config.dart` → `route/auto_route.dart`,
+  `route/errors.dart` → `route/missing_required_parameter_error.dart`,
+  `router/controller/controller_scope.dart` → `router/controller/router_scope.dart`,
+  `router/controller/route_leave.dart` → `router/controller/route_leave_kind.dart`,
+  `router/controller/navigation_history/navigation_history.dart` →
+  `router/controller/navigation_history/stub/navigation_history_impl.dart`,
+  `router/controller/navigation_history/native_navigation_history.dart` →
+  `router/controller/navigation_history/native/navigation_history_impl.dart`,
+  `router/controller/navigation_history/web_navigation_history.dart` →
+  `router/controller/navigation_history/web/navigation_history_impl.dart`,
+  `router/controller/navigation_history/navigation_history_base.dart` →
+  `router/controller/navigation_history/navigation_history.dart`,
+  `router/parser/route_information_parser.dart` → `router/parser/default_route_parser.dart`,
+  `router/transitions/custom_page_route.dart` → `router/transitions/auto_page_route_builder.dart`,
+  `router/transitions/predictive_back_page_detector.dart` → `router/transitions/predictive_back_phase.dart`,
+  `router/widgets/custom_cupertino_transitions_builder.dart` →
+  `router/widgets/cupertino_route_transition_override_mixin.dart`.
 
 ## 12.3.0
 - **BREAKING CHANGE**: `Parameters.optBool` and `getBool` take their default by name:

@@ -1,4 +1,4 @@
-part of 'controller_scope.dart';
+part of 'router_scope.dart';
 
 /// Injects the given [StackRouter] to context
 /// so it can be looked up by any child widget

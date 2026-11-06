@@ -1,5 +1,5 @@
 import 'package:auto_route/src/common/param_converter.dart';
-import 'package:auto_route/src/route/errors.dart';
+import 'package:auto_route/src/route/missing_required_parameter_error.dart';
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 

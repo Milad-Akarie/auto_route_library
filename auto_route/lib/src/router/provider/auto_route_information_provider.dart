@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:auto_route/src/router/parser/route_information_parser.dart';
+import 'package:auto_route/src/router/parser/default_route_parser.dart';
 import 'package:auto_route/src/router/provider/browser_entry_state.dart'
     if (dart.library.js_interop) 'package:auto_route/src/router/provider/browser_entry_state_web.dart';
 import 'package:flutter/foundation.dart';

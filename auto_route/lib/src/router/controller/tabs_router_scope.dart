@@ -1,4 +1,4 @@
-part of 'controller_scope.dart';
+part of 'router_scope.dart';
 
 /// Injects the given [TabsRouter] to context
 /// so it can be looked up by any child widget

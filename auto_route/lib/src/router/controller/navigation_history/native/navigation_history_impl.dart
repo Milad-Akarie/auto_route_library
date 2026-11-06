@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart'
     show RouteMatch, StackRouter, UrlState;
-import 'package:auto_route/src/router/controller/navigation_history/navigation_history_base.dart';
+import 'package:auto_route/src/router/controller/navigation_history/navigation_history.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
