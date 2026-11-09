@@ -132,7 +132,7 @@ class AutoRoutePage<T> extends Page<T> {
   /// `find.bySemanticsIdentifier` in widget tests, find the page by its route
   /// name, whatever its route type.
   // Public API: changing it is the maintainer's call.
-  Widget buildPage(BuildContext context) {
+  Widget buildPage(BuildContext _) {
     // explicitChildNodes keeps the page's own nodes apart, as the route's
     // scopesRoute node above does.
     return Semantics(

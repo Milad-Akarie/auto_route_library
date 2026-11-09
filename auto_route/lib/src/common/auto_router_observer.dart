@@ -6,13 +6,13 @@ import 'package:flutter/widgets.dart';
 class AutoRouterObserver extends NavigatorObserver {
   /// called when a tab route activates
   // A hook for subclasses: the default does nothing with what it is told.
-  void didInitTabRoute(TabPageRoute route, TabPageRoute? previousRoute) {
+  void didInitTabRoute(TabPageRoute _, TabPageRoute? _) {
     // Does nothing: a hook for subclasses.
   }
 
   /// called when tab route reactivates
   // A hook for subclasses: the default does nothing with what it is told.
-  void didChangeTabRoute(TabPageRoute route, TabPageRoute previousRoute) {
+  void didChangeTabRoute(TabPageRoute _, TabPageRoute _) {
     // Does nothing: a hook for subclasses.
   }
 }
@@ -47,13 +47,13 @@ mixin class AutoRouteAware {
 
   /// called when a tab route activates
   // A hook for implementers: the default does nothing with what it is told.
-  void didInitTabRoute(TabPageRoute? previousRoute) {
+  void didInitTabRoute(TabPageRoute? _) {
     // Does nothing: a hook for implementers.
   }
 
   /// called when tab route reactivates
   // A hook for implementers: the default does nothing with what it is told.
-  void didChangeTabRoute(TabPageRoute previousRoute) {
+  void didChangeTabRoute(TabPageRoute _) {
     // Does nothing: a hook for implementers.
   }
 }
@@ -91,12 +91,12 @@ mixin AutoRouteAwareStateMixin<T extends StatefulWidget> on State<T>
   }
 
   @override
-  void didChangeTabRoute(TabPageRoute previousRoute) {
+  void didChangeTabRoute(TabPageRoute _) {
     // Does nothing: a hook for the state that uses this mixin.
   }
 
   @override
-  void didInitTabRoute(TabPageRoute? previousRoute) {
+  void didInitTabRoute(TabPageRoute? _) {
     // Does nothing: a hook for the state that uses this mixin.
   }
 
