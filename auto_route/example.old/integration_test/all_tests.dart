@@ -21,6 +21,7 @@ import 'custom_route_swipe_back_test.dart' as custom_route_swipe_back;
 import 'custom_route_transition_test.dart' as custom_route_transition;
 import 'custom_route_underneath_test.dart' as custom_route_underneath;
 import 'declarative_hero_controller_test.dart' as declarative_hero_controller;
+import 'declarative_initial_routes_test.dart' as declarative_initial_routes;
 import 'declarative_push_message_test.dart' as declarative_push_message;
 import 'declarative_router_key_test.dart' as declarative_router_key;
 import 'declarative_routes_update_test.dart' as declarative_routes_update;
@@ -234,6 +235,7 @@ void main() {
   custom_route_transition.main();
   custom_route_underneath.main();
   declarative_hero_controller.main();
+  declarative_initial_routes.main();
   declarative_push_message.main();
   declarative_router_key.main();
   declarative_routes_update.main();
