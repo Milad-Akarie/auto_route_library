@@ -28,9 +28,7 @@ class UserDataCollectorPage extends StatelessWidget
         routes: (handler) {
           return [];
         },
-        onPopRoute: (route, results) {
-          // reset the state based on popped route
-        },
+        onPopRoute: null,
       ),
     );
   }
