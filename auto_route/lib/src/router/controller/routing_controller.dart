@@ -1831,6 +1831,7 @@ abstract class StackRouter extends RoutingController {
     super.dispose();
     pagelessRoutesObserver.dispose();
     activeGuardObserver.dispose();
+    _completeFuturesOf({..._pagesAtLastLeaveReport, ..._pages});
   }
 
   // Whether [dispose] was called; a navigation that resumes after awaiting a
@@ -1940,6 +1941,23 @@ abstract class StackRouter extends RoutingController {
     ];
     for (final (data, kind) in leaves) {
       data._reportLeave(kind);
+    }
+    _completeFuturesOf(
+      previousPages.where((page) => !stillShown.contains(page.routeData)),
+    );
+  }
+
+  // Completes with null the future that the push, navigate or replaceAll of
+  // each of [pages] returned, as a removed route's does in Flutter, once the
+  // page has left the stack for good: removed, replaced, taken over by a new
+  // page of the same route, or gone with its router. Left pending, each call
+  // awaiting it stays suspended and holds the pages it worked with, whose own
+  // futures older calls await, so the pages an app left stayed in memory: one
+  // more on every replaceAll, and in debug builds, which keep every local of a
+  // suspended call, the nested routers of every link too.
+  void _completeFuturesOf(Iterable<AutoRoutePage<Object?>> pages) {
+    for (final page in pages) {
+      page.routeData.onPopInvoked(null);
     }
   }
 

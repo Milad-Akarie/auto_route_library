@@ -370,6 +370,9 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
       );
     }
 
+    // The link's navigation ends when its page leaves the stack, which
+    // disposing the router also does.
+    if (_isDisposed) return;
     notifyListeners();
   }
 

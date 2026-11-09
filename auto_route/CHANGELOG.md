@@ -1,4 +1,10 @@
 ## Unreleased
+- **FIX**, **BEHAVIOR CHANGE**: the future that `push`, `navigate`, `navigatePath` or `replaceAll` returns now completes
+  with `null` once its page leaves the stack, as a removed route's does in Flutter: when a later `navigate` or
+  `replaceAll` takes the page off, when a new page of the same route takes its place, or when the page's nested router
+  closes. It never completed, and each call waiting on it kept the pages it worked with in memory: one more page on
+  every `replaceAll` in release builds, and in debug builds and tests also the nested routers and page widgets of every
+  link through nested routers.
 - **BEHAVIOR CHANGE**: `AutoTabsRouter` passes a new `homeIndex` on when it is rebuilt with one, so back goes to the new
   home tab. A `homeIndex` past the end of the tabs counts as no home tab instead of throwing (#1759).
 - **BEHAVIOR CHANGE**: a guard that rejects a page of a nested router when the guards are reevaluated now updates the
