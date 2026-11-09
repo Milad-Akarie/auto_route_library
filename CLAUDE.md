@@ -18,6 +18,7 @@ The old example app lives in `auto_route/example.old/` until the new one in `aut
 ## Branches
 - `dev` is where work happens. Branch every piece of work from `dev`; finished work lands on `dev`.
 - `master` holds stable releases. Only the maintainer moves it, when `dev` reaches a new stable.
+- `release/<version>`, named as the changelog names the release (such as `release/12.6.0`), pins apps that use the fork as a git dependency to that release, so work on `dev` doesn't reach them. The maintainer cuts it from `master` at the release commit and pushes it with the release. It never moves: a fix ships in a new release with a branch of its own.
 - CI runs on every push to any branch. So the maintainer lands each finished piece on the local `dev` and pushes `dev` once, when the last piece of a batch has landed, not after each fix: CI then runs once per batch.
 
 ## Every lint rule stays on
