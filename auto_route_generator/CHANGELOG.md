@@ -1,3 +1,6 @@
+## Unreleased
+- **CHORE**: the same lint setup as auto_route.
+
 ## 11.4.0
 - **CHANGE**: a generic route's args compare their items with `const ListEquality<Object?>()` and its kin, no longer
   `ListEquality<dynamic>()`; the comparison is the same. Regenerate routers to pick it up.

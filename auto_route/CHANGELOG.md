@@ -1,3 +1,8 @@
+## Unreleased
+- **CHORE**: the lint setup is simpler: `lines_longer_than_80_chars`, `prefer-single-widget-per-file`,
+  `prefer-prefixed-global-constants` and `prefer-match-file-name` are off, and DCM runs its recommended rules plus a
+  short list.
+
 ## 12.4.0
 - **FEAT**: `AutoRouter` and `AutoRouter.declarative` take a `heroControllerBuilder`, so Heroes fly between two pages
   of a nested router: pass `MaterialApp.createMaterialHeroController` or `CupertinoApp.createCupertinoHeroController`,
