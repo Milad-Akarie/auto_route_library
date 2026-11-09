@@ -1,6 +1,9 @@
 ## Unreleased
 - **FIX**: a `Point` parameter, such as `List<Point<int>>`, is imported from `dart:math`, which declares it, no longer
   from `dart:html`, which re-exports it and does not compile on mobile (#2152).
+- **FIX**: a const list default that builds objects, such as `= const [Color(0xFF000000)]`, keeps its `const` and
+  imports the class, where the route had "Undefined name 'Color'". A default that names declarations from several
+  libraries, such as `const [Color(1), Shade.dark]`, imports each of them (#636).
 
 ## 11.5.0
 - **CHORE**: the same lint setup as auto_route.

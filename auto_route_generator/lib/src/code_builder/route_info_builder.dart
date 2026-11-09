@@ -355,15 +355,23 @@ List<Class> buildRouteInfoAndArgs(
 /// contains the text, such as `constTitle`.
 final _constKeyword = RegExp(r'^const\b');
 
-/// The default value of [p], written as [code] when given. A list or set
-/// holding a declaration from another library, such as `const [Sort.asc]`,
-/// gets that declaration's import prefix.
+/// A string literal in a default value's code, which keeps the text inside it.
+const _stringLiteral = r'''('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*")''';
+
+/// Matches a string literal, or else one of [names] standing alone as an
+/// identifier, which is group 2.
+RegExp _declarationNames(Iterable<String> names) => .new(
+  '$_stringLiteral|(?<![.\\w\$])(${names.map(RegExp.escape).join('|')})(?![\\w\$])',
+);
+
+/// The default value of [p], written as [code] when given. Every declaration
+/// from another library that the value names, such as `Color` and `Sort` in
+/// `const [Color(1), Sort.asc]`, gets its import's prefix.
 Expression _defaultValue(ParamConfig p, [String? code]) {
   code ??= p.defaultValueCode!;
-  final symbol = p.defaultValueSymbol;
-  final import = p.defaultValueImport;
-  if (symbol == null || import == null) {
-    final url = import ?? p.type.import;
+  final imports = p.defaultValueImports;
+  if (imports.isEmpty) {
+    final url = p.type.import;
     // The prefix goes on the class in `const UserId('me')`, not on `const`.
     if (url != null && _constKeyword.hasMatch(code)) {
       final value = code.replaceFirst(_constKeyword, '').trimLeft();
@@ -373,12 +381,13 @@ Expression _defaultValue(ParamConfig p, [String? code]) {
     }
     return refer(code, url);
   }
+  final names = _declarationNames(imports.keys);
   return CodeExpression(
     Code.scope(
-      (allocate) => code!.replaceAll(
-        RegExp('\\b${RegExp.escape(symbol)}\\b'),
-        allocate(refer(symbol, import)),
-      ),
+      (allocate) => code!.replaceAllMapped(names, (match) {
+        final name = match[2];
+        return name == null ? match[0]! : allocate(refer(name, imports[name]));
+      }),
     ),
   );
 }

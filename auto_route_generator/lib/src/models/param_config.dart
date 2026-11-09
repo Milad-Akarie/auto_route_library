@@ -22,8 +22,7 @@ class ParamConfig {
     required this.isInheritedPathParam,
     this._alias,
     this.defaultValueCode,
-    this.defaultValueImport,
-    this.defaultValueSymbol,
+    this.defaultValueImports = const {},
     this._converter,
   });
 
@@ -47,8 +46,7 @@ class ParamConfig {
       isQueryParam: map['isQueryParam'] as bool,
       isUrlFragment: map['isUrlFragment'] as bool,
       defaultValueCode: map['defaultValueCode'] as String?,
-      defaultValueImport: map['defaultValueImport'] as String?,
-      defaultValueSymbol: map['defaultValueSymbol'] as String?,
+      defaultValueImports: _importsFromJson(map['defaultValueImports']),
       converter: map['converter'] == null
           ? null
           : ParamConverterRef._fromJson(
@@ -96,14 +94,11 @@ class ParamConfig {
   /// the default value code of the parameter
   final String? defaultValueCode;
 
-  /// the import of the declaration the default value names, such as a
-  /// function or a constant from another library
-  final String? defaultValueImport;
-
-  /// The name of the declaration [defaultValueImport] imports, when the
-  /// default value is a list or set holding it, such as `Sort` in
-  /// `const [Sort.asc]`; `null` when the whole value is that declaration.
-  final String? defaultValueSymbol;
+  /// The import of every top-level declaration the default value names, by
+  /// the declaration's name: a function, a constant or a class from another
+  /// library, such as `Color` and `Sort` in `const [Color(1), Sort.asc]`.
+  /// Empty when the default names none.
+  final Map<String, String> defaultValueImports;
 
   /// The `ParamConverter` the param's `@PathParam` or `@QueryParam` names,
   /// or `null` when it names none.
@@ -134,6 +129,9 @@ class ParamConfig {
   /// Returns the alias if exists otherwise the name
   String get paramName => _alias ?? name;
 
+  static Map<String, String> _importsFromJson(Object? json) =>
+      (json as Map<String, dynamic>?)?.cast() ?? const {};
+
   /// Serializes the parameter to a json map
   Map<String, dynamic> toJson() {
     return {
@@ -150,8 +148,7 @@ class ParamConfig {
       'isInheritedPathParam': isInheritedPathParam,
       'isQueryParam': isQueryParam,
       'defaultValueCode': defaultValueCode,
-      'defaultValueImport': defaultValueImport,
-      'defaultValueSymbol': defaultValueSymbol,
+      'defaultValueImports': defaultValueImports,
       'converter': ?_converter?.toJson(),
     };
   }
@@ -173,7 +170,7 @@ class FunctionParamConfig extends ParamConfig {
     required this._params,
     super.alias,
     super.defaultValueCode,
-    super.defaultValueImport,
+    super.defaultValueImports,
   }) : super(
          isPathParam: false,
          isQueryParam: false,
@@ -205,7 +202,9 @@ class FunctionParamConfig extends ParamConfig {
       isRequired: map['isRequired'] as bool,
       isNamed: map['isNamed'] as bool,
       defaultValueCode: map['defaultValueCode'] as String?,
-      defaultValueImport: map['defaultValueImport'] as String?,
+      defaultValueImports: ParamConfig._importsFromJson(
+        map['defaultValueImports'],
+      ),
     );
   }
 
@@ -232,7 +231,7 @@ class FunctionParamConfig extends ParamConfig {
       'isPathParam': isPathParam,
       'isQueryParam': isQueryParam,
       'defaultValueCode': defaultValueCode,
-      'defaultValueImport': defaultValueImport,
+      'defaultValueImports': defaultValueImports,
       'params': _params.map((e) => e.toJson()).toList(),
     };
   }

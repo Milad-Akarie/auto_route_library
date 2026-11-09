@@ -167,8 +167,7 @@ class RouteParameterResolver {
       isQueryParam: queryParamAnnotation != null,
       isUrlFragment: isUrlFragment,
       defaultValueCode: parameterElement.defaultValueCode,
-      defaultValueImport: _resolveDefaultValueImport(parameterElement),
-      defaultValueSymbol: _defaultValueSymbol(parameterElement),
+      defaultValueImports: _resolveDefaultValueImports(parameterElement),
       converter: converter,
     );
   }
@@ -248,7 +247,7 @@ class RouteParameterResolver {
       params: type.formalParameters.map(resolve).toList(),
       name: paramElement.displayName,
       defaultValueCode: paramElement.defaultValueCode,
-      defaultValueImport: _resolveDefaultValueImport(paramElement),
+      defaultValueImports: _resolveDefaultValueImports(paramElement),
       isRequired: paramElement.isRequiredNamed,
       isPositional: paramElement.isPositional,
       hasRequired: paramElement.isRequired,
@@ -257,59 +256,50 @@ class RouteParameterResolver {
     );
   }
 
-  /// Resolves the import of the declaration a default value names: a
-  /// top-level function or constant such as `defaultTitleResolver`, or the
-  /// class or enum in `Colors.red`. In a list or set literal such as
-  /// `const [Sort.asc]`, the first such declaration. Returns `null` for any
-  /// other value.
-  String? _resolveDefaultValueImport(FormalParameterElement parameterElement) {
-    final initializer = parameterElement.constantInitializer;
-    final element = switch (initializer) {
-      SimpleIdentifier() => initializer.element,
-      PrefixedIdentifier() => initializer.prefix.element,
-      final ListLiteral literal => _firstDeclarationIn(literal),
-      final SetOrMapLiteral literal => _firstDeclarationIn(literal),
-      _ => null,
-    };
-    if (element == null || element.enclosingElement is! LibraryElement) {
-      return null;
-    }
-    return _typeResolver.resolveImport(element);
-  }
-
-  /// The name of the declaration a list or set default holds, which the
-  /// generated code writes with the import's prefix; `null` for any other
-  /// default.
-  String? _defaultValueSymbol(FormalParameterElement parameterElement) {
-    final initializer = parameterElement.constantInitializer;
-    if (initializer is! ListLiteral && initializer is! SetOrMapLiteral) {
-      return null;
-    }
-    return _firstDeclarationIn(initializer!)?.name;
-  }
-
-  /// The first top-level declaration, such as the enum in `Sort.asc`, that
-  /// the collection literal [literal] names, or `null` when it names none.
-  Element? _firstDeclarationIn(Expression literal) {
+  /// Resolves the import of every top-level declaration a default value
+  /// names, by the declaration's name: a function or constant such as
+  /// `defaultTitleResolver`, the class in `Colors.red` or `Color(0xFF)`, each
+  /// one in a list or set literal such as `const [Color(1), Sort.asc]`. A
+  /// declaration with no import to name, such as one of dart:core, is left
+  /// out.
+  Map<String, String> _resolveDefaultValueImports(
+    FormalParameterElement parameterElement,
+  ) {
     final finder = _DeclarationFinder();
-    literal.accept(finder);
-    return finder.found;
+    parameterElement.constantInitializer?.accept(finder);
+    final imports = <String, String>{};
+    for (final element in finder.found) {
+      final name = element.name;
+      final import = _typeResolver.resolveImport(element);
+      if (name != null && import != null) {
+        imports.putIfAbsent(name, () => import);
+      }
+    }
+    return imports;
   }
 }
 
-/// Finds the first identifier in an expression that names a top-level
-/// declaration.
+/// Finds every identifier and type name in an expression that names a
+/// top-level declaration.
 class _DeclarationFinder extends RecursiveAstVisitor<void> {
-  /// The declaration found, or `null`.
-  Element? found;
+  /// The declarations found, in the order the expression names them.
+  final found = <Element>[];
 
   @override
-  void visitSimpleIdentifier(SimpleIdentifier node) {
-    final element = node.element;
-    if (found == null &&
-        element != null &&
+  void visitSimpleIdentifier(SimpleIdentifier node) => _take(node.element);
+
+  /// The class in `Color(0xFF000000)` is a type name, not an identifier.
+  @override
+  void visitNamedType(NamedType node) {
+    _take(node.element);
+    super.visitNamedType(node);
+  }
+
+  void _take(Element? element) {
+    if (element != null &&
+        element is! PrefixElement &&
         element.enclosingElement is LibraryElement) {
-      found = element;
+      found.add(element);
     }
   }
 }
