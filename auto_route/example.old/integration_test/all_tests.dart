@@ -180,6 +180,7 @@ import 'tab_inner_router_test.dart' as tab_inner_router;
 import 'tab_navigate_path_query_test.dart' as tab_navigate_path_query;
 import 'tab_rebuild_test.dart' as tab_rebuild;
 import 'tab_removed_test.dart' as tab_removed;
+import 'tab_required_args_refresh_test.dart' as tab_required_args_refresh;
 import 'tab_routes_change_test.dart' as tab_routes_change;
 import 'tab_routes_index_test.dart' as tab_routes_index;
 import 'tab_semantics_test.dart' as tab_semantics;
@@ -384,6 +385,7 @@ void main() {
   tab_navigate_path_query.main();
   tab_rebuild.main();
   tab_removed.main();
+  tab_required_args_refresh.main();
   tab_routes_change.main();
   tab_routes_index.main();
   tab_semantics.main();
