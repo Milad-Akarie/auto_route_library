@@ -4,7 +4,7 @@ This repository is a maintained fork of auto_route. Report bugs and send pull re
 
 ## Branches
 
-Branch from `dev` and open your pull request against `dev`. `master` holds stable releases.
+Branch from `dev` and open your pull request against `dev`. `master` holds stable releases, and each release has a `release/<version>` branch, such as `release/12.6.0`, that apps can pin to.
 
 ## Before you change code
 
