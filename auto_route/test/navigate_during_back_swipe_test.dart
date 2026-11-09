@@ -14,17 +14,20 @@ import 'back_test_utils.dart';
 // Let go of the swipe short of or past the middle.
 // Should: nothing throws, Test ends on top and takes taps.
 void main() {
-  final opens = <String, (Future<void> Function(StackRouter), List<String>)>{
+  final opens = {
     'navigate': (
-      (router) => router.navigate(const NamedRoute('TestRoute')),
+      (StackRouter router) async =>
+          await router.navigate<void>(const NamedRoute('TestRoute')),
       ['FeedRoute', 'DetailsRoute', 'TestRoute'],
     ),
     'replace': (
-      (router) => router.replace(const NamedRoute('TestRoute')),
+      (StackRouter router) async =>
+          await router.replace(const NamedRoute('TestRoute')),
       ['FeedRoute', 'TestRoute'],
     ),
     'push': (
-      (router) => router.push(const NamedRoute('TestRoute')),
+      (StackRouter router) async =>
+          await router.push(const NamedRoute('TestRoute')),
       ['FeedRoute', 'DetailsRoute', 'TestRoute'],
     ),
   };

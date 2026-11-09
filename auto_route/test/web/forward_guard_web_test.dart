@@ -35,7 +35,7 @@ void main() {
       'again, with $name '
       '(flutter/flutter#149181)',
       (tester) async {
-        final isLoggedIn = ValueNotifier<bool>(false);
+        final isLoggedIn = ValueNotifier(false);
         addTearDown(isLoggedIn.dispose);
         var guardCalls = 0;
         final loginGuard = guard(() {

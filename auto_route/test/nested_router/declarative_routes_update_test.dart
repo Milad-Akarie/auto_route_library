@@ -23,14 +23,14 @@ void main() {
       );
       await pumpRouterConfigApp(tester, router.config());
       expect(find.text('Home 1'), findsOneWidget);
-      final homeState = tester.state(find.byType(_HomePage));
+      final homeElement = tester.element(find.byType(_HomePage));
 
       await tester.tap(find.text('Next id'));
       await tester.pumpAndSettle();
       expect(find.text('Home 1'), findsNothing);
       expect(find.text('Home 2'), findsOneWidget);
       // The page is updated in place, not replaced by a new one.
-      expect(tester.state(find.byType(_HomePage)), same(homeState));
+      expect(tester.element(find.byType(_HomePage)), same(homeElement));
       expect(
         router
             .innerRouterOf<StackRouter>(_HostRoute.name)!
@@ -98,16 +98,11 @@ class _HomeRoute extends PageRouteInfo<_HomeRouteArgs> {
   );
 }
 
-class _HomePage extends StatefulWidget {
+class _HomePage extends StatelessWidget {
   const new({required this.id});
 
   final int id;
 
   @override
-  State<_HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<_HomePage> {
-  @override
-  Widget build(BuildContext context) => Text('Home ${widget.id}');
+  Widget build(BuildContext context) => Text('Home $id');
 }

@@ -21,7 +21,7 @@ void main() {
     WidgetTester tester,
     void Function(NavigationResolver resolver) onReevaluate,
   ) async {
-    final isReevaluating = ValueNotifier<bool>(false);
+    final isReevaluating = ValueNotifier(false);
     addTearDown(isReevaluating.dispose);
     final router = RootStackRouter.build(
       routes: [

@@ -69,7 +69,7 @@ void main() {
   }
 }
 
-void Function(StackRouter router) _goHome = (_) {};
+late void Function(StackRouter router) _goHome;
 
 PageInfo _page(String name) => .new(
   name,

@@ -103,7 +103,7 @@ void main() {
   testWidgets(
     'navigate() to an open page whose guard overrides its children opens them',
     (tester) async {
-      final didReset = ValueNotifier<bool>(false);
+      final didReset = ValueNotifier(false);
       addTearDown(didReset.dispose);
       final router = RootStackRouter.build(
         routes: [

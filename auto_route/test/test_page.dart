@@ -44,9 +44,9 @@ class SecondHostPage extends StatelessWidget {
                   } else if (leadingType.isClose) {
                     return const CloseButton();
                   } else if (leadingType.isDrawer) {
-                    return IconButton(
-                      icon: const Icon(Icons.menu),
-                      onPressed: () {},
+                    return const IconButton(
+                      icon: Icon(Icons.menu),
+                      onPressed: null,
                     );
                   } else if (leadingType.isNoLeading) {
                     return const SizedBox.shrink();

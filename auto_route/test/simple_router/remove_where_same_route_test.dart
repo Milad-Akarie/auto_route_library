@@ -72,7 +72,7 @@ void main() {
     await tester.pumpAndSettle();
     unawaited(router.push(_InfoRoute(title: 'Success')));
     await tester.pumpAndSettle();
-    final topState = tester.state(find.byType(_InfoPage));
+    final topElement = tester.element(find.byType(_InfoPage));
 
     router.removeWhere(
       (route) =>
@@ -82,7 +82,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(router.stack.map((p) => p.name), [_HomeRoute.name, _InfoRoute.name]);
-    expect(tester.state(find.byType(_InfoPage)), same(topState));
+    expect(tester.element(find.byType(_InfoPage)), same(topElement));
   });
 }
 
@@ -128,16 +128,11 @@ class _InfoRoute extends PageRouteInfo<_InfoRouteArgs> {
   );
 }
 
-class _InfoPage extends StatefulWidget {
+class _InfoPage extends StatelessWidget {
   const new({required this.title, super.key});
 
   final String title;
 
   @override
-  State<_InfoPage> createState() => _InfoPageState();
-}
-
-class _InfoPageState extends State<_InfoPage> {
-  @override
-  Widget build(BuildContext context) => Scaffold(body: Text(widget.title));
+  Widget build(BuildContext context) => Scaffold(body: Text(title));
 }

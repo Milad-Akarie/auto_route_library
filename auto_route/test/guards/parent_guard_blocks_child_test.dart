@@ -16,7 +16,7 @@ void main() {
   testWidgets(
     "A parent's guard runs for a deep link to its child (flutter/flutter#101183)",
     (tester) async {
-      final isOpen = ValueNotifier<bool>(false);
+      final isOpen = ValueNotifier(false);
       addTearDown(isOpen.dispose);
       final calls = <String>[];
       final router = RootStackRouter.build(

@@ -13,7 +13,7 @@ class TitledTabPage extends StatelessWidget {
     body: Column(
       children: [
         Text('$_label text'),
-        ElevatedButton(onPressed: () {}, child: Text('$_label button')),
+        ElevatedButton(onPressed: null, child: Text('$_label button')),
       ],
     ),
   );

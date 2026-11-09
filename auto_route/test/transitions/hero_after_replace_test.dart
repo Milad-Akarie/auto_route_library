@@ -85,7 +85,7 @@ void main() {
       Widget fabPage(String label) => Scaffold(
         body: Text(label),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: null,
           child: Text('$label fab'),
         ),
       );

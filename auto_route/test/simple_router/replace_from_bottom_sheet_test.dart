@@ -85,7 +85,7 @@ void main() {
   );
 }
 
-void Function(StackRouter router) _fromSheet = (_) {};
+late void Function(StackRouter router) _fromSheet;
 
 abstract final class _HomeRoute {
   static const String name = 'Home';
