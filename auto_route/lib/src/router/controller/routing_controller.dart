@@ -2158,6 +2158,10 @@ abstract class StackRouter extends RoutingController {
   /// waits for that page to be added and pops it, before it is ever shown.
   /// A push still waiting on a guard is not waited for: the guard may be
   /// waiting on the very route this pop closes, such as a dialog.
+  ///
+  /// On a router built by `AutoRouter.declarative`, popping the only page
+  /// closes the page that holds the router, as the router's routes callback
+  /// decides its pages.
   @override
   @optionalTypeArgs
   void pop<T extends Object?>([T? result]) {
@@ -2167,8 +2171,12 @@ abstract class StackRouter extends RoutingController {
     }
     if (_didPopUnbuiltTop(result)) return;
     final navigator = _navigatorKey.currentState;
-    if (navigator != null) {
-      navigator.pop(result);
+    // The routes callback of a declarative router decides its pages, so its
+    // only page can't be popped from under it: the page holding it closes.
+    if (managedByWidget && navigator?.canPop() == false) {
+      _parent?.pop<T>(result);
+    } else {
+      navigator?.pop(result);
     }
   }
 

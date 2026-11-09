@@ -14,6 +14,8 @@
   the list and put the wrong url in the address bar.
 - **FIX**, **BEHAVIOR CHANGE**: `onNavigate` of `AutoRouter.declarative` runs once per navigation. A navigation that
   came through a parent router, such as a browser back or a platform link, ran it twice.
+- **FIX**: `pop` on the only page of a router built by `AutoRouter.declarative` closes the page that holds the router. It
+  took the page away and left a blank screen.
 
 ## 12.5.0
 - **CHORE**: the lint setup is simpler: `lines_longer_than_80_chars`, `prefer-single-widget-per-file`,
