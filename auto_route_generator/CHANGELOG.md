@@ -4,6 +4,9 @@
 - **FIX**: a const list default that builds objects, such as `= const [Color(0xFF000000)]`, keeps its `const` and
   imports the class, where the route had "Undefined name 'Color'". A default that names declarations from several
   libraries, such as `const [Color(1), Shade.dark]`, imports each of them (#636).
+- **FIX**: a page whose only parameter is a `required Key`, as in `const Page({required Key key})`, gets a route that
+  takes the key, where the router did not compile. A page with only an optional `super.key` still gets a route without
+  it (#371).
 
 ## 11.5.0
 - **CHORE**: the same lint setup as auto_route.

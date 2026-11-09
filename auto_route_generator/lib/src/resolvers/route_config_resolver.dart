@@ -51,9 +51,12 @@ class RouteConfigResolver {
     final parameters = <ParamConfig>[];
     if (params.isNotEmpty) {
       // A generic page is built by its args, which carry its type arguments.
+      // A page that only takes an optional Key is built without one, on
+      // purpose; a required Key must reach the page, so the route takes it.
       if (constructor.isConst &&
           typeParameters.isEmpty &&
           params.length == 1 &&
+          !params.first.isRequired &&
           params.first.type.nameWithoutSuffix == 'Key') {
         hasConstConstructor = true;
       } else {
