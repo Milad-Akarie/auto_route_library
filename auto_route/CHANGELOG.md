@@ -6,6 +6,8 @@
   isn't there is skipped.
 - **CHANGE**: `StackRouter.replaceAll` with an empty list does nothing, instead of throwing a `StateError`. `pushAll` and
   `popAndPushAll` still assert in debug builds, and do nothing in release builds.
+- **FIX**: `navigate<void>`, or `navigate` with any named type, no longer rebuilds the pages on its way to the target when
+  the app started through `DeepLink.path`, which reset the tabs inside them.
 
 ## 12.4.0
 - **FEAT**: `AutoRouter` and `AutoRouter.declarative` take a `heroControllerBuilder`, so Heroes fly between two pages

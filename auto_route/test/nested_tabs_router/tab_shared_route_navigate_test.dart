@@ -11,7 +11,7 @@ void main() {
   late RootStackRouter router;
   late TabsRouter tabsRouter;
 
-  Future<void> pumpDashboard(WidgetTester tester) async {
+  Future<void> pumpDashboard(WidgetTester tester, {String? initialLink}) async {
     router = RootStackRouter.build(
       routes: [
         RedirectRoute(path: '/', redirectTo: '/dashboard'),
@@ -33,7 +33,11 @@ void main() {
         ),
       ],
     );
-    await pumpRouterConfigApp(tester, router.config());
+    if (initialLink == null) {
+      await pumpRouterConfigApp(tester, router.config());
+    } else {
+      await pumpRouterApp(tester, router, initialLink: initialLink);
+    }
     tabsRouter = router.innerRouterOf<TabsRouter>(_DashboardRoute.name)!;
   }
 
@@ -73,6 +77,31 @@ void main() {
       expect(tabStacks(), [_Test1Route.name, _Test2Route.name, '-']);
     },
   );
+
+  // Steps: open the app through DeepLink.path, open all three tabs, then
+  // navigate to Test2Route naming a result type.
+  // Happened: the page holding the tabs was built again with that type, and
+  // canUpdate compared the two by runtimeType, so the tabs started over.
+  // Should: the second tab opens, and the tabs keep their pages.
+  for (final (type, navigate) in <(String, Future<Object?> Function())>[
+    ('void', () => router.navigate<void>(const _Test2Route())),
+    ('bool', () => router.navigate<bool>(const _Test2Route())),
+  ]) {
+    testWidgets(
+      'navigate<$type>() after a DeepLink.path start keeps the tabs',
+      (tester) async {
+        await pumpDashboard(tester, initialLink: '/');
+        for (final index in [0, 1, 2]) {
+          tabsRouter.setActiveIndex(index);
+          await tester.pumpAndSettle();
+        }
+
+        navigate().ignore();
+        await tester.pumpAndSettle();
+        expect(tabStacks(), [_Test1Route.name, _Test2Route.name, '-']);
+      },
+    );
+  }
 
   // Same steps, navigating to Test1Route.
   // Happened: the first tab opened, but Test1Route was also pushed onto the

@@ -95,11 +95,14 @@ class AutoRoutePage<T> extends Page<T> {
   /// the same [routeKey] is removed from below it, the page must not take the
   /// removed page's route and leave its own to be popped. Nor does a new page
   /// take the route of a page the app removed itself, see [markRemoved].
+  ///
+  /// The result type isn't compared: a navigate builds the pages on its way to
+  /// the target with its own type, and they are still the same pages.
   @override
   bool canUpdate(Page<Object?> other) {
     final canUpdate =
-        other.runtimeType == runtimeType &&
-        (other as AutoRoutePage).routeKey == routeKey &&
+        other is AutoRoutePage &&
+        other.routeKey == routeKey &&
         routeData.stackKey == other.routeData.stackKey &&
         (other.key == key || (_shownPages[this] != true && !other.isRemoved));
     return canUpdate;
