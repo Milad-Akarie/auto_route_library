@@ -80,4 +80,8 @@ exceptions the project allows.
 
 ## Using AI tools
 
-They're welcome. You answer for every line and every claim in your pull request, whoever wrote it.
+They're welcome. Read the [AI policy](AI_POLICY.md) first: you answer for every line and every claim in your pull request, whoever wrote it, and you say which tool you used.
+
+## Security
+
+Report a vulnerability privately, as [SECURITY.md](SECURITY.md) says, not in a public issue.

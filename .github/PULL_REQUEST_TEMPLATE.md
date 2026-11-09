@@ -19,6 +19,13 @@
 - [ ] The integration tests pass on: <!-- the platforms you ran -->
 - [ ] The changelog has a line under `## Unreleased`
 
+## AI use
+
+<!-- Which tool you used and for what, or "none". -->
+
+- [ ] I read the [AI policy](https://github.com/callmephil/auto_route_library/blob/master/AI_POLICY.md), and I can explain every line of this change
+- [ ] The commits name any AI tool in a `Co-Authored-By` trailer
+
 ## Anything you didn't check
 
 <!-- Platforms not run, cases not covered. -->
