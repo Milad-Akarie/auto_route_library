@@ -1,3 +1,8 @@
+// The methods in this file are optional hooks. The router calls them on every
+// observer and subscriber, so an empty body is how a hook ignores its event.
+// Throwing or making them abstract would break apps that skip one.
+// ignore_for_file: no-empty-block
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
 

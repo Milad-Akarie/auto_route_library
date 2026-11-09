@@ -61,6 +61,7 @@ void main() {
       tester.state<NavigatorState>(find.byType(Navigator).last).pop();
       expect(removed, ['second']);
 
+      // ignore: no-empty-block
       setParentState(() {});
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 50));

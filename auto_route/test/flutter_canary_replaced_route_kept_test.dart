@@ -40,6 +40,7 @@ void main() {
               return Navigator(
                 observers: [_PushObserver(routes)],
                 pages: pages,
+                // ignore: no-empty-block
                 onDidRemovePage: (_) {},
               );
             },

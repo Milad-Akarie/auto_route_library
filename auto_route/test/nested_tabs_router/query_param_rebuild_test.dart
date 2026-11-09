@@ -97,6 +97,7 @@ void main() {
       expect(_ParamPageState.created, 1);
 
       _ParamPageState.builds = 0;
+      // ignore: no-empty-block
       setParentState(() {});
       await tester.pumpAndSettle();
       expect(_ParamPageState.builds, 0);

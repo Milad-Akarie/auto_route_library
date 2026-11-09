@@ -83,6 +83,7 @@ RootStackRouter _buildRouter({required bool hasNestedPageButton}) => .build(
                       IconButton(
                         key: ValueKey('outer $i'),
                         icon: const Icon(Icons.help),
+                        // ignore: no-empty-block
                         onPressed: () {},
                       ),
                   ],
@@ -106,6 +107,7 @@ RootStackRouter _buildRouter({required bool hasNestedPageButton}) => .build(
                     IconButton(
                       key: const ValueKey('nested'),
                       icon: const Icon(Icons.help),
+                      // ignore: no-empty-block
                       onPressed: () {},
                     ),
                 ],

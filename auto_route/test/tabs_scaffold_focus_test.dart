@@ -42,6 +42,7 @@ void main() {
                 path: 'tab1',
                 builder: (_, _) => Scaffold(
                   body: TextButton(
+                    // ignore: no-empty-block
                     onPressed: () {},
                     child: const Text('button'),
                   ),

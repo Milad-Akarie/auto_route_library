@@ -31,6 +31,8 @@ void main() {
     ) async {
       final sentUrls = <String>[];
       final messenger = tester.binding.defaultBinaryMessenger
+        // reason: Intended to be null, because the handler is only for routeInformationUpdated, which returns null.
+        // ignore: function-always-returns-null
         ..setMockMethodCallHandler(SystemChannels.navigation, (call) async {
           if (call.method == 'routeInformationUpdated') {
             sentUrls.add((call.arguments as Map)['uri'] as String);

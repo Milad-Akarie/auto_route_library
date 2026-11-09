@@ -63,6 +63,7 @@ void main() {
       const Key('outer'),
     );
 
+    // ignore: no-empty-block
     setHostState(() {});
     await tester.pumpAndSettle();
     expect(FocusManager.instance.primaryFocus, same(outerFocus));

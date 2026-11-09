@@ -73,6 +73,7 @@ void main() {
         WidgetsApp(
           color: const Color(0xFFFFFFFF),
           builder: (_, _) =>
+              // ignore: no-empty-block
               Navigator(pages: [flutterPage()], onDidRemovePage: (_) {}),
         ),
       );
@@ -112,6 +113,7 @@ Future<List<Object?>> _soundsOfTap(WidgetTester tester, Widget app) async {
   final sounds = <Object?>[];
   tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
     SystemChannels.platform,
+    // ignore: function-always-returns-null
     (call) async {
       if (call.method == 'SystemSound.play') sounds.add(call.arguments);
       return null;

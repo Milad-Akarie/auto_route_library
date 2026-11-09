@@ -105,6 +105,7 @@ void main() {
           actions: [
             TextButton(
               autofocus: true,
+              // ignore: no-empty-block
               onPressed: () {},
               child: const Text('OK'),
             ),

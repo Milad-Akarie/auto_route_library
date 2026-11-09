@@ -139,6 +139,8 @@ class AutoTabViewState extends State<AutoTabView> {
       oldWidget.controller.animation?.removeListener(
         _handleTabControllerAnimationTick,
       );
+      // reason: false positive
+      // ignore: always-remove-listener
       _controller.animation?.addListener(_handleTabControllerAnimationTick);
       _updateChildren();
       // Load the active tab, it may not have been opened yet.

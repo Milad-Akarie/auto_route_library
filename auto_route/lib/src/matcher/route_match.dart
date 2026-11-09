@@ -288,6 +288,7 @@ class RouteMatch<T> {
 @immutable
 // Inherits RouteMatch's ==, so it equals a match of the same route, params
 // and args whichever page it re-evaluates; changing that is a behavior change.
+// ignore: prefer-overriding-parent-equality
 class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
   /// Creates a new instance of [ReevaluatableRouteMatch]
   new({required this.currentPage, required this.originalMatch})
@@ -317,6 +318,7 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
   // An override of RouteMatch.copyWith: it changes the original match and keeps
   // the page being reevaluated, so currentPage and originalMatch are not its to
   // set.
+  // ignore: avoid-incomplete-copy-with
   ReevaluatableRouteMatch<T, R> copyWith({
     String? stringMatch,
     Parameters? params,

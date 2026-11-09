@@ -1,3 +1,6 @@
+// Some parameters copy Uri's own names, and the named ones have to match.
+// ignore_for_file: avoid-shadowing
+
 import 'dart:convert';
 
 import 'package:auto_route/auto_route.dart';

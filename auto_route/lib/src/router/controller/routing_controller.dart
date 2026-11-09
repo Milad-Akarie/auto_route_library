@@ -3582,6 +3582,8 @@ class PendingRoutesHandler {
   bool get hasPendingRoutes => _initialPendingRoutes?.isNotEmpty == true;
 
   /// Reads [_initialPendingRoutes] without deleting it's value
+  // peek is a public getter, so matching the field would mean a breaking rename.
+  // ignore: match-getter-setter-field-names
   List<PageRouteInfo<Object?>>? get peek => _initialPendingRoutes;
 
   /// One time read pending routes

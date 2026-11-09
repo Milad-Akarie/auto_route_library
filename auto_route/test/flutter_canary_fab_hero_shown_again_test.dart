@@ -34,6 +34,7 @@ void main() {
               builder: (_) => Scaffold(
                 body: const Text('HomeRoute'),
                 floatingActionButton: FloatingActionButton(
+                  // ignore: no-empty-block
                   onPressed: () {},
                   child: const Text('home button'),
                 ),
@@ -101,6 +102,7 @@ class _SecondPageState extends State<_SecondPage> {
       floatingActionButton: _isSaving
           ? null
           : FloatingActionButton(
+              // ignore: no-empty-block
               onPressed: () {},
               child: const Text('second button'),
             ),

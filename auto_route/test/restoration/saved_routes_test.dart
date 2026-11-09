@@ -49,6 +49,7 @@ void main() {
     platformStates = [];
     tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
       SystemChannels.navigation,
+      // ignore: function-always-returns-null
       (call) async {
         if (call.method == 'routeInformationUpdated') {
           platformStates.add((call.arguments as Map)['state']);

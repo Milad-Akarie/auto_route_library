@@ -31,6 +31,7 @@ void main() {
       final reported = <Object?>[];
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
         SystemChannels.navigation,
+        // ignore: function-always-returns-null
         (call) async {
           if (call.method == 'routeInformationUpdated') {
             reported.add(call.arguments);

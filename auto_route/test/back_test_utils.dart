@@ -73,6 +73,7 @@ class FrameworkHandlesBackRecorder {
     // Flutter sends the value only while the app is in the foreground.
     tester.binding.handleAppLifecycleStateChanged(.resumed);
     final messenger = tester.binding.defaultBinaryMessenger
+      // ignore: function-always-returns-null
       ..setMockMethodCallHandler(SystemChannels.platform, (call) async {
         if (call.method == 'SystemNavigator.setFrameworkHandlesBack') {
           _isHandlingBack = call.arguments as bool;

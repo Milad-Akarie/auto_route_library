@@ -24,6 +24,7 @@ void main() {
       final titles = <String>[];
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
         SystemChannels.platform,
+        // ignore: function-always-returns-null
         (call) async {
           if (call.method == 'SystemChrome.setApplicationSwitcherDescription') {
             titles.add(

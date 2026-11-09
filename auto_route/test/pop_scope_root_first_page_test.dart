@@ -43,6 +43,7 @@ void main() {
         bool? doesFrameworkHandleBack;
         tester.binding.handleAppLifecycleStateChanged(.resumed);
         final messenger = tester.binding.defaultBinaryMessenger
+          // ignore: function-always-returns-null
           ..setMockMethodCallHandler(SystemChannels.platform, (call) async {
             if (call.method == 'SystemNavigator.pop') wasAppClosed = true;
             if (call.method == 'SystemNavigator.setFrameworkHandlesBack') {

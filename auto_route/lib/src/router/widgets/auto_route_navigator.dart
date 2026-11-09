@@ -61,6 +61,7 @@ class AutoRouteNavigator extends StatefulWidget {
 class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
   List<PageRouteInfo>? _routesSnapshot;
   // The ancestors' routers, owned by them; this state only listens.
+  // ignore: dispose-fields
   List<TabsRouter> _ancestorTabs = const [];
   late bool _isInActiveTabs = widget.router.isInActiveTabs;
 
@@ -96,6 +97,8 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
         ? const []
         : widget.router.ancestorTabsRouters;
     for (final tabs in _ancestorTabs) {
+      // reason: false positive
+      // ignore: always-remove-listener
       tabs.addListener(_handleAncestorTabsChanged);
     }
   }

@@ -62,6 +62,7 @@ void main() {
     'config() called again in a rebuilt build keeps the stack and page state',
     (tester) async {
       await pumpInlineConfigApp(tester);
+      // ignore: no-empty-block
       rebuildApp(() {});
       await tester.pumpAndSettle();
       expectStackAndStateKept();

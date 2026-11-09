@@ -21,6 +21,8 @@ class AutoRoutePage<T> extends Page<T> {
   new({required this.routeData, required Widget child})
     // A page widget can implement AutoRouteWrapper to wrap itself.
     : _child = switch (child) {
+        // reason false alarm, since a page can be a widget that also implements AutoRouteWrapper.
+        // ignore: avoid-unrelated-type-assertions
         final AutoRouteWrapper wrapper => WrappedRoute(child: wrapper),
         _ => child,
       },
