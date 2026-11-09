@@ -1,4 +1,4 @@
-## Unreleased
+## 12.6.0
 - **FIX**, **BEHAVIOR CHANGE**: the future that `push`, `navigate`, `navigatePath` or `replaceAll` returns now completes
   with `null` once its page leaves the stack, as a removed route's does in Flutter: when a later `navigate` or
   `replaceAll` takes the page off, when a new page of the same route takes its place, or when the page's nested router

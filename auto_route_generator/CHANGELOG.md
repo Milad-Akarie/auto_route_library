@@ -1,4 +1,5 @@
-## Unreleased
+## 11.6.0
+- **CHORE**: depends on auto_route 12.6.0, the version its tests run against.
 - **FIX**: a `Point` parameter, such as `List<Point<int>>`, is imported from `dart:math`, which declares it, no longer
   from `dart:html`, which re-exports it and does not compile on mobile (#2152).
 - **FIX**: a const list default that builds objects, such as `= const [Color(0xFF000000)]`, keeps its `const` and
