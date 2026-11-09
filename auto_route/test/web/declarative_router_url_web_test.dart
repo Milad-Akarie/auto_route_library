@@ -1,6 +1,8 @@
 @TestOn('browser')
 library;
 
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -12,11 +14,15 @@ import 'browser_history.dart';
 // Setup: a root page at '/' holds AutoRouter.declarative. Its list page is at
 // '' and its details page at 'book/:id'; the details page shows when the
 // holder's own state has an id. The routes callback reads the routes a refresh
-// opens from its handler, as the README says.
-// Steps: open the app at '/book/1', as a refresh does, then move the mouse over
-// the page.
-// Reported (2.4.2): the address bar changed to '/' on hover after a refresh.
-// Should: the page shows book 1 and the address bar stays '/book/1'.
+// opens from its handler, as the README says, and each call of onNavigate is
+// counted.
+// Steps: (1) open the app at '/book/1', as a refresh does, then move the mouse
+// over the page. (2) From the list, open book 1, then press the browser's back
+// button.
+// Reported (2.4.2): the address bar changed to '/' on hover after a refresh,
+// and onNavigate ran twice on browser back.
+// Should: the page shows book 1 and the address bar stays '/book/1', and a back
+// press calls onNavigate once and shows the list.
 // The address bar is checked here in Chrome's headless runner with the real
 // history; what a real browser's hover does is left to the maintainer's
 // `flutter drive` run.
@@ -69,6 +75,28 @@ void main() {
       expect(router.currentUrl, '/book/1');
     },
   );
+
+  testWidgets('On web, browser back from a book calls onNavigate once', (
+    tester,
+  ) async {
+    await pumpRouterConfigApp(tester, router.config());
+    await settleBrowser(tester);
+    final listsAtStart = find.text('BooksListRoute').evaluate().length;
+
+    unawaited(router.navigatePath('/book/1'));
+    await settleBrowser(tester);
+    expect(find.text('BookDetailsRoute 1'), findsOneWidget);
+    expect(browserPath, '/book/1');
+
+    final before = navigateCalls;
+    await pressBrowserBack(tester);
+    expect(navigateCalls - before, 1, reason: 'onNavigate calls on one back');
+    expect(
+      (listsAtStart, find.text('BooksListRoute').evaluate().length),
+      (1, 1),
+    );
+    expect(browserPath, '/');
+  });
 }
 
 PageInfo _page(String name) => .new(

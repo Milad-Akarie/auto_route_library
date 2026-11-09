@@ -3180,6 +3180,8 @@ abstract class StackRouter extends RoutingController {
       pushedMeanwhile.addAll(_pages.whereNot(wasReevaluated));
       _pages.clear();
     }
+    // Here alone, so a navigation reports once however it reaches this router.
+    if (managedByWidget) _onNavigate(routes);
     Future<T?>? popped;
     if (routes.isNotEmpty) {
       var mayUpdateRoute = routes.last;
@@ -3213,8 +3215,6 @@ abstract class StackRouter extends RoutingController {
         } else if (pushed.isCompleted) {
           _closePagelessRoutesOverTop();
         }
-      } else {
-        _onNavigate(routes);
       }
       final mayUpdateController = _topInnerControllerOf(mayUpdateRoute.key);
       final newChildren = mayUpdateRoute.children ?? const [];
@@ -3225,11 +3225,6 @@ abstract class StackRouter extends RoutingController {
         return null;
       }
       if (mayUpdateController != null) {
-        // Only a declarative stack router is managed by its widget.
-        if (mayUpdateController is StackRouter &&
-            mayUpdateController.managedByWidget) {
-          mayUpdateController._onNavigate(newChildren);
-        }
         // children a guard set while reevaluating are new routes, not pages
         // being reevaluated
         final areChildrenOverridden = newChildren.any(
