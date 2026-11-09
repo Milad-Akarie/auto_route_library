@@ -21,6 +21,10 @@
   level too high. `push`, `replace`, `navigate` and paths still reach the router that can take the route. What now acts
   on the declarative router: `stack`, `current`, `pop`, and `popUntil` and its kin, which stop at it; call them on
   `router.parent<StackRouter>()` to reach the router above.
+- **FIX**, **BEHAVIOR CHANGE**: off the web, with `includePrefixMatches: false`, a platform link that reaches an app still
+  showing the page it launched with, and that has stayed on screen since, takes that page's place, unless a guard
+  rejects it. iOS hands the link of a cold start over after the first frame, so the stack held the home page below the
+  link's page.
 
 ## 12.5.0
 - **CHORE**: the lint setup is simpler: `lines_longer_than_80_chars`, `prefer-single-widget-per-file`,

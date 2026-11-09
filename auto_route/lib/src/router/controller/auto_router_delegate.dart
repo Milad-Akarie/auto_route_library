@@ -168,6 +168,11 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     if (controller.hasEntries) {
       return;
     }
+    // A browser opens the app at its url, so a later route on the web is never
+    // the link of the launch.
+    if (!kIsWeb && _launchLink == Navigator.defaultRouteName) {
+      _launchWatch = AppLifecycleListener(onHide: _endLaunch);
+    }
     final platformDeepLink = PlatformDeepLink._(configuration, true);
     if (deepLinkBuilder != null) {
       return await _handleDeepLink(await deepLinkBuilder!(platformDeepLink));
@@ -177,17 +182,31 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     throw FlutterError(_unresolvedMessage(platformDeepLink));
   }
 
-  Future<void> _handleDeepLink(DeepLink deepLink) {
+  Future<void> _handleDeepLink(
+    DeepLink deepLink, {
+    bool replacesLaunchPage = false,
+  }) {
     if (deepLink is _IgnoredDeepLink) return SynchronousFuture(null);
 
     if (!deepLink.isValid) throw FlutterError(_unresolvedMessage(deepLink));
-    return controller.root._openLink(() => _openDeepLink(deepLink));
+    return controller.root._openLink(
+      () => _openDeepLink(deepLink, replacesLaunchPage: replacesLaunchPage),
+    );
   }
 
-  Future<void> _openDeepLink(DeepLink deepLink) {
+  Future<void> _openDeepLink(
+    DeepLink deepLink, {
+    required bool replacesLaunchPage,
+  }) {
     if (deepLink is PlatformDeepLink) {
       _onNewUrlState(deepLink.configuration);
-      return controller.navigateAll(deepLink.matches);
+      // A replacement a guard rejects puts the launch page back.
+      return replacesLaunchPage
+          ? controller._replaceAllMatches(
+              deepLink.matches,
+              updateExistingRoutes: true,
+            )
+          : controller.navigateAll(deepLink.matches);
     } else if (deepLink is _PathDeepLink) {
       if (deepLink.navigate) {
         return controller.navigatePath(
@@ -273,6 +292,35 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
         '${controller.routeCollection.toTreeString()}';
   }
 
+  // Lives while the app that started at the platform's default route has
+  // stayed on screen and been handed no route since.
+  AppLifecycleListener? _launchWatch;
+
+  void _endLaunch() {
+    _launchWatch?.dispose();
+    _launchWatch = null;
+  }
+
+  // Whether [link], handed over while the launch page is all the app shows,
+  // takes that page's place. iOS hands the link of a cold start over after the
+  // first frame, so the app opens '/' first and the link then lands on top of
+  // it. With prefix matches off, a link names only its own page, so a cold
+  // start at it keeps nothing below it, and neither does this. Only while the
+  // app has stayed on screen: a link that reaches an app that has been in the
+  // background opens over its page, as in any running app.
+  bool _doesLinkReplaceLaunchPage(DeepLink link) {
+    if (_launchWatch == null || link is! PlatformDeepLink) return false;
+    final launchPage = controller.stack.singleOrNull;
+    final context = controller.navigatorKey.currentContext;
+    final parser = context == null
+        ? null
+        : Router.maybeOf(context)?.routeInformationParser;
+    return launchPage != null &&
+        parser is DefaultRouteParser &&
+        !parser.includePrefixMatches &&
+        link.matches.firstOrNull?.name != launchPage.name;
+  }
+
   @override
   Future<void> setNewRoutePath(UrlState configuration) async {
     _wasGivenRoute = true;
@@ -311,10 +359,15 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
       final resolvedLink = deepLinkBuilder == null
           ? platLink
           : await deepLinkBuilder!(platLink);
+      final replacesLaunchPage = _doesLinkReplaceLaunchPage(resolvedLink);
+      _endLaunch();
       if (rebuildStackOnDeepLink) {
         controller._popUntilNow((route) => false, isScoped: true);
       }
-      await _handleDeepLink(resolvedLink);
+      await _handleDeepLink(
+        resolvedLink,
+        replacesLaunchPage: replacesLaunchPage,
+      );
     }
 
     notifyListeners();
@@ -337,6 +390,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     // The Router may have handed it a route while the parser ran.
     if (configuration is UrlState && !_wasGivenRoute) {
       await setInitialRoutePath(configuration);
+      _endLaunch();
     }
   }
 
@@ -411,6 +465,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   void dispose() {
     if (_isDisposed) return;
     _isDisposed = true;
+    _endLaunch();
     super.dispose();
     controller.navigationHistory.removeListener(_handleRebuild);
     reevaluateListenable?.removeListener(_reevaluateGuards);
