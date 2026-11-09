@@ -8,15 +8,14 @@ import 'package:material_ui/material_ui.dart';
 import 'support/app.dart';
 import 'support/tab_history_router.dart';
 
-// AutoTabsRouter(backThroughHistory:) follows the latest build: a parent that
-// rebuilds the tabs with another value changes where back goes.
-// Found while fixing #1759 (homeIndex ignored after a rebuild); no issue
-// reports it.
-// Headless test:
-// auto_route/test/nested_tabs_router/back_through_history_rebuild_test.dart
+// The backThroughHistory flag of AutoTabsRouter follows the latest build: a
+// parent that rebuilds the tabs with another value changes where back goes.
+// Found while fixing #1759 (homeIndex ignored after a rebuild), and no issue
+// reports it. The headless test is
+// auto_route/test/nested_tabs_router/back_through_history_rebuild_test.dart.
 //
-// Steps: show the tabs over a first page, rebuild them with the other value,
-// show tab 2, then 1, and press system back.
+// Steps: show the tabs over a first page and rebuild them with the other
+// value, then show tab 2 and tab 1, and press system back.
 // Should: with true, back shows 2; with false, back leaves the tabs for the
 // page under them.
 void main() {
