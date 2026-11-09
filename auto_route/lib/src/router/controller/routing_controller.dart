@@ -939,7 +939,7 @@ class TabsRouter extends RoutingController {
     required this.preload,
     required this.matchId,
     this._homeIndex = -1,
-    this.backThroughHistory = false,
+    this._backThroughHistory = false,
     this._parent,
   }) : _routeCollection = routeCollection,
        _matcher = RouteMatcher(routeCollection);
@@ -1043,7 +1043,30 @@ class TabsRouter extends RoutingController {
   ///
   /// The history lives as long as this router and is not restored with
   /// the app's state. When the tabs change, it keeps the tabs still there.
-  final bool backThroughHistory;
+  ///
+  /// [AutoTabsRouter] sets it whenever it is rebuilt with another value.
+  bool get backThroughHistory => _backThroughHistory;
+
+  /// Makes back go through the tabs visited before, or not.
+  ///
+  /// The history is only kept while this is true, so turning it off forgets
+  /// it. Android is told after the frame whether the app still takes back,
+  /// as this is set while the [AutoTabsRouter] above builds.
+  set backThroughHistory(bool value) {
+    if (_backThroughHistory == value) return;
+    _backThroughHistory = value;
+    if (value) return;
+    final hadHistory = _tabHistory.isNotEmpty;
+    _tabHistory.clear();
+    if (!hadHistory) return;
+    SchedulerBinding.instance
+      ..addPostFrameCallback((_) {
+        if (!_isDisposed) root.notifyListeners();
+      })
+      ..ensureVisualUpdate();
+  }
+
+  bool _backThroughHistory;
 
   // The tabs shown before the active one, the latest last, each once.
   final _tabHistory = <int>[];

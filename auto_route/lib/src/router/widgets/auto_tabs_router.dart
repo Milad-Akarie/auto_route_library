@@ -242,7 +242,9 @@ abstract class AutoTabsRouterState<T extends AutoTabsRouter> extends State<T> {
   @override
   void didUpdateWidget(T oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _controller?.homeIndex = widget.homeIndex;
+    _controller
+      ?..homeIndex = widget.homeIndex
+      ..backThroughHistory = widget.backThroughHistory;
   }
 
   // One key per tab, not per index, so a tab moved by a routes change keeps

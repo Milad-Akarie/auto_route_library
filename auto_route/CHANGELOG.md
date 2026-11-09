@@ -25,6 +25,8 @@
   showing the page it launched with, and that has stayed on screen since, takes that page's place, unless a guard
   rejects it. iOS hands the link of a cold start over after the first frame, so the stack held the home page below the
   link's page.
+- **BEHAVIOR CHANGE**: `AutoTabsRouter` passes a new `backThroughHistory` on when it is rebuilt with one, so back
+  follows the latest value. Turning it off forgets the tab history.
 
 ## 12.5.0
 - **CHORE**: the lint setup is simpler: `lines_longer_than_80_chars`, `prefer-single-widget-per-file`,
