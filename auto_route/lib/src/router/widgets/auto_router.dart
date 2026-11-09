@@ -118,7 +118,8 @@ class AutoRouter extends StatefulWidget {
   @override
   State<AutoRouter> createState() => AutoRouterState();
 
-  /// Looks up and returns the scoped [StackRouter]
+  /// Looks up and returns the scoped [StackRouter], the closest one above
+  /// [context], which may be one built by [AutoRouter.declarative].
   ///
   /// if watch is true dependent widget will watch changes
   /// of this scope otherwise it would just read it

@@ -111,9 +111,13 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter>
       inheritableObserversBuilder: _inheritableObserversBuilder,
       navigatorObservers: _navigatorObservers,
       stateHash: stateHash,
-      child: heroController == null
-          ? navigator
-          : HeroControllerScope(controller: heroController, child: navigator),
+      child: StackRouterScope(
+        controller: _controller!,
+        stateHash: stateHash,
+        child: heroController == null
+            ? navigator
+            : HeroControllerScope(controller: heroController, child: navigator),
+      ),
     );
   }
 

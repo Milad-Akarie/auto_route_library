@@ -16,6 +16,11 @@
   came through a parent router, such as a browser back or a platform link, ran it twice.
 - **FIX**: `pop` on the only page of a router built by `AutoRouter.declarative` closes the page that holds the router. It
   took the page away and left a blank screen.
+- **FIX**, **BEHAVIOR CHANGE**: `AutoRouter.of` and `context.router` in a page of `AutoRouter.declarative` return that
+  declarative router, as `RouterScope.of` always did. They returned the router above it, so `router.parent()` was one
+  level too high. `push`, `replace`, `navigate` and paths still reach the router that can take the route. What now acts
+  on the declarative router: `stack`, `current`, `pop`, and `popUntil` and its kin, which stop at it; call them on
+  `router.parent<StackRouter>()` to reach the router above.
 
 ## 12.5.0
 - **CHORE**: the lint setup is simpler: `lines_longer_than_80_chars`, `prefer-single-widget-per-file`,
