@@ -1174,6 +1174,25 @@ MaterialApp.router(
 );
 ```
 
+#### A custom-scheme link with no host
+
+A link such as `myapp://page/sub-page` has no host: Flutter reads `page` as the host, so the router receives the path `/sub-page` and `page` is lost. Since the breaking change in 8.0.0 (see the [changelog](auto_route/CHANGELOG.md)), **AutoRoute** no longer puts it back for you. If your routes expect `/page/sub-page`, do it in the transformer:
+
+```dart
+MaterialApp.router(
+  routerConfig: _appRouter.config(
+    deepLinkTransformer: (uri) {
+      if (uri.scheme == 'myapp' && uri.host.isNotEmpty) {
+        return SynchronousFuture(
+          uri.replace(host: '', path: '/${uri.host}${uri.path}'),
+        );
+      }
+      return SynchronousFuture(uri);
+    },
+  ),
+);
+```
+
 ### Using Deep-link Builder
 
 Deep link builder is an interceptor for deep-links where you can validate or override deep-links coming from the platform.
