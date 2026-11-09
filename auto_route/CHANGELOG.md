@@ -12,6 +12,8 @@
   `AutoRouteGuard(<hash>)`.
 - **FEAT**: `AutoRouteGuard.simple`, `redirect` and `redirectPath`, `DefaultRouteParser` and `AutoRouteAware` can be
   created with `const`.
+- **CHANGE**: `AutoTabsScaffold.bottomNavigationBuilder` gets a context below the `Scaffold`, so `Scaffold.of(context)`
+  works in it.
 
 ## 12.4.0
 - **FEAT**: `AutoRouter` and `AutoRouter.declarative` take a `heroControllerBuilder`, so Heroes fly between two pages
