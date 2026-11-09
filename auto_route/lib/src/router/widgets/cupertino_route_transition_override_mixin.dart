@@ -5,8 +5,9 @@
 // The adjustments made to this code is to disable unwanted shadow
 // of routes when used as nested routes, e.g inside of a TabsRouter
 
-// Copied from Flutter: the code stays as Flutter wrote it, so the two can
-// still be compared line by line.
+// Copied from Flutter: apart from safe list reads and comparing colors by
+// value, the code stays as Flutter wrote it, so the two can still be compared
+// line by line.
 
 import 'package:auto_route/src/utils/collection.dart';
 import 'package:cupertino_ui/cupertino_ui.dart'
@@ -268,11 +269,12 @@ class _CupertinoEdgeShadowDecoration extends Decoration {
   @override
   bool operator ==(Object other) {
     if (other.runtimeType != runtimeType) return false;
-    return other is _CupertinoEdgeShadowDecoration && other._colors == _colors;
+    return other is _CupertinoEdgeShadowDecoration &&
+        listEquals(other._colors, _colors);
   }
 
   @override
-  int get hashCode => _colors.hashCode;
+  int get hashCode => Object.hashAll(_colors ?? const []);
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {

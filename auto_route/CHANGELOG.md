@@ -14,6 +14,8 @@
   created with `const`.
 - **CHANGE**: `AutoTabsScaffold.bottomNavigationBuilder` gets a context below the `Scaffold`, so `Scaffold.of(context)`
   works in it.
+- **FIX**: two edge shadows of a Cupertino transition with the same colors now compare equal, so a rebuild doesn't
+  repaint them.
 
 ## 12.4.0
 - **FEAT**: `AutoRouter` and `AutoRouter.declarative` take a `heroControllerBuilder`, so Heroes fly between two pages
