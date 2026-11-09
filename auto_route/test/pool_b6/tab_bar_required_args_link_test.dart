@@ -16,10 +16,12 @@ import '../router_test_utils.dart';
 // Steps: (1) open the app, switch to the second tab; (2) start the app on
 // the url '/tab2', which a refresh does; (3) the same, with the value as a
 // path parameter.
-// Result: (1) shows the argument. (2) throws MissingRequiredParameterError:
-// a url can't hold a constructor argument, so this is how the package works
-// and what the message says; the test pins it. (3) shows the value from the
-// url, which is the way to keep a value over a refresh.
+// Result: (1) shows the argument. (3) shows the value from the url, which is
+// the way to keep a value over a refresh. (2) throws
+// MissingRequiredParameterError. That is not pinned here: nobody on the
+// thread says it is by design (the maintainer never answered, and #1302 is
+// not in the thread), so it stays an open question, with the reporter's
+// expectation (no error) kept as a failing test in the notes, round1/2107.dart.
 void main() {
   RootStackRouter buildRouter() => .build(
     routes: [
@@ -76,13 +78,6 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.text('Tab 2 from routes'), findsOneWidget);
-  });
-
-  testWidgets('A refresh on the url of a tab with a required constructor '
-      'argument reports the missing argument', (tester) async {
-    await pumpRouterApp(tester, buildRouter(), initialLink: '/tab2');
-
-    expect(tester.takeException(), isA<MissingRequiredParameterError>());
   });
 
   testWidgets('A refresh on the url of a tab with a path parameter shows it', (
