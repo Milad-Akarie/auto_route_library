@@ -427,7 +427,7 @@ class UrlState {
   @override
   String toString() {
     return 'UrlState{uri: $uri, shouldReplace: $shouldReplace, pathState: '
-        '$pathState}';
+        '${pathState ?? 'null'}}';
   }
 
   /// Returns true if [segments] is not empty

@@ -8,6 +8,8 @@
   `popAndPushAll` still assert in debug builds, and do nothing in release builds.
 - **FIX**: `navigate<void>`, or `navigate` with any named type, no longer rebuilds the pages on its way to the target when
   the app started through `DeepLink.path`, which reset the tabs inside them.
+- **CHANGE**: `RouteMatch.toString` shows its key's hash code, and a guard without a `toString` of its own prints as
+  `AutoRouteGuard(<hash>)`.
 
 ## 12.4.0
 - **FEAT**: `AutoRouter` and `AutoRouter.declarative` take a `heroControllerBuilder`, so Heroes fly between two pages

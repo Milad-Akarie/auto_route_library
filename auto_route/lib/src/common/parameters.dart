@@ -11,6 +11,8 @@ class Parameters {
   const new(Map<String, dynamic>? params) : _rawMap = params ?? const {};
   final Map<String, Object?> _rawMap;
 
+  String _rawText(String key) => (_rawMap[key] ?? 'null').toString();
+
   /// returns the raw map passed to the constructor
   Map<String, dynamic> get rawMap => _rawMap;
 
@@ -65,7 +67,7 @@ class Parameters {
     final val = _stringOf(_rawMap[key]) ?? defaultValue;
     if (val == null) {
       throw MissingRequiredParameterError(
-        'Failed to parse [String] $key value from ${_rawMap[key]}',
+        'Failed to parse [String] $key value from ${_rawText(key)}',
       );
     }
     return val;
@@ -97,7 +99,7 @@ class Parameters {
     final val = optInt(key, defaultValue);
     if (val == null) {
       throw MissingRequiredParameterError(
-        'Failed to parse [int] $key value from ${_rawMap[key]}',
+        'Failed to parse [int] $key value from ${_rawText(key)}',
       );
     }
     return val;
@@ -121,7 +123,7 @@ class Parameters {
     final val = optDouble(key, defaultValue);
     if (val == null) {
       throw MissingRequiredParameterError(
-        'Failed to parse [double] $key value from ${_rawMap[key]}',
+        'Failed to parse [double] $key value from ${_rawText(key)}',
       );
     }
     return val;
@@ -145,7 +147,7 @@ class Parameters {
     final val = optNum(key, defaultValue);
     if (val == null) {
       throw MissingRequiredParameterError(
-        'Failed to parse [num] $key value from ${_rawMap[key]}',
+        'Failed to parse [num] $key value from ${_rawText(key)}',
       );
     }
     return val;
@@ -176,7 +178,7 @@ class Parameters {
     final isTrue = optBool(key, defaultValue: defaultValue);
     if (isTrue == null) {
       throw MissingRequiredParameterError(
-        'Failed to parse [bool] $key value from ${_rawMap[key]}',
+        'Failed to parse [bool] $key value from ${_rawText(key)}',
       );
     }
     return isTrue;
@@ -212,7 +214,7 @@ class Parameters {
     final val = optTyped(key, converter, defaultValue);
     if (val == null) {
       throw MissingRequiredParameterError(
-        'Failed to parse [$T] $key value from ${_rawMap[key]}',
+        'Failed to parse [$T] $key value from ${_rawText(key)}',
       );
     }
     return val;
@@ -223,7 +225,7 @@ class Parameters {
     final val = _rawMap[key] ?? defaultValue;
     if (val == null) {
       throw MissingRequiredParameterError(
-        'Failed to parse [List<String>] $key value from ${_rawMap[key]}',
+        'Failed to parse [List<String>] $key value from ${_rawText(key)}',
       );
     }
     if (val is List) {

@@ -271,9 +271,10 @@ class RouteMatch<T> {
   @override
   String toString() {
     return 'RouteMatch{ routeName: $name, pathParams: $params, queryParams: '
-        '$queryParams, children: $children, fragment: $fragment, segments: '
-        '$segments, redirectedFrom: $redirectedFrom,  path: $path, '
-        'stringMatch: $stringMatch, args: $args, guards: $guards, key: $key}';
+        '$queryParams, children: ${children ?? 'null'}, fragment: $fragment, '
+        'segments: $segments, redirectedFrom: ${redirectedFrom ?? 'null'}, '
+        ' path: $path, stringMatch: $stringMatch, args: ${args ?? 'null'}, '
+        'guards: $guards, key: ${key.hashCode}}';
   }
 
   /// Returns a new instance of [PageRouteInfo] from
@@ -399,8 +400,8 @@ class HierarchySegment {
 
   @override
   String toString() {
-    return '$name: {pathParams: $pathParams, queryParams: $queryParams, '
-        'children: $children}';
+    return '$name: {pathParams: ${pathParams ?? 'null'}, queryParams: '
+        '${queryParams ?? 'null'}, children: $children}';
   }
 
   @override

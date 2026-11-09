@@ -43,6 +43,9 @@ abstract class AutoRouteGuard {
 }
    */
   FutureOr<void> onNavigation(NavigationResolver resolver, StackRouter router);
+
+  @override
+  String toString() => 'AutoRouteGuard($hashCode)';
 }
 
 class _AutoRouteGuardRedirectCallback extends AutoRouteGuard {

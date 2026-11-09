@@ -196,7 +196,7 @@ class PageRouteInfo<T extends Object?> {
   @override
   String toString() {
     return 'Route{name: $_routeName,  params: $rawPathParams}, children: '
-        '${initialChildren?.map((e) => e.routeName)}';
+        '${initialChildren?.map((e) => e.routeName) ?? 'null'}';
   }
 
   /// Calls [StackRouter.push] with this route on the nearest router
