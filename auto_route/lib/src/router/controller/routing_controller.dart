@@ -3605,7 +3605,10 @@ class NestedStackRouter extends StackRouter {
   }
 
   @internal
-  /// pushes the initial routes to the stack
+  /// Pushes the initial routes to the stack.
+  ///
+  /// A router built by `AutoRouter.declarative` pushes nothing: it hands the
+  /// routes a link opened to [pendingRoutesHandler] for its routes callback.
   void setupInitialRoutes() {
     if (_routeData.hasPendingChildren) {
       final initialRoutes = List<RouteMatch<Object?>>.unmodifiable(
@@ -3621,7 +3624,7 @@ class NestedStackRouter extends StackRouter {
         );
       }
       _routeData.pendingChildren.clear();
-    } else {
+    } else if (!managedByWidget) {
       final possibleInitialRoutes = matcher.match('');
       if (possibleInitialRoutes != null) {
         unawaited(

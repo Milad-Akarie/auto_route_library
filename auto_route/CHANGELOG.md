@@ -9,6 +9,9 @@
 - **BEHAVIOR CHANGE**: a tab opened by a url, such as after a browser refresh, keeps the args its `AutoTabsRouter`
   `routes` list gives it, instead of throwing `MissingRequiredParameterError`. A url with path or query params still
   builds the args from those (#2107).
+- **FIX**, **BEHAVIOR CHANGE**: `AutoRouter.declarative` gets the routes a link opens: `handler.initialPendingRoutes`
+  now holds them when the routes callback first runs. It was always `null`, so a refresh or link at a nested page showed
+  the list and put the wrong url in the address bar.
 
 ## 12.5.0
 - **CHORE**: the lint setup is simpler: `lines_longer_than_80_chars`, `prefer-single-widget-per-file`,

@@ -33,7 +33,7 @@ class _DeclarativeAutoRouter extends StatefulWidget {
 
 class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter>
     with _HeroControllerOwner<_DeclarativeAutoRouter> {
-  StackRouter? _controller;
+  NestedStackRouter? _controller;
 
   @override
   HeroController Function()? get _heroControllerBuilder =>
@@ -73,6 +73,9 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter>
         ),
       );
       _parentController.attachChildController(_controller!);
+      // Before the navigator's first build: the routes callback reads the
+      // routes the url names from the handler.
+      _controller!.setupInitialRoutes();
     }
   }
 
