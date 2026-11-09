@@ -31,7 +31,7 @@ while [ "$i" -le "$runs" ]; do
     url) flutter test --run-skipped test/benchmark/url_benchmark_test.dart >> "$file" 2>&1 ;;
     url-chrome) flutter test --run-skipped test/benchmark/url_benchmark_test.dart --platform chrome >> "$file" 2>&1 ;;
     navigation)
-      (cd example && flutter drive --profile --no-dds --driver=test_driver/perf_driver.dart \
+      (cd example.old && flutter drive --profile --no-dds --driver=test_driver/perf_driver.dart \
         --target=integration_test/navigation_benchmark.dart -d "$device") >> "$file" 2>&1 ;;
     *) echo "Unknown benchmark: $benchmark" >&2; exit 64 ;;
   esac

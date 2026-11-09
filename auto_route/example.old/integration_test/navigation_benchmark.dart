@@ -9,7 +9,7 @@ import 'package:material_ui/material_ui.dart';
 // Times the navigation apps do most, in profile mode: push and pop, a deep
 // link through nested routers, tab switches of each kind, and a push through
 // guards. It is a benchmark, not a test, so all_tests.dart leaves it out.
-// Run it from auto_route/example on its own, on macOS or a phone:
+// Run it from auto_route/example.old on its own, on macOS or a phone:
 //
 //   flutter drive --profile --no-dds --driver=test_driver/perf_driver.dart --target=integration_test/navigation_benchmark.dart -d macos
 //
