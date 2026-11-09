@@ -1,3 +1,7 @@
+## Unreleased
+- **FIX**: a `Point` parameter, such as `List<Point<int>>`, is imported from `dart:math`, which declares it, no longer
+  from `dart:html`, which re-exports it and does not compile on mobile (#2152).
+
 ## 11.5.0
 - **CHORE**: the same lint setup as auto_route.
 - **CHORE**: depends on auto_route 12.5.0, the version its tests run against.

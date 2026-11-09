@@ -23,6 +23,16 @@ class TypeResolver {
       return null;
     }
 
+    // A type of the Dart SDK is imported from the library that declares it.
+    // Another SDK library may export it too, as dart:html does `Point`, which
+    // dart:math declares, and the first library found must not win.
+    final declaring = element.library!.uri;
+    if (declaring.scheme == 'dart' &&
+        !declaring.path.startsWith('_') &&
+        !_kUnPreferredImports.contains(declaring.toString())) {
+      return declaring.toString();
+    }
+
     final fallBackImports = <String>{};
     for (final lib in _libs) {
       if (!_isCoreDartType(lib) &&
