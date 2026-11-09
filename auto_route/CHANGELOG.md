@@ -1,6 +1,9 @@
 ## Unreleased
 - **BEHAVIOR CHANGE**: `AutoTabsRouter` passes a new `homeIndex` on when it is rebuilt with one, so back goes to the new
   home tab. A `homeIndex` past the end of the tabs counts as no home tab instead of throwing (#1759).
+- **BEHAVIOR CHANGE**: a guard that rejects a page of a nested router when the guards are reevaluated now updates the
+  url, replacing the closed page's entry, and a nested router left empty that way shows its first page again instead
+  of keeping the closed page on screen (#1740).
 
 ## 12.5.0
 - **CHORE**: the lint setup is simpler: `lines_longer_than_80_chars`, `prefer-single-widget-per-file`,

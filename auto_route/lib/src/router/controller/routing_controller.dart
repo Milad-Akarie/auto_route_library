@@ -2925,11 +2925,9 @@ abstract class StackRouter extends RoutingController {
       } else {
         // A page its guard now closes leaves its history entry to the page
         // below, as a pop does; a new entry would lead back to the guard.
-        if (match is ReevaluatableRouteMatch) {
+        if (match is ReevaluatableRouteMatch<Object?, Object?>) {
           _markLeaving([match.currentPage], .removed);
-        }
-        if (match is ReevaluatableRouteMatch<Object?, Object?> &&
-            _pages.remove(match.currentPage)) {
+          _pages.remove(match.currentPage);
           markUrlStateForReplace();
         }
         break;
@@ -3176,6 +3174,12 @@ abstract class StackRouter extends RoutingController {
           _pages
             ..removeWhere((page) => !wasReevaluated(page))
             ..addAll([...pushedMeanwhile, ...pushedDuring]);
+          if (_pages.where(wasReevaluated).length < reevaluatedRoutes.length) {
+            await _reopenInitialRoutesIfEmptied();
+            // Nothing else tells the navigator of a nested router that its
+            // guard closed the top page, as no page goes on in its place.
+            if (!_isDisposed) notifyAll();
+          }
         } else if (pushed.isCompleted) {
           _closePagelessRoutesOverTop();
         }
@@ -3205,6 +3209,15 @@ abstract class StackRouter extends RoutingController {
       _reset();
     }
     return await popped;
+  }
+
+  // A nested router its guards emptied, such as one a link opened on a guarded
+  // child alone, shows its first page again instead of nothing.
+  Future<void> _reopenInitialRoutesIfEmptied() async {
+    if (_pages.isNotEmpty || isRoot || _isDisposed) return;
+    final initialRoutes = matcher.match('');
+    if (initialRoutes == null) return;
+    await _pushAllGuarded(initialRoutes, returnLastRouteCompleter: false);
   }
 
   void _reset() {
