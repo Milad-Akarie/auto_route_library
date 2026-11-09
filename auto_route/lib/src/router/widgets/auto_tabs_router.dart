@@ -6,11 +6,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:material_ui/material_ui.dart';
 
+part 'auto_tabs_router_builder.dart';
 part 'auto_tabs_router_indexed_stack.dart';
-part 'indexed_stack_builder.dart';
 part 'auto_tabs_router_page_view.dart';
 part 'auto_tabs_router_tab_bar.dart';
-part 'auto_tabs_router_builder.dart';
+part 'indexed_stack_builder.dart';
 part 'keep_alive_tab.dart';
 
 /// Signature for a wrapper builder used by [_AutoTabsRouterIndexedStack]
@@ -205,9 +205,9 @@ abstract class AutoTabsRouterState<T extends AutoTabsRouter> extends State<T> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final parentRoute = RouteData.of(context);
-    final parentScope = RouterScope.of(context, watch: true);
     if (_controller == null) {
+      final parentRoute = RouteData.of(context);
+      final parentScope = RouterScope.of(context, watch: true);
       _inheritableObserversBuilder = () {
         final observers = widget.navigatorObservers();
         if (!widget.inheritNavigatorObservers) {

@@ -204,17 +204,19 @@ class _WebEngineUri implements Uri {
     String? query,
     Map<String, Object?>? queryParameters,
     String? fragment,
-  }) => _uri.replace(
-    scheme: scheme,
-    userInfo: userInfo,
-    host: host,
-    port: port,
-    path: path,
-    pathSegments: pathSegments,
-    query: query,
-    queryParameters: queryParameters,
-    fragment: fragment,
-  );
+  }) {
+    return _uri.replace(
+      scheme: scheme,
+      userInfo: userInfo,
+      host: host,
+      port: port,
+      path: path,
+      pathSegments: pathSegments,
+      query: query,
+      queryParameters: queryParameters,
+      fragment: fragment,
+    );
+  }
 
   @override
   Uri removeFragment() => _uri.removeFragment();

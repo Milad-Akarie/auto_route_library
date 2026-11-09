@@ -280,7 +280,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     if (history.consumeOwnBrowserMove(configuration)) {
       return;
     }
-    if (history.isBrowserBehindApp && await _doesTopRouteRefusePop()) {
+    if (history.isBrowserBehindApp && _doesTopRouteRefusePop()) {
       history.returnBrowserToApp();
       return;
     }
@@ -343,7 +343,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   // Whether the route on top of the top-most navigator refuses to be popped,
   // through a PopScope; asks it the way Navigator.maybePop does, so it hears
   // of the attempt.
-  Future<bool> _doesTopRouteRefusePop() async {
+  bool _doesTopRouteRefusePop() {
     final topMost = controller.topMostRouter();
     if (topMost is! StackRouter) return false;
     Route<Object?>? topRoute;

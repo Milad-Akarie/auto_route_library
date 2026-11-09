@@ -12,9 +12,9 @@ import 'package:material_ui/material_ui.dart';
 
 part '../../route/route_data.dart';
 part 'auto_route_guard.dart';
+part 'auto_route_leave_listener.dart';
 part 'auto_router_delegate.dart';
 part 'root_stack_router.dart';
-part 'auto_route_leave_listener.dart';
 part 'routes_restoration.dart';
 
 /// Signature of a predicate to select [RouteData]
@@ -1161,7 +1161,11 @@ class TabsRouter extends RoutingController {
     final updated = update || !identical(result.route, match)
         ? _updateTabPage(index, result.route)
         : null;
-    final didPreload = preload(index);
+    // Preloads while the old tab is still active, whether or not this notifies.
+    final shouldWaitForFrame =
+        preload(index) &&
+        notify &&
+        SchedulerBinding.instance.schedulerPhase != .idle;
     if (backThroughHistory) {
       _tabHistory
         ..remove(index)
@@ -1170,15 +1174,13 @@ class TabsRouter extends RoutingController {
     }
     _previousIndex = _activeIndex;
     _activeIndex = index;
-    if (notify) {
-      if (didPreload && SchedulerBinding.instance.schedulerPhase != .idle) {
-        SchedulerBinding.instance.addPostFrameCallback((_) {
-          // The tabs may be disposed by the end of the frame.
-          if (!_isDisposed) notifyAll();
-        });
-      } else {
-        notifyAll();
-      }
+    if (shouldWaitForFrame) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        // The tabs may be disposed by the end of the frame.
+        if (!_isDisposed) notifyAll();
+      });
+    } else if (notify) {
+      notifyAll();
     }
     if (updated != null) _navigateInsideTab(updated, onFailure: onFailure);
     return .done;
@@ -2525,19 +2527,18 @@ abstract class StackRouter extends RoutingController {
         }
       },
     );
-    if (wasRejected) {
-      for (final page in _pages.where(
-        (added) => !previousPages.contains(added),
-      )) {
-        page.routeData.onPopInvoked(null);
-      }
-      _pages
-        ..clear()
-        ..addAll(previousPages);
-      _stackKey = previousStackKey;
-      markUrlStateForReplace();
-      notifyAll(forceUrlRebuild: true);
+    if (!wasRejected) return;
+    for (final page in _pages.where(
+      (added) => !previousPages.contains(added),
+    )) {
+      page.routeData.onPopInvoked(null);
     }
+    _pages
+      ..clear()
+      ..addAll(previousPages);
+    _stackKey = previousStackKey;
+    markUrlStateForReplace();
+    notifyAll(forceUrlRebuild: true);
   }
 
   /// Pop the whole stack except for the first entry
@@ -2890,9 +2891,8 @@ abstract class StackRouter extends RoutingController {
           } else {
             final completer = _addNewPage<T>(match, notify: notify);
             if (pushed != null && !pushed.isCompleted) pushed.complete();
-            if (returnLastRouteCompleter) {
-              return await completer;
-            }
+            // This is the last route, so the loop ends here either way.
+            return returnLastRouteCompleter ? await completer : null;
           }
         }
 

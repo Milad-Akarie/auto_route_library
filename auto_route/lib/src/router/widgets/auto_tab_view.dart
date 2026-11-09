@@ -92,7 +92,7 @@ class AutoTabViewState extends State<AutoTabView> {
   void initState() {
     super.initState();
     _updateChildren();
-    _controller.animation!.addListener(_handleTabControllerAnimationTick);
+    _controller.animation?.addListener(_handleTabControllerAnimationTick);
     _router.addListener(_onRouterUpdated);
     _pageController = PageController(initialPage: _router.activeIndex);
   }
@@ -160,7 +160,7 @@ class AutoTabViewState extends State<AutoTabView> {
   @override
   void dispose() {
     if (_isControllerValid) {
-      _controller.animation!.removeListener(_handleTabControllerAnimationTick);
+      _controller.animation?.removeListener(_handleTabControllerAnimationTick);
     }
     _router.removeListener(_onRouterUpdated);
     _pageController.dispose();

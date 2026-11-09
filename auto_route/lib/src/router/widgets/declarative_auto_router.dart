@@ -47,8 +47,8 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final parentData = RouteData.of(context);
     if (_controller == null) {
+      final parentData = RouteData.of(context);
       final parentScope = RouterScope.of(context);
       _inheritableObserversBuilder = () {
         final observers = widget.navigatorObserversBuilder();
