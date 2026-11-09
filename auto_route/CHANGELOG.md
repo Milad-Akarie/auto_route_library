@@ -4,6 +4,8 @@
 - **BEHAVIOR CHANGE**: a guard that rejects a page of a nested router when the guards are reevaluated now updates the
   url, replacing the closed page's entry, and a nested router left empty that way shows its first page again instead
   of keeping the closed page on screen (#1740).
+- **FIX**: `replaceAll` listing an open parent and then one of its children, such as `[MainRoute(), SearchRoute()]`,
+  no longer fails Flutter's duplicate page key assertion (#1586).
 
 ## 12.5.0
 - **CHORE**: the lint setup is simpler: `lines_longer_than_80_chars`, `prefer-single-widget-per-file`,

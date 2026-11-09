@@ -3187,8 +3187,14 @@ abstract class StackRouter extends RoutingController {
         _onNavigate(routes);
       }
       final mayUpdateController = _topInnerControllerOf(mayUpdateRoute.key);
+      final newChildren = mayUpdateRoute.children ?? const [];
+      // A page that took over this nested router has opened its children in
+      // it; opening them again would stack them twice.
+      if (newChildren.isNotEmpty &&
+          _shownTopTakenOverBy(mayUpdateRoute) != null) {
+        return null;
+      }
       if (mayUpdateController != null) {
-        final newChildren = mayUpdateRoute.children ?? const [];
         // Only a declarative stack router is managed by its widget.
         if (mayUpdateController is StackRouter &&
             mayUpdateController.managedByWidget) {
