@@ -12,7 +12,7 @@ import 'package:path/path.dart' as p show posix;
 /// AutoRoute extension of [RouteInformationParser]
 class DefaultRouteParser extends RouteInformationParser<UrlState> {
   /// Default constructor
-  new(
+  const new(
     this._matcher, {
     this.includePrefixMatches = false,
     this.deepLinkTransformer,

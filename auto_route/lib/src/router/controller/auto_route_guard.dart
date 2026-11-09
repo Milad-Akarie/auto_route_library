@@ -13,19 +13,20 @@ abstract class AutoRouteGuard {
   const new();
 
   /// Builds a simple instance that takes in the [OnNavigation] callback
-  factory simple(OnNavigation onNavigation, {String? debugLabel}) =
+  const factory simple(OnNavigation onNavigation, {String? debugLabel}) =
       AutoRouteGuardCallback;
 
   /// Builds a simple instance that returns either a redirect-to route or null
   /// for no redirect
-  factory redirect(
+  const factory redirect(
     PageRouteInfo? Function(NavigationResolver resolver) redirect,
   ) = _AutoRouteGuardRedirectCallback;
 
   /// Builds a simple instance that returns either a redirect-to path or null
   /// for no redirect
-  factory redirectPath(String? Function(NavigationResolver resolver) redirect) =
-      _AutoRouteGuardRedirectPathCallback;
+  const factory redirectPath(
+    String? Function(NavigationResolver resolver) redirect,
+  ) = _AutoRouteGuardRedirectPathCallback;
 
   /// clients will call [NavigationResolver.next] to continue
   /// navigation or [NavigationResolver.reject] to abort navigation

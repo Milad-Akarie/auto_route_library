@@ -10,6 +10,8 @@
   the app started through `DeepLink.path`, which reset the tabs inside them.
 - **CHANGE**: `RouteMatch.toString` shows its key's hash code, and a guard without a `toString` of its own prints as
   `AutoRouteGuard(<hash>)`.
+- **FEAT**: `AutoRouteGuard.simple`, `redirect` and `redirectPath`, `DefaultRouteParser` and `AutoRouteAware` can be
+  created with `const`.
 
 ## 12.4.0
 - **FEAT**: `AutoRouter` and `AutoRouter.declarative` take a `heroControllerBuilder`, so Heroes fly between two pages

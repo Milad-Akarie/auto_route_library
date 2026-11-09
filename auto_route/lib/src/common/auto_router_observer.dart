@@ -20,6 +20,9 @@ class AutoRouterObserver extends NavigatorObserver {
 /// An interface used to mark classes as AutoRouteAware entities
 /// usually implemented by widget States
 mixin class AutoRouteAware {
+  /// Creates an entity that listens to route changes.
+  const new();
+
   /// Called when the top route has been popped off, and the current route
   /// shows up.
   void didPopNext() {
