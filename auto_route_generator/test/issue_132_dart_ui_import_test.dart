@@ -27,10 +27,12 @@ $fields
 void main() {
   // #132: "dart:ui" was imported in the generated router although nothing
   // used it, and the analyzer complained. The report gives no steps; assumed:
-  // a page with a parameter whose type comes from dart:ui (a Locale and a
-  // Size), then build the router. When the bug is real the source imports
-  // dart:ui with nothing from it used, or does not compile. A page with no
-  // dart:ui type must never get the import.
+  // a page with a parameter whose type comes from dart:ui, then build the
+  // router. When the bug is real the generated source imports dart:ui, with
+  // nothing from it used, or does not compile. The generated router must
+  // name each type through the library the app can reach it by (here
+  // package:flutter), never through dart:ui, and must compile. A page with no
+  // dart:ui type must never get the import either.
   group('dart:ui in the generated router (#132)', () {
     test('a page with no dart:ui type does not import it', () async {
       final result = await generateRouter({
@@ -45,7 +47,7 @@ void main() {
       expect(result.source, isNot(contains('dart:ui')));
     });
 
-    test('a page with dart:ui types compiles', () async {
+    test('a Locale and a Size come through package:flutter', () async {
       final result = await generateRouter({
         'lib/canvas_page.dart': _page(
           'CanvasPage',
@@ -55,6 +57,35 @@ void main() {
       });
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
+      expect(result.source, isNot(contains('dart:ui')));
+      expect(
+        result.source,
+        contains("import 'package:flutter/widgets.dart' as _i3;"),
+      );
+      expect(result.source, contains('required _i3.Locale locale'));
+      expect(result.source, contains('required _i3.Size size'));
     });
+
+    test(
+      'a page that imports dart:ui does not make the router do so',
+      () async {
+        final result = await generateRouter({
+          'lib/dispatch_page.dart': _page(
+            'DispatchPage',
+            parameters: 'required this.dispatcher',
+            fields: '  final PlatformDispatcher dispatcher;',
+            imports: "import 'dart:ui';",
+          ),
+        });
+        expect(result.errors, isEmpty);
+        expect(result.compileErrors, isEmpty);
+        expect(result.source, isNot(contains('dart:ui')));
+        expect(
+          result.source,
+          contains("import 'package:flutter/foundation.dart' as _i4;"),
+        );
+        expect(result.source, contains('required _i4.PlatformDispatcher'));
+      },
+    );
   });
 }
