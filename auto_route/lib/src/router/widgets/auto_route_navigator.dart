@@ -188,9 +188,16 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
             },
           )
         : (widget.placeholder?.call(context) ??
-              // A Container with no child fills its space; a ColoredBox would
-              // shrink to nothing.
-              Container(color: Theme.of(context).scaffoldBackgroundColor));
+              LimitedBox(
+                maxWidth: 0,
+                maxHeight: 0,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints.expand(),
+                  child: ColoredBox(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                  ),
+                ),
+              ));
     final navigator = Listener(
       onPointerDown: (event) => _activePointers.add(event.pointer),
       onPointerUp: (event) => _activePointers.remove(event.pointer),

@@ -115,9 +115,16 @@ class _AutoTabsRouterIndexedStackState
         final stateHash = controller!.stateHash;
 
         final builderChild = stack.isEmpty
-            // A Container with no child fills its space; a ColoredBox would
-            // shrink to nothing.
-            ? Container(color: Theme.of(stackContext).scaffoldBackgroundColor)
+            ? LimitedBox(
+                maxWidth: 0,
+                maxHeight: 0,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints.expand(),
+                  child: ColoredBox(
+                    color: Theme.of(stackContext).scaffoldBackgroundColor,
+                  ),
+                ),
+              )
             : _IndexedStackBuilder(
                 key: _indexedStackKey,
                 activeIndex: _index,

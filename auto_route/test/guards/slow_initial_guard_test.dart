@@ -42,12 +42,12 @@ void main() {
 
       expect(tester.takeException(), isNull);
       expect(find.text('HomeRoute'), findsNothing);
-      final placeholder = tester.widget<Container>(
-        find.byType(Container).first,
+      final placeholder = tester.widget<ColoredBox>(
+        find.byType(ColoredBox).first,
       );
       expect(placeholder.color, background);
       expect(
-        tester.getSize(find.byType(Container).first),
+        tester.getSize(find.byType(ColoredBox).first),
         tester.view.physicalSize / tester.view.devicePixelRatio,
       );
 
