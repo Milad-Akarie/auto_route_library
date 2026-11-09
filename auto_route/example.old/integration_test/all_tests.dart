@@ -45,6 +45,7 @@ import 'generic_page_test.dart' as generic_page;
 import 'hero_controller_builder_test.dart' as hero_controller_builder;
 import 'hero_nested_router_test.dart' as hero_nested_router;
 import 'home_index_back_test.dart' as home_index_back;
+import 'home_index_update_test.dart' as home_index_update;
 import 'host_back_button_test.dart' as host_back_button;
 import 'hot_reload_routes_test.dart' as hot_reload_routes;
 import 'indexed_stack_curved_animation_test.dart'
@@ -252,6 +253,7 @@ void main() {
   hero_controller_builder.main();
   hero_nested_router.main();
   home_index_back.main();
+  home_index_update.main();
   host_back_button.main();
   hot_reload_routes.main();
   indexed_stack_curved_animation.main();
