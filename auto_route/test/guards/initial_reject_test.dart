@@ -57,7 +57,7 @@ void main() {
       (tester) async {
         final router = buildRouter((resolver, guardedRouter) {
           resolver.reject();
-          const fallback = NamedRoute('FallbackRoute');
+          const fallback = NamedRoute<Object?>('FallbackRoute');
           unawaited(
             how == 'push'
                 ? guardedRouter.push(fallback)

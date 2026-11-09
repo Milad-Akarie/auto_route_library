@@ -53,7 +53,10 @@ final PageInfo _tab2Page = _trackedPage('Tab2Route');
 PageInfo _tabsHostPage(String tabsType) => .new(
   'TabsHostRoute',
   builder: (_) {
-    const routes = [NamedRoute('Tab1Route'), NamedRoute('Tab2Route')];
+    const routes = [
+      NamedRoute<Object?>('Tab1Route'),
+      NamedRoute<Object?>('Tab2Route'),
+    ];
     return switch (tabsType) {
       'PageView' => const AutoTabsRouter.pageView(routes: routes),
       'TabBar' => AutoTabsRouter.tabBar(

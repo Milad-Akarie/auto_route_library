@@ -78,7 +78,7 @@ void main() {
       final tabs = tester.element(find.text('PagerPage1Route')).router;
 
       await expectLater(
-        tabs.navigate(const NamedRoute('OtherExternalPageRoute')),
+        tabs.navigate<void>(const NamedRoute('OtherExternalPageRoute')),
         throwsA(isA<FlutterError>()),
       );
       await tester.pumpAndSettle();

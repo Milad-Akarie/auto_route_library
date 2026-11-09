@@ -69,7 +69,7 @@ void main() {
           await tester.pumpAndSettle();
         }
 
-        router.navigate(const _Test2Route()).ignore();
+        router.navigate<Object?>(const _Test2Route()).ignore();
         await tester.pumpAndSettle();
         expect(find.text(_Test2Route.name), findsOneWidget);
         expect(router.urlState.url, '/dashboard/tests/test2');
@@ -78,7 +78,7 @@ void main() {
 
         await tester.tap(find.text('Third'));
         await tester.pumpAndSettle();
-        router.navigate(const _Test1Route()).ignore();
+        router.navigate<Object?>(const _Test1Route()).ignore();
         await tester.pumpAndSettle();
         expect(find.text(_Test1Route.name), findsOneWidget);
         expect(router.urlState.url, '/dashboard/tests/test1');

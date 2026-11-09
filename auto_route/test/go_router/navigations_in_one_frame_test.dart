@@ -94,11 +94,13 @@ class _Buttons extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     children: [
       TextButton(
-        onPressed: () => context.router.navigate(const PageRouteInfo('XRoute')),
+        onPressed: () =>
+            context.router.navigate<Object?>(const PageRouteInfo('XRoute')),
         child: const Text('to x'),
       ),
       TextButton(
-        onPressed: () => context.router.navigate(const PageRouteInfo('YRoute')),
+        onPressed: () =>
+            context.router.navigate<Object?>(const PageRouteInfo('YRoute')),
         child: const Text('to y'),
       ),
       const Expanded(child: AutoRouter()),

@@ -111,8 +111,9 @@ class _SettingsPage extends StatelessWidget {
           children: [
             Text('query: $query'),
             TextButton(
-              onPressed: () =>
-                  context.router.navigate(_SettingsTab(query: 'working')),
+              onPressed: () => context.router.navigate<Object?>(
+                _SettingsTab(query: 'working'),
+              ),
               child: const Text('navigate'),
             ),
             TextButton(

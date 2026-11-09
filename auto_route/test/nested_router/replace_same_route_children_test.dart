@@ -34,11 +34,11 @@ RootStackRouter _buildRouter({bool isUsersInitial = false}) => .build(
   ],
 );
 
-const NamedRoute _kUsers = NamedRoute(
+const NamedRoute<void> _kUsers = NamedRoute(
   'AppRoute',
   children: [NamedRoute('UsersRoute')],
 );
-const NamedRoute _kOther = NamedRoute(
+const NamedRoute<void> _kOther = NamedRoute(
   'AppRoute',
   children: [NamedRoute('OtherRoute')],
 );

@@ -94,7 +94,7 @@ void main() {
       // Let the router add the vendor page, which it does after checking
       // guards.
       for (var i = 0; i < 5; i++) {
-        await Future.microtask(() {});
+        await Future<void>.value();
       }
 
       unawaited(router.navigate(const _VendorBranchesRoute()));

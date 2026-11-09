@@ -135,7 +135,10 @@ final _loginGuard = AutoRouteGuard.simple((resolver, _) {
 });
 
 RootStackRouter _buildRouter(_Tabs kind, AutoRouteGuard guard) {
-  const routes = [NamedRoute('FeedRoute'), NamedRoute('ProfileRoute')];
+  const routes = [
+    NamedRoute<Object?>('FeedRoute'),
+    NamedRoute<Object?>('ProfileRoute'),
+  ];
   Widget bottomBar(TabsRouter tabs) => BottomNavigationBar(
     currentIndex: tabs.activeIndex,
     onTap: tabs.setActiveIndex,

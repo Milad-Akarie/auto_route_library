@@ -23,8 +23,9 @@ void main() {
     (
       'routes',
       (RoutingController router) =>
-          router.navigate(const _Route('DetailRoute')),
-      (RoutingController router) => router.navigate(const _Route('ARoute')),
+          router.navigate<void>(const _Route('DetailRoute')),
+      (RoutingController router) =>
+          router.navigate<void>(const _Route('ARoute')),
     ),
   ]) {
     testWidgets(

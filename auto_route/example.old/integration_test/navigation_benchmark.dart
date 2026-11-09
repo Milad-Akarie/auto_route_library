@@ -34,16 +34,13 @@ void main() {
     Future<void> Function(int index, Stopwatch call) step,
   ) async {
     final calls = <int>[];
-    await binding.traceAction(
-      () async {
-        for (var index = 0; index < _kSteps; index++) {
-          final call = Stopwatch();
-          await step(index, call);
-          calls.add(call.elapsedMicroseconds);
-        }
-      },
-      reportKey: key,
-    );
+    await binding.traceAction(() async {
+      for (var index = 0; index < _kSteps; index++) {
+        final call = Stopwatch();
+        await step(index, call);
+        calls.add(call.elapsedMicroseconds);
+      }
+    }, reportKey: key);
     syncMicros[key] = _median(calls);
   }
 
@@ -231,7 +228,8 @@ class _TabsHost extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final routes = [
-      for (var i = 0; i < _kTabCount; i++) NamedRoute('${kind.parent}Tab$i'),
+      for (var i = 0; i < _kTabCount; i++)
+        NamedRoute<Object?>('${kind.parent}Tab$i'),
     ];
     return switch (kind) {
       .indexedStack => AutoTabsRouter(

@@ -17,7 +17,7 @@ void main() {
   for (final (label, goHome) in [
     (
       'navigate',
-      (StackRouter router) => router.navigate(const NamedRoute('Home')),
+      (StackRouter router) => router.navigate<void>(const NamedRoute('Home')),
     ),
     (
       'replaceAll',

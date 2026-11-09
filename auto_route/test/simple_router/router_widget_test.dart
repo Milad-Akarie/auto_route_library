@@ -223,7 +223,7 @@ void main() {
       var isCompleted = false;
       Object? result;
       unawaited(
-        router.navigate(const SecondRoute()).then((value) {
+        router.navigate<Object?>(const SecondRoute()).then((value) {
           isCompleted = true;
           result = value;
         }),

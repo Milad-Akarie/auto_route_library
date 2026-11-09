@@ -95,7 +95,7 @@ PageInfo _page(String name) => .new(
                         children: [
                           const Text('Page2'),
                           TextButton(
-                            onPressed: () => context.router.navigate(
+                            onPressed: () => context.router.navigate<Object?>(
                               const PageRouteInfo('Page1'),
                             ),
                             child: const Text('Go to Page1'),

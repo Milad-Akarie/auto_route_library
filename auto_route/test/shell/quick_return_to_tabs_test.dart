@@ -23,7 +23,7 @@ void main() {
     ),
     (
       'navigate',
-      (StackRouter router) => router.navigate(const _Route('HomeRoute')),
+      (StackRouter router) => router.navigate<void>(const _Route('HomeRoute')),
       ['LoadingRoute', 'HomeRoute'],
     ),
     (

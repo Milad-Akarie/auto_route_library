@@ -267,7 +267,7 @@ RootStackRouter _buildRouter(
   int guardedTab = 1,
   int homeIndex = -1,
 }) {
-  final routes = [for (final name in _kTabNames) NamedRoute(name)];
+  final routes = [for (final name in _kTabNames) NamedRoute<Object?>(name)];
   final host = switch (kind) {
     .indexedStack => AutoTabsRouter(routes: routes, homeIndex: homeIndex),
     .pageView => AutoTabsRouter.pageView(routes: routes, homeIndex: homeIndex),

@@ -17,7 +17,7 @@ void main() {
     ValueNotifier<int?> index, {
     required bool shouldUsePathAsKey,
   }) {
-    const list = NamedRoute('BookListRoute');
+    const list = NamedRoute<void>('BookListRoute');
     return .build(
       routes: [
         AutoRoute(

@@ -48,8 +48,9 @@ void main() {
                         children: [
                           const Text('Screen B/2'),
                           FilledButton(
-                            onPressed: () =>
-                                context.navigateTo(const NamedRoute('ATab')),
+                            onPressed: () => context.navigateTo<void>(
+                              const NamedRoute('ATab'),
+                            ),
                             child: const Text('Go to Screen A'),
                           ),
                         ],

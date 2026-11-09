@@ -46,7 +46,7 @@ void main() {
       Future<StackRouter> openDetail() async {
         final postRouter = tester.element(find.text('PostRoute')).router;
         postRouter
-            .navigate(
+            .navigate<void>(
               const NamedRoute(
                 'PostRouter',
                 children: [NamedRoute('PostDetailRoute')],

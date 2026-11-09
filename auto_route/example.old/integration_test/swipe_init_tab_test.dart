@@ -14,9 +14,9 @@ void main() {
 
   group('swipe init tab', () {
     const tabs = [
-      NamedRoute('Tab1Route'),
-      NamedRoute('Tab2Route'),
-      NamedRoute('Tab3Route'),
+      NamedRoute<Object?>('Tab1Route'),
+      NamedRoute<Object?>('Tab2Route'),
+      NamedRoute<Object?>('Tab3Route'),
     ];
 
     RootStackRouter buildRouter(Widget Function() tabsRouter) => .build(

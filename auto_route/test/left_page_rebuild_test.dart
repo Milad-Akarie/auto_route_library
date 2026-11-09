@@ -43,7 +43,7 @@ void main() {
   // state it was opened with. A page that has left should not build again.
   for (final (label, leave) in [
     ('replace', () => router.replace(const SecondRoute())),
-    ('navigate', () => router.navigate(const SecondRoute())),
+    ('navigate', () => router.navigate<Object?>(const SecondRoute())),
     ('push', () => router.push(const SecondRoute())),
   ]) {
     // Steps: open A, whose build reads context.routeData and

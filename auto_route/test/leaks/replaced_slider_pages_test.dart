@@ -63,7 +63,7 @@ void main() {
       var current = 'Widget1';
       for (var i = 0; i < 80; i++) {
         current = current == 'Widget1' ? 'Widget2' : 'Widget1';
-        final next = NamedRoute(current);
+        final next = NamedRoute<Object?>(current);
         if (i < 40) {
           unawaited(nested.replace(next));
         } else {

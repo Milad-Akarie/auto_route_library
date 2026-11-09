@@ -50,8 +50,9 @@ void main() {
                   name: 'Page1Route',
                   path: '',
                   builder: (context, _) => TextButton(
-                    onPressed: () =>
-                        context.router.navigate(const NamedRoute('Page2Route')),
+                    onPressed: () => context.router.navigate<Object?>(
+                      const NamedRoute('Page2Route'),
+                    ),
                     child: const Text('Go to page 2'),
                   ),
                 ),
@@ -59,8 +60,9 @@ void main() {
                   name: 'Page2Route',
                   path: 'page2',
                   builder: (context, _) => TextButton(
-                    onPressed: () =>
-                        context.router.navigate(const NamedRoute('Page1Route')),
+                    onPressed: () => context.router.navigate<Object?>(
+                      const NamedRoute('Page1Route'),
+                    ),
                     child: const Text('Go to home page'),
                   ),
                 ),
