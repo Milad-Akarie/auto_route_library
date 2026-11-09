@@ -143,6 +143,8 @@ import 'remove_where_same_route_test.dart' as remove_where_same_route;
 import 'repeated_query_key_test.dart' as repeated_query_key;
 import 'replace_all_from_deep_stack_test.dart' as replace_all_from_deep_stack;
 import 'replace_all_on_reevaluation_test.dart' as replace_all_on_reevaluation;
+import 'replace_all_parent_then_child_test.dart'
+    as replace_all_parent_then_child;
 import 'replace_all_rejected_test.dart' as replace_all_rejected;
 import 'replace_changed_path_param_test.dart' as replace_changed_path_param;
 import 'replace_rejected_test.dart' as replace_rejected;
@@ -346,6 +348,7 @@ void main() {
   repeated_query_key.main();
   replace_all_from_deep_stack.main();
   replace_all_on_reevaluation.main();
+  replace_all_parent_then_child.main();
   replace_all_rejected.main();
   replace_changed_path_param.main();
   replace_rejected.main();
