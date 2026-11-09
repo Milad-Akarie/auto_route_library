@@ -4,7 +4,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/matcher/route_matcher.dart';
 import 'package:auto_route/src/route/auto_route.dart';
 import 'package:auto_route/src/router/transitions/auto_page_route_builder.dart';
-import 'package:collection/collection.dart';
+import 'package:auto_route/src/utils/collection.dart';
+import 'package:collection/collection.dart' hide ListExtensions;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:material_ui/material_ui.dart';
@@ -349,7 +350,9 @@ abstract class RoutingController with ChangeNotifier {
     RoutingController? controller = this;
     var pending = const <RouteMatch<Object?>>[];
     for (var i = 0; i < chain.length - 1; i++) {
-      final name = chain[i].name;
+      final link = chain.elementAtOrNull(i);
+      if (link == null) break;
+      final name = link.name;
       RouteMatch<Object?>? open;
       if (controller != null) {
         final data = controller.stackData.lastWhereOrNull(
@@ -367,7 +370,7 @@ abstract class RoutingController with ChangeNotifier {
         pending = open?.children ?? const [];
       }
       if (open == null) break;
-      chain[i] = chain[i].copyWith(
+      chain[i] = link.copyWith(
         stringMatch: open.stringMatch,
         segments: open.segments,
         params: open.params,
@@ -1103,8 +1106,9 @@ class TabsRouter extends RoutingController {
     if (_activeIndex == index) return _TabChange.done;
     // A view asks again for the tab it moved to while its guards decide.
     if (route == null && _pendingTab == index) return _pendingChange!;
+    final match = route ?? _pages.elementAtOrNull(index)?.routeData._route;
+    if (match == null) return _TabChange.done;
     final change = ++_tabChanges;
-    final match = route ?? _pages[index].routeData._route;
     final checked = _checkTabGuards(match, onFailure: onFailure);
     if (checked is ResolverResult) {
       return _endTabChange(
@@ -1191,14 +1195,14 @@ class TabsRouter extends RoutingController {
     int from = 0,
   }) {
     final guards = route.guards;
-    if (from == guards.length) {
+    final guard = guards.elementAtOrNull(from);
+    if (guard == null) {
       return ResolverResult(
         continueNavigation: true,
         reevaluateNext: true,
         route: route,
       );
     }
-    final guard = guards[from];
     final router = _guardRouter;
     final resolver = NavigationResolver(router, Completer(), route);
     final entry = GuardEntry(guard, resolver);
@@ -1244,7 +1248,7 @@ class TabsRouter extends RoutingController {
   List<AutoRoutePage<Object?>> get stack => .unmodifiable(_pages);
 
   AutoRoutePage<Object?>? get _activePage {
-    return _pages.isEmpty ? null : _pages[_activeIndex];
+    return _pages.elementAtOrNull(_activeIndex);
   }
 
   @override
@@ -1480,7 +1484,7 @@ class TabsRouter extends RoutingController {
   /// and sets `previousActiveRoute` as active index if provided
   void replaceAll(List<PageRouteInfo>? routes, int fromIndex) {
     final routesToPush = _resolveRoutes(routes);
-    final previousActiveRoute = stackData[fromIndex];
+    final previousActiveRoute = stackData.elementAtOrNull(fromIndex);
     final previousPages = List.of(_pages);
     final previousHistory = _tabHistoryNames;
 
@@ -1501,7 +1505,7 @@ class TabsRouter extends RoutingController {
     final keptMatchIds = _pages.map((p) => p.routeData.matchId).toSet();
     _childControllers.removeWhere((c) => !keptMatchIds.contains(c.matchId));
     var targetIndex = routesToPush.indexWhere(
-      (r) => r.name == previousActiveRoute.name,
+      (r) => r.name == previousActiveRoute?.name,
     );
     if (targetIndex == -1) {
       targetIndex = homeIndex == -1 ? 0 : homeIndex;
@@ -1517,7 +1521,8 @@ class TabsRouter extends RoutingController {
   }
 
   List<String> get _tabHistoryNames => [
-    for (final index in _tabHistory) _pages[index].routeData.name,
+    for (final index in _tabHistory)
+      if (_pages.elementAtOrNull(index) case final page?) page.routeData.name,
   ];
 
   // The tab history over [routes] that [names] give, found by name as the
@@ -1552,7 +1557,8 @@ class TabsRouter extends RoutingController {
           );
         } else {
           final shouldNotify =
-              mayUpdateRoute != _pages[pageToUpdateIndex].routeData._route;
+              mayUpdateRoute !=
+              _pages.elementAtOrNull(pageToUpdateIndex)?.routeData._route;
           final routeToBeUpdated = _updateTabPage(
             pageToUpdateIndex,
             mayUpdateRoute,
@@ -1584,11 +1590,11 @@ class TabsRouter extends RoutingController {
     int index,
     RouteMatch<Object?> mayUpdateRoute,
   ) {
-    final routeToBeUpdated = mayUpdateRoute.withId(
-      _pages[index].routeData._route.id,
-    );
+    final oldData = _pages.elementAtOrNull(index)?.routeData;
+    if (oldData == null) return mayUpdateRoute;
+    final routeToBeUpdated = mayUpdateRoute.withId(oldData._route.id);
     for (final ctr in _childControllers) {
-      if (ctr.matchId == _pages[index].routeData.matchId) {
+      if (ctr.matchId == oldData.matchId) {
         ctr._isMarkedForDataUpdate = true;
       }
     }
@@ -1634,7 +1640,8 @@ class TabsRouter extends RoutingController {
     if (tabs.length < 2) return tabs.firstOrNull ?? -1;
     final childName = route.children?.firstOrNull?.name;
     bool doesHoldChild(int index) {
-      final data = _pages[index].routeData;
+      final data = _pages.elementAtOrNull(index)?.routeData;
+      if (data == null) return false;
       final pageNames =
           _innerControllerOfMatch(data.matchId)?.stackData.map((d) => d.name) ??
           data.route.children?.map((c) => c.name) ??
@@ -1644,7 +1651,9 @@ class TabsRouter extends RoutingController {
 
     final holding = tabs.where(doesHoldChild).toList();
     final meant = holding.isEmpty ? tabs : holding;
-    return meant.contains(_activeIndex) ? _activeIndex : meant.first;
+    return meant.contains(_activeIndex)
+        ? _activeIndex
+        : (meant.firstOrNull ?? -1);
   }
 
   /// If page corresponding with [index]
@@ -1654,8 +1663,9 @@ class TabsRouter extends RoutingController {
     if (_childControllers.isEmpty) {
       return null;
     }
-    final pageMatchId = _pages[index].routeData.matchId;
-    final innerRouter = _innerControllerOfMatch(pageMatchId);
+    final page = _pages.elementAtOrNull(index);
+    if (page == null) return null;
+    final innerRouter = _innerControllerOfMatch(page.routeData.matchId);
     if (innerRouter is StackRouter) {
       return innerRouter;
     }
@@ -1693,7 +1703,8 @@ class TabsRouter extends RoutingController {
     String fragment = '',
     bool includeAncestors = false,
   }) {
-    final newData = _pages[activeIndex].routeData;
+    final newData = _pages.elementAtOrNull(activeIndex)?.routeData;
+    if (newData == null) return;
     final route = newData.route;
     newData._updateRoute(
       route.copyWith(queryParams: Parameters(queryParams), fragment: fragment),
@@ -2248,7 +2259,8 @@ abstract class StackRouter extends RoutingController {
   }) async {
     final kept = isReevaluating ? 0 : _keepPagesUnderTarget(matches);
     final toPush = kept == 0 ? matches : matches.sublist(kept);
-    final anchor = toPush.first;
+    final anchor = toPush.firstOrNull;
+    if (anchor == null) return null;
     final anchorPage = _pages.lastWhereOrNull((p) => p.routeKey == anchor.key);
     if (anchorPage != null) {
       for (final candidate in List<AutoRoutePage<Object?>>.unmodifiable(
@@ -2284,12 +2296,15 @@ abstract class StackRouter extends RoutingController {
   // which updates its router. The pages above the kept ones are removed,
   // except one the next match opens again, which is left for the caller.
   int _keepPagesUnderTarget(List<RouteMatch<Object?>> matches) {
-    final start = _pages.lastIndexWhere((p) => p.routeKey == matches.first.key);
+    final start = _pages.lastIndexWhere(
+      (p) => p.routeKey == matches.firstOrNull?.key,
+    );
     if (start == -1) return 0;
     var kept = 0;
-    while (kept < matches.length - 1 && start + kept < _pages.length) {
-      final data = _pages[start + kept].routeData;
-      if (data._route != matches[kept] ||
+    while (kept < matches.length - 1) {
+      final data = _pages.elementAtOrNull(start + kept)?.routeData;
+      if (data == null ||
+          data._route != matches.elementAtOrNull(kept) ||
           _innerControllerOfMatch(data.matchId) != null) {
         break;
       }
@@ -2297,7 +2312,9 @@ abstract class StackRouter extends RoutingController {
     }
     if (kept == 0) return 0;
     final next = start + kept;
-    if (next < _pages.length && _pages[next].routeKey != matches[kept].key) {
+    final nextPage = _pages.elementAtOrNull(next);
+    if (nextPage != null &&
+        nextPage.routeKey != matches.elementAtOrNull(kept)?.key) {
       _markLeaving(_pages.sublist(next), .removed);
       _pages.removeRange(next, _pages.length);
     }
@@ -2425,7 +2442,9 @@ abstract class StackRouter extends RoutingController {
     OnNavigationFailure? onFailure,
   }) {
     assert(routes.isNotEmpty, 'routes must not be empty.');
-    return _findStackScope(routes.first)._pushAll(routes, onFailure: onFailure);
+    final first = routes.firstOrNull;
+    if (first == null) return Future.value();
+    return _findStackScope(first)._pushAll(routes, onFailure: onFailure);
   }
 
   /// Pop the current route off the navigator and push all given [routes] in its
@@ -2441,7 +2460,9 @@ abstract class StackRouter extends RoutingController {
     OnNavigationFailure? onFailure,
   }) {
     assert(routes.isNotEmpty, 'routes must not be empty.');
-    final scope = _findStackScope(routes.first)..pop();
+    final first = routes.firstOrNull;
+    if (first == null) return Future.value();
+    final scope = _findStackScope(first)..pop();
     return scope._pushAll(routes, onFailure: onFailure);
   }
 
@@ -2457,7 +2478,9 @@ abstract class StackRouter extends RoutingController {
     OnNavigationFailure? onFailure,
     bool updateExistingRoutes = true,
   }) {
-    return _findStackScope(routes.first)._replaceAll(
+    final first = routes.firstOrNull;
+    if (first == null) return Future.value();
+    return _findStackScope(first)._replaceAll(
       routes,
       onFailure: onFailure,
       updateExistingRoutes: updateExistingRoutes,
@@ -3247,13 +3270,13 @@ abstract class StackRouter extends RoutingController {
         // Each router sits on the top page of the next one.
         var isStillShown = true;
         for (var i = rejectedPages.length - 1; i >= 0; i--) {
+          final router = routers.elementAtOrNull(i);
+          final rejected = rejectedPages.elementAtOrNull(i);
+          if (router == null || rejected == null) continue;
           if (isStillShown) {
-            routers[i]._removePagesUntil(
-              rejectedPages[i],
-              isForPush: routers[i] == scope,
-            );
+            router._removePagesUntil(rejected, isForPush: router == scope);
           }
-          isStillShown = isStillShown && rejectedPages[i] == 0;
+          isStillShown = isStillShown && rejected == 0;
         }
       },
     );
@@ -3298,7 +3321,9 @@ abstract class StackRouter extends RoutingController {
   void _removePagesUntil(int count, {required bool isForPush}) {
     _markLeaving(_pages.reversed.take(count), isForPush ? .replaced : .removed);
     for (var i = 0; i < count; i++) {
-      final shownRoute = pagelessRoutesObserver.routeOf(_pages.last);
+      final top = _pages.lastOrNull;
+      if (top == null) break;
+      final shownRoute = pagelessRoutesObserver.routeOf(top);
       if (!isForPush && shownRoute != null) {
         final shownNavigator = shownRoute.navigator;
         shownNavigator?.removeRoute(shownRoute);

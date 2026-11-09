@@ -134,7 +134,7 @@ class RouteData<R> {
           messages
             ..add(
               '${_route.name} is an auto created ancestor of target route '
-              '${_route.flattened.last.name}',
+              '${_route.flattened.lastOrNull?.name ?? _route.name}',
             )
             ..add(
               'This usually happens when you try to navigate to a route '

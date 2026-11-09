@@ -8,6 +8,7 @@
 // Copied from Flutter: the code stays as Flutter wrote it, so the two can
 // still be compared line by line.
 
+import 'package:auto_route/src/utils/collection.dart';
 import 'package:cupertino_ui/cupertino_ui.dart'
     show CupertinoDynamicColor, CupertinoRouteTransitionMixin;
 import 'package:flutter/foundation.dart';
@@ -238,8 +239,8 @@ class _CupertinoEdgeShadowDecoration extends Decoration {
       'Both decorations have the same number of colors.',
     );
     return _CupertinoEdgeShadowDecoration._([
-      for (int i = 0; i < bColors!.length; i += 1)
-        Color.lerp(a._colors?[i], bColors[i], t)!,
+      for (final (i, color) in bColors!.indexed)
+        Color.lerp(a._colors?.elementAtOrNull(i), color, t)!,
     ]);
   }
 
@@ -340,8 +341,8 @@ class _CupertinoEdgeShadowPainter extends BoxPainter {
       }
       final paint = Paint()
         ..color = Color.lerp(
-          colors[bandColorIndex],
-          colors[bandColorIndex + 1],
+          colors.elementAtOrNull(bandColorIndex),
+          colors.elementAtOrNull(bandColorIndex + 1),
           (dx % bandWidth) / bandWidth,
         )!;
       final x = start + shadowDirection * dx;

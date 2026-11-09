@@ -125,10 +125,9 @@ class _AutoTabsRouterIndexedStackState
                 lazyLoad: widget.lazyLoad,
                 navigatorObservers: _navigatorObservers,
                 itemBuilder: (context, index) {
-                  return KeepAliveTab(
-                    key: _tabKeyOf(stack[index]),
-                    page: stack[index],
-                  );
+                  final page = stack.elementAtOrNull(index);
+                  if (page == null) return const SizedBox.shrink();
+                  return KeepAliveTab(key: _tabKeyOf(page), page: page);
                 },
                 stack: stack,
               );

@@ -2,6 +2,10 @@
 - **CHORE**: the lint setup is simpler: `lines_longer_than_80_chars`, `prefer-single-widget-per-file`,
   `prefer-prefixed-global-constants` and `prefer-match-file-name` are off, and DCM runs its recommended rules plus a
   short list.
+- **FIX**: reading a page, tab, guard or url segment past the end of its list no longer throws inside the router; what
+  isn't there is skipped.
+- **CHANGE**: `StackRouter.replaceAll` with an empty list does nothing, instead of throwing a `StateError`. `pushAll` and
+  `popAndPushAll` still assert in debug builds, and do nothing in release builds.
 
 ## 12.4.0
 - **FEAT**: `AutoRouter` and `AutoRouter.declarative` take a `heroControllerBuilder`, so Heroes fly between two pages

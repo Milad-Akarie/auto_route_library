@@ -6,6 +6,7 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/router/widgets/eager_page_view.dart';
+import 'package:auto_route/src/utils/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:material_ui/material_ui.dart';
@@ -284,9 +285,11 @@ class AutoTabViewState extends State<AutoTabView> {
       // For motivation, see https://github.com/flutter/flutter/pull/29188 and
       // https://github.com/flutter/flutter/issues/27010#issuecomment-486475152.
       _children = List.of(_children, growable: false);
-      final temp = _children[initialPage];
-      _children[initialPage] = _children[previousIndex];
-      _children[previousIndex] = temp;
+      final first = _children.elementAtOrNull(initialPage);
+      final second = _children.elementAtOrNull(previousIndex);
+      if (first == null || second == null) return;
+      _children[initialPage] = second;
+      _children[previousIndex] = first;
     });
 
     // Make a first jump to the adjacent page.

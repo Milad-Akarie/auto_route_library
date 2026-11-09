@@ -2,7 +2,8 @@ import 'dart:convert';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/matcher/route_matcher.dart';
-import 'package:collection/collection.dart';
+import 'package:auto_route/src/utils/collection.dart';
+import 'package:collection/collection.dart' hide ListExtensions;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart'
     show RouteInformation, RouteInformationParser;
@@ -369,9 +370,13 @@ class UrlState {
       ];
       final out = StringBuffer();
       var i = 0;
-      while (i < bytes.length) {
-        if (bytes[i] < 0x80) {
-          final char = String.fromCharCode(bytes[i]);
+      for (
+        var byte = bytes.elementAtOrNull(i);
+        byte != null;
+        byte = bytes.elementAtOrNull(i)
+      ) {
+        if (byte < 0x80) {
+          final char = String.fromCharCode(byte);
           out.write(
             keep.contains(char) ? run.substring(i * 3, i * 3 + 3) : char,
           );
@@ -379,7 +384,7 @@ class UrlState {
           continue;
         }
         var end = i + 1;
-        while (end < bytes.length && bytes[end] >= 0x80) {
+        while ((bytes.elementAtOrNull(end) ?? 0) >= 0x80) {
           end++;
         }
         try {
@@ -414,8 +419,10 @@ class UrlState {
   /// With the flattened version of [segments]
   /// e.g if segments = [Match1[Match2[Match3]]]
   /// the result is [Match1,Match2,Match3]
-  UrlState get flatten =>
-      .fromSegments(segments.last.flattened, state: pathState);
+  UrlState get flatten => .fromSegments(
+    segments.lastOrNull?.flattened ?? const [],
+    state: pathState,
+  );
 
   @override
   String toString() {

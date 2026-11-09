@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/router/widgets/auto_tab_view.dart';
-import 'package:collection/collection.dart';
+import 'package:auto_route/src/utils/collection.dart';
+import 'package:collection/collection.dart' hide ListExtensions;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:material_ui/material_ui.dart';
@@ -292,17 +293,15 @@ mixin _RouteAwareTabsMixin<T extends StatefulWidget> on State<T> {
   List<RouteMatch<Object?>> get routes;
 
   void _didInitTabRoute(int index, [int previous = -1]) {
+    final routeInfo = routes.elementAtOrNull(index);
+    if (routeInfo == null) return;
+    final previousInfo = routes.elementAtOrNull(previous);
     observers.whereType<AutoRouterObserver>().forEach((observer) {
-      TabPageRoute? previousRoute;
-      if (previous != -1) {
-        previousRoute = TabPageRoute(
-          routeInfo: routes[previous],
-          index: previous,
-        );
-      }
       observer.didInitTabRoute(
-        TabPageRoute(routeInfo: routes[index], index: index),
-        previousRoute,
+        TabPageRoute(routeInfo: routeInfo, index: index),
+        previousInfo == null
+            ? null
+            : TabPageRoute(routeInfo: previousInfo, index: previous),
       );
     });
   }
@@ -320,10 +319,13 @@ mixin _RouteAwareTabsMixin<T extends StatefulWidget> on State<T> {
   }
 
   void _didChangeTabRoute(int index, int previous) {
+    final routeInfo = routes.elementAtOrNull(index);
+    final previousInfo = routes.elementAtOrNull(previous);
+    if (routeInfo == null || previousInfo == null) return;
     observers.whereType<AutoRouterObserver>().forEach((observer) {
       observer.didChangeTabRoute(
-        TabPageRoute(routeInfo: routes[index], index: index),
-        TabPageRoute(routeInfo: routes[previous], index: previous),
+        TabPageRoute(routeInfo: routeInfo, index: index),
+        TabPageRoute(routeInfo: previousInfo, index: previous),
       );
     });
   }
