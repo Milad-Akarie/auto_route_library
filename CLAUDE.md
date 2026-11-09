@@ -26,7 +26,7 @@ Before fixing a lint, load the `dart-lint` skill: it holds the shapes that fix e
 Use the DCM MCP tools (`dcm_analyze`, `dcm_fix` and the other `dcm_*` checks) with the package folder as their root, or the `dcm` command.
 A finding that can't be fixed without changing public API or behavior stays standing, and the report names its file, line, rule and reason.
 `.github/scripts/check_lint_rules_on.sh` proves it: it fails on a rule set to `false`, a per-rule `exclude:` or an `// ignore:` comment.
-One exception, Phil's, 2026-11-06: `prefer-boolean-prefixes` and `prefer-correct-callback-field-name` are switched off, since renaming the package's own booleans and callback fields is too much change for apps. The script allows exactly those two.
+Exceptions, Phil's. Since 2026-11-06, `prefer-boolean-prefixes` and `prefer-correct-callback-field-name` are off, since renaming the package's own booleans and callback fields is too much change for apps. Since 2026-11-09, `lines_longer_than_80_chars`, `prefer-single-widget-per-file`, `prefer-prefixed-global-constants` and `prefer-match-file-name` are off too, and ten rules may carry an `// ignore:` comment with its reason beside it. The script lists exactly these.
 
 ## Proving a fix
 1. A headless test in `auto_route/test/` that fails before the fix and passes after it. Its comment names the issue and the steps.

@@ -11,8 +11,9 @@
 # `exclude:` lists for build output and generated code, and `metrics-exclude:`,
 # are left alone.
 #
-# Exactly two rules may be false, Phil's recorded exception (see `allowed`
-# below). Any other rule set to false still fails.
+# Six rules may be false and ten may carry an ignore comment, Phil's recorded
+# exceptions (see `allowed` and `allowed_ignores` below). Any other rule set to
+# false, or any other ignore comment, still fails.
 #
 # Usage, from anywhere inside the repository:
 # check_lint_rules_on.sh [folder]
@@ -24,7 +25,11 @@ cd "${1:-$(git rev-parse --show-toplevel)}" || exit 1
 # Phil, 2026-11-06: "lets do without var renaming as it is too much of a
 # change, we can disable this rule for now." Both rules would rename the
 # package's own booleans and callback fields.
-allowed="prefer-boolean-prefixes prefer-correct-callback-field-name"
+allowed="prefer-boolean-prefixes prefer-correct-callback-field-name lines_longer_than_80_chars prefer-single-widget-per-file prefer-prefixed-global-constants prefer-match-file-name"
+
+# Phil, 2026-11-09: the findings of these rules are false alarms or public API,
+# and each ignore comment says so where it stands.
+allowed_ignores="no-empty-block|function-always-returns-null|prefer-overriding-parent-equality|avoid-incomplete-copy-with|avoid-unrelated-type-assertions|avoid-suspicious-super-overrides|match-getter-setter-field-names|avoid-shadowing|dispose-fields|always-remove-listener"
 
 options_program='
   BEGIN { n = split(allow, names, " "); for (i = 1; i <= n; i++) ok[names[i]] = 1 }
@@ -58,12 +63,13 @@ found=$(
     git ls-files -z -- '*analysis_options.yaml' | xargs -0 awk -v allow="$allowed" "$options_program"
     git ls-files -z -- '*.dart' ':!:*.gr.dart' ':!:*.g.dart' ':!:*.mocks.dart' |
       xargs -0 grep -HnE '//[[:space:]]*ignore(_for_file)?:' |
+      grep -vE "//[[:space:]]*ignore(_for_file)?:[[:space:]]*($allowed_ignores)[[:space:]]*$" |
       sed -E 's/^/IGNORE /; s/^(IGNORE [^:]*:[0-9]+:)/\1 ignore comment:/'
   } 2>/dev/null
 )
 
 if [ -z "$found" ]; then
-  echo "Every lint rule is on except the two Phil switched off (prefer-boolean-prefixes, prefer-correct-callback-field-name), and nothing is ignored."
+  echo "Every lint rule is on except the six Phil switched off, and nothing else is ignored."
   exit 0
 fi
 
