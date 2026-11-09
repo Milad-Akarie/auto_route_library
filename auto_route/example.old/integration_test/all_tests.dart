@@ -180,6 +180,7 @@ import 'tab_bar_dispose_test.dart' as tab_bar_dispose;
 import 'tab_bar_indicator_test.dart' as tab_bar_indicator;
 import 'tab_cached_context_test.dart' as tab_cached_context;
 import 'tab_guards_test.dart' as tab_guards;
+import 'tab_history_back_rebuild_test.dart' as tab_history_back_rebuild;
 import 'tab_history_back_test.dart' as tab_history_back;
 import 'tab_inner_router_test.dart' as tab_inner_router;
 import 'tab_navigate_path_query_test.dart' as tab_navigate_path_query;
@@ -389,6 +390,7 @@ void main() {
   tab_bar_indicator.main();
   tab_cached_context.main();
   tab_guards.main();
+  tab_history_back_rebuild.main();
   tab_history_back.main();
   tab_inner_router.main();
   tab_navigate_path_query.main();
