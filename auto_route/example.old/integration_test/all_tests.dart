@@ -25,6 +25,7 @@ import 'declarative_initial_routes_test.dart' as declarative_initial_routes;
 import 'declarative_on_navigate_once_test.dart' as declarative_on_navigate_once;
 import 'declarative_push_message_test.dart' as declarative_push_message;
 import 'declarative_router_key_test.dart' as declarative_router_key;
+import 'declarative_router_of_test.dart' as declarative_router_of;
 import 'declarative_routes_update_test.dart' as declarative_routes_update;
 import 'deep_link_parent_build_test.dart' as deep_link_parent_build;
 import 'deferred_and_eager_page_test.dart' as deferred_and_eager_page;
@@ -240,6 +241,7 @@ void main() {
   declarative_on_navigate_once.main();
   declarative_push_message.main();
   declarative_router_key.main();
+  declarative_router_of.main();
   declarative_routes_update.main();
   deep_link_parent_build.main();
   deferred_and_eager_page.main();
