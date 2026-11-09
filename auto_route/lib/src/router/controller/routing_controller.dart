@@ -938,7 +938,7 @@ class TabsRouter extends RoutingController {
     required this._routeData,
     required this.preload,
     required this.matchId,
-    this.homeIndex = -1,
+    this._homeIndex = -1,
     this.backThroughHistory = false,
     this._parent,
   }) : _routeCollection = routeCollection,
@@ -1002,7 +1002,30 @@ class TabsRouter extends RoutingController {
   /// if activeIndex != homeIndex
   /// set activeIndex to homeIndex
   /// else pop parent
-  final int homeIndex;
+  ///
+  /// [AutoTabsRouter] sets it whenever it is rebuilt with another homeIndex.
+  /// An index past the end of the tabs counts as no home tab.
+  int get homeIndex => _homeIndex;
+
+  /// Makes the tab at [value] the one back goes to, or none when it is -1.
+  ///
+  /// Android is told after the frame whether the app still takes back, as
+  /// this is set while the [AutoTabsRouter] above builds.
+  set homeIndex(int value) {
+    if (_homeIndex == value) return;
+    _homeIndex = value;
+    SchedulerBinding.instance
+      ..addPostFrameCallback((_) {
+        if (!_isDisposed) root.notifyListeners();
+      })
+      ..ensureVisualUpdate();
+  }
+
+  int _homeIndex;
+
+  // The tab back goes to, or -1: the tabs may have become fewer than
+  // [homeIndex] counts on.
+  int get _homeTab => homeIndex < _pages.length ? homeIndex : -1;
 
   /// Whether back shows the tabs visited before the active one, the latest
   /// first, before it leaves the tabs.
@@ -1028,7 +1051,7 @@ class TabsRouter extends RoutingController {
   // Whether back stays inside these tabs, by showing another one.
   bool get _doesTakeBack =>
       (backThroughHistory && _tabHistory.isNotEmpty) ||
-      (homeIndex != -1 && _activeIndex != homeIndex);
+      (_homeTab != -1 && _activeIndex != _homeTab);
 
   /// Called to preload a page before other navigation events occur if it
   /// returns true, the page has been preloaded, otherwise we assume it's
@@ -1309,8 +1332,8 @@ class TabsRouter extends RoutingController {
     final FutureOr<_TabChange> change;
     if (isFromHistory) {
       change = _changeTab(_tabHistory.removeLast(), remember: false);
-    } else if (homeIndex != -1 && _activeIndex != homeIndex) {
-      change = _changeTab(homeIndex, remember: false);
+    } else if (_homeTab != -1 && _activeIndex != _homeTab) {
+      change = _changeTab(_homeTab, remember: false);
     } else {
       return false;
     }
@@ -1510,7 +1533,7 @@ class TabsRouter extends RoutingController {
       (r) => r.name == previousActiveRoute?.name,
     );
     if (targetIndex == -1) {
-      targetIndex = homeIndex == -1 ? 0 : homeIndex;
+      targetIndex = _homeTab == -1 ? 0 : _homeTab;
     }
     // Set directly, not through setActiveIndex: the old index points into the
     // old routes, so it can't be preloaded or reported to observers as the

@@ -1,3 +1,7 @@
+## Unreleased
+- **BEHAVIOR CHANGE**: `AutoTabsRouter` passes a new `homeIndex` on when it is rebuilt with one, so back goes to the new
+  home tab. A `homeIndex` past the end of the tabs counts as no home tab instead of throwing (#1759).
+
 ## 12.5.0
 - **CHORE**: the lint setup is simpler: `lines_longer_than_80_chars`, `prefer-single-widget-per-file`,
   `prefer-prefixed-global-constants` and `prefer-match-file-name` are off, and DCM runs its recommended rules plus a

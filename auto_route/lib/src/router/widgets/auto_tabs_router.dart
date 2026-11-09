@@ -237,6 +237,14 @@ abstract class AutoTabsRouterState<T extends AutoTabsRouter> extends State<T> {
 
   void _setupController();
 
+  // Before the views' own didUpdateWidget, which may replace the routes and
+  // fall back to the home tab.
+  @override
+  void didUpdateWidget(T oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _controller?.homeIndex = widget.homeIndex;
+  }
+
   // One key per tab, not per index, so a tab moved by a routes change keeps
   // its state. Global, because IndexedStack wraps each child in a widget
   // without a key, so a local key can't take the tab's state to its new index.
