@@ -44,20 +44,19 @@ void main() {
 
     // Steps: open A, then C; tap C's button, which calls push(B) then pop().
     // Should: the stack is [A, C] again, with C on screen.
-    testWidgets(
-      'push then pop over a pushed page leaves that page',
-      (tester) async {
-        await pumpRouterApp(tester, router);
-        unawaited(router.push(const PageRouteInfo('C')));
-        await tester.pumpAndSettle();
+    testWidgets('push then pop over a pushed page leaves that page', (
+      tester,
+    ) async {
+      await pumpRouterApp(tester, router);
+      unawaited(router.push(const PageRouteInfo('C')));
+      await tester.pumpAndSettle();
 
-        await tester.tap(find.text('Push and pop'));
-        await tester.pumpAndSettle();
-        expect(tester.takeException(), isNull);
-        expect(names(), ['A', 'C']);
-        expectCurrentPage(router, 'C');
-      },
-    );
+      await tester.tap(find.text('Push and pop'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(names(), ['A', 'C']);
+      expectCurrentPage(router, 'C');
+    });
   });
 }
 

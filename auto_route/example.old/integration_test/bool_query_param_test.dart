@@ -53,36 +53,33 @@ void main() {
 
     // Steps: open the deep link /flag?f=false.
     // Should: the page shows the flag false.
-    testWidgets(
-      'a deep link reads the text value with optBool',
-      (tester) async {
-        final router = buildRouter();
-        await pumpRouterApp(tester, router, initialLink: '/flag?f=false');
-        expect(tester.takeException(), isNull);
-        expect(find.text('Flag false'), findsOneWidget);
-      },
-    );
+    testWidgets('a deep link reads the text value with optBool', (
+      tester,
+    ) async {
+      final router = buildRouter();
+      await pumpRouterApp(tester, router, initialLink: '/flag?f=false');
+      expect(tester.takeException(), isNull);
+      expect(find.text('Flag false'), findsOneWidget);
+    });
 
     // Steps: push the page with f: true, then restore the app.
     // Should: the restored page shows the flag true.
-    testWidgets(
-      'a restored page reads its saved bool query param',
-      (tester) async {
-        await pumpRestorableApp(tester, buildRouter);
-        unawaited(
-          RestorableRouterApp.router.push(
-            const NamedRoute('FlagRoute', queryParams: {'f': true}),
-          ),
-        );
-        await tester.pumpAndSettle();
-        final earlier1 = find.text('Flag true').evaluate().length;
+    testWidgets('a restored page reads its saved bool query param', (
+      tester,
+    ) async {
+      await pumpRestorableApp(tester, buildRouter);
+      unawaited(
+        RestorableRouterApp.router.push(
+          const NamedRoute('FlagRoute', queryParams: {'f': true}),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final earlier1 = find.text('Flag true').evaluate().length;
 
-        await tester.restartAndRestore();
-        await tester.pumpAndSettle();
-        expect(tester.takeException(), isNull);
-        expect((earlier1, find.text('Flag true').evaluate().length), (1, 1));
-      },
-      skip: kIsWeb,
-    );
+      await tester.restartAndRestore();
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect((earlier1, find.text('Flag true').evaluate().length), (1, 1));
+    }, skip: kIsWeb);
   });
 }

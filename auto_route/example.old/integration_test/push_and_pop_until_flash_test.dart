@@ -44,41 +44,40 @@ void main() {
     // DRoute slides in.
     // Should: only CRoute shows under DRoute, then DRoute alone; back goes to
     // HomeRoute.
-    testWidgets(
-      'pushAndPopUntil never shows the pages it removes',
-      (tester) async {
-        await pumpRouterApp(tester, router);
-        unawaited(router.push(const PageRouteInfo('BRoute')));
-        await tester.pumpAndSettle();
-        unawaited(router.push(const PageRouteInfo('CRoute')));
-        await tester.pumpAndSettle();
+    testWidgets('pushAndPopUntil never shows the pages it removes', (
+      tester,
+    ) async {
+      await pumpRouterApp(tester, router);
+      unawaited(router.push(const PageRouteInfo('BRoute')));
+      await tester.pumpAndSettle();
+      unawaited(router.push(const PageRouteInfo('CRoute')));
+      await tester.pumpAndSettle();
 
-        unawaited(
-          router.pushAndPopUntil(
-            const PageRouteInfo('DRoute'),
-            predicate: (route) => route.settings.name == 'HomeRoute',
-          ),
-        );
-        final frames = <List<String>>[];
-        for (var i = 0; i < 25; i++) {
-          await tester.pump(const Duration(milliseconds: 40));
-          frames.add(shown());
-        }
-        expect(
-          frames.where(
-            (frame) => frame.contains('HomeRoute') || frame.contains('BRoute'),
-          ),
-          isEmpty,
-          reason: 'frames: $frames',
-        );
-        await tester.pumpAndSettle();
-        expect(router.stack.map((page) => page.name), ['HomeRoute', 'DRoute']);
+      unawaited(
+        router.pushAndPopUntil(
+          const PageRouteInfo('DRoute'),
+          predicate: (route) => route.settings.name == 'HomeRoute',
+        ),
+      );
+      final frames = <List<String>>[];
+      for (var i = 0; i < 25; i++) {
+        await tester.pump(const Duration(milliseconds: 40));
+        frames.add(shown());
+      }
+      expect(
+        frames.where(
+          (frame) => frame.contains('HomeRoute') || frame.contains('BRoute'),
+        ),
+        isEmpty,
+        reason: 'frames: $frames',
+      );
+      await tester.pumpAndSettle();
+      expect(router.stack.map((page) => page.name), ['HomeRoute', 'DRoute']);
 
-        unawaited(router.maybePop());
-        await tester.pumpAndSettle();
-        expectCurrentPage(router, 'HomeRoute');
-      },
-    );
+      unawaited(router.maybePop());
+      await tester.pumpAndSettle();
+      expectCurrentPage(router, 'HomeRoute');
+    });
   });
 }
 

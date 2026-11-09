@@ -109,17 +109,16 @@ void main() {
     for (final isNested in [false, true]) {
       final where = isNested ? 'in a nested router' : 'in a flat route';
       for (final MapEntry(key: name, value: (back, theme)) in backs.entries) {
-        testWidgets(
-          '$name $where calls onPopInvokedWithResult once',
-          (tester) async {
-            await openCountedPage(tester, isNested: isNested, theme: theme);
+        testWidgets('$name $where calls onPopInvokedWithResult once', (
+          tester,
+        ) async {
+          await openCountedPage(tester, isNested: isNested, theme: theme);
 
-            await back(tester);
+          await back(tester);
 
-            expect(find.text(_CountedRoute.name), findsNothing);
-            expect(_heard, [true]);
-          },
-        );
+          expect(find.text(_CountedRoute.name), findsNothing);
+          expect(_heard, [true]);
+        });
 
         // The iOS swipe doesn't start while PopScope blocks the page.
         if (back == swipeBack) continue;

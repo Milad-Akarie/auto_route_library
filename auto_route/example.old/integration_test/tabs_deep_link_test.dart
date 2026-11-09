@@ -91,10 +91,7 @@ class _LateGuard extends AutoRouteGuard {
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
     unawaited(
-      Future.delayed(
-        const Duration(milliseconds: 20),
-        () => resolver.next(),
-      ),
+      Future.delayed(const Duration(milliseconds: 20), () => resolver.next()),
     );
   }
 }

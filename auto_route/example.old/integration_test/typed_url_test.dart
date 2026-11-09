@@ -37,19 +37,17 @@ void main() {
 
     // Steps: open the app, type '/test/42' into the address bar.
     // Should: the page for '/test/:id' shows with id 42.
-    testWidgets(
-      'A path typed into the address bar opens its page',
-      (tester) async {
-        await pumpRouterAppWithConfig(tester, router);
+    testWidgets('A path typed into the address bar opens its page', (
+      tester,
+    ) async {
+      await pumpRouterAppWithConfig(tester, router);
 
-        typeBrowserUrl('/test/42');
-        await expectBrowserUrl('/test/42');
-        await tester.pumpAndSettle();
-        expect(router.topRoute.name, 'TestRoute');
-        expect(find.text('Test 42'), findsOneWidget);
-      },
-      skip: !kIsWeb,
-    );
+      typeBrowserUrl('/test/42');
+      await expectBrowserUrl('/test/42');
+      await tester.pumpAndSettle();
+      expect(router.topRoute.name, 'TestRoute');
+      expect(find.text('Test 42'), findsOneWidget);
+    }, skip: !kIsWeb);
 
     // Steps: open the app on '/test/7', as entering that url does on web or a
     // deep link does elsewhere.

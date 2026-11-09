@@ -51,38 +51,37 @@ void main() {
     // Steps: push the items route with lists.
     // Should: the url carries each item, an enum by its name, the form the
     // deep link uses.
-    testWidgets(
-      'Pushing the route writes the items in the url',
-      (tester) async {
-        final router = ListRouter();
-        await pumpRouterApp(tester, router);
-        unawaited(
-          router.push(
-            ItemsRoute(
-              ids: const [4, 5],
-              prices: const [1.5],
-              flags: const [true],
-              sorts: const [.desc],
-              picked: const [9],
-            ),
+    testWidgets('Pushing the route writes the items in the url', (
+      tester,
+    ) async {
+      final router = ListRouter();
+      await pumpRouterApp(tester, router);
+      unawaited(
+        router.push(
+          ItemsRoute(
+            ids: const [4, 5],
+            prices: const [1.5],
+            flags: const [true],
+            sorts: const [.desc],
+            picked: const [9],
           ),
-        );
-        await tester.pumpAndSettle();
-        expect(tester.takeException(), isNull);
-        expect(
-          find.text(
-            'ids [4, 5] prices [1.5] flags [true] sorts [desc] picked [9]',
-          ),
-          findsOneWidget,
-        );
-        expect(
-          router.urlState.url,
-          '/items?ids=4&ids=5&prices=1.5&flags=true&sorts=desc&picked=9',
-        );
-        await expectBrowserUrl(
-          '/items?ids=4&ids=5&prices=1.5&flags=true&sorts=desc&picked=9',
-        );
-      },
-    );
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(
+        find.text(
+          'ids [4, 5] prices [1.5] flags [true] sorts [desc] picked [9]',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        router.urlState.url,
+        '/items?ids=4&ids=5&prices=1.5&flags=true&sorts=desc&picked=9',
+      );
+      await expectBrowserUrl(
+        '/items?ids=4&ids=5&prices=1.5&flags=true&sorts=desc&picked=9',
+      );
+    });
   });
 }

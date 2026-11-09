@@ -97,10 +97,8 @@ class _HostRoute extends PageRouteInfo<void> {
           .tabBar => AutoTabsRouter.tabBar(routes: routes),
           .builder => AutoTabsRouter.builder(
             routes: routes,
-            builder: (context, children, tabsRouter) => IndexedStack(
-              index: tabsRouter.activeIndex,
-              children: children,
-            ),
+            builder: (context, children, tabsRouter) =>
+                IndexedStack(index: tabsRouter.activeIndex, children: children),
           ),
         };
       },

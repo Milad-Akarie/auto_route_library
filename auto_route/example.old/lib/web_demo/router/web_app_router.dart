@@ -25,16 +25,13 @@ class WebAppRouter extends RootStackRouter {
       initial: true,
       page: MainWebRoute.page,
       guards: [
-        AutoRouteGuard.simple(
-          (resolver, _) {
-            if (authService.isAuthenticated) {
-              resolver.next();
-            } else {
-              unawaited(resolver.redirectUntil(WebLoginRoute()));
-            }
-          },
-          debugLabel: 'AuthGuard',
-        ),
+        AutoRouteGuard.simple((resolver, _) {
+          if (authService.isAuthenticated) {
+            resolver.next();
+          } else {
+            unawaited(resolver.redirectUntil(WebLoginRoute()));
+          }
+        }, debugLabel: 'AuthGuard'),
       ],
     ),
     AutoRoute(path: '/login', page: WebLoginRoute.page),
@@ -48,20 +45,17 @@ class WebAppRouter extends RootStackRouter {
           path: 'posts',
           page: UserPostsRoute.page,
           guards: [
-            AutoRouteGuard.simple(
-              (resolver, scope) {
-                debugPrint(
-                  'Verify Guard: ${resolver.routeName}, isRev: '
-                  '${resolver.isReevaluating}',
-                );
-                if (authService.isVerified) {
-                  resolver.next();
-                } else {
-                  unawaited(resolver.redirectUntil(WebVerifyRoute()));
-                }
-              },
-              debugLabel: 'VerifyGuard',
-            ),
+            AutoRouteGuard.simple((resolver, scope) {
+              debugPrint(
+                'Verify Guard: ${resolver.routeName}, isRev: '
+                '${resolver.isReevaluating}',
+              );
+              if (authService.isVerified) {
+                resolver.next();
+              } else {
+                unawaited(resolver.redirectUntil(WebVerifyRoute()));
+              }
+            }, debugLabel: 'VerifyGuard'),
           ],
           children: [
             AutoRoute(path: 'all', page: UserAllPostsRoute.page, initial: true),

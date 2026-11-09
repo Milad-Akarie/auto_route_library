@@ -64,12 +64,9 @@ class ProfilePageState extends State<ProfilePage> {
               ElevatedButton(
                 onPressed: () {
                   unawaited(
-                    context.router.replaceAll(
-                      [
-                        HomeRoute(children: [SettingsTab(tab: 'Replaced')]),
-                      ],
-                      updateExistingRoutes: false,
-                    ),
+                    context.router.replaceAll([
+                      HomeRoute(children: [SettingsTab(tab: 'Replaced')]),
+                    ], updateExistingRoutes: false),
                   );
                 },
                 child: const Text('ReplaceAll'),

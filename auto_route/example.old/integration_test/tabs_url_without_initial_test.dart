@@ -23,56 +23,55 @@ void main() {
     // browser's back button on web, router.back() elsewhere.
     // Should: the url is '/tabs/tab-1' on the first tab, and going back shows it.
     for (final includePrefixMatches in [false, true]) {
-      testWidgets(
-        'going back to a tabs host opened without a tab in its url '
-        'shows its first tab, includePrefixMatches: $includePrefixMatches',
-        (tester) async {
-          final router = RootStackRouter.build(
-            routes: [
-              AutoRoute(page: _HomeRoute.page, path: '/'),
-              AutoRoute(
-                page: _TabsRoute.page,
-                path: '/tabs',
-                children: [
-                  AutoRoute(page: _Tab1Route.page, path: 'tab-1'),
-                  AutoRoute(page: _Tab2Route.page, path: 'tab-2'),
-                ],
-              ),
-            ],
-          );
-          await pumpRouterConfigApp(
-            tester,
-            router.config(
-              includePrefixMatches: includePrefixMatches,
-              deepLinkBuilder: (link) =>
-                  link.initial ? DeepLink.defaultPath : link,
+      testWidgets('going back to a tabs host opened without a tab in its url '
+          'shows its first tab, includePrefixMatches: $includePrefixMatches', (
+        tester,
+      ) async {
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(page: _HomeRoute.page, path: '/'),
+            AutoRoute(
+              page: _TabsRoute.page,
+              path: '/tabs',
+              children: [
+                AutoRoute(page: _Tab1Route.page, path: 'tab-1'),
+                AutoRoute(page: _Tab2Route.page, path: 'tab-2'),
+              ],
             ),
-          );
-          unawaited(router.navigate(const _TabsRoute()));
-          await tester.pumpAndSettle();
-          final earlier2 = find.text('Tab 1').evaluate().length;
-          final earlier1 = router.currentUrl;
-          await expectBrowserUrl('/tabs/tab-1');
-          await tester.tap(find.text('Show tab 2'));
-          await tester.pumpAndSettle();
-          expect(router.currentUrl, '/tabs/tab-2');
-          await expectBrowserUrl('/tabs/tab-2');
+          ],
+        );
+        await pumpRouterConfigApp(
+          tester,
+          router.config(
+            includePrefixMatches: includePrefixMatches,
+            deepLinkBuilder: (link) =>
+                link.initial ? DeepLink.defaultPath : link,
+          ),
+        );
+        unawaited(router.navigate(const _TabsRoute()));
+        await tester.pumpAndSettle();
+        final earlier2 = find.text('Tab 1').evaluate().length;
+        final earlier1 = router.currentUrl;
+        await expectBrowserUrl('/tabs/tab-1');
+        await tester.tap(find.text('Show tab 2'));
+        await tester.pumpAndSettle();
+        expect(router.currentUrl, '/tabs/tab-2');
+        await expectBrowserUrl('/tabs/tab-2');
 
-          if (kIsWeb) {
-            pressBrowserBack();
-            await expectBrowserUrl('/tabs/tab-1');
-          } else {
-            router.back();
-          }
-          await tester.pumpAndSettle();
-          expect((earlier2, find.text('Tab 1').evaluate().length), (1, 1));
-          expect((earlier1, router.currentUrl), ('/tabs/tab-1', '/tabs/tab-1'));
-          expect(router.stack.map((p) => p.name), [
-            _HomeRoute.name,
-            _TabsRoute.name,
-          ]);
-        },
-      );
+        if (kIsWeb) {
+          pressBrowserBack();
+          await expectBrowserUrl('/tabs/tab-1');
+        } else {
+          router.back();
+        }
+        await tester.pumpAndSettle();
+        expect((earlier2, find.text('Tab 1').evaluate().length), (1, 1));
+        expect((earlier1, router.currentUrl), ('/tabs/tab-1', '/tabs/tab-1'));
+        expect(router.stack.map((p) => p.name), [
+          _HomeRoute.name,
+          _TabsRoute.name,
+        ]);
+      });
     }
   });
 }

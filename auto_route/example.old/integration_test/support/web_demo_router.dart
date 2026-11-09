@@ -46,16 +46,13 @@ class WebAppRouter extends RootStackRouter {
       initial: true,
       page: MainWebRoute.page,
       guards: [
-        AutoRouteGuard.simple(
-          (resolver, _) {
-            if (authService.isAuthenticated) {
-              resolver.next();
-            } else {
-              unawaited(resolver.redirectUntil(const WebLoginRoute()));
-            }
-          },
-          debugLabel: 'AuthGuard',
-        ),
+        AutoRouteGuard.simple((resolver, _) {
+          if (authService.isAuthenticated) {
+            resolver.next();
+          } else {
+            unawaited(resolver.redirectUntil(const WebLoginRoute()));
+          }
+        }, debugLabel: 'AuthGuard'),
       ],
     ),
     AutoRoute(path: '/login', page: WebLoginRoute.page),
@@ -69,16 +66,13 @@ class WebAppRouter extends RootStackRouter {
           path: 'posts',
           page: UserPostsRoute.page,
           guards: [
-            AutoRouteGuard.simple(
-              (resolver, _) {
-                if (authService.isVerified) {
-                  resolver.next();
-                } else {
-                  unawaited(resolver.redirectUntil(const WebVerifyRoute()));
-                }
-              },
-              debugLabel: 'VerifyGuard',
-            ),
+            AutoRouteGuard.simple((resolver, _) {
+              if (authService.isVerified) {
+                resolver.next();
+              } else {
+                unawaited(resolver.redirectUntil(const WebVerifyRoute()));
+              }
+            }, debugLabel: 'VerifyGuard'),
           ],
           children: [
             AutoRoute(path: 'all', page: UserAllPostsRoute.page, initial: true),

@@ -43,79 +43,75 @@ void main() {
     // ExternalRoute twice, then restore the app and go back.
     // Should: all three ExternalRoute pages come back; back returns to the
     // second, then the first, and the sign-up page is gone.
-    testWidgets(
-      'a stack of the same page comes back after restoration',
-      (tester) async {
-        await pumpRestorableApp(tester, buildRouter);
-        var router = RestorableRouterApp.router;
-        unawaited(router.replace(const NamedRoute('ExternalRoute')));
-        await tester.pumpAndSettle();
-        unawaited(router.push(const NamedRoute('ExternalRoute')));
-        await tester.pumpAndSettle();
-        unawaited(router.push(const NamedRoute('ExternalRoute')));
-        await tester.pumpAndSettle();
-        final earlier2 = tester.takeException();
+    testWidgets('a stack of the same page comes back after restoration', (
+      tester,
+    ) async {
+      await pumpRestorableApp(tester, buildRouter);
+      var router = RestorableRouterApp.router;
+      unawaited(router.replace(const NamedRoute('ExternalRoute')));
+      await tester.pumpAndSettle();
+      unawaited(router.push(const NamedRoute('ExternalRoute')));
+      await tester.pumpAndSettle();
+      unawaited(router.push(const NamedRoute('ExternalRoute')));
+      await tester.pumpAndSettle();
+      final earlier2 = tester.takeException();
 
-        await tester.restartAndRestore();
-        await tester.pumpAndSettle();
-        router = RestorableRouterApp.router;
-        expect((earlier2, tester.takeException()), (null, null));
-        expect(router.stack.map((page) => page.name), [
-          'ExternalRoute',
-          'ExternalRoute',
-          'ExternalRoute',
-        ]);
+      await tester.restartAndRestore();
+      await tester.pumpAndSettle();
+      router = RestorableRouterApp.router;
+      expect((earlier2, tester.takeException()), (null, null));
+      expect(router.stack.map((page) => page.name), [
+        'ExternalRoute',
+        'ExternalRoute',
+        'ExternalRoute',
+      ]);
 
-        await systemBack(tester);
-        expect(router.stack.map((page) => page.name), [
-          'ExternalRoute',
-          'ExternalRoute',
-        ]);
-        await systemBack(tester);
-        expect(router.stack.map((page) => page.name), ['ExternalRoute']);
-        expect(find.text('SignUpRoute'), findsNothing);
-      },
-      skip: kIsWeb,
-    );
+      await systemBack(tester);
+      expect(router.stack.map((page) => page.name), [
+        'ExternalRoute',
+        'ExternalRoute',
+      ]);
+      await systemBack(tester);
+      expect(router.stack.map((page) => page.name), ['ExternalRoute']);
+      expect(find.text('SignUpRoute'), findsNothing);
+    }, skip: kIsWeb);
 
     // Steps: push the settings page, the shelf, and items 7 and 8 in the
     // shelf's nested router, then restore the app and go back four times.
     // Should: item 8 shows at '/shelf/item/8', then back shows item 7, the
     // shelf list, the settings page and the sign-up page.
-    testWidgets(
-      'every page of the stacks comes back after restoration',
-      (tester) async {
-        await pumpRestorableApp(tester, buildRouter);
-        var router = RestorableRouterApp.router;
-        unawaited(router.push(const NamedRoute('SettingsRoute')));
-        await tester.pumpAndSettle();
-        unawaited(router.pushPath('/shelf'));
-        await tester.pumpAndSettle();
-        unawaited(router.pushPath('item/7'));
-        await tester.pumpAndSettle();
-        unawaited(router.pushPath('item/8'));
-        await tester.pumpAndSettle();
-        final earlier1 = find.text('Item 8').evaluate().length;
+    testWidgets('every page of the stacks comes back after restoration', (
+      tester,
+    ) async {
+      await pumpRestorableApp(tester, buildRouter);
+      var router = RestorableRouterApp.router;
+      unawaited(router.push(const NamedRoute('SettingsRoute')));
+      await tester.pumpAndSettle();
+      unawaited(router.pushPath('/shelf'));
+      await tester.pumpAndSettle();
+      unawaited(router.pushPath('item/7'));
+      await tester.pumpAndSettle();
+      unawaited(router.pushPath('item/8'));
+      await tester.pumpAndSettle();
+      final earlier1 = find.text('Item 8').evaluate().length;
 
-        await tester.restartAndRestore();
-        await tester.pumpAndSettle();
-        router = RestorableRouterApp.router;
-        expect((earlier1, find.text('Item 8').evaluate().length), (1, 1));
-        expect(router.currentPath, '/shelf/item/8');
-        await expectBrowserUrl('/shelf/item/8');
+      await tester.restartAndRestore();
+      await tester.pumpAndSettle();
+      router = RestorableRouterApp.router;
+      expect((earlier1, find.text('Item 8').evaluate().length), (1, 1));
+      expect(router.currentPath, '/shelf/item/8');
+      await expectBrowserUrl('/shelf/item/8');
 
-        for (final expected in [
-          'Item 7',
-          'ShelfListRoute',
-          'SettingsRoute',
-          'SignUpRoute',
-        ]) {
-          await systemBack(tester);
-          expect(find.text(expected), findsOneWidget);
-        }
-      },
-      skip: kIsWeb,
-    );
+      for (final expected in [
+        'Item 7',
+        'ShelfListRoute',
+        'SettingsRoute',
+        'SignUpRoute',
+      ]) {
+        await systemBack(tester);
+        expect(find.text(expected), findsOneWidget);
+      }
+    }, skip: kIsWeb);
   });
 }
 

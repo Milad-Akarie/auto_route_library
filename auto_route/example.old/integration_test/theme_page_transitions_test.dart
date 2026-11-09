@@ -18,36 +18,35 @@ void main() {
     // Steps: show the router in a MaterialApp whose theme has its own page
     // transitions builder for every platform, then push a second page.
     // Should: the builder of the theme runs for the pushed page.
-    testWidgets(
-      'A pushed page uses the Theme pageTransitionsTheme',
-      (tester) async {
-        final builder = _RecordingTransitionsBuilder();
-        final router = RootStackRouter.build(
-          routes: [
-            AutoRoute(page: _HomeRoute.page, path: '/'),
-            AutoRoute(page: _DetailsRoute.page, path: '/details'),
-          ],
-        );
-        await pumpRouterApp(
-          tester,
-          router,
-          theme: ThemeData(
-            pageTransitionsTheme: PageTransitionsTheme(
-              builders: {
-                for (final platform in TargetPlatform.values) platform: builder,
-              },
-            ),
+    testWidgets('A pushed page uses the Theme pageTransitionsTheme', (
+      tester,
+    ) async {
+      final builder = _RecordingTransitionsBuilder();
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: _HomeRoute.page, path: '/'),
+          AutoRoute(page: _DetailsRoute.page, path: '/details'),
+        ],
+      );
+      await pumpRouterApp(
+        tester,
+        router,
+        theme: ThemeData(
+          pageTransitionsTheme: PageTransitionsTheme(
+            builders: {
+              for (final platform in TargetPlatform.values) platform: builder,
+            },
           ),
-        );
-        builder.calls = 0;
+        ),
+      );
+      builder.calls = 0;
 
-        unawaited(router.push(const _DetailsRoute()));
-        await tester.pumpAndSettle();
+      unawaited(router.push(const _DetailsRoute()));
+      await tester.pumpAndSettle();
 
-        expect(find.text('Details'), findsOneWidget);
-        expect(builder.calls, greaterThan(0));
-      },
-    );
+      expect(find.text('Details'), findsOneWidget);
+      expect(builder.calls, greaterThan(0));
+    });
 
     // Steps: show the router in a MaterialApp from
     // package:flutter/material.dart, whose Theme is another class than

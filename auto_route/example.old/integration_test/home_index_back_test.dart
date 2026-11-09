@@ -42,21 +42,20 @@ void main() {
       return router.innerRouterOf<TabsRouter>(_tabsPage.name)!;
     }
 
-    testWidgets(
-      'system back on another tab shows the home tab',
-      (tester) async {
-        final tabs = await pumpApp(tester, homeIndex: 0);
-        tabs.setActiveIndex(2);
-        await tester.pumpAndSettle();
+    testWidgets('system back on another tab shows the home tab', (
+      tester,
+    ) async {
+      final tabs = await pumpApp(tester, homeIndex: 0);
+      tabs.setActiveIndex(2);
+      await tester.pumpAndSettle();
 
-        await systemBack(tester);
+      await systemBack(tester);
 
-        expect(tabs.activeIndex, 0);
-        final [newsTab, ...] = _kTabNames;
-        expect(find.text(newsTab), findsOneWidget);
-        expect(await doesAndroidSendBackToFlutter(), anyOf(isNull, isFalse));
-      },
-    );
+      expect(tabs.activeIndex, 0);
+      final [newsTab, ...] = _kTabNames;
+      expect(find.text(newsTab), findsOneWidget);
+      expect(await doesAndroidSendBackToFlutter(), anyOf(isNull, isFalse));
+    });
 
     testWidgets(
       'system back on the first tab shows the home tab when homeIndex is '

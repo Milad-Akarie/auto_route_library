@@ -29,19 +29,18 @@ void main() {
     // SecondRoute.
     // Should: FirstRoute leaves the stack, and on web SecondRoute takes its
     // browser entry instead of adding one.
-    testWidgets(
-      'Pushing from a page without history replaces it',
-      (tester) async {
-        await pumpRouterApp(tester, router);
-        await expectBrowserUrl('/');
-        await expectBrowserEntryAfter(0, () async {
-          unawaited(router.push(const SecondRoute()));
-          await tester.pumpAndSettle();
-          expect(router.stack.map((p) => p.name), [SecondRoute.name]);
-          await expectBrowserUrl('/second');
-        });
-      },
-    );
+    testWidgets('Pushing from a page without history replaces it', (
+      tester,
+    ) async {
+      await pumpRouterApp(tester, router);
+      await expectBrowserUrl('/');
+      await expectBrowserEntryAfter(0, () async {
+        unawaited(router.push(const SecondRoute()));
+        await tester.pumpAndSettle();
+        expect(router.stack.map((p) => p.name), [SecondRoute.name]);
+        await expectBrowserUrl('/second');
+      });
+    });
 
     // Steps: open FirstRoute, which has keepHistory: false, then replaceAll
     // with SecondRoute, as a splash screen does.

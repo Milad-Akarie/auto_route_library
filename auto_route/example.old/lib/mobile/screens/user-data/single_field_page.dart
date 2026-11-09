@@ -34,9 +34,8 @@ class SingleFieldPageState extends State<SingleFieldPage> {
   Widget build(BuildContext context) {
     return PopScope(
       onPopInvokedWithResult: (_, _) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(widget.willPopMessage)),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(widget.willPopMessage)));
       },
       child: Scaffold(
         key: _scaffoldKey,

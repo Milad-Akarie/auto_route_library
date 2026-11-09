@@ -18,10 +18,7 @@ class UserDataCollectorPage extends StatelessWidget
 
   @override
   Widget wrappedRoute(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => SettingsState(),
-      child: this,
-    );
+    return ChangeNotifierProvider(create: (_) => SettingsState(), child: this);
   }
 
   @override

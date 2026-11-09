@@ -34,23 +34,19 @@ void main() {
     // browser's back button.
     // Should: the page stays, PopScope hears of the attempt, and the browser
     // returns to the page's entry.
-    testWidgets(
-      'PopScope blocks the browser back button',
-      (tester) async {
-        await pumpRouterAppWithConfig(tester, router);
-        unawaited(router.push(const _FormRoute()));
-        await tester.pumpAndSettle();
-        await expectBrowserUrl('/form');
-        final formEntry = browserEntryIndex();
+    testWidgets('PopScope blocks the browser back button', (tester) async {
+      await pumpRouterAppWithConfig(tester, router);
+      unawaited(router.push(const _FormRoute()));
+      await tester.pumpAndSettle();
+      await expectBrowserUrl('/form');
+      final formEntry = browserEntryIndex();
 
-        pressBrowserBack();
-        await _waitForPopAttempt(tester);
-        await expectBrowserUrl('/form');
-        expect(browserEntryIndex(), formEntry);
-        expect(router.current.name, _FormRoute.name);
-      },
-      skip: !kIsWeb,
-    );
+      pressBrowserBack();
+      await _waitForPopAttempt(tester);
+      await expectBrowserUrl('/form');
+      expect(browserEntryIndex(), formEntry);
+      expect(router.current.name, _FormRoute.name);
+    }, skip: !kIsWeb);
   });
 }
 
