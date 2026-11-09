@@ -6,6 +6,9 @@
   of keeping the closed page on screen (#1740).
 - **FIX**: `replaceAll` listing an open parent and then one of its children, such as `[MainRoute(), SearchRoute()]`,
   no longer fails Flutter's duplicate page key assertion (#1586).
+- **BEHAVIOR CHANGE**: a tab opened by a url, such as after a browser refresh, keeps the args its `AutoTabsRouter`
+  `routes` list gives it, instead of throwing `MissingRequiredParameterError`. A url with path or query params still
+  builds the args from those (#2107).
 
 ## 12.5.0
 - **CHORE**: the lint setup is simpler: `lines_longer_than_80_chars`, `prefer-single-widget-per-file`,

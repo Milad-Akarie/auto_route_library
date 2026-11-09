@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../router_test_utils.dart';
 
-// https://github.com/Milad-Akarie/auto_route_library/issues/2107
+// Reproduction for https://github.com/Milad-Akarie/auto_route_library/issues/2107
 // A thin report: a video and a sample repo that is gone from the thread. The
 // reporter shows AutoTabsRouter.tabBar with a second tab, TabRoute2, whose
 // page has a required constructor parameter, on web. Opened the first time,
@@ -13,27 +15,29 @@ import '../router_test_utils.dart';
 // from the title and the error: the tab's routes list gives TabRoute2 its
 // argument, and the refresh opens the tab's url '/tab2', which holds
 // no argument. #1302, which the reporter links, is not in the thread.
-// Steps: (1) open the app, switch to the second tab; (2) start the app on
-// the url '/tab2', which a refresh does; (3) the same, with the value as a
-// path parameter.
-// Result: (1) shows the argument. (3) shows the value from the url, which is
-// the way to keep a value over a refresh. (2) throws
-// MissingRequiredParameterError. That is not pinned here: nobody on the
-// thread says it is by design (the maintainer never answered, and #1302 is
-// not in the thread), so it stays an open question, with the reporter's
-// expectation (no error) kept as a failing test in the notes, round1/2107.dart.
+// Steps: (1) open the app and switch to the second tab, (2) start the app on
+// the url '/tab2', which a refresh does, (3) the same with the value as a
+// path parameter, (4) go to '/tab2' while the app runs.
+// Result: (1) shows the argument. (2) and (4) threw
+// MissingRequiredParameterError, as a url can't hold a constructor argument.
+// The tab's routes list holds it, so they now show the argument from there.
+// (3) shows the value from the url. A tab whose routes list has no argument
+// still reports it.
 void main() {
-  RootStackRouter buildRouter() => .build(
+  RootStackRouter buildRouter({bool isTab2ArgListed = true}) => .build(
     routes: [
       NamedRouteDef(
         name: 'HomeRoute',
         path: '/',
         initial: true,
         builder: (_, _) => AutoTabsRouter.tabBar(
-          routes: const [
-            NamedRoute('TabRoute1'),
-            NamedRoute('TabRoute2', args: 'from routes'),
-            NamedRoute('TabRoute3', params: {'name': 'from routes'}),
+          routes: [
+            const NamedRoute('TabRoute1'),
+            NamedRoute(
+              'TabRoute2',
+              args: isTab2ArgListed ? 'from routes' : null,
+            ),
+            const NamedRoute('TabRoute3', params: {'name': 'from routes'}),
           ],
           builder: (_, child, controller) => Column(
             children: [
@@ -78,6 +82,37 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.text('Tab 2 from routes'), findsOneWidget);
+  });
+
+  testWidgets('A refresh on the url of a tab with a required constructor '
+      "argument shows the argument from the tab's routes list", (tester) async {
+    await pumpRouterApp(tester, buildRouter(), initialLink: '/tab2');
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('Tab 2 from routes'), findsOneWidget);
+  });
+
+  testWidgets('A link to a tab with a required constructor argument while the '
+      "app runs shows the argument from the tab's routes list", (tester) async {
+    final router = buildRouter();
+    await pumpRouterApp(tester, router);
+
+    unawaited(router.navigatePath('/tab2'));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('Tab 2 from routes'), findsOneWidget);
+  });
+
+  testWidgets('A refresh on the url of a tab whose routes list has no argument '
+      'reports the missing argument', (tester) async {
+    await pumpRouterApp(
+      tester,
+      buildRouter(isTab2ArgListed: false),
+      initialLink: '/tab2',
+    );
+
+    expect(tester.takeException(), isA<MissingRequiredParameterError>());
   });
 
   testWidgets('A refresh on the url of a tab with a path parameter shows it', (

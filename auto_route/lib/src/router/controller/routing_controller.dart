@@ -1351,11 +1351,20 @@ class TabsRouter extends RoutingController {
   /// after match validation and deciding initial index
   void setupRoutes(List<PageRouteInfo>? routes) {
     final routesToPush = _resolveRoutes(routes);
+    _listedTabArgs = [for (final route in routesToPush) route.args];
     // Tabs restored after the app was ended each come with their own stack.
     // The last pending one is the active tab.
-    for (final pending in _routeData.pendingChildren) {
+    final pendingChildren = _routeData.pendingChildren;
+    for (final (pendingIndex, pending) in pendingChildren.indexed) {
       final index = routesToPush.indexWhere((r) => r.key == pending.key);
-      if (index != -1) routesToPush[index] = pending;
+      if (index != -1) {
+        final withArgs = _withTabArgs(
+          pending,
+          _listedTabArgs.elementAtOrNull(index),
+        );
+        pendingChildren[pendingIndex] = withArgs;
+        routesToPush[index] = withArgs;
+      }
     }
     final outgoing = _routeData.hasPendingChildren
         ? null
@@ -1509,6 +1518,7 @@ class TabsRouter extends RoutingController {
   /// and sets `previousActiveRoute` as active index if provided
   void replaceAll(List<PageRouteInfo>? routes, int fromIndex) {
     final routesToPush = _resolveRoutes(routes);
+    _listedTabArgs = [for (final route in routesToPush) route.args];
     final previousActiveRoute = stackData.elementAtOrNull(fromIndex);
     final previousPages = List.of(_pages);
     final previousHistory = _tabHistoryNames;
@@ -1627,11 +1637,31 @@ class TabsRouter extends RoutingController {
     if (mayUpdateRoute is ReevaluatableRouteMatch) {
       _pages[index] = mayUpdateRoute.currentPage;
     } else {
-      final data = _createRouteData<Object?>(routeToBeUpdated, routeData);
+      final data = _createRouteData<Object?>(
+        _withTabArgs(routeToBeUpdated, _listedTabArgs.elementAtOrNull(index)),
+        routeData,
+      );
       _pages[index] = data.buildPage();
     }
     return routeToBeUpdated;
   }
+
+  // The args each tab has in the routes the tabs are shown with, by index.
+  // Not the page's own: those may be from a navigation, which a url replaces.
+  var _listedTabArgs = const <Object?>[];
+
+  // A url can't hold constructor args, so a tab it opens gets [tabArgs], the
+  // ones the tabs list gave it. Not when the url has params: a page's args
+  // are then rebuilt from them, and listed ones would hide their values.
+  RouteMatch<Object?> _withTabArgs(
+    RouteMatch<Object?> route,
+    Object? tabArgs,
+  ) =>
+      route.args != null ||
+          route.params.isNotEmpty ||
+          route.queryParams.isNotEmpty
+      ? route
+      : route.copyWith(args: tabArgs);
 
   // Navigates the nested router of the tab holding [route] to its children.
   void _navigateInsideTab(
