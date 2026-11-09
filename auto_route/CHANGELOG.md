@@ -1,4 +1,4 @@
-## Unreleased
+## 12.5.0
 - **CHORE**: the lint setup is simpler: `lines_longer_than_80_chars`, `prefer-single-widget-per-file`,
   `prefer-prefixed-global-constants` and `prefer-match-file-name` are off, and DCM runs its recommended rules plus a
   short list.

@@ -1,5 +1,6 @@
-## Unreleased
+## 11.5.0
 - **CHORE**: the same lint setup as auto_route.
+- **CHORE**: depends on auto_route 12.5.0, the version its tests run against.
 
 ## 11.4.0
 - **CHANGE**: a generic route's args compare their items with `const ListEquality<Object?>()` and its kin, no longer
