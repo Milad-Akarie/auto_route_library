@@ -99,6 +99,8 @@ import 'page_view_zero_duration_test.dart' as page_view_zero_duration;
 import 'pageless_push_rebuild_test.dart' as pageless_push_rebuild;
 import 'param_converter_test.dart' as param_converter;
 import 'parent_pages_build_test.dart' as parent_pages_build;
+import 'platform_link_over_launch_page_test.dart'
+    as platform_link_over_launch_page;
 import 'pop_and_back_test.dart' as pop_and_back;
 import 'pop_and_push_all_test.dart' as pop_and_push_all;
 import 'pop_and_push_from_animating_modal_test.dart'
@@ -310,6 +312,7 @@ void main() {
   pageless_push_rebuild.main();
   param_converter.main();
   parent_pages_build.main();
+  platform_link_over_launch_page.main();
   pop_and_back.main();
   pop_and_push_all.main();
   pop_and_push_from_animating_modal.main();
