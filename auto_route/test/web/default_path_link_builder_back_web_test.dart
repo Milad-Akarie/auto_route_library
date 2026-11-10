@@ -18,7 +18,9 @@ import 'browser_history.dart';
 // Reported: after back the Flutter inspector showed two copies of the user
 // page in the widget tree, where before it showed one.
 // Should: the user page appears once, or not at all, and the home page shows.
-// Offstage pages count, as the inspector lists them.
+// Offstage pages count, as the inspector lists them. The stack holds the home
+// page alone: a back that also ran the default-path link and pushed its page
+// would leave a second copy of a page offstage.
 void main() {
   useRealBrowserHistory();
 
@@ -60,6 +62,7 @@ void main() {
         reason: 'user pages in the tree after back',
       );
       expect(find.text('Home'), findsOneWidget);
+      expect(router.stack.map((page) => page.name), ['HomeRoute']);
       expect(browserPath, '/');
     },
   );
