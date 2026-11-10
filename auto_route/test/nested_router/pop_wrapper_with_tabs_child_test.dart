@@ -9,7 +9,9 @@ import '../router_test_utils.dart';
 // https://github.com/Milad-Akarie/auto_route_library/issues/1931
 // Steps: Home at '/'. DetailWrapper at '/detail' is a shell whose children are
 // Detail (initial; it holds tabs FirstTab and SecondTab) and InsideDetail at
-// 'insideDetail'. Push DetailWrapper from Home, then go back.
+// 'insideDetail'. Push DetailWrapper from Home, then go back from the page
+// shown, as a back button does: the tabs router hands the pop to the wrapper's
+// router, which holds one page and hands it to the root router.
 // Reported (8.0.0, still on 8.1.1): the screen went blank instead of Home.
 // Should: Home is shown again.
 void main() {
@@ -75,7 +77,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('First'), findsOneWidget);
 
-    await router.maybePop();
+    await router.maybePopTop();
     await tester.pumpAndSettle();
     expect(find.text('Home'), findsOneWidget);
     expect(find.text('First'), findsNothing);
