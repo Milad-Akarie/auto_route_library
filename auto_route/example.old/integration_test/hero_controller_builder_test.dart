@@ -75,6 +75,15 @@ RootStackRouter _router(HeroController Function()? heroControllerBuilder) =>
             NamedRouteDef(
               name: 'ToRoute',
               path: 'to',
+              // The runner's clock is real, and on a slow Android emulator
+              // the first frames after the push took over 700 ms, longer than
+              // a default page transition. Once it ends, the first page is
+              // offstage and its Hero can't be found either way, so the checks
+              // need a transition still running when they land.
+              type: .custom(
+                transitionsBuilder: TransitionsBuilders.fadeIn,
+                duration: const Duration(seconds: 5),
+              ),
               builder: (_, _) => const _HeroPage('to', .topRight),
             ),
           ],
@@ -82,14 +91,26 @@ RootStackRouter _router(HeroController Function()? heroControllerBuilder) =>
       ],
     );
 
-/// Taps the first page's button and pumps into the transition. The runner's
-/// clock is real, so the checks leave out where the Hero is.
+/// Taps the first page's button, pumps into the transition and checks it is
+/// still running, so the checks after it see the Hero mid-flight. The clock is
+/// real, so the checks leave out where the Hero is.
 Future<void> _openSecondPage(WidgetTester tester) async {
   expect(find.text('from'), findsOneWidget);
   await tester.tap(find.text('open'));
   await tester.pump();
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 16));
+  final secondPage = tester.element(
+    find.byWidgetPredicate(
+      (widget) => widget is _HeroPage && widget.name == 'to',
+      skipOffstage: false,
+    ),
+  );
+  expect(
+    ModalRoute.of(secondPage)?.animation?.status,
+    AnimationStatus.forward,
+    reason: 'the checks must land while the second page comes in',
+  );
 }
 
 /// A page with a Hero box showing [name], placed at [alignment], and a button
