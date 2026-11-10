@@ -41,6 +41,9 @@
 
 ## 11.0.0
 - **CHORE**: require Dart 3.13, the version Flutter 3.47 ships.
+- **BREAKING CHANGE**: lean_builder support is dropped, and the generator runs on build_runner only.
+  lean_builder often conflicted with other packages that depend on build_runner. An app that built
+  its routes with lean_builder builds them with `dart run build_runner build` instead.
 - **BEHAVIOR CHANGE**: an enum query parameter is read with `values.asNameMap()` and written with
   `.name`, so the url holds `type=rm`, not `type=CartType.rm`. Regenerate the router, fixes #2148
 - **BREAKING CHANGE**: a router in a part file whose route would share its page's name (a page
