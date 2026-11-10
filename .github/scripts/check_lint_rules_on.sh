@@ -29,7 +29,9 @@ allowed="prefer-boolean-prefixes prefer-correct-callback-field-name lines_longer
 
 # Phil, 2026-11-09: the findings of these rules are false alarms or public API,
 # and each ignore comment says so where it stands.
-allowed_ignores="no-empty-block|function-always-returns-null|prefer-overriding-parent-equality|avoid-incomplete-copy-with|avoid-unrelated-type-assertions|avoid-suspicious-super-overrides|match-getter-setter-field-names|avoid-shadowing|dispose-fields|always-remove-listener"
+# Phil, 2026-11-10: avoid-unnecessary-extends flags the `extends Object?` bounds
+# that keep an omitted type argument from being inferred as `dynamic`.
+allowed_ignores="no-empty-block|function-always-returns-null|prefer-overriding-parent-equality|avoid-incomplete-copy-with|avoid-unrelated-type-assertions|avoid-suspicious-super-overrides|match-getter-setter-field-names|avoid-shadowing|dispose-fields|always-remove-listener|avoid-unnecessary-extends"
 
 options_program='
   BEGIN { n = split(allow, names, " "); for (i = 1; i <= n; i++) ok[names[i]] = 1 }

@@ -1,3 +1,7 @@
+// `extends Object?` is not unnecessary: without it, a type argument an app
+// leaves out is inferred as `dynamic`, not `Object?`.
+// ignore_for_file: avoid-unnecessary-extends
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart' show BuildContext, optionalTypeArgs;
 
