@@ -1,0 +1,112 @@
+import 'dart:async';
+
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+
+// Rebuilding MaterialApp.router with other debug flags or another builder
+// keeps the page stack and the pages' state.
+// The same scenario as flutter/flutter#115427 in go_router, where the
+// rebuild closed the pages over the root one.
+void main() {
+  final changes = {
+    'showPerformanceOverlay': const _AppSettings(
+      isShowPerformanceOverlay: true,
+    ),
+    'showSemanticsDebugger': const _AppSettings(isShowSemanticsDebugger: true),
+    'builder': const _AppSettings(isWrap: true),
+  };
+
+  for (final MapEntry(key: change, value: settings) in changes.entries) {
+    // Steps: MaterialApp.router(routerConfig:) shows ARoute; push
+    // BRoute; rebuild the app with $change changed, then back again.
+    // Should: the stack stays [ARoute, BRoute], ARoute's state is not
+    // created again, and going back shows ARoute.
+    testWidgets('changing MaterialApp.router $change keeps the stack', (
+      tester,
+    ) async {
+      var created = 0;
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'ARoute',
+              builder: (_) => _CountingPage(onCreate: () => created++),
+            ),
+          ),
+          AutoRoute(
+            path: '/b',
+            page: PageInfo('BRoute', builder: (_) => const Text('BRoute')),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+      final config = router.config();
+      final app = ValueNotifier(const _AppSettings());
+      addTearDown(app.dispose);
+      await tester.pumpWidget(
+        ValueListenableBuilder(
+          valueListenable: app,
+          builder: (_, appSettings, _) => MaterialApp.router(
+            routerConfig: config,
+            showPerformanceOverlay: appSettings.isShowPerformanceOverlay,
+            showSemanticsDebugger: appSettings.isShowSemanticsDebugger,
+            builder: appSettings.isWrap
+                ? (_, child) => ColoredBox(color: Colors.white, child: child)
+                : null,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      unawaited(router.pushPath('/b'));
+      await tester.pumpAndSettle();
+      expect(created, 1);
+
+      for (final next in [settings, const _AppSettings()]) {
+        app.value = next;
+        await tester.pumpAndSettle();
+        expect(router.stack.map((page) => page.name), ['ARoute', 'BRoute']);
+        expect(find.text('BRoute'), findsOneWidget);
+      }
+
+      await router.maybePop();
+      await tester.pumpAndSettle();
+      expect(router.stack.map((page) => page.name), ['ARoute']);
+      expect(find.text('ARoute'), findsOneWidget);
+      expect(created, 1, reason: 'after router.maybePop()');
+    });
+  }
+}
+
+class _AppSettings {
+  const new({
+    this.isShowPerformanceOverlay = false,
+    this.isShowSemanticsDebugger = false,
+    this.isWrap = false,
+  });
+
+  final bool isShowPerformanceOverlay;
+  final bool isShowSemanticsDebugger;
+  final bool isWrap;
+}
+
+class _CountingPage extends StatefulWidget {
+  const new({required this.onCreate});
+
+  final VoidCallback onCreate;
+
+  @override
+  State<_CountingPage> createState() => _CountingPageState();
+}
+
+class _CountingPageState extends State<_CountingPage> {
+  @override
+  void initState() {
+    super.initState();
+    widget.onCreate();
+  }
+
+  @override
+  Widget build(BuildContext context) => const Text('ARoute');
+}

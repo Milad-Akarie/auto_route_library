@@ -1,45 +1,63 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:auto_route_generator/build_utils.dart';
+import 'package:auto_route_generator/dart_type_x.dart';
+import 'package:auto_route_generator/src/models/param_config.dart';
+import 'package:auto_route_generator/src/models/route_config.dart';
+import 'package:auto_route_generator/src/models/url_param_type.dart';
+import 'package:auto_route_generator/src/resolvers/route_parameter_resolver.dart';
+import 'package:auto_route_generator/src/resolvers/type_resolver.dart';
+import 'package:build/build.dart' show log;
 import 'package:source_gen/source_gen.dart';
-
-import '../../build_utils.dart';
-import '../models/route_config.dart';
-import '../models/route_parameter_config.dart';
-import '../resolvers/route_parameter_resolver.dart';
-import '../resolvers/type_resolver.dart';
 
 /// extracts route configs from class fields and their meta data
 class RouteConfigResolver {
-  final TypeResolver _typeResolver;
-
   /// Default constructor
-  RouteConfigResolver(this._typeResolver);
+  const new(this._typeResolver);
+  final TypeResolver _typeResolver;
 
   /// Resolves a [ClassElement] into a consumable [RouteConfig]
   RouteConfig resolve(Element element, ConstantReader routePage) {
-    var isDeferred = routePage.peek('deferredLoading')?.boolValue;
+    final isDeferred = routePage.peek('deferredLoading')?.boolValue;
     throwIf(
-      element is! ClassElement,
       '${element.displayName} is not a class element',
       element: element,
+      shouldThrow: element is! ClassElement,
     );
 
     final classElement = element as ClassElement;
     final page = classElement.thisType;
-    final hasWrappedRoute = classElement.allSupertypes.any((e) => e.nameWithoutSuffix == 'AutoRouteWrapper');
-    var pageType = _typeResolver.resolveType(page);
-    var className = page.nameWithoutSuffix;
+    final hasWrappedRoute = classElement.allSupertypes.any(
+      (e) => e.nameWithoutSuffix == 'AutoRouteWrapper',
+    );
+    final pageType = _typeResolver.resolveType(page);
+    // The name alone: the type's display name has the type parameters.
+    final className = classElement.displayName;
+    final typeParameters = [
+      for (final t in classElement.typeParameters)
+        RouteTypeParameter(
+          name: t.displayName,
+          bound: t.bound == null ? null : _typeResolver.resolveType(t.bound!),
+        ),
+    ];
 
-    var name = routePage.peek('name')?.stringValue;
+    final name = routePage.peek('name')?.stringValue;
     final constructor = classElement.unnamedConstructor;
     throwIf(
-      constructor == null,
       'Route pages must have an unnamed constructor',
+      shouldThrow: constructor == null,
     );
     var hasConstConstructor = false;
-    var params = constructor!.formalParameters;
-    var parameters = <ParamConfig>[];
+    final params = constructor!.formalParameters;
+    final parameters = <ParamConfig>[];
     if (params.isNotEmpty) {
-      if (constructor.isConst && params.length == 1 && params.first.type.nameWithoutSuffix == 'Key') {
+      // A generic page is built by its args, which carry its type arguments.
+      // A page that only takes an optional Key is built without one, on
+      // purpose; a required Key must reach the page, so the route takes it.
+      if (constructor.isConst &&
+          typeParameters.isEmpty &&
+          params.length == 1 &&
+          !params.first.isRequired &&
+          params.first.type.nameWithoutSuffix == 'Key') {
         hasConstConstructor = true;
       } else {
         final paramResolver = RouteParameterResolver(_typeResolver);
@@ -50,32 +68,65 @@ class RouteConfigResolver {
     }
 
     throwIf(
-      parameters.where((e) => e.isUrlFragment).length > 1,
       'Only one parameter can be annotated with @urlFragment',
       element: element,
+      shouldThrow: parameters.where((e) => e.isUrlFragment).length > 1,
     );
 
-    var pathParameters = parameters.where((element) => element.isPathParam);
+    final pathParameters = parameters.where(
+      (candidate) => candidate.isPathParam,
+    );
 
     if (parameters.any((p) => p.isPathParam || p.isQueryParam)) {
-      var unParsableRequiredArgs =
-          parameters.where((p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
+      final unParsableRequiredArgs = parameters.where(
+        (p) =>
+            (p.isRequired || p.isPositional) &&
+            !p.isPathParam &&
+            !p.isQueryParam,
+      );
       if (unParsableRequiredArgs.isNotEmpty) {
-        print(
-            '\nWARNING => Because [$className] has required parameters ${unParsableRequiredArgs.map((e) => e.paramName)} '
-            'that can not be parsed from path,\n@PathParam() and @QueryParam() annotations will be ignored.\n');
-      }
-    }
-
-    if (pathParameters.isNotEmpty) {
-      for (var pParam in pathParameters) {
-        throwIf(
-          !validPathParamTypes.contains(pParam.type.name),
-          "Parameter [${pParam.name}] must be of a type that can be parsed from a [String] because it will also obtain it's value from a path\nvalid types: $validPathParamTypes",
+        log.warning(
+          'Because [$className] has required parameters '
+          '${unParsableRequiredArgs.map((e) => e.paramName)} '
+          'that can not be parsed from path, @PathParam() and '
+          '@QueryParam() annotations will be ignored.',
         );
       }
     }
 
+    // A query param is read from the url unless a required argument keeps
+    // the page from being opened by one, so its type must be one the url
+    // gives; any other was read as `dynamic` and threw when a link opened
+    // the page.
+    final isReadFromUrl = !parameters.any(
+      (p) =>
+          (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam,
+    );
+    for (final qParam in parameters.where(
+      (p) => p.isQueryParam && isReadFromUrl,
+    )) {
+      final type = qParam.type;
+      throwIf(
+        'Parameter [${qParam.name}] is a @QueryParam of type ${type.name}, '
+        'which a url can not give.\n'
+        'valid types: ${UrlParamType.pathTypeNames}, Object, an enum, or a '
+        '${kUrlCollectionTypes.join(', ')} of those',
+        shouldThrow: qParam.urlType == null,
+      );
+    }
+
+    for (final pParam in pathParameters) {
+      throwIf(
+        'Parameter [${pParam.name}] must be of a type that can be parsed '
+        "from a [String] because it will also obtain it's value from a "
+        'path\nvalid types: ${UrlParamType.pathTypeNames}\n'
+        'For any other type, give @PathParam a '
+        'ParamConverter<${pParam.type.name}>, '
+        "as in @PathParam('${pParam.paramName}', "
+        '${_lowerFirst(pParam.type.name)}Converter).',
+        shouldThrow: !(pParam.urlType?.isInPath ?? false),
+      );
+    }
     return RouteConfig(
       className: className,
       name: name,
@@ -83,7 +134,11 @@ class RouteConfigResolver {
       parameters: parameters,
       hasConstConstructor: hasConstConstructor,
       pageType: pageType,
-      deferredLoading: isDeferred,
+      isDeferredLoading: isDeferred,
+      typeParameters: typeParameters,
     );
   }
 }
+
+String _lowerFirst(String text) =>
+    text.isEmpty ? text : text[0].toLowerCase() + text.substring(1);

@@ -5,11 +5,11 @@ import 'package:mockito/mockito.dart';
 import '../main_router.dart';
 import 'router.dart';
 
-class MockListener extends Mock {
+class _MockListener extends Mock {
   void call();
 }
 
-class MockOnNavigationFailureListener extends Mock {
+class _MockOnNavigationFailureListener extends Mock {
   void call(NavigationFailure? failure);
 }
 
@@ -23,14 +23,17 @@ void main() {
     expect(router.currentHierarchy(), list);
   }
 
-  test('Pushing single route should add it to stack and notify navigation history', () async {
-    final listener = MockListener();
-    router.navigationHistory.addListener(listener.call);
-    await router.push(const FirstRoute());
-    expectHierarchy(const [HierarchySegment(FirstRoute.name)]);
-    verify(listener()).called(1);
-    verifyNoMoreInteractions(listener);
-  });
+  test(
+    'Pushing single route should add it to stack and notify navigation history',
+    () async {
+      final listener = _MockListener();
+      router.navigationHistory.addListener(listener.call);
+      await router.push(const FirstRoute());
+      expectHierarchy(const [HierarchySegment(FirstRoute.name)]);
+      verify(listener()).called(1);
+      verifyNoMoreInteractions(listener);
+    },
+  );
 
   test('Checking if pushed route is active should return true', () async {
     await router.push(const FirstRoute());
@@ -38,8 +41,9 @@ void main() {
     expect(router.isRouteActive(FirstRoute.name), true);
   });
 
-  test('Replacing single route should replace top stack entry and notify navigation history', () async {
-    final listener = MockListener();
+  test('Replacing single route should replace top stack entry and notify '
+      'navigation history', () async {
+    final listener = _MockListener();
     router.navigationHistory.addListener(listener.call);
     await router.push(const FirstRoute());
     await router.replace(const SecondRoute());
@@ -47,21 +51,35 @@ void main() {
     verify(listener()).called(2);
   });
 
-  test('Navigating to a none-declared route should call onFailure(<RouteNotFoundFailure>)', () async {
-    final mockListener = MockOnNavigationFailureListener();
+  test('Navigating to a none-declared route should call '
+      'onFailure(<RouteNotFoundFailure>)', () async {
+    final mockListener = _MockOnNavigationFailureListener();
     await router.push(const SecondNested1Route(), onFailure: mockListener.call);
-    expect(verify(mockListener(captureAny)).captured.single, isA<RouteNotFoundFailure>());
+    expect(
+      verify(mockListener(captureAny)).captured.singleOrNull,
+      isA<RouteNotFoundFailure>(),
+    );
   });
 
-  test('Navigating to a none-declared path should call onFailure(<RouteNotFoundFailure>)', () async {
-    final mockListener = MockOnNavigationFailureListener();
+  test('Navigating to a none-declared path should call '
+      'onFailure(<RouteNotFoundFailure>)', () async {
+    final mockListener = _MockOnNavigationFailureListener();
     await router.navigatePath('/none-declared', onFailure: mockListener.call);
-    expect(verify(mockListener(captureAny)).captured.single, isA<RouteNotFoundFailure>());
+    expect(
+      verify(mockListener(captureAny)).captured.singleOrNull,
+      isA<RouteNotFoundFailure>(),
+    );
   });
 
-  test('Routes rejected by guards should call onFailure(<RejectedByGuardFailure>)', () async {
-    final mockListener = MockOnNavigationFailureListener();
-    await router.push(const FourthRoute(), onFailure: mockListener.call);
-    expect(verify(mockListener(captureAny)).captured.single, isA<RejectedByGuardFailure>());
-  });
+  test(
+    'Routes rejected by guards should call onFailure(<RejectedByGuardFailure>)',
+    () async {
+      final mockListener = _MockOnNavigationFailureListener();
+      await router.push(const FourthRoute(), onFailure: mockListener.call);
+      expect(
+        verify(mockListener(captureAny)).captured.singleOrNull,
+        isA<RejectedByGuardFailure>(),
+      );
+    },
+  );
 }

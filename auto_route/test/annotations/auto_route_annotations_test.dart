@@ -54,6 +54,15 @@ void main() {
       const param = PathParam.inherit('id');
       expect(param.name, 'id');
     });
+
+    test('constructors with a converter (#1794)', () {
+      expect(const PathParam('id', _kConverter).converter, same(_kConverter));
+      expect(
+        const PathParam.inherit('id', _kConverter).converter,
+        same(_kConverter),
+      );
+      expect(const PathParam('id').converter, null);
+    });
   });
 
   group('QueryParam', () {
@@ -66,12 +75,30 @@ void main() {
       const param = QueryParam('foo');
       expect(param.name, 'foo');
     });
+
+    test('constructor with a converter (#1794)', () {
+      expect(const QueryParam('foo', _kConverter).converter, same(_kConverter));
+      expect(const QueryParam('foo').converter, null);
+    });
   });
 
   group('UrlFragment', () {
     test('constructor', () {
-      // Since it's a private constructor, test the exported constant
-      expect(urlFragment, isNotNull);
+      // Since it's a private constructor, test the exported constant.
+      // It compiles only if the constant exists, which is what it checks.
+      expect(urlFragment, isA<UrlFragment>());
     });
   });
 }
+
+class _TextConverter extends ParamConverter<String> {
+  const new();
+
+  @override
+  String fromParam(String value) => value;
+
+  @override
+  String toParam(String value) => value;
+}
+
+const _kConverter = _TextConverter();

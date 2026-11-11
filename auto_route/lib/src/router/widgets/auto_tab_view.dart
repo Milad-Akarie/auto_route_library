@@ -2,31 +2,35 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/router/widgets/eager_page_view.dart';
+import 'package:auto_route/src/utils/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// The adjustments made to this code from [TabView] is to fix children not
+/// The adjustments made to this code from `TabView` is to fix children not
 /// updating in sync with TabRouter changes
 /// and to set pageController.offset.round() to [TabController.index]
 /// so page is set when the scroll pos is rounded to it
 class AutoTabView extends StatefulWidget {
   /// Creates a page view with one child per tab.
 
-  const AutoTabView({
-    super.key,
+  const new({
     required this.controller,
-    this.physics,
-    required this.router,
-    this.scrollDirection = Axis.horizontal,
-    this.dragStartBehavior = DragStartBehavior.start,
+    required this._router,
+    required this._physics,
+    required this._lazyLoad,
+    required this._scrollDirection,
+    required this._dragStartBehavior,
+    super.key,
   });
 
   /// The scroll direction of the [PageView]
   /// see [PageView.scrollDirection]
-  final Axis scrollDirection;
+  final Axis _scrollDirection;
 
   /// The page controller used by [PageView]
   /// see [PageView.controller]
@@ -34,7 +38,7 @@ class AutoTabView extends StatefulWidget {
 
   /// An object that controllers what page to display
   /// and navigates from one page to another
-  final TabsRouter router;
+  final TabsRouter _router;
 
   /// How the page view should respond to user input.
   ///
@@ -45,10 +49,19 @@ class AutoTabView extends StatefulWidget {
   /// [PageScrollPhysics] prior to being used.
   ///
   /// Defaults to matching platform conventions.
-  final ScrollPhysics? physics;
+  final ScrollPhysics? _physics;
 
   /// {@macro flutter.widgets.scrollable.dragStartBehavior}
-  final DragStartBehavior dragStartBehavior;
+  final DragStartBehavior _dragStartBehavior;
+
+  /// Whether each tab's page is built only once the tab is first shown.
+  ///
+  /// Defaults to true. When false, every tab's page is built with the tabs,
+  /// so a tab's state and inner router exist before its first visit, and
+  /// observers hear of every tab through
+  /// [AutoRouterObserver.didInitTabRoute] at once. A tab whose route doesn't
+  /// `maintainState` is still dropped when another tab shows.
+  final bool _lazyLoad;
 
   @override
   State<AutoTabView> createState() => AutoTabViewState();
@@ -62,80 +75,140 @@ class AutoTabViewState extends State<AutoTabView> {
   int? _currentIndex;
   int _warpUnderwayCount = 0;
   int _scrollUnderwayCount = 0;
-  final _tabKeys = <int, GlobalKey<KeepAliveTabState>>{};
+  // Keyed by tab, not index, so a tab moved by a routes change keeps its state.
+  final _tabKeys = <LocalKey, GlobalKey<KeepAliveTabState>>{};
+  // Tabs a drag loaded before they were opened; observers have not heard of
+  // them.
+  final _draggedInTabs = <LocalKey>{};
 
-  TabsRouter get _router => widget.router;
+  TabsRouter get _router => widget._router;
 
   // If the TabBarView is rebuilt with a new tab controller, the caller should
   // dispose the old one. In that case the old controller's animation will be
   // null and should not be accessed.
-  bool get _controllerIsValid => _controller.animation != null;
+  bool get _isControllerValid => _controller.animation != null;
 
   @override
   void initState() {
     super.initState();
     _updateChildren();
-    _controller.animation!.addListener(_handleTabControllerAnimationTick);
+    _controller.animation?.addListener(_handleTabControllerAnimationTick);
     _router.addListener(_onRouterUpdated);
     _pageController = PageController(initialPage: _router.activeIndex);
   }
 
   /// Preload the page at [index]
+  ///
+  /// Returns true when this opens the tab for the first time, also when a
+  /// drag already loaded it.
   bool preload(int index) {
-    final didPreload = _tabKeys[index]?.currentState?.preload() == true;
-    if (didPreload) {
-      _updateChildren();
+    final wasDraggedIn = _draggedInTabs.remove(_matchIdAt(index));
+    final didPreload = _tabKeyAt(index)?.currentState?.preload() == true;
+    if (didPreload && mounted) {
+      setState(_updateChildren);
     }
-    return didPreload;
+    return didPreload || wasDraggedIn;
+  }
+
+  // Loads the tab a drag is uncovering, without opening it. A guarded tab
+  // loads only once its guards let it in.
+  void _preloadDraggedIn(int index) {
+    if (_isGuarded(index)) return;
+    if (_tabKeyAt(index)?.currentState?.preload() != true) return;
+    _draggedInTabs.add(_matchIdAt(index)!);
+    _updateChildren();
+  }
+
+  // Whether the tab at [index] is not the active one and has guards, which
+  // are asked once a drag to it ends rather than as it passes.
+  bool _isGuarded(int index) {
+    if (index == _router.activeIndex) return false;
+    return _router.stack
+            .elementAtOrNull(index)
+            ?.routeData
+            .route
+            .guards
+            .isNotEmpty ??
+        false;
   }
 
   @override
   void didUpdateWidget(AutoTabView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.controller != oldWidget.controller) {
-      oldWidget.controller.animation?.removeListener(_handleTabControllerAnimationTick);
+      oldWidget.controller.animation?.removeListener(
+        _handleTabControllerAnimationTick,
+      );
+      // reason: false positive
+      // ignore: always-remove-listener
       _controller.animation?.addListener(_handleTabControllerAnimationTick);
       _updateChildren();
+      // Load the active tab, it may not have been opened yet.
+      _tabKeyAt(_router.activeIndex)?.currentState?.preload();
 
+      // The routes changed: show the new pages on the active one.
       _currentIndex = _controller.index;
-      _pageController.jumpToPage(_currentIndex!);
+      correctToPage(_pageController, _currentIndex!);
     }
   }
 
   void _onRouterUpdated() {
     _disposeInactiveChildren();
     if (mounted) {
-      setState(() {
-        _updateChildren();
-      });
+      setState(_updateChildren);
     }
   }
 
   @override
   void dispose() {
-    if (_controllerIsValid) {
-      _controller.animation!.removeListener(_handleTabControllerAnimationTick);
+    if (_isControllerValid) {
+      _controller.animation?.removeListener(_handleTabControllerAnimationTick);
     }
     _router.removeListener(_onRouterUpdated);
+    _pageController.dispose();
     super.dispose();
   }
 
+  LocalKey? _matchIdAt(int index) {
+    final stack = _router.stack;
+    if (index < 0) return null;
+    return stack.elementAtOrNull(index)?.routeData.matchId;
+  }
+
+  GlobalKey<KeepAliveTabState>? _tabKeyAt(int index) =>
+      _tabKeys[_matchIdAt(index)];
+
   void _updateChildren() {
     final stack = _router.stack;
-    _children = List.generate(
-      stack.length,
-      (index) => KeepAliveTab(
-        key: _tabKeys.putIfAbsent(index, () => GlobalKey()),
-        initiallyLoaded: _router.activeIndex == index,
-        page: stack[index],
-      ),
-    );
+    final matchIds = {for (final page in stack) page.routeData.matchId};
+    _tabKeys.removeWhere((matchId, _) => !matchIds.contains(matchId));
+    _draggedInTabs.retainAll(matchIds);
+    _children = List.generate(stack.length, (index) {
+      final isActive = _router.activeIndex == index;
+      // The page view keeps every tab laid out beside the active one; a screen
+      // reader or the keyboard must not reach those.
+      return ExcludeSemantics(
+        excluding: !isActive,
+        child: ExcludeFocus(
+          excluding: !isActive,
+          child: KeepAliveTab(
+            key: _tabKeys.putIfAbsent(
+              stack[index].routeData.matchId,
+              GlobalKey.new,
+            ),
+            initiallyLoaded: isActive || !widget._lazyLoad,
+            page: stack[index],
+          ),
+        ),
+      );
+    });
   }
 
   void _disposeInactiveChildren() {
-    for (int i = 0; i < _tabKeys.length; i++) {
+    final stack = _router.stack;
+    for (var i = 0; i < stack.length; i++) {
       if (i != _router.activeIndex) {
-        _tabKeys[i]?.currentState?.unloadIfRequired();
+        _tabKeys[stack[i].routeData.matchId]?.currentState?.unloadIfRequired();
       }
     }
   }
@@ -146,7 +219,7 @@ class AutoTabViewState extends State<AutoTabView> {
     } // This widget is driving the controller's animation.
     if (_controller.index != _currentIndex) {
       _currentIndex = _controller.index;
-      _warpToCurrentIndex();
+      unawaited(_warpToCurrentIndex());
     }
   }
 
@@ -155,17 +228,16 @@ class AutoTabViewState extends State<AutoTabView> {
       return;
     }
     _disposeInactiveChildren();
-    final bool adjacentDestination = (_currentIndex! - _controller.previousIndex).abs() == 1;
-    if (adjacentDestination) {
+    final isAdjacentDestination =
+        (_currentIndex! - _controller.previousIndex).abs() == 1;
+    if (isAdjacentDestination) {
       await _warpToAdjacentTab(_controller.animationDuration);
     } else {
       await _warpToNonAdjacentTab(_controller.animationDuration);
     }
 
     if (mounted) {
-      setState(() {
-        _updateChildren();
-      });
+      setState(_updateChildren);
     }
   }
 
@@ -175,100 +247,150 @@ class AutoTabViewState extends State<AutoTabView> {
     _warpUnderwayCount -= 1;
   }
 
-  Future<void> _animateToPage(int page, {required Duration duration, required Curve curve}) async {
+  Future<void> _animateToPage(
+    int page, {
+    required Duration duration,
+    required Curve curve,
+  }) async {
     _warpUnderwayCount += 1;
     await _pageController.animateToPage(page, duration: duration, curve: curve);
     _warpUnderwayCount -= 1;
   }
 
   Future<void> _warpToAdjacentTab(Duration duration) async {
-    if (duration == Duration.zero) {
+    if (duration == .zero) {
       _jumpToPage(_currentIndex!);
     } else {
-      await _animateToPage(_currentIndex!, duration: duration, curve: Curves.ease);
+      await _animateToPage(
+        _currentIndex!,
+        duration: duration,
+        curve: Curves.ease,
+      );
     }
-
-    return Future<void>.value();
   }
 
   Future<void> _warpToNonAdjacentTab(Duration duration) async {
-    final int previousIndex = _controller.previousIndex;
-    assert((_currentIndex! - previousIndex).abs() > 1);
+    final previousIndex = _controller.previousIndex;
+    assert(
+      (_currentIndex! - previousIndex).abs() > 1,
+      'Only a jump of more than one tab warps.',
+    );
 
     // initialPage defines which page is shown when starting the animation.
     // This page is adjacent to the destination page.
-    final int initialPage = _currentIndex! > previousIndex ? _currentIndex! - 1 : _currentIndex! + 1;
+    final initialPage = _currentIndex! > previousIndex
+        ? _currentIndex! - 1
+        : _currentIndex! + 1;
 
     setState(() {
       // Needed for `RenderSliverMultiBoxAdaptor.move` and kept alive children.
       // For motivation, see https://github.com/flutter/flutter/pull/29188 and
       // https://github.com/flutter/flutter/issues/27010#issuecomment-486475152.
-      _children = List<Widget>.of(_children, growable: false);
-      final Widget temp = _children[initialPage];
-      _children[initialPage] = _children[previousIndex];
-      _children[previousIndex] = temp;
+      _children = List.of(_children, growable: false);
+      final first = _children.elementAtOrNull(initialPage);
+      final second = _children.elementAtOrNull(previousIndex);
+      if (first == null || second == null) return;
+      _children[initialPage] = second;
+      _children[previousIndex] = first;
     });
 
     // Make a first jump to the adjacent page.
     _jumpToPage(initialPage);
 
     // Jump or animate to the destination page.
-    if (duration == Duration.zero) {
+    if (duration == .zero) {
       _jumpToPage(_currentIndex!);
     } else {
-      await _animateToPage(_currentIndex!, duration: duration, curve: Curves.ease);
+      await _animateToPage(
+        _currentIndex!,
+        duration: duration,
+        curve: Curves.ease,
+      );
     }
   }
 
   // Called when the PageView scrolls
-  bool _handleScrollNotification(ScrollNotification notification) {
+  void _handleScrollNotification(ScrollNotification notification) {
     if (_warpUnderwayCount > 0 || _scrollUnderwayCount > 0) {
-      return false;
+      return;
     }
 
-    if (notification.depth != 0) return false;
+    if (notification.depth != 0) return;
 
     _scrollUnderwayCount += 1;
-    if (notification is ScrollUpdateNotification && !_controller.indexIsChanging) {
+    if (notification is ScrollUpdateNotification &&
+        !_controller.indexIsChanging) {
       if ((_pageController.page! - _controller.index).abs() > 1.0) {
         _controller.index = _pageController.page!.round();
         _currentIndex = _controller.index;
       }
       final currentPage = _pageController.page!.round();
-      _controller.index = currentPage;
-      _controller.offset = (_pageController.page! - _controller.index).clamp(-1.0, 1.0);
+      if (!_isGuarded(currentPage)) {
+        _controller.index = currentPage;
+      }
+      _controller.offset = (_pageController.page! - _controller.index).clamp(
+        -1.0,
+        1.0,
+      );
       final deltaDx = notification.dragDetails?.delta.dx;
       if (deltaDx != null) {
         if (deltaDx > 0 && currentPage > 0) {
-          preload(currentPage - 1);
+          _preloadDraggedIn(currentPage - 1);
         } else if (deltaDx < 0 && currentPage < _children.length) {
-          preload(currentPage + 1);
+          _preloadDraggedIn(currentPage + 1);
         }
       }
     } else if (notification is ScrollEndNotification) {
-      _controller.index = _pageController.page!.round();
+      final currentPage = _pageController.page!.round();
+      if (_isGuarded(currentPage)) {
+        _router.setActiveIndex(currentPage);
+        // Until its guards let the tab in, the active one shows. The scroll
+        // that ended settles first.
+        if (_router.activeIndex != currentPage) {
+          _controller.offset = 0;
+          scheduleMicrotask(() {
+            if (mounted) {
+              unawaited(
+                _animateToPage(
+                  _router.activeIndex,
+                  duration: _controller.animationDuration,
+                  curve: Curves.ease,
+                ),
+              );
+            }
+          });
+          _scrollUnderwayCount -= 1;
+          return;
+        }
+      }
+      _controller.index = currentPage;
       _currentIndex = _controller.index;
       if (!_controller.indexIsChanging) {
-        _controller.offset = (_pageController.page! - _controller.index).clamp(-1.0, 1.0);
+        _controller.offset = (_pageController.page! - _controller.index).clamp(
+          -1.0,
+          1.0,
+        );
       }
     }
     _scrollUnderwayCount -= 1;
-
-    return false;
   }
 
   @override
   Widget build(BuildContext context) {
     return NotificationListener<ScrollNotification>(
-      onNotification: _handleScrollNotification,
+      onNotification: (notification) {
+        _handleScrollNotification(notification);
+        // The notification keeps bubbling up.
+        return false;
+      },
       child: EagerPageView(
         cacheExtent: _children.length,
-        scrollDirection: widget.scrollDirection,
-        dragStartBehavior: widget.dragStartBehavior,
+        scrollDirection: widget._scrollDirection,
+        dragStartBehavior: widget._dragStartBehavior,
         controller: _pageController,
-        physics: widget.physics == null
+        physics: widget._physics == null
             ? const PageScrollPhysics().applyTo(const ClampingScrollPhysics())
-            : const PageScrollPhysics().applyTo(widget.physics),
+            : const PageScrollPhysics().applyTo(widget._physics),
         children: _children,
       ),
     );
@@ -277,10 +399,11 @@ class AutoTabViewState extends State<AutoTabView> {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<TabController>('controller', _controller));
-    properties.add(DiagnosticsProperty<TabsRouter>('router', _router));
-    properties.add(IntProperty('activeIndex', _router.activeIndex));
-    properties.add(IntProperty('previousIndex', _router.previousIndex));
-    properties.add(IntProperty('childrenCount', _children.length));
+    properties
+      ..add(DiagnosticsProperty<TabController>('controller', _controller))
+      ..add(DiagnosticsProperty<TabsRouter>('router', _router))
+      ..add(IntProperty('activeIndex', _router.activeIndex))
+      ..add(IntProperty('previousIndex', _router.previousIndex))
+      ..add(IntProperty('childrenCount', _children.length));
   }
 }

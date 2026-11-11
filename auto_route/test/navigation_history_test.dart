@@ -1,10 +1,24 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:auto_route/src/router/controller/navigation_history/navigation_history_base.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'main_router.dart';
 import 'simple_router/router.dart';
+
+// Skip reasons for tests that check behavior only the native history has. On
+// web the history is the browser's own; test/web tests it against the real
+// browser history, which this file's default headless setup doesn't connect.
+const Object _kWebSupportsIt = kIsWeb
+    ? 'checks that this throws, which it does only off the web'
+    : false;
+const Object _kWebCountsBrowserEntries = kIsWeb
+    ? "checks the native history's entry count; "
+          "on web length counts the browser's entries"
+    : false;
+const Object _kWebBackMovesBrowser = kIsWeb
+    ? "checks the native history's own back step; "
+          'on web back() moves the browser, which reports it later'
+    : false;
 
 void main() {
   group('NavigationHistory Tests', () {
@@ -19,7 +33,7 @@ void main() {
     test('Initial state should have length 0 and cannot navigate back', () {
       expect(history.length, 0);
       expect(history.canNavigateBack, false);
-    });
+    }, skip: _kWebCountsBrowserEntries);
 
     test('Should add entry when navigating to a route', () async {
       await router.push(const FirstRoute());
@@ -27,24 +41,35 @@ void main() {
       expect(history.canNavigateBack, false); // Only one entry, can't go back
     });
 
-    test('Should be able to navigate back when history has more than one entry', () async {
-      await router.push(const FirstRoute());
-      await router.push(const SecondRoute());
+    test(
+      'Should be able to navigate back when history has more than one entry',
+      () async {
+        await router.push(const FirstRoute());
+        await router.push(const SecondRoute());
 
-      expect(history.length, 2);
-      expect(history.canNavigateBack, true);
-    });
+        expect(history.length, 2);
+        expect(history.canNavigateBack, true);
+      },
+      skip: _kWebBackMovesBrowser,
+    );
 
-    test('Should prevent duplicate consecutive entries', () async {
-      await router.push(const FirstRoute());
-      final firstLength = history.length;
+    // Rebuilding the url of the same page adds no entry, but pushing the same
+    // route again does: the second page is a page of its own, and back()
+    // returns to the first one, as maybePop() does.
+    test(
+      'Should prevent duplicate consecutive entries for the same page only',
+      () async {
+        await router.push(const FirstRoute());
+        final firstLength = history.length;
 
-      // Try to add the same route again
-      await router.push(const FirstRoute());
+        history.rebuildUrl();
+        expect(history.length, firstLength);
 
-      // Length should remain the same due to duplicate prevention
-      expect(history.length, firstLength);
-    });
+        await router.push(const FirstRoute());
+        expect(history.length, firstLength + 1);
+      },
+      skip: _kWebCountsBrowserEntries,
+    );
 
     test('Should allow same route if not consecutive', () async {
       await router.push(const FirstRoute());
@@ -52,7 +77,7 @@ void main() {
       await router.push(const FirstRoute());
 
       expect(history.length, 3);
-    });
+    }, skip: _kWebCountsBrowserEntries);
 
     test('Back navigation should remove last entry', () async {
       await router.push(const FirstRoute());
@@ -62,20 +87,22 @@ void main() {
       expect(history.length, 3);
 
       history.back();
-      await Future.delayed(const Duration(milliseconds: 10)); // Give time for navigation
+      await Future<void>.delayed(
+        const Duration(milliseconds: 10),
+      ); // Give time for navigation
 
       expect(history.length, 2);
-    });
+    }, skip: _kWebBackMovesBrowser);
 
     test('Back navigation should navigate to previous route', () async {
       await router.push(const FirstRoute());
       await router.push(const SecondRoute());
 
       history.back();
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
 
       expect(router.current.name, FirstRoute.name);
-    });
+    }, skip: _kWebBackMovesBrowser);
 
     test('Back navigation on single entry should not crash', () async {
       await router.push(const FirstRoute());
@@ -88,7 +115,7 @@ void main() {
 
     test('Should limit history to 20 entries', () async {
       // Push 25 routes
-      for (int i = 0; i < 25; i++) {
+      for (var i = 0; i < 25; i++) {
         // Alternate between routes to avoid duplicate prevention
         if (i % 3 == 0) {
           await router.push(const FirstRoute());
@@ -104,14 +131,14 @@ void main() {
     });
 
     test('Should notify listeners on URL state change', () async {
-      bool notified = false;
-      history.addListener(() {
-        notified = true;
-      });
+      var wasNotified = false;
+      void onChange() => wasNotified = true;
+      history.addListener(onChange);
+      addTearDown(() => history.removeListener(onChange));
 
       await router.push(const FirstRoute());
 
-      expect(notified, true);
+      expect(wasNotified, true);
     });
 
     test('Should track route as active after navigation', () async {
@@ -150,15 +177,15 @@ void main() {
       expect(history.length, 3);
 
       history.back();
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
       expect(history.length, 2);
 
       history.back();
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
       expect(history.length, 1);
 
       expect(history.canNavigateBack, false);
-    });
+    }, skip: _kWebBackMovesBrowser);
 
     test('Should handle path checking correctly', () async {
       await router.push(const FirstRoute());
@@ -179,7 +206,7 @@ void main() {
       expect(history.urlState.hasSegments, true);
     });
 
-    test('Should not add entry if URL has no segments', () async {
+    test('Should not add entry if URL has no segments', () {
       final initialLength = history.length;
 
       // Create a URL state with no segments
@@ -201,34 +228,39 @@ void main() {
     });
 
     test('Forward navigation should throw error on native platforms', () {
-      expect(
-        () => history.forward(),
-        throwsA(isA<FlutterError>()),
-      );
-    });
+      expect(() => history.forward(), throwsA(isA<FlutterError>()));
+    }, skip: _kWebSupportsIt);
 
     test('pathState getter should throw error on native platforms', () {
-      expect(
-        () => history.pathState,
-        throwsA(isA<FlutterError>()),
-      );
-    });
+      expect(() => history.pathState, throwsA(isA<FlutterError>()));
+    }, skip: _kWebSupportsIt);
 
     test('pushPathState should throw error on native platforms', () {
-      expect(
-        () => history.pushPathState(null),
-        throwsA(isA<FlutterError>()),
-      );
-    });
+      expect(() => history.pushPathState(null), throwsA(isA<FlutterError>()));
+    }, skip: _kWebSupportsIt);
 
-    test('Should mark and unmark URL state for replace', () {
+    test('Should mark and unmark URL state for replace', () async {
       expect(history.isUrlStateMarkedForReplace, false);
 
       history.markUrlStateForReplace();
       expect(history.isUrlStateMarkedForReplace, true);
 
+      // An empty stack has no url to record, so the mark waits for the next one
+      // (#2331).
       history.rebuildUrl();
-      expect(history.isUrlStateMarkedForReplace, false);
+      expect(
+        history.isUrlStateMarkedForReplace,
+        true,
+        reason: 'after history.rebuildUrl()',
+      );
+
+      await router.push(const FirstRoute());
+      history.rebuildUrl();
+      expect(
+        history.isUrlStateMarkedForReplace,
+        false,
+        reason: 'after history.rebuildUrl()',
+      );
     });
 
     test('Should handle navigation with shouldReplace flag', () async {
@@ -253,7 +285,7 @@ void main() {
 
       // Each route should be added (except any duplicates)
       expect(history.length, greaterThan(1));
-    });
+    }, skip: _kWebCountsBrowserEntries);
 
     test('Back from empty history should handle gracefully', () {
       expect(history.length, 0);
@@ -262,15 +294,27 @@ void main() {
       // Should not crash
       expect(() => history.back(), returnsNormally);
 
-      expect(history.length, 0);
-    });
+      expect(
+        history.length,
+        0,
+        reason: 'after }, skip: _kWebCountsBrowserEntries)',
+      );
+    }, skip: _kWebBackMovesBrowser);
 
     test('Multiple listeners should all be notified', () async {
-      int listener1Count = 0;
-      int listener2Count = 0;
+      var listener1Count = 0;
+      var listener2Count = 0;
 
-      history.addListener(() => listener1Count++);
-      history.addListener(() => listener2Count++);
+      void onFirst() => listener1Count++;
+      void onSecond() => listener2Count++;
+      history
+        ..addListener(onFirst)
+        ..addListener(onSecond);
+      addTearDown(() {
+        history
+          ..removeListener(onFirst)
+          ..removeListener(onSecond);
+      });
 
       await router.push(const FirstRoute());
 
@@ -280,7 +324,7 @@ void main() {
     });
 
     test('Should remove listener correctly', () async {
-      int callCount = 0;
+      var callCount = 0;
       void listener() => callCount++;
 
       history.addListener(listener);
@@ -316,9 +360,13 @@ void main() {
       expect(history.length, 3);
 
       history.back();
-      await Future.delayed(const Duration(milliseconds: 10));
-      expect(history.length, 2);
-    });
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+      expect(
+        history.length,
+        2,
+        reason: 'after Future<void>.delayed(const Duration(milliseconds: 10))',
+      );
+    }, skip: _kWebCountsBrowserEntries);
   });
 
   group('NavigationHistory Edge Cases', () {
@@ -334,7 +382,7 @@ void main() {
       await router.push(const FirstRoute());
 
       history.back();
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
 
       // History should handle being empty after back navigation
       expect(() => history.length, returnsNormally);
@@ -344,9 +392,10 @@ void main() {
       await router.push(const FirstRoute());
       await router.push(const SecondRoute());
 
-      history.back();
-      history.back();
-      await Future.delayed(const Duration(milliseconds: 20));
+      for (var i = 0; i < 2; i++) {
+        history.back();
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 20));
 
       expect(() => history.length, returnsNormally);
     });
@@ -362,37 +411,42 @@ void main() {
       // Call back twice rapidly without waiting
       history.back();
 
-      // Second back should be blocked because canNavigateBack is false during navigation
+      // Second back should be blocked because canNavigateBack is false during
+      // navigation
       final canNavigateDuringBack = history.canNavigateBack;
       history.back(); // This should be blocked
 
-      await Future.delayed(const Duration(milliseconds: 20));
+      await Future<void>.delayed(const Duration(milliseconds: 20));
 
       // Should only go back once, not twice
       expect(history.length, 2);
       expect(canNavigateDuringBack, false); // Was blocked during navigation
-    });
+    }, skip: _kWebBackMovesBrowser);
 
-    test('Should allow back navigation after previous back completes', () async {
-      await router.push(const FirstRoute());
-      await router.push(const SecondRoute());
-      await router.push(const ThirdRoute());
+    test(
+      'Should allow back navigation after previous back completes',
+      () async {
+        await router.push(const FirstRoute());
+        await router.push(const SecondRoute());
+        await router.push(const ThirdRoute());
 
-      expect(history.length, 3);
+        expect(history.length, 3);
 
-      // First back
-      history.back();
-      await Future.delayed(const Duration(milliseconds: 20));
-      expect(history.length, 2);
+        // First back
+        history.back();
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+        expect(history.length, 2);
 
-      // Should be able to navigate back again after first completes
-      expect(history.canNavigateBack, true);
+        // Should be able to navigate back again after first completes
+        expect(history.canNavigateBack, true);
 
-      // Second back
-      history.back();
-      await Future.delayed(const Duration(milliseconds: 20));
-      expect(history.length, 1);
-    });
+        // Second back
+        history.back();
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+        expect(history.length, 1);
+      },
+      skip: _kWebBackMovesBrowser,
+    );
 
     test('Should not add duplicate entries during back navigation', () async {
       await router.push(const FirstRoute());
@@ -402,42 +456,53 @@ void main() {
 
       history.back();
 
-      // Try to push during back navigation - the navigation callback might trigger
-      // This simulates the scenario where onNewUrlState is called during back
-      await Future.delayed(const Duration(milliseconds: 20));
+      // Try to push during back navigation - the navigation callback might
+      // trigger This simulates the scenario where onNewUrlState is called
+      // during back
+      await Future<void>.delayed(const Duration(milliseconds: 20));
 
       expect(history.length, 1);
       expect(router.current.name, FirstRoute.name);
-    });
+    }, skip: _kWebBackMovesBrowser);
 
-    test('Should reset navigation flag after successful back navigation', () async {
-      await router.push(const FirstRoute());
-      await router.push(const SecondRoute());
+    test(
+      'Should reset navigation flag after successful back navigation',
+      () async {
+        await router.push(const FirstRoute());
+        await router.push(const SecondRoute());
 
-      expect(history.canNavigateBack, true);
+        expect(history.canNavigateBack, true);
 
-      history.back();
-      expect(history.canNavigateBack, false); // Blocked during navigation
+        history.back();
+        expect(history.canNavigateBack, false); // Blocked during navigation
 
-      await Future.delayed(const Duration(milliseconds: 50));
+        await Future<void>.delayed(const Duration(milliseconds: 50));
 
-      // If there's still one entry left, should be false (can't go back from single entry)
-      // The flag should be reset, but canNavigateBack depends on having 2+ entries
-      expect(history.length, 1);
-      expect(history.canNavigateBack, false); // Only one entry, can't go back
-    });
+        // If there's still one entry left, should be false (can't go back from
+        // single entry) The flag should be reset, but canNavigateBack depends
+        // on having 2+ entries
+        expect(history.length, 1);
+        expect(
+          history.canNavigateBack,
+          false,
+          reason:
+              'after Future<void>.delayed(const Duration(milliseconds: 50))',
+        ); // Only one entry, can't go back
+      },
+      skip: _kWebBackMovesBrowser,
+    );
 
     test('Should handle complex navigation patterns', () async {
       await router.push(const FirstRoute());
       await router.push(const SecondRoute());
       history.back();
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
 
       await router.push(const ThirdRoute());
       await router.push(const SecondRoute());
 
       expect(history.length, greaterThan(1));
       expect(router.current.name, SecondRoute.name);
-    });
+    }, skip: _kWebBackMovesBrowser);
   });
 }

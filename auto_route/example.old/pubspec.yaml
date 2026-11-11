@@ -1,0 +1,34 @@
+name: example
+description: A new Flutter application.
+version: 1.0.0+1
+publish_to: none
+
+environment:
+  sdk: ">=3.13.0 <4.0.0"
+  flutter: ">=3.47.0"
+resolution: workspace
+
+dependencies:
+  auto_route:
+  collection: any
+  cupertino_ui: any
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  material_ui: any
+  provider: ^6.1.5+1
+
+dev_dependencies:
+  auto_route_generator:
+  build_runner: ^2.4.15
+  flutter_driver:
+    sdk: flutter
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  very_good_analysis: ^11.0.0
+
+flutter:
+  uses-material-design: true

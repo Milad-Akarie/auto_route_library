@@ -1,0 +1,29 @@
+/// What the user data flow collects: a name and a favorite book.
+class UserData {
+  /// Both fields start empty.
+  const new({this.name, this.favoriteBook});
+
+  /// The name entered, or `null` when not given yet.
+  final String? name;
+
+  /// The favorite book entered, or `null` when not given yet.
+  final String? favoriteBook;
+
+  @override
+  String toString() {
+    return 'UserData{name: ${name ?? 'null'}, '
+        'favoriteBook: ${favoriteBook ?? 'null'}}';
+  }
+
+  /// Whether both the name and the favorite book are given.
+  bool get isDone => name != null && favoriteBook != null;
+
+  /// Returns a copy with [name] and [favoriteBook] replaced when they are not
+  /// `null`.
+  UserData copyWith({String? name, String? favoriteBook}) {
+    return UserData(
+      name: name ?? this.name,
+      favoriteBook: favoriteBook ?? this.favoriteBook,
+    );
+  }
+}

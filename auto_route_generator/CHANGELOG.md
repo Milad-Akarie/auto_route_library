@@ -1,3 +1,92 @@
+## 11.6.0
+- **CHORE**: depends on auto_route 12.6.0, the version its tests run against.
+- **FIX**: a `Point` parameter, such as `List<Point<int>>`, is imported from `dart:math`, which declares it, no longer
+  from `dart:html`, which re-exports it and does not compile on mobile (#2152).
+- **FIX**: a const list default that builds objects, such as `= const [Color(0xFF000000)]`, keeps its `const` and
+  imports the class, where the route had "Undefined name 'Color'". A default that names declarations from several
+  libraries, such as `const [Color(1), Shade.dark]`, imports each of them (#636).
+- **FIX**: a page whose only parameter is a `required Key`, as in `const Page({required Key key})`, gets a route that
+  takes the key, where the router did not compile. A page with only an optional `super.key` still gets a route without
+  it (#371).
+
+## 11.5.0
+- **CHORE**: the same lint setup as auto_route.
+- **CHORE**: depends on auto_route 12.5.0, the version its tests run against.
+
+## 11.4.0
+- **CHANGE**: a generic route's args compare their items with `const ListEquality<Object?>()` and its kin, no longer
+  `ListEquality<dynamic>()`; the comparison is the same. Regenerate routers to pick it up.
+- **BREAKING CHANGE**: the generator's two extensions are filed and spelled by name: `IterableExtenstion` (sic) from
+  `utils.dart` is `IterableExtension` in `iterable_extension.dart`, and `DartTypeX` from `build_utils.dart` is in
+  `dart_type_x.dart`. Only code that imports `package:auto_route_generator/utils.dart` or `build_utils.dart` for one of
+  them changes its import; generated routers are the same.
+- **CHORE**: depends on auto_route 12.4.0, the version its tests run against.
+
+## 11.3.0
+- **BREAKING CHANGE**: `throwIf` from `build_utils.dart` takes the message first and its condition by name:
+  `throwIf(message, shouldThrow: condition)`.
+- **CHANGE**: generated routers read a bool query or path param's default by name, `getBool('key', defaultValue: x)`,
+  and an inherited path param from `PathParam.inherited`; they need auto_route 12.3.0.
+- **CHANGE**: the builders' warnings go through build_runner's logger instead of `print`, so they show as warnings.
+- **CHORE**: every analyzer and DCM rule is on, with no rule switched off and no ignore; the code is formatted at 80
+  columns.
+
+## 11.1.0
+- **FEAT**: a `ParamConverter` on `@PathParam` or `@QueryParam` reads and writes a param of any type; a custom type
+  without one fails the build saying how to give one (#1794).
+- **FIX**: a `const` default from another library, such as `= const UserId('me')`, no longer gets its import
+  prefix in front of `const` in the generated reader.
+- **FEAT**: a `@RoutePage` class with type parameters builds: its route and args class take the same type
+  parameters, and the args build the page with them. Before, the build failed (#2050, #1879, #1739).
+
+## 11.0.0
+- **CHORE**: require Dart 3.13, the version Flutter 3.47 ships.
+- **BREAKING CHANGE**: lean_builder support is dropped, and the generator runs on build_runner only.
+  lean_builder often conflicted with other packages that depend on build_runner. An app that built
+  its routes with lean_builder builds them with `dart run build_runner build` instead.
+- **BEHAVIOR CHANGE**: an enum query parameter is read with `values.asNameMap()` and written with
+  `.name`, so the url holds `type=rm`, not `type=CartType.rm`. Regenerate the router, fixes #2148
+- **BREAKING CHANGE**: a router in a part file whose route would share its page's name (a page
+  `CostsTab` that `replaceInRouteName` does not rename) now fails the build with a message listing
+  each page and the `@RoutePage(name: ...)` that fixes it. Before, the build left a router that did
+  not compile. Add the name; routers in libraries of their own build as before, fixes #1870
+- **BREAKING CHANGE**: a `List` query param of a type other than `String`, `int`, `double`, `num`,
+  `bool` or an enum, and a `List` path param of anything but `String`, fail the build with a
+  message naming the param, instead of producing code that does not compile.
+- **BREAKING CHANGE**: a query param of a type the url can't give (such as `DateTime`) fails the
+  build with a message naming it, as a path param already did, instead of compiling and throwing a
+  `TypeError` when a link opens the page. A page whose required args keep it from opening by a link
+  is not checked, flutter/flutter#108437
+- **BREAKING CHANGE**: a page argument whose type the build can't resolve, such as a class another
+  builder hasn't written yet or one without its import, fails the build with a message naming the
+  argument and its page, instead of a router that doesn't compile ("Undefined class
+  'InvalidType'"). Run the other builder first, fixes #1507
+- **BREAKING CHANGE**: a page class with type parameters fails the build with a message naming it
+  and the way around it (a page class without type parameters that builds the generic widget),
+  instead of "Could not format because the source could not be parsed", fixes #332
+- **BREAKING CHANGE**: a `replaceInRouteName` without exactly one comma, with an empty pattern, or
+  with a replacement a Dart name can't hold fails the build naming the router and the value;
+  before, it was skipped and every route kept its `Route` suffix. A space after the comma
+  (`'Page, Route'`) is trimmed instead of breaking the build, fixes #994
+- **FIX**: a `List<int>`, `List<double>`, `List<num>`, `List<bool>` or enum list query param
+  compiles; an item that doesn't convert is left out, fixes #2061
+- **FIX**: `build_extensions` can move the generated router, for example
+  `'^lib/{{}}.dart': 'lib/generated/{{}}.gr.dart'`, fixes #1686
+- **FIX**: a default value from another library gets its import, fixes #1968
+- **FIX**: path and query parameters typed by a typedef build, fixes #2053
+- **FIX**: function types inside route argument types keep their signature, fixes #2106
+- **FIX**: a route argument whose record holds another record builds, fixes #1801
+- **FIX**: a default value named after `const` (`this.title = constTitle`) is no longer written
+  as `const`.
+- **FIX**: a `Set` or `Iterable` query param opens from a link; its items convert as a `List`'s
+  do, flutter/flutter#108437
+- **FIX**: a list or set default naming an enum from another file (`const [Sort.asc]`) gets its
+  import, flutter/flutter#122181
+- **FIX**: page classes and page params named with a '$' (`venue$id`) compile, fixes #1163
+- **FIX**: a deferred page and a page that isn't deferred in one file compile together; every page
+  of a file loads the way the file does.
+- **FIX**: a router outside `lib/`, such as one in `integration_test/`, imports its pages by
+  relative path, so a Flutter build accepts it.
 ## 10.6.0
 - **CHORE**: update analyzer constraints to support versions >=10.0.0 <14.0.0
 - **CHORE**: update lean_builder dependency to ^1.2.0

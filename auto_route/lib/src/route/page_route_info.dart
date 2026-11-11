@@ -1,8 +1,10 @@
+// `extends Object?` is not unnecessary: without it, a type argument an app
+// leaves out is inferred as `dynamic`, not `Object?`.
+// ignore_for_file: avoid-unnecessary-extends
+
+import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
-
-import '../../auto_route.dart';
-import '../utils.dart';
 
 /// Holds information of a named destination
 ///
@@ -21,7 +23,44 @@ import '../utils.dart';
 @optionalTypeArgs
 @immutable
 class PageRouteInfo<T extends Object?> {
-  final String _name;
+  /// Default constructor
+  const new(
+    String name, {
+    this.initialChildren,
+    this.args,
+    this.rawPathParams = const {},
+    this.rawQueryParams = const {},
+    String? fragment,
+    this.stringMatch,
+    this.redirectedFrom,
+    this.argsEquality = true,
+  }) : _routeName = name,
+       fragment = fragment ?? '';
+
+  /// Creates a new instance form [RouteMatch]
+  factory fromMatch(RouteMatch<Object?> match) {
+    return PageRouteInfo(
+      match.name,
+      rawPathParams: match.params.rawMap,
+      rawQueryParams: match.queryParams.rawMap,
+      fragment: match.fragment,
+      redirectedFrom: match.redirectedFrom,
+      stringMatch: match.stringMatch,
+      args: match.args as T?,
+      initialChildren: match.children?.map(PageRouteInfo.fromMatch).toList(),
+    );
+  }
+
+  /// Creates a new instance of a named route
+  const factory named(
+    String name, {
+    List<PageRouteInfo>? children,
+    T? args,
+    Map<String, dynamic> params,
+    Map<String, dynamic> queryParams,
+    String? fragment,
+  }) = NamedRoute<T>;
+  final String _routeName;
 
   /// The  typed arguments of the route
   ///
@@ -55,26 +94,13 @@ class PageRouteInfo<T extends Object?> {
   /// The string match from the [RouteMatch]
   final String? stringMatch;
 
-  /// Default constructor
-  const PageRouteInfo(
-    this._name, {
-    this.initialChildren,
-    this.args,
-    this.rawPathParams = const {},
-    this.rawQueryParams = const {},
-    String? fragment,
-    this.stringMatch,
-    this.redirectedFrom,
-    this.argsEquality = true,
-  }) : fragment = fragment ?? '';
-
   /// Whether the equality check should include [args]
   ///
   /// default is true
   final bool argsEquality;
 
   /// The name of the route
-  String get routeName => _name;
+  String get routeName => _routeName;
 
   /// Whether this route has initial child routes
   bool get hasChildren => initialChildren?.isNotEmpty == true;
@@ -86,22 +112,32 @@ class PageRouteInfo<T extends Object?> {
   bool get fromRedirect => redirectedFrom != null;
 
   /// Builds and returns a new instance of Parameters with [rawPathParams]
-  Parameters get pathParams => Parameters(rawPathParams);
+  Parameters get pathParams => .new(rawPathParams);
 
   /// Builds and returns a new instance of Parameters with [rawQueryParams]
-  Parameters get queryParams => Parameters(rawQueryParams);
+  Parameters get queryParams => .new(rawQueryParams);
 
   /// Expends the path by populating it's dynamic-segments with
   /// their corresponding values from [params]
   /// e.g if [template] = '/products/:id' and [params] = {'id':'5'}
   /// the result is '/products/5'
   static String expandPath(String template, Map<String, dynamic> params) {
-    if (mapNullOrEmpty(params)) {
+    if (params.isEmpty) {
       return template;
     }
-    var paramsRegex = RegExp(":(${params.keys.join('|')})");
-    var path = template.replaceAllMapped(paramsRegex, (match) {
-      return params[match.group(1)]?.toString() ?? '';
+    // Escaped, so a name such as `user$id` matches as it is written. A name
+    // runs to the end of its segment, so ':id' is never read out of ':idx'.
+    final paramsRegex = RegExp(
+      ":(${params.keys.map(RegExp.escape).join('|')})(?=[/?#]|\$)",
+    );
+    final path = template.replaceAllMapped(paramsRegex, (match) {
+      final value = params[match.group(1)]?.toString();
+      // Encoded as a path segment, so a '/', '?' or '#' in the value stays part
+      // of it. The leading empty segment keeps a ':' in the value from being
+      // escaped as a scheme.
+      return value == null
+          ? ''
+          : Uri(pathSegments: ['', value]).path.substring(1);
     });
     return path;
   }
@@ -110,65 +146,66 @@ class PageRouteInfo<T extends Object?> {
   /// e.g if we have = Route1[Route2[Route3]]
   /// the result is [Route1,Route2,Route3]
   List<PageRouteInfo> get flattened {
-    return [this, if (hasChildren) ...initialChildren!.last.flattened];
+    return [
+      this,
+      if (initialChildren case [..., final last]) ...last.flattened,
+    ];
   }
 
   /// Returns a new instance with the provided
   /// overrides
+  ///
+  /// Every field not overridden is kept. Each parameter is named after the
+  /// field it sets.
   PageRouteInfo copyWith({
     String? name,
-    String? path,
     T? args,
-    RouteMatch? match,
-    Map<String, dynamic>? params,
-    Map<String, dynamic>? queryParams,
-    List<PageRouteInfo>? children,
+    Map<String, dynamic>? rawPathParams,
+    Map<String, dynamic>? rawQueryParams,
+    List<PageRouteInfo>? initialChildren,
     String? fragment,
+    String? stringMatch,
+    String? redirectedFrom,
+    bool? argsEquality,
   }) {
-    if ((name == null || identical(name, _name)) &&
+    if ((name == null || identical(name, _routeName)) &&
         (fragment == null || identical(fragment, this.fragment)) &&
         (args == null || identical(args, this.args)) &&
-        (params == null || identical(params, rawPathParams)) &&
-        (queryParams == null || identical(queryParams, rawQueryParams)) &&
-        (children == null || identical(children, initialChildren))) {
+        (rawPathParams == null ||
+            identical(rawPathParams, this.rawPathParams)) &&
+        (rawQueryParams == null ||
+            identical(rawQueryParams, this.rawQueryParams)) &&
+        (initialChildren == null ||
+            identical(initialChildren, this.initialChildren)) &&
+        (stringMatch == null || identical(stringMatch, this.stringMatch)) &&
+        (redirectedFrom == null ||
+            identical(redirectedFrom, this.redirectedFrom)) &&
+        (argsEquality == null || argsEquality == this.argsEquality)) {
       return this;
     }
 
     return PageRouteInfo(
-      name ?? _name,
+      name ?? _routeName,
       args: args ?? this.args,
-      rawPathParams: params ?? rawPathParams,
-      rawQueryParams: queryParams ?? rawQueryParams,
-      initialChildren: children ?? initialChildren,
+      rawPathParams: rawPathParams ?? this.rawPathParams,
+      rawQueryParams: rawQueryParams ?? this.rawQueryParams,
+      initialChildren: initialChildren ?? this.initialChildren,
+      fragment: fragment ?? this.fragment,
+      stringMatch: stringMatch ?? this.stringMatch,
+      redirectedFrom: redirectedFrom ?? this.redirectedFrom,
+      argsEquality: argsEquality ?? this.argsEquality,
     );
   }
 
   @override
   String toString() {
-    return 'Route{name: $_name,  params: $rawPathParams}, children: ${initialChildren?.map((e) => e.routeName)}';
-  }
-
-  /// Creates a new instance form [RouteMatch]
-  factory PageRouteInfo.fromMatch(RouteMatch match) {
-    return PageRouteInfo(
-      match.name,
-      rawPathParams: match.params.rawMap,
-      rawQueryParams: match.queryParams.rawMap,
-      fragment: match.fragment,
-      redirectedFrom: match.redirectedFrom,
-      stringMatch: match.stringMatch,
-      args: match.args,
-      initialChildren: match.children
-          ?.map(
-            (m) => PageRouteInfo.fromMatch(m),
-          )
-          .toList(),
-    );
+    return 'Route{name: $_routeName,  params: $rawPathParams}, children: '
+        '${initialChildren?.map((e) => e.routeName) ?? 'null'}';
   }
 
   /// Calls [StackRouter.push] with this route on the nearest router
   Future<E?> push<E>(BuildContext context) {
-    return context.router.push<E>(this);
+    return context.router.push(this);
   }
 
   /// Calls [StackRouter.navigate] with this route on the nearest router
@@ -177,45 +214,47 @@ class PageRouteInfo<T extends Object?> {
   }
 
   /// Returns the match result of this route
-  /// which internally calls [router.matcher.matchByRoute]
-  RouteMatch? match(BuildContext context) {
+  /// which internally calls `router.matcher.matchByRoute`
+  RouteMatch<Object?>? match(BuildContext context) {
     return context.router.match(this);
   }
-
-  /// Creates a new instance of a named route
-  const factory PageRouteInfo.named(String name,
-      {List<PageRouteInfo>? children,
-      T? args,
-      Map<String, dynamic> params,
-      Map<String, dynamic> queryParams,
-      String? fragment}) = NamedRoute<T>;
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is PageRouteInfo &&
-          _name == other._name &&
+          _routeName == other._routeName &&
           fragment == other.fragment &&
-          (argsEquality ? args == other.args : true) &&
-          const ListEquality().equals(initialChildren, other.initialChildren) &&
-          const MapEquality().equals(rawPathParams, other.rawPathParams) &&
-          const MapEquality().equals(rawQueryParams, other.rawQueryParams);
+          (!argsEquality || args == other.args) &&
+          const ListEquality<Object?>().equals(
+            initialChildren,
+            other.initialChildren,
+          ) &&
+          // Deep, so params holding equal lists or sets are equal.
+          const DeepCollectionEquality().equals(
+            rawPathParams,
+            other.rawPathParams,
+          ) &&
+          const DeepCollectionEquality().equals(
+            rawQueryParams,
+            other.rawQueryParams,
+          );
 
   @override
   int get hashCode =>
-      _name.hashCode ^
+      _routeName.hashCode ^
       fragment.hashCode ^
       args.hashCode ^
-      const MapEquality().hash(rawPathParams) ^
-      const MapEquality().hash(rawQueryParams) ^
-      const ListEquality().hash(initialChildren);
+      const DeepCollectionEquality().hash(rawPathParams) ^
+      const DeepCollectionEquality().hash(rawQueryParams) ^
+      const ListEquality<Object?>().hash(initialChildren);
 }
 
 /// A proxy Route page that provides a way to create a [PageRouteInfo]
 /// without the need for creating a new Page Widget
 class EmptyShellRoute extends PageInfo {
   /// Default constructor
-  const EmptyShellRoute(super.name) : super.emptyShell();
+  const new(super.name) : super.emptyShell();
 
   /// Creates a new instance with of [PageRouteInfo]
   PageRouteInfo call({List<PageRouteInfo>? children}) {
@@ -231,7 +270,7 @@ class EmptyShellRoute extends PageInfo {
 /// typically built with [NamedRouteDef]
 class NamedRoute<A extends Object?> extends PageRouteInfo<A> {
   /// Default constructor
-  const NamedRoute(
+  const new(
     super.name, {
     List<PageRouteInfo>? children,
     super.args,
@@ -239,8 +278,8 @@ class NamedRoute<A extends Object?> extends PageRouteInfo<A> {
     Map<String, dynamic> queryParams = const {},
     super.fragment,
   }) : super(
-          initialChildren: children,
-          rawPathParams: params,
-          rawQueryParams: queryParams,
-        );
+         initialChildren: children,
+         rawPathParams: params,
+         rawQueryParams: queryParams,
+       );
 }

@@ -26,6 +26,45 @@ typedef FloatingActionButtonBuilder = Widget? Function(
 /// A scaffold wrapper widget that makes creating an [AutoTabsRouter]
 /// much easier and cleaner
 class AutoTabsScaffold extends StatelessWidget {
+  /// Default constructor;
+  const new({
+    super.key,
+    this.routes,
+    this.lazyLoad = true,
+    this.homeIndex = -1,
+    this.backThroughHistory = false,
+    this.animationDuration = const Duration(milliseconds: 300),
+    this.animationCurve = Curves.ease,
+    this.transitionBuilder,
+    this.bottomNavigationBuilder,
+    this.inheritNavigatorObservers = true,
+    this.navigatorObservers =
+        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.floatingActionButton,
+    this.floatingActionButtonBuilder,
+    this.floatingActionButtonLocation,
+    this.floatingActionButtonAnimator,
+    this.persistentFooterButtons,
+    this.drawer,
+    this.onDrawerChanged,
+    this.endDrawer,
+    this.onEndDrawerChanged,
+    this.drawerScrimColor,
+    this.backgroundColor,
+    this.bottomSheet,
+    this.resizeToAvoidBottomInset,
+    this.primary = true,
+    this.drawerDragStartBehavior = DragStartBehavior.start,
+    this.drawerEdgeDragWidth,
+    this.drawerEnableOpenDragGesture = true,
+    this.endDrawerEnableOpenDragGesture = true,
+    this.restorationId,
+    this.extendBody = false,
+    this.extendBodyBehindAppBar = false,
+    this.appBarBuilder,
+    this.scaffoldKey,
+  });
+
   /// Builds the transition between tabs
   /// defaults to [FadeTransition]
   final AnimatedIndexedStackTransitionBuilder? transitionBuilder;
@@ -42,7 +81,7 @@ class AutoTabsScaffold extends StatelessWidget {
   /// If this is true routes will only be loaded once navigated to
   final bool lazyLoad;
 
-  /// Builds a BottomNavigation to [Scaffold.bottomNavigation]
+  /// Builds a BottomNavigation to `Scaffold.bottomNavigation`
   final BottomNavigationBuilder? bottomNavigationBuilder;
 
   /// The AutoRouteObservers to be used by [AutoTabsRouter]
@@ -119,7 +158,7 @@ class AutoTabsScaffold extends StatelessWidget {
   /// Builds a BottomNavigation to [Scaffold.appBar]
   final AppBarBuilder? appBarBuilder;
 
-  /// Passed to  [Scaffold.scaffoldKey]
+  /// Passed to  `Scaffold.scaffoldKey`
   final GlobalKey<ScaffoldState>? scaffoldKey;
 
   /// Passed to  [Scaffold.  final GlobalKey<ScaffoldState>? scaffoldKey;]
@@ -129,42 +168,9 @@ class AutoTabsScaffold extends StatelessWidget {
   /// else pop parent
   final int homeIndex;
 
-  /// Default constructor;
-  const AutoTabsScaffold({
-    super.key,
-    this.routes,
-    this.lazyLoad = true,
-    this.homeIndex = -1,
-    this.animationDuration = const Duration(milliseconds: 300),
-    this.animationCurve = Curves.ease,
-    this.transitionBuilder,
-    this.bottomNavigationBuilder,
-    this.inheritNavigatorObservers = true,
-    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
-    this.floatingActionButton,
-    this.floatingActionButtonBuilder,
-    this.floatingActionButtonLocation,
-    this.floatingActionButtonAnimator,
-    this.persistentFooterButtons,
-    this.drawer,
-    this.onDrawerChanged,
-    this.endDrawer,
-    this.onEndDrawerChanged,
-    this.drawerScrimColor,
-    this.backgroundColor,
-    this.bottomSheet,
-    this.resizeToAvoidBottomInset,
-    this.primary = true,
-    this.drawerDragStartBehavior = DragStartBehavior.start,
-    this.drawerEdgeDragWidth,
-    this.drawerEnableOpenDragGesture = true,
-    this.endDrawerEnableOpenDragGesture = true,
-    this.restorationId,
-    this.extendBody = false,
-    this.extendBodyBehindAppBar = false,
-    this.appBarBuilder,
-    this.scaffoldKey,
-  });
+  /// Whether back shows the tabs the user visited before the active one,
+  /// before it leaves the tabs; see [AutoTabsRouter.backThroughHistory].
+  final bool backThroughHistory;
 
   @override
   Widget build(BuildContext context) {
@@ -173,15 +179,13 @@ class AutoTabsScaffold extends StatelessWidget {
       duration: animationDuration,
       lazyLoad: lazyLoad,
       homeIndex: homeIndex,
+      backThroughHistory: backThroughHistory,
       navigatorObservers: navigatorObservers,
       inheritNavigatorObservers: inheritNavigatorObservers,
       curve: animationCurve,
       transitionBuilder: (context, child, animation) =>
           transitionBuilder?.call(context, child, animation) ??
-          FadeTransition(
-            opacity: animation,
-            child: child,
-          ),
+          FadeTransition(opacity: animation, child: child),
       builder: (context, child) {
         final tabsRouter = context.tabsRouter;
         return Scaffold(
@@ -200,7 +204,9 @@ class AutoTabsScaffold extends StatelessWidget {
           onDrawerChanged: onDrawerChanged,
           endDrawerEnableOpenDragGesture: endDrawerEnableOpenDragGesture,
           onEndDrawerChanged: onEndDrawerChanged,
-          floatingActionButton: floatingActionButton ?? floatingActionButtonBuilder?.call(context, tabsRouter),
+          floatingActionButton:
+              floatingActionButton ??
+              floatingActionButtonBuilder?.call(context, tabsRouter),
           floatingActionButtonAnimator: floatingActionButtonAnimator,
           floatingActionButtonLocation: floatingActionButtonLocation,
           bottomSheet: bottomSheet,
@@ -208,19 +214,16 @@ class AutoTabsScaffold extends StatelessWidget {
           primary: primary,
           appBar: appBarBuilder == null
               ? null
-              : appBarBuilder!(
-                  context,
-                  tabsRouter,
-                ),
+              : appBarBuilder!(context, tabsRouter),
           body: child,
           bottomNavigationBar: bottomNavigationBuilder == null
               ? null
               : AnimatedBuilder(
                   animation: tabsRouter,
-                  builder: (_, __) => bottomNavigationBuilder!(
-                    context,
-                    tabsRouter,
-                  ),
+                  // The builder's context is below the Scaffold, so it can find it.
+                  builder: (context, _) {
+                    return bottomNavigationBuilder!(context, tabsRouter);
+                  },
                 ),
         );
       },

@@ -1,23 +1,24 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:collection/collection.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
-import 'package:path/path.dart' as p;
 
 /// Matches paths and [PageRouteInfo]s with
 /// the given [collection]
 class RouteMatcher {
+  /// Default constructor
+  const new(this.collection);
+
   /// The list of route-entries to match against
   final RouteCollection collection;
 
-  /// Default constructor
-  const RouteMatcher(this.collection);
-
   /// Parses a [Uri] from [rawPath] then maps call to [_match]
-  List<RouteMatch>? match(String rawPath, {bool includePrefixMatches = false}) {
-    return _match(
+  List<RouteMatch<Object?>>? match(
+    String rawPath, {
+    bool includePrefixMatches = false,
+  }) {
+    return _matchFromTop(
       Uri.parse(rawPath),
-      collection,
-      includePrefixMatches: includePrefixMatches,
-      root: true,
+      shouldIncludePrefixMatches: includePrefixMatches,
     );
   }
 
@@ -27,45 +28,110 @@ class RouteMatcher {
   /// will be included in the return list
   ///
   /// returns null if not match is found
-  List<RouteMatch>? matchUri(Uri uri, {bool includePrefixMatches = false}) {
-    return _match(
-      uri,
-      collection,
-      includePrefixMatches: includePrefixMatches,
-      root: true,
-    );
+  List<RouteMatch<Object?>>? matchUri(
+    Uri uri, {
+    bool includePrefixMatches = false,
+  }) {
+    return _matchFromTop(uri, shouldIncludePrefixMatches: includePrefixMatches);
   }
 
-  List<RouteMatch>? _match(Uri uri, RouteCollection collection,
-      {bool includePrefixMatches = false, bool root = false, String? redirectedFrom}) {
+  // Matches [uri] against [collection], the top of this matcher.
+  //
+  // A RedirectRoute among a parent's children whose redirectTo is absolute,
+  // such as '/auth', names a url from the top, which no child path can
+  // match. So that url is matched again from the top, as a redirect there
+  // would be, and its matches stand for the whole url.
+  List<RouteMatch<Object?>>? _matchFromTop(
+    Uri uri, {
+    required bool shouldIncludePrefixMatches,
+  }) {
+    final topRedirect = _TopRedirect();
+    final matches = _match(
+      uri,
+      collection,
+      includePrefixMatches: shouldIncludePrefixMatches,
+      root: true,
+      topRedirect: topRedirect,
+    );
+    return topRedirect.isFollowed ? topRedirect.matches : matches;
+  }
+
+  List<RouteMatch<Object?>>? _match(
+    Uri uri,
+    RouteCollection routeCollection, {
+    bool includePrefixMatches = false,
+    bool root = false,
+    String? redirectedFrom,
+    List<_Redirect> redirectChain = const [],
+    _TopRedirect? topRedirect,
+  }) {
     final pathSegments = _split(uri.path);
-    final matches = <RouteMatch>[];
-    for (var config in collection.routes) {
-      var match = matchByPath(uri, config, redirectedFrom: redirectedFrom);
+    final matches = <RouteMatch<Object?>>[];
+    for (final config in routeCollection.routes) {
+      var match = _matchByPath(
+        uri,
+        pathSegments,
+        config,
+        redirectedFrom: redirectedFrom,
+      );
       if (match != null) {
         if (!includePrefixMatches || config.path == '*') {
           matches.clear();
         }
         // handle redirects
         if (config is RedirectRoute) {
-          final redirectToUri = Uri.parse(PageRouteInfo.expandPath(
-            config.redirectTo,
+          final redirectToUri = Uri.parse(
+            PageRouteInfo.expandPath(config.redirectTo, match.params.rawMap),
+          );
+          final redirectFrom = PageRouteInfo.expandPath(
+            config.path,
             match.params.rawMap,
-          ));
+          );
+          // The same RedirectRoute matching the same path again. Its config
+          // tells it from another parent's route of the same relative path.
+          if (redirectChain.any(
+            (r) => identical(r.route, config) && r.path == redirectFrom,
+          )) {
+            final steps = [...redirectChain.map((r) => r.path), redirectFrom];
+            throw FlutterError(
+              'Redirect loop detected: ${steps.join(' -> ')}\n'
+              'The RedirectRoutes above send the url back to one that was '
+              'already redirected. '
+              'Change the redirectTo of one of them so the chain ends at a '
+              'page.',
+            );
+          }
+          final target = redirectToUri.replace(
+            queryParameters: {
+              ...redirectToUri.queryParametersAll,
+              ...uri.queryParametersAll,
+            },
+            fragment: uri.fragment,
+          );
+          final chain = [...redirectChain, (route: config, path: redirectFrom)];
+          if (topRedirect != null &&
+              target.path.startsWith('/') &&
+              !identical(routeCollection, collection)) {
+            topRedirect.settle(
+              _match(
+                target,
+                collection,
+                includePrefixMatches: includePrefixMatches,
+                root: true,
+                redirectedFrom: redirectFrom,
+                redirectChain: chain,
+                topRedirect: topRedirect,
+              ),
+            );
+            return null;
+          }
           return _handleRedirect(
-            routesCollection: collection,
+            redirectChain: chain,
+            routesCollection: routeCollection,
             includePrefixMatches: includePrefixMatches,
-            redirectTo: redirectToUri.replace(
-              queryParameters: {
-                ...redirectToUri.queryParametersAll,
-                ...uri.queryParametersAll,
-              },
-              fragment: uri.fragment,
-            ),
-            redirectedFrom: PageRouteInfo.expandPath(
-              config.path,
-              match.params.rawMap,
-            ),
+            redirectTo: target,
+            redirectedFrom: redirectFrom,
+            topRedirect: topRedirect,
           );
         }
 
@@ -73,13 +139,18 @@ class RouteMatcher {
           // has rest
           if (config.hasSubTree) {
             final rest = uri.replace(
-              pathSegments: pathSegments.sublist(match.segments.length).map(Uri.decodeComponent),
+              pathSegments: pathSegments
+                  .sublist(match.segments.length)
+                  .map(Uri.decodeComponent),
             );
             final children = _match(
               rest,
-              collection.subCollectionOf(config.name),
+              routeCollection.subCollectionOf(config.name),
               includePrefixMatches: includePrefixMatches,
+              redirectChain: redirectChain,
+              topRedirect: topRedirect,
             );
+            if (topRedirect?.isFollowed ?? false) return null;
             match = match.copyWith(children: children);
           }
           matches.add(match);
@@ -91,7 +162,14 @@ class RouteMatcher {
           //
           // include empty route if exists
           if (config.hasSubTree && !match.hasChildren) {
-            match = match.copyWith(children: _match(uri.replace(path: ''), collection.subCollectionOf(config.name)));
+            final children = _match(
+              uri.replace(path: ''),
+              routeCollection.subCollectionOf(config.name),
+              redirectChain: redirectChain,
+              topRedirect: topRedirect,
+            );
+            if (topRedirect?.isFollowed ?? false) return null;
+            match = match.copyWith(children: children);
           }
 
           matches.add(match);
@@ -100,19 +178,25 @@ class RouteMatcher {
       }
     }
 
-    if (matches.isEmpty || (root && matches.last.allSegments(includeEmpty: true).length < pathSegments.length)) {
+    final last = matches.lastOrNull;
+    if (last == null ||
+        (root && _consumedSegments(last) < pathSegments.length)) {
       return null;
     }
     return matches;
   }
 
-  List<RouteMatch>? _handleRedirect({
+  List<RouteMatch<Object?>>? _handleRedirect({
     required RouteCollection routesCollection,
     required bool includePrefixMatches,
     required Uri redirectTo,
     required String redirectedFrom,
+    required List<_Redirect> redirectChain,
+    required _TopRedirect? topRedirect,
   }) {
     return _match(
+      redirectChain: redirectChain,
+      topRedirect: topRedirect,
       redirectTo,
       routesCollection,
       includePrefixMatches: includePrefixMatches,
@@ -120,41 +204,104 @@ class RouteMatcher {
     );
   }
 
-  List<String> _split(String path) => p.split(path);
+  // How many segments of the url [match] and its children consumed. A match
+  // with no segments of its own consumed none, unless a redirect to an empty
+  // path made it: then it stands for the segment the redirect matched. So a
+  // path no route has doesn't match the '' route of a router.
+  static int _consumedSegments(RouteMatch<Object?> match) {
+    final own = match.segments.isEmpty && match.redirectedFrom != null
+        ? 1
+        : match.segments.length;
+    return own +
+        (switch (match.children) {
+          [..., final last] => _consumedSegments(last),
+          _ => 0,
+        });
+  }
+
+  // Splits a url's path at each '/': the root '/' first when the path has one,
+  // then each segment that isn't empty. Escapes stay as they are, so an
+  // encoded '/' stays inside its segment. A url's separator is '/' on every
+  // platform, so this doesn't split at a backslash on Windows.
+  static List<String> _split(String path) {
+    final segments = <String>[if (path.startsWith('/')) '/'];
+    for (final segment in path.split('/')) {
+      if (segment.isNotEmpty) segments.add(segment);
+    }
+    return segments;
+  }
+
+  // Joins segments split by [_split] back into a path.
+  static String _join(List<String> segments) {
+    if (segments.isNotEmpty && segments.first == '/') {
+      return '/${segments.skip(1).join('/')}';
+    }
+    return segments.join('/');
+  }
+
+  // The segments of each route's path. A route's path never changes, and
+  // matching a url compares it with every route until one matches, so each
+  // path is split once instead of on every match.
+  static final _pathParts = Expando<List<String>>('path parts');
+
+  List<String> _partsOf(AutoRoute config) =>
+      _pathParts[config] ??= _split(config.path);
 
   /// Matches a uri against a route-config [AutoRoute]
   /// and returns a single match result
   ///
   /// returns null if not match is found
-  RouteMatch? matchByPath(Uri uri, AutoRoute config, {String? redirectedFrom}) {
-    var parts = _split(config.path);
-    var segments = _split(Uri.decodeComponent(uri.path));
+  RouteMatch<Object?>? matchByPath(
+    Uri uri,
+    AutoRoute config, {
+    String? redirectedFrom,
+  }) {
+    // Split before decoding, so an encoded '/' stays inside its segment.
+    return _matchByPath(
+      uri,
+      _split(uri.path),
+      config,
+      redirectedFrom: redirectedFrom,
+    );
+  }
+
+  // [segments] is the path of [uri], split.
+  RouteMatch<Object?>? _matchByPath(
+    Uri uri,
+    List<String> segments,
+    AutoRoute config, {
+    String? redirectedFrom,
+  }) {
+    final parts = _partsOf(config);
 
     if (parts.length > segments.length) {
       return null;
     }
 
-    if (config.fullMatch && segments.length > parts.length && (parts.isEmpty || parts.last != '*')) {
+    if (config.fullMatch &&
+        segments.length > parts.length &&
+        parts.lastOrNull != '*') {
       return null;
     }
 
-    var pathParams = <String, String>{};
-    for (var index = 0; index < parts.length; index++) {
-      var segment = segments[index];
-      var part = parts[index];
+    final pathParams = <String, String>{};
+    // Fewer parts than segments, as checked above: each part has its segment.
+    for (final [part, segment] in IterableZip([parts, segments])) {
       if (part.startsWith(':')) {
-        pathParams[part.substring(1)] = segment;
-      } else if (segment != part && part != "*") {
+        pathParams[part.substring(1)] = Uri.decodeComponent(segment);
+      } else if (Uri.decodeComponent(segment) != part && part != '*') {
         return null;
       }
     }
 
     var extractedSegments = segments.sublist(0, parts.length);
-    if (parts.isNotEmpty && parts.last == "*") {
-      extractedSegments = segments;
+    if (parts.isNotEmpty && parts.last == '*') {
+      // A copy: [segments] is shared by every route this url is matched
+      // against.
+      extractedSegments = List.of(segments);
     }
 
-    final stringMatch = p.joinAll(extractedSegments);
+    final stringMatch = _join(extractedSegments);
     return RouteMatch(
       config: config,
       key: ValueKey(config.usesPathAsKey ? stringMatch : config.name),
@@ -173,26 +320,31 @@ class RouteMatcher {
   /// and it does not care about paths
   ///
   /// returns null if not match is found
-  RouteMatch? matchByRoute(PageRouteInfo route) {
+  RouteMatch<Object?>? matchByRoute(PageRouteInfo route) {
     return _matchByRoute(route, collection);
   }
 
-  RouteMatch? _matchByRoute(PageRouteInfo route, RouteCollection routes) {
-    var config = routes[route.routeName];
+  RouteMatch<Object?>? _matchByRoute(
+    PageRouteInfo route,
+    RouteCollection routes,
+  ) {
+    final config = routes[route.routeName];
     if (config == null) {
       return null;
     }
-    var childMatches = <RouteMatch>[];
+    final childMatches = <RouteMatch<Object?>>[];
     if (config.hasSubTree) {
       final subRoutes = routes.subCollectionOf(route.routeName);
       if (route.hasChildren) {
-        for (var childRoute in route.initialChildren!) {
-          var match = _matchByRoute(childRoute.copyWith(fragment: route.fragment), subRoutes);
+        for (final childRoute in route.initialChildren!) {
+          final match = _matchByRoute(
+            childRoute.copyWith(fragment: route.fragment),
+            subRoutes,
+          );
           if (match == null) {
             return null;
-          } else {
-            childMatches.add(match);
           }
+          childMatches.add(match);
         }
       } else {
         // include default matches if exist
@@ -211,7 +363,10 @@ class RouteMatcher {
     } else if (route.hasChildren) {
       return null;
     }
-    final stringMatch = PageRouteInfo.expandPath(config.path, route.rawPathParams);
+    final stringMatch = PageRouteInfo.expandPath(
+      config.path,
+      route.rawPathParams,
+    );
     return RouteMatch(
       config: config,
       segments: _split(stringMatch),
@@ -233,15 +388,24 @@ class RouteMatcher {
   /// adding their parents to stack first
   ///
   /// returns null if no track is found
-  RouteMatch? buildPathTo(PageRouteInfo<dynamic> route) {
+  RouteMatch<Object?>? buildPathTo(PageRouteInfo<Object?> route) {
     final configs = collection.findPathTo(route.routeName);
     if (configs.isEmpty) return null;
-    final matches = <RouteMatch>[];
+    final matches = <RouteMatch<Object?>>[];
     for (var i = 0; i < configs.length; i++) {
       final config = configs[i];
       if (i == configs.length - 1) {
-        // last match should take route's info
-        final stringMatch = PageRouteInfo.expandPath(config.path, route.rawPathParams);
+        // last match should take route's info, and the default children it
+        // gets when matched by route from its own level, which carry its query
+        var routes = collection;
+        for (final ancestor in configs.take(i)) {
+          routes = routes.subCollectionOf(ancestor.name);
+        }
+        final children = _matchByRoute(route, routes)?.children;
+        final stringMatch = PageRouteInfo.expandPath(
+          config.path,
+          route.rawPathParams,
+        );
         matches.add(
           RouteMatch(
             config: config,
@@ -253,15 +417,28 @@ class RouteMatcher {
             redirectedFrom: route.redirectedFrom,
             params: Parameters(route.rawPathParams),
             queryParams: Parameters(route.rawQueryParams),
+            children: children == null || children.isEmpty ? null : children,
           ),
         );
       } else {
+        // A path param of the route can belong to an ancestor's path, as with a
+        // page at '' under 'books/:id'; fill it in there too.
+        final ancestorParams = {
+          for (final entry in route.rawPathParams.entries)
+            if (_split(config.path).contains(':${entry.key}'))
+              entry.key: entry.value,
+        };
+        final stringMatch = PageRouteInfo.expandPath(
+          config.path,
+          ancestorParams,
+        );
         matches.add(
           RouteMatch(
             config: config,
-            segments: _split(config.path),
-            key: ValueKey(config.usesPathAsKey ? config.path : config.name),
-            stringMatch: config.path,
+            segments: _split(stringMatch),
+            key: ValueKey(config.usesPathAsKey ? stringMatch : config.name),
+            stringMatch: stringMatch,
+            params: Parameters(ancestorParams),
             autoFilled: true,
           ),
         );
@@ -270,10 +447,12 @@ class RouteMatcher {
     return UrlState.toHierarchy(matches);
   }
 
-  Map<String, dynamic> _normalizeSingleValues(Map<String, List<String>> queryParametersAll) {
-    final queryMap = <String, dynamic>{};
-    for (var key in queryParametersAll.keys) {
-      var list = queryParametersAll[key];
+  Map<String, Object?> _normalizeSingleValues(
+    Map<String, List<String>> queryParametersAll,
+  ) {
+    final queryMap = <String, Object?>{};
+    for (final key in queryParametersAll.keys) {
+      final list = queryParametersAll[key];
       if (list!.length > 1) {
         queryMap[key] = list;
       } else if (list.isNotEmpty) {
@@ -285,11 +464,33 @@ class RouteMatcher {
     return queryMap;
   }
 
-  Map<String, dynamic> _normalizeForUri(Map<String, dynamic> queryParameters) {
-    final queryMap = <String, dynamic>{};
-    for (var key in queryParameters.keys) {
+  Map<String, Object?> _normalizeForUri(Map<String, Object?> queryParameters) {
+    final queryMap = <String, Object?>{};
+    for (final key in queryParameters.keys) {
       queryMap[key] = UrlState.normalizeQueryParamValue(queryParameters[key]);
     }
     return queryMap;
+  }
+}
+
+// A RedirectRoute followed while matching a url, with the path it matched.
+typedef _Redirect = ({AutoRoute route, String path});
+
+// What a RedirectRoute among a parent's children with an absolute redirectTo
+// matched from the top of the matcher, which stands for the whole url.
+class _TopRedirect {
+  // Whether such a redirect was followed.
+  bool isFollowed = false;
+
+  // What it matched, null when nothing did.
+  List<RouteMatch<Object?>>? matches;
+
+  // Keeps [found], the matches of a redirect followed from the top, unless
+  // one followed from there already settled: the last redirect of a chain
+  // settles first, and its matches stand.
+  void settle(List<RouteMatch<Object?>>? found) {
+    if (isFollowed) return;
+    matches = found;
+    isFollowed = true;
   }
 }

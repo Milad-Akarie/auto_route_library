@@ -12,8 +12,9 @@ void main() {
     router = NestedRouter();
   });
 
-  testWidgets('Simple Declarative routing test', (WidgetTester tester) async {
+  testWidgets('Simple Declarative routing test', (tester) async {
     final pageNotifier = ValueNotifier(1);
+    addTearDown(pageNotifier.dispose);
     await pumpRouterConfigApp(
       tester,
       router.config(
@@ -36,7 +37,15 @@ void main() {
     expect(declarativeRouter.pageCount, 3);
     pageNotifier.value = 1;
     await tester.pumpAndSettle();
-    expect(find.text(SecondNested1Route.name), findsOneWidget);
-    expect(declarativeRouter.pageCount, 1);
+    expect(
+      find.text(SecondNested1Route.name),
+      findsOneWidget,
+      reason: 'after pageNotifier.value = 1',
+    );
+    expect(
+      declarativeRouter.pageCount,
+      1,
+      reason: 'after pageNotifier.value = 1',
+    );
   });
 }

@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "dcm": {
+      "type": "stdio",
+      "command": "dcm",
+      "args": ["start-mcp-server", "--client=claude-code"]
+    }
+  }
+}

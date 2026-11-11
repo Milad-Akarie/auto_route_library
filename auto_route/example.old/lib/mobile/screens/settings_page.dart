@@ -1,0 +1,91 @@
+import 'dart:async';
+
+import 'package:auto_route/auto_route.dart';
+import 'package:example/mobile/router/app_router.dart';
+import 'package:example/mobile/router/app_router.gr.dart';
+import 'package:example/mobile/router/auth_service.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:provider/provider.dart';
+
+/// Settings tab page, which shows its path and query parameters and has buttons
+/// that navigate with new ones.
+@RoutePage(name: 'SettingsTab')
+class SettingsPage extends StatefulWidget {
+  /// Takes the [tab] path parameter and the [query] query parameter.
+  const new({
+    super.key,
+    @pathParam this.tab = 'none',
+    @queryParam this.query = 'none',
+  });
+
+  /// The `tab` path parameter, `none` when the url has none.
+  final String tab;
+
+  /// The `query` query parameter, `none` when the url has none.
+  final String query;
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage>
+    with AutoRouteAwareStateMixin<SettingsPage> {
+  int queryUpdateCont = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: .min,
+          children: [
+            Text(widget.tab),
+            Text(widget.query),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  queryUpdateCont++;
+                });
+                unawaited(
+                  context.navigateTo(
+                    SettingsTab(
+                      tab: 'Updated Path param $queryUpdateCont',
+                      query: 'updated Query $queryUpdateCont',
+                    ),
+                  ),
+                );
+              },
+              child: Text('Update Query $queryUpdateCont'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                unawaited(
+                  context.navigateTo(
+                    kBooksTab(children: [BookDetailsRoute(id: 1)]),
+                  ),
+                );
+              },
+              child: const Text('Navigate to book details/1'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                context.read<AuthService>().logout();
+              },
+              child: const Text('Logout'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  void didInitTabRoute(TabPageRoute? previousRoute) {
+    debugPrint('init tab route from ${previousRoute?.name ?? 'null'}');
+  }
+
+  @override
+  void didChangeTabRoute(TabPageRoute previousRoute) {
+    debugPrint('did change tab route from ${previousRoute.name}');
+  }
+}

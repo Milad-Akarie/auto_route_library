@@ -1,16 +1,40 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:auto_route/src/router/transitions/flutter_material_theme.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show PredictiveBackEvent;
 import 'package:material_ui/material_ui.dart';
-import 'package:flutter/services.dart' show PredictiveBackEvent, SwipeEdge;
 
-part 'transitions/predictive_back_page_detector.dart';
+part 'transitions/predictive_back_gesture_detector.dart';
 
-/// Creates a RoutePage based on [routeData.type],
+// The pages a navigator has shown; see [AutoRoutePage.markShown].
+final _shownPages = Expando<bool>();
+
+// The routes of the pages the app took off the stack itself; see
+// [AutoRoutePage.markRemoved].
+final _removedRoutes = Expando<bool>();
+
+/// Creates a RoutePage based on `routeData.type`,
 /// The decision happens inside of [onCreateRoute]
 class AutoRoutePage<T> extends Page<T> {
+  /// Default constructor
+  new({required this.routeData, required Widget child})
+    // A page widget can implement AutoRouteWrapper to wrap itself.
+    : _child = switch (child) {
+        // reason false alarm, since a page can be a widget that also implements AutoRouteWrapper.
+        // ignore: avoid-unrelated-type-assertions
+        final AutoRouteWrapper wrapper => WrappedRoute(child: wrapper),
+        _ => child,
+      },
+      super(
+        restorationId: routeData.restorationId,
+        name: routeData.name,
+        arguments: routeData.route.args,
+        key: routeData.matchId,
+      );
+
   /// The Route Data that's used to build the page
-  final RouteData routeData;
+  final RouteData<Object?> routeData;
   final Widget _child;
 
   /// Whether to treat the built route as a fullscreenDialog.
@@ -37,53 +61,101 @@ class AutoRoutePage<T> extends Page<T> {
   /// The widget passed to the route
   Widget get child => _child;
 
-  /// Default constructor
-  AutoRoutePage({
-    required this.routeData,
-    required Widget child,
-  })  : _child = child is AutoRouteWrapper ? WrappedRoute(child: child as AutoRouteWrapper) : child,
-        super(
-          restorationId: routeData.restorationId,
-          name: routeData.name,
-          arguments: routeData.route.args,
-          key: routeData.matchId,
-        );
+  /// Records that the [Navigator] has shown this page, so it now holds a
+  /// route of its own.
+  ///
+  /// Called by [AutoRouteNavigator] for the pages of its previous build. A
+  /// shown page only updates its own route in [canUpdate].
+  @internal
+  void markShown() => _shownPages[this] = true;
 
+  /// Records that the app took this page off the stack itself, with
+  /// [StackRouter.removeLast], [StackRouter.removeRoute],
+  /// [StackRouter.removeWhere] or [StackRouter.removeUntil].
+  ///
+  /// The route of a removed page leaves with it: a new page of the same route
+  /// pushed before the navigator rebuilds is a page of its own (#1204).
+  @internal
+  void markRemoved() => _removedRoutes[routeData] = true;
+
+  /// Whether the app took this page off the stack itself; see [markRemoved].
+  @internal
+  bool get isRemoved => _removedRoutes[routeData] ?? false;
+
+  /// Builds a new page of the same type for [routeData], e.g. after its args
+  /// changed.
+  ///
+  /// The new page has the same key, so it takes over this page's route.
+  @internal
+  AutoRoutePage<T> rebuild() => routeData.buildPage();
+
+  /// Whether this page can take over the route that [other] is showing.
+  ///
+  /// A new page takes over the route of a page with the same [routeKey] in the
+  /// same stack, so replacing a route with itself updates the page in place.
+  /// A page the navigator already shows keeps its own route: when a page with
+  /// the same [routeKey] is removed from below it, the page must not take the
+  /// removed page's route and leave its own to be popped. Nor does a new page
+  /// take the route of a page the app removed itself, see [markRemoved].
+  ///
+  /// Nor does a page whose result type the route can't hold: Flutter's
+  /// navigator casts a route's page to the route's result type when the route
+  /// closes, as [Page.canUpdate] keeps it by comparing types. A page of a
+  /// narrower type fits, such as one a `navigate<bool>` builds on its way to
+  /// its target. A page that takes over a screen the navigator shows is built
+  /// with that screen's type, so it always fits.
   @override
-  bool canUpdate(Page<dynamic> other) {
-    final canUpdate = other.runtimeType == runtimeType &&
-        (other as AutoRoutePage).routeKey == routeKey &&
-        routeData.stackKey == other.routeData.stackKey;
+  bool canUpdate(Page<Object?> other) {
+    final canUpdate =
+        other is AutoRoutePage &&
+        other.routeKey == routeKey &&
+        routeData.stackKey == other.routeData.stackKey &&
+        other._canBeTakenOverBy(this) &&
+        (other.key == key || (_shownPages[this] != true && !other.isRemoved));
     return canUpdate;
   }
+
+  // Whether the route showing this page can show [page] instead: the route's
+  // result type is this page's or wider, and Flutter casts the route's page
+  // to it.
+  bool _canBeTakenOverBy(Object page) => page is Page<T>;
 
   @override
   PopInvokedWithResultCallback<T> get onPopInvoked {
     return (didPop, result) {
       if (didPop) {
-        routeData.onPopInvoked(result);
         final router = routeData.router;
-        // a workaround to fix pop flicker issue
-        // Todo: remove this workaround after flutter issue is fixed
-        // https://github.com/flutter/flutter/issues/178570
-        if (router is StackRouter) {
-          router.onPopPage(this);
-        }
+        // As Route.didComplete does, a pop without a result, such as the
+        // back gesture, completes with the route's currentResult.
+        final shownRoute = router is StackRouter
+            ? router.pagelessRoutesObserver.routeOf(this)
+            : null;
+        routeData
+          ..onPoppedByNavigator()
+          ..onPopInvoked(result ?? shownRoute?.currentResult as T?);
       }
     };
   }
 
-  /// Builds a the widget that's scoped
-  /// with [routeData]
-  Widget buildPage(BuildContext context) {
-    return RouteDataScope(
-      routeData: routeData,
-      child: _child,
+  /// Builds the page's widget, scoped with [routeData].
+  ///
+  /// The widget's semantics carry the route's name as their
+  /// `Semantics.identifier`, so UI testing tools, and
+  /// `find.bySemanticsIdentifier` in widget tests, find the page by its route
+  /// name, whatever its route type.
+  // Public API: changing it is the maintainer's call.
+  Widget buildPage(BuildContext _) {
+    // explicitChildNodes keeps the page's own nodes apart, as the route's
+    // scopesRoute node above does.
+    return Semantics(
+      identifier: routeData.name,
+      explicitChildNodes: true,
+      child: RouteDataScope(routeData: routeData, child: _child),
     );
   }
 
   /// Creates a PageRoute variant based on
-  /// [routeData.type]
+  /// `routeData.type`
   Route<T> onCreateRoute(BuildContext context) {
     final type = routeData.type;
     final title = routeData.title(context);
@@ -91,33 +163,41 @@ class AutoRoutePage<T> extends Page<T> {
       return _PageBasedMaterialPageRoute<T>(
         page: this,
         enablePredictiveBackGesture: type.enablePredictiveBackGesture,
-        predictiveBackPageTransitionsBuilder: type.predictiveBackPageTransitionsBuilder,
+        predictiveBackPageTransitionsBuilder:
+            type.predictiveBackPageTransitionsBuilder,
       );
     } else if (type is CupertinoRouteType) {
       return _PageBasedCupertinoPageRoute<T>(page: this, title: title);
     } else if (type is CustomRouteType) {
-      final result = buildPage(context);
       if (type.customRouteBuilder != null) {
-        return type.customRouteBuilder!.call<T>(context, result, this);
+        return type.customRouteBuilder!<T>(
+          context,
+          _CurrentPageChild(page: this),
+          this,
+        );
       }
       return _CustomPageBasedPageRouteBuilder<T>(
         page: this,
         routeType: type,
         enablePredictiveBackGesture: type.enablePredictiveBackGesture,
-        predictiveBackPageTransitionsBuilder: type.predictiveBackPageTransitionsBuilder,
+        predictiveBackPageTransitionsBuilder:
+            type.predictiveBackPageTransitionsBuilder,
       );
     } else if (type is AdaptiveRouteType) {
       if (kIsWeb) {
         return _NoAnimationPageRouteBuilder(page: this);
-      } else if ([TargetPlatform.macOS, TargetPlatform.iOS].contains(defaultTargetPlatform)) {
+      } else if ([
+        TargetPlatform.macOS,
+        TargetPlatform.iOS,
+      ].contains(defaultTargetPlatform)) {
         return _PageBasedCupertinoPageRoute<T>(page: this, title: title);
-      } else {
-        return _PageBasedMaterialPageRoute<T>(
-          page: this,
-          enablePredictiveBackGesture: type.enablePredictiveBackGesture,
-          predictiveBackPageTransitionsBuilder: type.predictiveBackPageTransitionsBuilder,
-        );
       }
+      return _PageBasedMaterialPageRoute<T>(
+        page: this,
+        enablePredictiveBackGesture: type.enablePredictiveBackGesture,
+        predictiveBackPageTransitionsBuilder:
+            type.predictiveBackPageTransitionsBuilder,
+      );
     }
     return _PageBasedMaterialPageRoute<T>(page: this);
   }
@@ -128,9 +208,40 @@ class AutoRoutePage<T> extends Page<T> {
   }
 }
 
+/// The child handed to [CustomRouteType.customRouteBuilder].
+///
+/// The route that builder returns keeps this child for its whole life, while
+/// the navigator gives the route a new page whenever its data changes, for
+/// example new query params. So this builds the page the route holds now, and
+/// rebuilds whenever the page's router changes.
+class _CurrentPageChild extends StatelessWidget {
+  const new({required this.page});
+
+  /// The page the route was created with.
+  final AutoRoutePage<Object?> page;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: page.routeData.router,
+      builder: (context, _) {
+        final route = ModalRoute.of(context);
+        final settings = route?.settings;
+        final current = settings is AutoRoutePage ? settings : page;
+        // The route is the app's own, so it can't set it as auto_route's do.
+        current.routeData.animation ??= route?.animation;
+        return current.buildPage(context);
+      },
+    );
+  }
+}
+
 class _PageBasedMaterialPageRoute<T> extends _PageRoute<T>
-    with MaterialRouteTransitionMixin<T>, _CustomPredictiveBackGestureMixin<T> {
-  _PageBasedMaterialPageRoute({
+    with
+        MaterialRouteTransitionMixin<T>,
+        _FlutterMaterialThemeTransitionMixin<T>,
+        _CustomPredictiveBackGestureMixin<T> {
+  new({
     required super.page,
     this.enablePredictiveBackGesture = false,
     this.predictiveBackPageTransitionsBuilder,
@@ -148,13 +259,97 @@ class _PageBasedMaterialPageRoute<T> extends _PageRoute<T>
   }
 }
 
+/// Takes the page transitions from the app's theme when it comes from
+/// package:flutter/material.dart, see [flutterMaterialThemeOf]; otherwise
+/// [MaterialRouteTransitionMixin] reads the theme of package:material_ui.
+mixin _FlutterMaterialThemeTransitionMixin<T>
+    on MaterialRouteTransitionMixin<T> {
+  @override
+  Duration get transitionDuration {
+    final theme = flutterMaterialThemeOf(navigator!.context);
+    if (theme == null) return super.transitionDuration;
+    return flutterPageTransitionsBuilderOf(theme).transitionDuration;
+  }
+
+  @override
+  Duration get reverseTransitionDuration {
+    final theme = flutterMaterialThemeOf(navigator!.context);
+    if (theme == null) return super.reverseTransitionDuration;
+    return flutterPageTransitionsBuilderOf(theme).reverseTransitionDuration;
+  }
+
+  // The route below takes the delegated transition of the route above only
+  // when it differs from its own, and keeps it. So this stays the function of
+  // MaterialRouteTransitionMixin unless Flutter's theme is the nearer one, and
+  // is static either way: a method would hold this route after it's popped.
+  @override
+  DelegatedTransitionBuilder? get delegatedTransition {
+    final navigator = this.navigator;
+    if (navigator == null ||
+        flutterMaterialThemeOf(navigator.context) == null) {
+      return super.delegatedTransition;
+    }
+    return _flutterThemeDelegatedTransition;
+  }
+
+  static Widget? _flutterThemeDelegatedTransition(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    bool allowSnapshotting,
+    Widget? child,
+  ) {
+    final flutterTheme = flutterMaterialThemeOf(context);
+    final themeDelegatedTransition = flutterTheme != null
+        ? flutterTheme.pageTransitionsTheme.delegatedTransition(
+            flutterTheme.platform,
+          )
+        : Theme.of(context).pageTransitionsTheme
+              .delegatedTransition(Theme.of(context).platform);
+    return themeDelegatedTransition?.call(
+      context,
+      animation,
+      secondaryAnimation,
+      allowSnapshotting,
+      child,
+    );
+  }
+
+  @override
+  Widget buildTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    final theme = flutterMaterialThemeOf(context);
+    if (theme == null) {
+      return super.buildTransitions(
+        context,
+        animation,
+        secondaryAnimation,
+        child,
+      );
+    }
+    return theme.pageTransitionsTheme.buildTransitions(
+      this,
+      context,
+      animation,
+      secondaryAnimation,
+      child,
+    );
+  }
+}
+
 class _CustomPageBasedPageRouteBuilder<T> extends _PageRoute<T>
-    with _CustomPageRouteTransitionMixin<T>, _CustomPredictiveBackGestureMixin<T> {
-  _CustomPageBasedPageRouteBuilder({
+    with
+        _CustomPageRouteTransitionMixin<T>,
+        _CustomPredictiveBackGestureMixin<T> {
+  new({
     required super.page,
     required this.routeType,
-    this.enablePredictiveBackGesture = false,
-    this.predictiveBackPageTransitionsBuilder,
+    required this.enablePredictiveBackGesture,
+    required this.predictiveBackPageTransitionsBuilder,
   });
 
   @override
@@ -170,20 +365,24 @@ class _CustomPageBasedPageRouteBuilder<T> extends _PageRoute<T>
   final RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder;
 
   @override
+  bool get barrierDismissible => routeType.barrierDismissible;
+
+  @override
   Color? get barrierColor => routeType.barrierColor;
 
   @override
   String? get barrierLabel => routeType.barrierLabel;
 }
 
-class _NoAnimationPageRouteBuilder<T> extends _PageRoute<T> with _NoAnimationPageRouteTransitionMixin<T> {
-  _NoAnimationPageRouteBuilder({required super.page});
+class _NoAnimationPageRouteBuilder<T> extends _PageRoute<T>
+    with _NoAnimationPageRouteTransitionMixin<T> {
+  new({required super.page});
 
   @override
   Widget buildContent(BuildContext context) => _page.buildPage(context);
 
   @override
-  Duration get transitionDuration => Duration.zero;
+  Duration get transitionDuration => .zero;
 }
 
 mixin _NoAnimationPageRouteTransitionMixin<T> on _PageRoute<T> {
@@ -225,10 +424,12 @@ mixin _CustomPageRouteTransitionMixin<T> on _PageRoute<T> {
   Widget buildContent(BuildContext context);
 
   @override
-  Duration get transitionDuration => routeType.duration ?? const Duration(milliseconds: 300);
+  Duration get transitionDuration =>
+      routeType.duration ?? const .new(milliseconds: 300);
 
   @override
-  Duration get reverseTransitionDuration => routeType.reverseDuration ?? const Duration(milliseconds: 300);
+  Duration get reverseTransitionDuration =>
+      routeType.reverseDuration ?? const .new(milliseconds: 300);
 
   @override
   Widget buildPage(
@@ -244,40 +445,86 @@ mixin _CustomPageRouteTransitionMixin<T> on _PageRoute<T> {
   }
 
   Widget _defaultTransitionsBuilder(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return child;
   }
 
   @override
   Widget buildTransitions(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-    final transitionsBuilder = routeType.transitionsBuilder ?? _defaultTransitionsBuilder;
-    return transitionsBuilder(context, animation, secondaryAnimation, child);
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    final transitionsBuilder =
+        routeType.transitionsBuilder ?? _defaultTransitionsBuilder;
+    final transitions = transitionsBuilder(
+      context,
+      animation,
+      secondaryAnimation,
+      child,
+    );
+    final platform =
+        flutterMaterialThemeOf(context)?.platform ?? Theme.of(context).platform;
+    if (!routeType.enableCupertinoBackGesture ||
+        (platform != .iOS && platform != .macOS)) {
+      return transitions;
+    }
+    // Flutter's iOS back gesture comes only with its slide transition, which
+    // moves nothing when its animations stand still. The gesture drives this
+    // route's own animation, so the page follows the finger through its
+    // custom transition.
+    return CupertinoRouteTransitionMixin.buildPageTransitions(
+      this,
+      context,
+      kAlwaysCompleteAnimation,
+      kAlwaysDismissedAnimation,
+      transitions,
+    );
   }
 }
 
 class _PageBasedCupertinoPageRoute<T> extends _PageRoute<T>
-    with CupertinoRouteTransitionMixin<T>, CupertinoRouteTransitionOverrideMixin<T> {
-  _PageBasedCupertinoPageRoute({required super.page, this.title});
+    with
+        CupertinoRouteTransitionMixin<T>,
+        CupertinoRouteTransitionOverrideMixin<T> {
+  new({required super.page, required this.title});
 
   @override
   Widget buildContent(BuildContext context) => _page.buildPage(context);
 
   @override
-  final String? title;
+  final String title;
 }
 
-mixin _CustomPredictiveBackGestureMixin<T> on _PageRoute<T> implements PredictiveBackGestureMixin {
-  late final _predictiveBackPageTransitionsBuilder = const PredictiveBackPageTransitionsBuilder();
+mixin _CustomPredictiveBackGestureMixin<T> on _PageRoute<T>
+    implements PredictiveBackGestureMixin {
+  late final _predictiveBackTransitions =
+      const PredictiveBackPageTransitionsBuilder();
   @override
   Widget buildTransitions(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-    if (!enablePredictiveBackGesture || Theme.of(context).platform != TargetPlatform.android) {
-      return super.buildTransitions(context, animation, secondaryAnimation, child);
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    final platform =
+        flutterMaterialThemeOf(context)?.platform ?? Theme.of(context).platform;
+    if (!enablePredictiveBackGesture || platform != .android) {
+      return super.buildTransitions(
+        context,
+        animation,
+        secondaryAnimation,
+        child,
+      );
     }
 
     if (predictiveBackPageTransitionsBuilder == null) {
-      return _predictiveBackPageTransitionsBuilder.buildTransitions(
+      return _predictiveBackTransitions.buildTransitions(
         this,
         context,
         animation,
@@ -287,28 +534,30 @@ mixin _CustomPredictiveBackGestureMixin<T> on _PageRoute<T> implements Predictiv
     }
     return _PredictiveBackGestureDetector(
       route: this,
-      builder: (
-        BuildContext context,
-        _PredictiveBackPhase phase,
-        PredictiveBackEvent? startBackEvent,
-        PredictiveBackEvent? currentBackEvent,
-      ) {
+      builder: (context, phase, startBackEvent, currentBackEvent) {
         if (popGestureInProgress) {
-          return predictiveBackPageTransitionsBuilder!.call(context, animation, secondaryAnimation, child);
-        } else {
-          return super.buildTransitions(context, animation, secondaryAnimation, child);
+          return predictiveBackPageTransitionsBuilder!(
+            context,
+            animation,
+            secondaryAnimation,
+            child,
+          );
         }
+        return super.buildTransitions(
+          context,
+          animation,
+          secondaryAnimation,
+          child,
+        );
       },
     );
   }
 }
 
 abstract class _PageRoute<T> extends PageRoute<T> {
-  _PageRoute({
-    required AutoRoutePage page,
-  }) : super(settings: page);
+  new({required AutoRoutePage<Object?> page}) : super(settings: page);
 
-  AutoRoutePage get _page => settings as AutoRoutePage;
+  AutoRoutePage<Object?> get _page => settings as AutoRoutePage;
 
   @override
   bool get popGestureEnabled {
@@ -317,12 +566,15 @@ abstract class _PageRoute<T> extends PageRoute<T> {
     /// can pop
     if (super.popGestureEnabled) {
       final router = _page.routeData.router;
+      // A page in a hidden tab stays mounted, and its predictive back
+      // detector still listens; the gesture belongs to the tab on screen.
+      if (!router.isInActiveTabs) return false;
       final topMostRouter = router.topMostRouter();
-      return (router.isTopMost ||
+      return router.isTopMost ||
           !topMostRouter.canPop(
             ignoreParentRoutes: true,
             ignorePagelessRoutes: true,
-          ));
+          );
     }
     return false;
   }
@@ -330,7 +582,7 @@ abstract class _PageRoute<T> extends PageRoute<T> {
   @override
   void install() {
     super.install();
-    _page.routeData.setAnimation(animation);
+    _page.routeData.animation = animation;
   }
 
   @override
@@ -346,13 +598,17 @@ abstract class _PageRoute<T> extends PageRoute<T> {
   bool get opaque => _page.opaque;
 
   @override
-  String get debugLabel => '${super.debugLabel}(${_page.name})';
+  String get debugLabel => '${super.debugLabel}(${_page.routeData.name})';
 
   @override
-  bool canTransitionTo(TransitionRoute nextRoute) {
-    return (nextRoute is _CustomPageBasedPageRouteBuilder && !nextRoute.fullscreenDialog ||
-            nextRoute is MaterialRouteTransitionMixin && !nextRoute.fullscreenDialog) ||
-        (nextRoute is _NoAnimationPageRouteTransitionMixin && !nextRoute.fullscreenDialog) ||
-        (nextRoute is CupertinoRouteTransitionMixin && !nextRoute.fullscreenDialog);
+  bool canTransitionTo(TransitionRoute<Object?> nextRoute) {
+    return (nextRoute is _CustomPageBasedPageRouteBuilder &&
+                !nextRoute.fullscreenDialog ||
+            nextRoute is MaterialRouteTransitionMixin &&
+                !nextRoute.fullscreenDialog) ||
+        (nextRoute is _NoAnimationPageRouteTransitionMixin &&
+            !nextRoute.fullscreenDialog) ||
+        (nextRoute is CupertinoRouteTransitionMixin &&
+            !nextRoute.fullscreenDialog);
   }
 }

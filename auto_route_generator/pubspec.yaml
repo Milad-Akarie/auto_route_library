@@ -1,21 +1,30 @@
 name: auto_route_generator
 description: AutoRoute is a declarative routing solution, where everything needed for navigation is automatically generated for you.
-version: 10.6.0
+version: 11.6.0
 homepage: https://github.com/Milad-Akarie/auto_route_library
 environment:
-  sdk: ">=3.4.0 <4.0.0"
+  sdk: ">=3.13.0 <4.0.0"
+
+publish_to: none
 
 dependencies:
-  build: ">=3.0.2 <5.0.0"
-  source_gen: ">=3.1.0 <5.0.0"
-  analyzer: ">=10.0.0 <14.0.0"
-  path: ^1.9.1
+  analyzer: ^14.5.0
+  auto_route: ^12.6.0
+  build: ">=4.0.0 <6.0.0"
   code_builder: ^4.11.1
   dart_style: ^3.1.5
   glob: ^2.1.3
-  lean_builder: ^1.2.0
-  auto_route: ^11.1.0
+  meta: ^1.16.0
+  path: ^1.9.1
+  source_gen: ">=3.1.0 <5.0.0"
 
 dev_dependencies:
-  lints: ^6.1.0
-  build_runner: ^2.11.1
+  build_test: ^3.5.23
+  test: ^1.28.0
+  very_good_analysis: ^11.0.0
+
+# The generator is outside the workspace (see the root pubspec.yaml), so this
+# keeps its tests on the local auto_route rather than the one on pub.dev.
+dependency_overrides:
+  auto_route:
+    path: ../auto_route

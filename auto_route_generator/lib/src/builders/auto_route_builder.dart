@@ -4,50 +4,48 @@ import 'dart:io';
 
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:auto_route/annotations.dart';
+import 'package:auto_route_generator/iterable_extension.dart';
 import 'package:auto_route_generator/src/builders/cache_aware_builder.dart';
 import 'package:auto_route_generator/src/models/route_config.dart';
 import 'package:auto_route_generator/src/models/routes_list.dart';
 import 'package:auto_route_generator/src/resolvers/route_config_resolver.dart';
 import 'package:auto_route_generator/src/resolvers/type_resolver.dart';
-import 'package:auto_route_generator/utils.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
-const _typeChecker = TypeChecker.typeNamed(RoutePage, inPackage: 'auto_route');
+const _kTypeChecker = TypeChecker.typeNamed(RoutePage, inPackage: 'auto_route');
 
 /// Default location of the routes cache file
 final routesCacheFile = File('.dart_tool/build/cache/auto_routes_cache.json');
 
-final _cacheResource = Resource<Map<String, RoutesList>>(
-  () async {
-    final cachedRes = <String, RoutesList>{};
-    final jsonRes = jsonDecode(await routesCacheFile.readAsString());
-    for (final json in jsonRes as List<dynamic>) {
-      final generated = RoutesList.fromJson(json);
-      cachedRes[generated.inputPath] = generated;
-    }
+final _cacheResource = Resource<Map<String, RoutesList>>(() async {
+  final cachedRes = <String, RoutesList>{};
+  final jsonRes = jsonDecode(await routesCacheFile.readAsString());
+  for (final json in (jsonRes as List<Object?>).cast<Map<String, dynamic>>()) {
+    final generated = RoutesList.fromJson(json);
+    cachedRes[generated.inputPath] = generated;
+  }
 
-    return cachedRes;
-  },
-);
+  return cachedRes;
+});
 
 /// A [Builder] which generates json route files for annotated pages
 class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
   /// Default constructor
-  AutoRouteBuilder({super.options})
-      : super(
-          generatedExtension: '.route.json',
-          allowSyntaxErrors: true,
-          annotationName: 'RoutePage',
-        );
+  new({super.options})
+    : super(
+        generatedExtension: '.route.json',
+        isSyntaxErrorAllowed: true,
+        annotationName: 'RoutePage',
+      );
 
   @override
-  bool get cacheEnabled => options?.config['enable_cached_builds'] == true;
+  bool get isCacheEnabled => options?.config['enable_cached_builds'] == true;
 
   @override
   Future<RoutesList?> loadFromCache(BuildStep buildStep, int stepHash) async {
-    Map<String, RoutesList> cachedRes = {};
-    if (await routesCacheFile.exists()) {
+    var cachedRes = <String, RoutesList>{};
+    if (routesCacheFile.existsSync()) {
       cachedRes = await buildStep.fetchResource(_cacheResource);
     }
     if (cachedRes.containsKey(buildStep.inputId.path)) {
@@ -67,7 +65,9 @@ class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
         if (child is ConstructorDeclaration || child is FieldDeclaration) {
           calculatedHash = calculatedHash ^ child.toSource().hashCode;
         }
-        final routePageMeta = clazz.metadata.firstWhereOrNull((e) => e.name.name == annotationName);
+        final routePageMeta = clazz.metadata.firstWhereOrNull(
+          (e) => e.name.name == annotationName,
+        );
         if (routePageMeta != null) {
           calculatedHash = calculatedHash ^ routePageMeta.toSource().hashCode;
         }
@@ -82,10 +82,16 @@ class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
   }
 
   @override
-  Future<RoutesList?> onResolve(LibraryReader library, BuildStep buildStep, int stepHash) async {
-    final routeResolver = RouteConfigResolver(TypeResolver(await buildStep.resolver.libraries.toList()));
+  Future<RoutesList?> onResolve(
+    LibraryReader library,
+    BuildStep buildStep,
+    int stepHash,
+  ) async {
+    final routeResolver = RouteConfigResolver(
+      TypeResolver(await buildStep.resolver.libraries.toList()),
+    );
     final routes = <RouteConfig>[];
-    for (var annotatedElement in library.annotatedWith(_typeChecker)) {
+    for (final annotatedElement in library.annotatedWith(_kTypeChecker)) {
       final route = routeResolver.resolve(
         annotatedElement.element,
         annotatedElement.annotation,

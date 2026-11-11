@@ -1,6 +1,6 @@
 name: auto_route
 description: AutoRoute is a declarative routing solution, where everything needed for navigation is automatically generated for you.
-version: 11.2.0
+version: 12.6.0
 homepage: https://github.com/Milad-Akarie/auto_route_library
 screenshots:
   - description: 'Auto Route Logo'
@@ -13,30 +13,29 @@ topics:
   - deep-linking
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
-  flutter: ">=3.16.0"
+  sdk: ">=3.13.0 <4.0.0"
+  flutter: ">=3.47.0"
+resolution: workspace
 
 dependencies:
+  collection: ^1.18.0
+  cupertino_ui: any
   flutter:
     sdk: flutter
+  material_ui: any
+  meta: ^1.16.0
   path: ^1.9.0
   web: ^1.0.0
-  collection: ^1.18.0
-  meta: ^1.16.0
 
-
-  cupertino_ui: any
-  material_ui: any
 dev_dependencies:
+  auto_route_generator: ^11.6.0
+  benchmark_harness: ^2.4.0
   build_runner:
-  mockito: ^5.6.1
-  auto_route_generator: ^10.4.0
   flutter_test:
     sdk: flutter
-  flutter_lints: ^6.0.0
-
-dependency_overrides:
-  auto_route_generator:
-    path: ../auto_route_generator
-
-
+  flutter_web_plugins:
+    sdk: flutter
+  leak_tracker: ^11.0.2
+  leak_tracker_flutter_testing: ^3.0.10
+  mockito: ^5.6.1
+  very_good_analysis: ^11.0.0

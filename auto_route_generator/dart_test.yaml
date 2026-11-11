@@ -1,0 +1,6 @@
+# The first test of each file also warms up the analyzer for that file: about
+# 12 seconds alone on an idle Mac, 40 to 90 seconds when the five files start
+# together on a busy machine, past the default 30-second limit. Every other
+# test takes 3 to 13 seconds. Six times the default leaves room for a slow
+# runner and still stops a hung build within three minutes.
+timeout: 6x

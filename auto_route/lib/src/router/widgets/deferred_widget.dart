@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:material_ui/material_ui.dart';
 
+part 'deferred_loading_placeholder.dart';
+
 /// Signature for a function that returns a void future
 /// Used in [DeferredWidget] to load deferred libraries
 typedef LibraryLoader = Future<void> Function();
@@ -17,7 +19,7 @@ typedef DeferredWidgetBuilder = Widget Function();
 /// state as long as closure to create widget stays the same.
 class DeferredWidget extends StatefulWidget {
   /// default constructor
-  const DeferredWidget(
+  const new(
     this.libraryLoader,
     this.createWidget, {
     super.key,
@@ -37,7 +39,7 @@ class DeferredWidget extends StatefulWidget {
 
   static Future<void> _preload(LibraryLoader loader) {
     if (!_moduleLoaders.containsKey(loader)) {
-      _moduleLoaders[loader] = loader().then((dynamic _) {
+      _moduleLoaders[loader] = loader().then((_) {
         _loadedModules.add(loader);
       });
     }
@@ -49,58 +51,46 @@ class DeferredWidget extends StatefulWidget {
 }
 
 class _DeferredWidgetState extends State<DeferredWidget> {
-  _DeferredWidgetState();
+  new();
 
   Widget? _loadedChild;
-  DeferredWidgetBuilder? _loadedCreator;
+  DeferredWidgetBuilder? _loadedBuilder;
 
   @override
   void initState() {
+    super.initState();
+
     /// If module was already loaded immediately create widget instead of
     /// waiting for future or zone turn.
     if (DeferredWidget._loadedModules.contains(widget.libraryLoader)) {
-      _onLibraryLoaded();
+      _createLoadedChild();
     } else {
-      DeferredWidget._preload(widget.libraryLoader).then((dynamic _) => _onLibraryLoaded());
+      unawaited(
+        DeferredWidget._preload(widget.libraryLoader).then((_) {
+          // The page can leave the tree before its library loads.
+          if (mounted) setState(_createLoadedChild);
+        }),
+      );
     }
-    super.initState();
   }
 
-  void _onLibraryLoaded() {
-    setState(() {
-      _loadedCreator = widget.createWidget;
-      _loadedChild = _loadedCreator!();
-    });
+  void _createLoadedChild() {
+    _loadedBuilder = widget.createWidget;
+    _loadedChild = _loadedBuilder!();
   }
 
   @override
   Widget build(BuildContext context) {
     /// If closure to create widget changed, create new instance, otherwise
     /// treat as const Widget.
-    if (_loadedCreator != widget.createWidget && _loadedCreator != null) {
-      _loadedCreator = widget.createWidget;
-      _loadedChild = _loadedCreator!();
+    if (_loadedBuilder != widget.createWidget && _loadedBuilder != null) {
+      _loadedBuilder = widget.createWidget;
+      _loadedChild = _loadedBuilder!();
     }
 
-    final placeHolder = AutoRouterDelegate.of(context).placeholder?.call(context) ?? const DeferredLoadingPlaceholder();
+    final placeHolder =
+        AutoRouterDelegate.of(context).placeholder?.call(context) ??
+        const DeferredLoadingPlaceholder();
     return _loadedChild ?? placeHolder;
-  }
-}
-
-/// Displays a progress indicator when the widget is a deferred component
-/// and is currently being installed.
-class DeferredLoadingPlaceholder extends StatelessWidget {
-  /// default constructor
-  const DeferredLoadingPlaceholder({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
   }
 }

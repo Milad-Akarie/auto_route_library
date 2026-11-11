@@ -1,3 +1,404 @@
+## 12.6.0
+- **FIX**, **BEHAVIOR CHANGE**: the future that `push`, `navigate`, `navigatePath` or `replaceAll` returns now completes
+  with `null` once its page leaves the stack, as a removed route's does in Flutter: when a later `navigate` or
+  `replaceAll` takes the page off, or when the page's nested router closes. It never completed, and each call waiting
+  on it kept the pages it worked with in memory: one more page on every `replaceAll` in release builds, and in debug
+  builds and tests also the nested routers and page widgets of every link through nested routers. A navigation that
+  reaches a screen already shown keeps that screen, so the code that opened it keeps waiting and gets the result the
+  screen closes with, as Flutter's Navigator keeps the route of a page with the same type and key. The first build of
+  12.6.0 (b705ff78) answered that code `null` at once: a picker answered `null` while still open, and a link to the
+  redirect a guard showed with `redirectUntil` left a blank screen.
+- **FIX**: a screen opened with a result type, such as with `push<int>`, and then reached again by `navigate`, a link,
+  `replace` or `replaceAll` closes again, even with system back. Since 12.5.0 closing it threw
+  `type 'AutoRoutePage<Object?>' is not a subtype of type 'Page<int>'`. The page that takes over a screen now keeps
+  its result type, and a page whose type the screen's route can't hold gets a route of its own, as in Flutter.
+- **BEHAVIOR CHANGE**: `AutoTabsRouter` passes a new `homeIndex` on when it is rebuilt with one, so back goes to the new
+  home tab. A `homeIndex` past the end of the tabs counts as no home tab instead of throwing (#1759).
+- **BEHAVIOR CHANGE**: a guard that rejects a page of a nested router when the guards are reevaluated now updates the
+  url, replacing the closed page's entry, and a nested router left empty that way shows its first page again instead
+  of keeping the closed page on screen (#1740).
+- **FIX**: `replaceAll` listing an open parent and then one of its children, such as `[MainRoute(), SearchRoute()]`,
+  no longer fails Flutter's duplicate page key assertion (#1586).
+- **BEHAVIOR CHANGE**: a tab opened by a url, such as after a browser refresh, keeps the args its `AutoTabsRouter`
+  `routes` list gives it, instead of throwing `MissingRequiredParameterError`. A url with path or query params still
+  builds the args from those (#2107).
+- **FIX**, **BEHAVIOR CHANGE**: `AutoRouter.declarative` gets the routes a link opens: `handler.initialPendingRoutes`
+  now holds them when the routes callback first runs. It was always `null`, so a refresh or link at a nested page showed
+  the list and put the wrong url in the address bar.
+- **FIX**, **BEHAVIOR CHANGE**: `onNavigate` of `AutoRouter.declarative` runs once per navigation. A navigation that
+  came through a parent router, such as a browser back or a platform link, ran it twice.
+- **FIX**: `pop` on the only page of a router built by `AutoRouter.declarative` closes the page that holds the router. It
+  took the page away and left a blank screen.
+- **FIX**, **BEHAVIOR CHANGE**: `AutoRouter.of` and `context.router` in a page of `AutoRouter.declarative` return that
+  declarative router, as `RouterScope.of` always did. They returned the router above it, so `router.parent()` was one
+  level too high. `push`, `replace`, `navigate` and paths still reach the router that can take the route. What now acts
+  on the declarative router: `stack`, `current`, `pop`, and `popUntil` and its kin, which stop at it; call them on
+  `router.parent<StackRouter>()` to reach the router above.
+- **FIX**, **BEHAVIOR CHANGE**: off the web, with `includePrefixMatches: false`, a platform link that reaches an app still
+  showing the page it launched with, and that has stayed on screen since, takes that page's place, unless a guard
+  rejects it. iOS hands the link of a cold start over after the first frame, so the stack held the home page below the
+  link's page.
+- **BEHAVIOR CHANGE**: `AutoTabsRouter` passes a new `backThroughHistory` on when it is rebuilt with one, so back
+  follows the latest value. Turning it off forgets the tab history.
+
+## 12.5.0
+- **CHORE**: the lint setup is simpler: `lines_longer_than_80_chars`, `prefer-single-widget-per-file`,
+  `prefer-prefixed-global-constants` and `prefer-match-file-name` are off, and DCM runs its recommended rules plus a
+  short list.
+- **FIX**: reading a page, tab, guard or url segment past the end of its list no longer throws inside the router; what
+  isn't there is skipped.
+- **CHANGE**: `StackRouter.replaceAll` with an empty list does nothing, instead of throwing a `StateError`. `pushAll` and
+  `popAndPushAll` still assert in debug builds, and do nothing in release builds.
+- **FIX**: `navigate<void>`, or `navigate` with any named type, no longer rebuilds the pages on its way to the target when
+  the app started through `DeepLink.path`, which reset the tabs inside them.
+- **CHANGE**: `RouteMatch.toString` shows its key's hash code, and a guard without a `toString` of its own prints as
+  `AutoRouteGuard(<hash>)`.
+- **FEAT**: `AutoRouteGuard.simple`, `redirect` and `redirectPath`, `DefaultRouteParser` and `AutoRouteAware` can be
+  created with `const`.
+- **CHANGE**: `AutoTabsScaffold.bottomNavigationBuilder` gets a context below the `Scaffold`, so `Scaffold.of(context)`
+  works in it.
+- **FIX**: two edge shadows of a Cupertino transition with the same colors now compare equal, so a rebuild doesn't
+  repaint them.
+
+## 12.4.0
+- **FEAT**: `AutoRouter` and `AutoRouter.declarative` take a `heroControllerBuilder`, so Heroes fly between two pages
+  of a nested router: pass `MaterialApp.createMaterialHeroController` or `CupertinoApp.createCupertinoHeroController`,
+  and the router disposes the controller it creates. Left out, `AutoRouter` flies none, as before (#372,
+  flutter/flutter#90103).
+- **BEHAVIOR CHANGE**: `AutoRouter.declarative` no longer creates a hero controller by itself; pass
+  `heroControllerBuilder` to keep hero animations between its pages.
+- **BREAKING CHANGE**: every `RouteMatch<dynamic>` in the API is `RouteMatch<Object?>`, among them `RouteData.route`,
+  `RouteData.topMatch`, `RoutingController.topMatch`, `NavigationResolver.route` and `RouteMatch.children`, so a match's
+  `args` is `Object?`, no longer `dynamic`. Read it with a cast, `match.args as MyArgs`, or with
+  `routeData.argsAs<MyArgs>()`.
+- **BREAKING CHANGE**: every `RouteData<dynamic>` in the API is `RouteData<Object?>`, among them `RouteData.of`,
+  `context.routeData`, `context.topRoute`, `RoutingController.current`, `topRoute` and `stackData`,
+  `AutoRoutePage.routeData` and the `AutoRoutePageBuilder` and `RouteDataPredicate` callbacks, so the result `popped`
+  completes with is `Object?`. Read it with a cast, `await routeData.popped as bool?`.
+- **BREAKING CHANGE**: every `Route<dynamic>` in the API is `Route<Object?>`: the `didPush`, `didPop` and `didRemove` of
+  `AutoRouterObserver`, and `PagelessRoutesObserver`'s `current`, `routeOf`, `topPageRoute`, `routeWhere`,
+  `pagelessRoutesOver` and observer methods. An override that names `Route<dynamic>` still compiles, as the two types
+  are interchangeable there; a route read from them gives `Object?` where it gave `dynamic`, so cast what it returns,
+  `await route.popped as bool?`.
+- **BREAKING CHANGE**: every `AutoRoutePage<dynamic>` in the API is `AutoRoutePage<Object?>`: `RoutingController.stack`
+  and `topPage`, `KeepAliveTab.page` and the `PageBuilder` callback. Code that declares one of these types names
+  `AutoRoutePage<Object?>`, and a value read through it is `Object?`, read with a cast.
+- **BREAKING CHANGE**: `AutoRoutePage.canUpdate` and `PagelessRoutesObserver.routeOf` take a `Page<Object?>`, not a
+  `Page<dynamic>`. A subclass that overrides `canUpdate` with `Page<dynamic>` still compiles; write `Page<Object?>` to
+  match.
+- **BREAKING CHANGE**: `PendingRoutesHandler.peek` and `initialPendingRoutes` return `List<PageRouteInfo<Object?>>?`,
+  not `List<PageRouteInfo<dynamic>>?`. Code that stores the list names `PageRouteInfo<Object?>`.
+- **BREAKING CHANGE**: `RouteData.animation` is an `Animation<double>?`, not an `Animation<dynamic>?`, the type of the
+  route animation it holds, so `routeData.animation?.value` is a `double`. Code that sets it passes the route's own
+  `animation`, as before.
+- **BREAKING CHANGE**: `ReevaluateListenable.stream` takes a `Stream<Object?>`, not a `Stream<dynamic>`. Any stream
+  still fits, so a call needs no change; code that tears the constructor off as a function names `Stream<Object?>`.
+- **BREAKING CHANGE**: `Parameters.get` takes and returns `Object?`, not `dynamic`, and
+  `UrlState.normalizeQueryParamValue` does the same. Read a typed value with `getString`, `getInt` and their kin, or
+  cast, `params.get('id') as String?`.
+- **BREAKING CHANGE**: each file in `lib/src` is named after the first type it declares. Only imports of
+  `package:auto_route/src/...` change; every name an app writes stays. Old → new, all under `src/`:
+  `common/auto_route_annotations.dart` → `common/auto_router_config.dart`,
+  `common/auto_route_observer.dart` → `common/auto_router_observer.dart`,
+  `route/auto_route_config.dart` → `route/auto_route.dart`,
+  `route/errors.dart` → `route/missing_required_parameter_error.dart`,
+  `router/controller/controller_scope.dart` → `router/controller/router_scope.dart`,
+  `router/controller/route_leave.dart` → `router/controller/auto_route_leave_listener.dart`,
+  `router/controller/navigation_history/navigation_history.dart` →
+  `router/controller/navigation_history/stub/navigation_history_impl.dart`,
+  `router/controller/navigation_history/native_navigation_history.dart` →
+  `router/controller/navigation_history/native/navigation_history_impl.dart`,
+  `router/controller/navigation_history/web_navigation_history.dart` →
+  `router/controller/navigation_history/web/navigation_history_impl.dart`,
+  `router/controller/navigation_history/navigation_history_base.dart` →
+  `router/controller/navigation_history/navigation_history.dart`,
+  `router/parser/route_information_parser.dart` → `router/parser/default_route_parser.dart`,
+  `router/transitions/custom_page_route.dart` → `router/transitions/auto_page_route_builder.dart`,
+  `router/transitions/predictive_back_page_detector.dart` → `router/transitions/predictive_back_gesture_detector.dart`,
+  `router/widgets/custom_cupertino_transitions_builder.dart` →
+  `router/widgets/cupertino_route_transition_override_mixin.dart`.
+- **CHORE**: DCM's `prefer-boolean-prefixes` and `prefer-correct-callback-field-name` are switched off for now, so
+  the package's own booleans and callback fields keep their names; every other analyzer and DCM rule stays on.
+
+## 12.3.0
+- **BREAKING CHANGE**: `Parameters.optBool` and `getBool` take their default by name:
+  `getBool('key', defaultValue: false)` instead of `getBool('key', false)`. Routers generated by auto_route_generator
+  write the new form; regenerate them.
+- **BREAKING CHANGE**: `MissingRequiredParameterError` is an `Exception`, no longer an `Error`; catch it with
+  `on MissingRequiredParameterError`. Its name and message are unchanged.
+- **BREAKING CHANGE**: `RouteMatch.copyWith(pathParams:)` is removed; pass `params:`.
+- **BREAKING CHANGE**: `ReevaluatableRouteMatch.copyWith(pathParams:)` is removed; pass `params:`.
+- **BREAKING CHANGE**: `PageRouteInfo.copyWith(params:)` is removed; pass `rawPathParams:`.
+- **BREAKING CHANGE**: `PageRouteInfo.copyWith(queryParams:)` is removed; pass `rawQueryParams:`.
+- **BREAKING CHANGE**: `PageRouteInfo.copyWith(children:)` is removed; pass `initialChildren:`.
+- **BREAKING CHANGE**: `PageRouteInfo.copyWith(path:)` is removed; it was ignored, since a `PageRouteInfo` holds no
+  path, so drop the argument.
+- **BREAKING CHANGE**: `PageRouteInfo.copyWith(match:)` is removed; it was ignored, since a `PageRouteInfo` holds no
+  match, so drop the argument.
+- **BREAKING CHANGE**: `RouteData.setAnimation(animation)` is removed; set `routeData.animation = animation`.
+- **BREAKING CHANGE**: `NavigationResolver.next(bool continueNavigation)` no longer takes a bool; call `next()` to
+  continue or `reject()` to stop.
+- **BREAKING CHANGE**: `NavigationResolver.resolveNext(bool continueNavigation, {bool reevaluateNext})` is removed;
+  call `next()`, or `reject(reevaluateNext: false)` to stop, or `overrideNext(reevaluateNext: false)` to continue
+  without pushing the pending routes again.
+- **BREAKING CHANGE**: `NavigationResolver.nextOrBack(bool continueNavigation)` no longer takes a bool; call
+  `nextOrBack()` to continue or `reject(goBack: true)` to stop and go back.
+- **BEHAVIOR CHANGE**: on the web, a WillPopScope no longer blocks the browser back button; use PopScope, which Flutter replaced it with in 3.12 and which still blocks it (#1588).
+- **FEAT**: `PathParam.inherited` says whether a path param is inherited from a parent route; the generator reads it.
+- **CHORE**: every analyzer and DCM rule is on, with no rule switched off and no ignore; the code is formatted at 80
+  columns, and CI checks that it stays so.
+
+## 12.1.0
+- **FEAT**: path and query params can be the app's own types: give `@PathParam` or `@QueryParam` a
+  `ParamConverter<T>`, a top-level const, and the route reads the param with the new `Parameters.getTyped` or
+  `optTyped` and writes it back with `toParam` (#1794).
+- **FEAT**: a page class with type parameters gets a generic route: `PickerPage<T>` gives `PickerRoute<T>`, and
+  `push<int>(PickerRoute<int>(...))` builds `PickerPage<int>`; a page opened from a link gets each type
+  parameter's bound (#2050, #1879, #1739).
+- **FEAT**: in debug builds, two routes with the same full path make the router throw a `FlutterError` naming
+  both when it first reads its routes; paths that differ only in param names count as the same
+  (flutter/flutter#190741).
+- **FEAT**: `AutoTabsRouter` and `AutoTabsScaffold` take `backThroughHistory`: back shows the tabs visited before,
+  the latest first, then leaves the tabs (#1789, #830).
+- **FEAT**: `AutoTabsRouter.tabBar` and `AutoTabsRouter.pageView` take `lazyLoad`; `false` builds every tab's page
+  up front (#2013).
+- **FEAT**: every page's semantics carry its route name as their identifier, so UI testing tools such as Appium and
+  Maestro, and `find.bySemanticsIdentifier` in widget tests, find a page by its route name, whatever its route
+  type (#2115).
+- **FEAT**: `CustomRoute(enableCupertinoBackGesture: true)`, also on `RouteType.custom`, keeps the iOS back swipe on a
+  page with a custom transition, on iOS and macOS (flutter/flutter#183252).
+- **FEAT**: `router.waitForTransitions()` completes once every page has stopped moving after a push, a replace or a
+  pop, for example to open a bottom sheet once a page has come in (flutter/flutter#162789).
+
+## 12.0.0
+- **BREAKING CHANGE**: `RouteMatch.pathParams` and `RouteData.pathParams`, deprecated since 11.2.0, are removed;
+  use `params`.
+- **BREAKING CHANGE**: the `durationInMilliseconds` and `reverseDurationInMilliseconds` parameters of `CustomRoute`
+  and `RouteType.custom`, deprecated since 11.2.0, are removed; pass `duration` and `reverseDuration`.
+- **BREAKING CHANGE**: the `animatePageTransition` parameter of `AutoTabsRouter.tabBar`, deprecated since 11.2.0, is
+  removed; pass `duration: Duration.zero` to switch tabs without animating.
+- **FIX**: an app can catch a bad path param's error by its type: `MissingRequiredParameterError` is exported
+  from `package:auto_route/auto_route.dart` (flutter/flutter#155598).
+- **FIX**: a page view tabs router with a zero duration switches tabs without animating (#1150).
+- `NavigationHistory`, the type of `router.navigationHistory`, is exported from `package:auto_route/auto_route.dart`,
+  so an app can name it in a variable, a parameter or a test.
+- **DEPRECATION**: passing a bool to `NavigationResolver.next` is deprecated; call `next()` to
+  continue and the new `reject()` to stop, so `resolver.next(false)` becomes `resolver.reject()`.
+- **DEPRECATION**: passing a bool to `NavigationResolver.nextOrBack` is deprecated;
+  `nextOrBack(false)` becomes `reject(goBack: true)`.
+- **DEPRECATION**: `NavigationResolver.resolveNext` is deprecated. `resolveNext(true, reevaluateNext: false)`
+  becomes `overrideNext(reevaluateNext: false)`, and `resolveNext(false, reevaluateNext: false)`
+  becomes `reject(reevaluateNext: false)`.
+- **BREAKING CHANGE** (behavior): the futures of `pushAll` and `popAndPushAll` complete once every
+  guard has decided, instead of at once, as `replaceAll`'s already did. Code after `await router.pushAll(...)` now sees
+  the new stack, or the old one when a guard rejected it; don't await it inside a guard of the same
+  routes.
+- **BREAKING CHANGE** (an analyzer warning only): `Parameters`, `PageInfo`, `RouteType`,
+  `RouteCollection`, `HierarchySegment` and `AutoRouteInformation` are `@immutable`, since they
+  define `==`. A subclass with a field that isn't `final` now gets `must_be_immutable`; make it final.
+- **DEPRECATION**: `copyWith` takes each field's own name. On `PageRouteInfo`, write `rawPathParams`,
+  `rawQueryParams` and `initialChildren` instead of `params`, `queryParams` and `children`, and drop
+  `path` and `match`, which did nothing; it can now also set `stringMatch`, `redirectedFrom` and
+  `argsEquality`. On `RouteMatch`, write `params` instead of `pathParams`; it can now also set `id`.
+- **BREAKING CHANGE**: `CupertinoRoute`, `AdaptiveRoute` and `CustomRoute` no longer take a type
+  argument, which they never used. Write `CustomRoute(...)` instead of `CustomRoute<void>(...)`.
+- **BREAKING CHANGE**: `OnNavigationChanged` is `void Function(TabsRouter)`, and `popAndPushAll`'s
+  `onFailure` is an `OnNavigationFailure?` instead of `dynamic`. Callbacks written as closures
+  compile as before; pass `onFailure` a `void Function(NavigationFailure)`, as `pushAll` takes.
+- **DEPRECATION**: `RouteData.setAnimation(a)` is deprecated; write `routeData.animation = a`.
+  `RouteData.animation` can now be read too. `RouteData.args` stays `Object?`: a route's args can be
+  any class, so read them typed with `argsAs<T>()`.
+- **BREAKING CHANGE**: `NavigationResolver.redirectUntil` returns `Future<void>` instead of `void`,
+  completing once the redirect route closes. Calls compile as before; a class that overrides it
+  must return `Future<void>`, and a lint that asks for it is answered with `unawaited(...)`.
+- **CHORE**: require Dart 3.13, the version Flutter 3.47 ships. The package already required
+  Flutter 3.47, so no app that could use it before is left out.
+- **BEHAVIOR CHANGE**: `pushAndPopUntil` now removes the routes below the new page instead of
+  popping them, like `Navigator.pushAndRemoveUntil`, so they no longer flash while the new page
+  slides in. Navigator observers get `didRemove` for those routes, not `didPop`; the PopScope of
+  the removed routes is not asked; their push futures complete with null. They are removed only
+  once the new page's guards let it through, so a rejected push leaves the stack as it was,
+  fixes #1797
+- **BEHAVIOR CHANGE**: urls split only at '/' on every platform, so on Windows a backslash in a
+  route path no longer separates segments, and `RouteData.match` joins segments with '/', not '\'.
+- **FIX**: on web, a url whose first segment ends in ':' (like `/c:/files`) keeps its leading '/'.
+- **FIX**: a `CustomRoute` or `RouteType.custom` with `barrierDismissible: true` pops on a tap on its
+  barrier; the flag had no effect. `CustomRoute`'s `barrierDismissible` now defaults to false, as
+  `RouteType.custom` and `PageRouteBuilder` do, so a route that doesn't set it behaves as before.
+- **BREAKING CHANGE**: `auto_route` requires Flutter 3.47 (its pubspec now says so; it imported
+  `material_ui` and `cupertino_ui`, which already needed it, and on older Flutter pub's error named
+  those packages instead of this one). Upgrade Flutter, or stay on the release you use.
+- **BEHAVIOR CHANGE**: an enum query parameter is read and written by its name. Before, a page
+  with `@QueryParam('type') CartType? type` opened from `/cart?type=rm` threw a type error, and a
+  push wrote `type=CartType.rm`. Now the url holds `type=rm`; an unknown name reads as null, or as
+  the default. Regenerate your router; a link you saved in the old `CartType.rm` form no longer
+  reads, fixes #2148
+- **BEHAVIOR CHANGE**: a path param holding '/', '?' or '#' is encoded in the url and read back
+  whole: `FilesRoute(path: 'reports/2024')` is `/files/reports%2F2024`, and a link with `%2F` no
+  longer splits into two segments. `currentUrl` also keeps `=`, `&`, `+` and the other delimiters
+  of a param encoded, so opening `currentUrl` again reads the same query, fixes #2070, #1925
+- **BEHAVIOR CHANGE**: every tab change asks the tab route's guards, as a stack asks before a push.
+  A tab whose guard rejects no longer shows when you call `setActiveIndex`, navigate to it, open
+  its url or swipe to it; a guard that decides later (`redirectUntil`) keeps the current tab until
+  then. Guards in `RootStackRouter.guards` are still not asked for tabs. A guard on a tab route
+  that rejected without anyone noticing now takes effect, fixes #2218
+- **BEHAVIOR CHANGE**: a guard that redirects a route to itself (`redirectUntil` to a route its
+  own guard sends back) now reports a `FlutterError` naming the route and rejects the navigation,
+  instead of looping to a white screen, fixes #2213, #1818
+- **BEHAVIOR CHANGE**: `replace()` removes the page only once the new route's guards let it
+  through, so a rejected `replace()` keeps the page and the url, fixes #2046. `replaceAll()` keeps
+  the old pages until then and, when a guard rejects one of the new routes, puts them back: a
+  rejected route rejects the whole batch, in nested routers too, fixes #2299
+- **BEHAVIOR CHANGE**: a page whose required args weren't saved is left out of a restored stack
+  instead of failing, fixes #2098
+- **BEHAVIOR CHANGE**: `AutoRouteObserver` tells the popped page `didPop` before it tells the page
+  under it `didPopNext`, on a pop and on a remove that uncovers a page; before, the page under
+  heard first. A push already ran in this order, flutter/flutter#26902
+- **BEHAVIOR CHANGE**: `navigate()` from a tab to a route that is a child of the tabs host's route
+  but not one of its `AutoTabsRouter`'s routes now calls `onFailure` with a
+  `RouteNotFoundFailure`, or throws; before, it did nothing, fixes #1371
+- **BEHAVIOR CHANGE**: `popUntil` and `popUntilRoot` remove the pages between the top page and the
+  one the predicate meets, then pop the top page with its animation, so the pages in between no
+  longer show. Navigator observers hear `didRemove` for those pages, not `didPop`; their push
+  futures complete with null as before, flutter/flutter#59990
+- **BEHAVIOR CHANGE**: two `RedirectRoute`s that point at each other report a `FlutterError`
+  naming the loop instead of overflowing the stack, flutter/flutter#104441
+- **BEHAVIOR CHANGE**: a global guard's `redirect()` or `redirectPath()` that redirects again to
+  where it came from, and two guards whose `redirectUntil()` send the user to each other's route,
+  now report a `FlutterError` naming the loop and reject the route, instead of overflowing the
+  stack or opening pages without end, flutter/flutter#118061
+- **BEHAVIOR CHANGE**: `replace()` with a route of the same name and no children opens the route's
+  initial child, as `navigate()` with the same route does; before, the nested router kept the child
+  it showed. A route with no initial child still keeps it.
+- **FEAT**: routers save their pages for state restoration (off the web): every page's name, path,
+  query params and fragment, and each nested router's pages. Route args are your own objects and
+  are not saved, so a page that needs required args is left out when restored.
+- **FIX**: state restoration brings back every page of every stack and every tab, not only the
+  one in the url, fixes #2040, #2041, #2099
+- **FIX**: `Parameters.optBool` and `getBool` no longer crash on a bool pushed in code
+  (`NamedRoute('Flag', queryParams: {'f': true})`) or restored by state restoration, fixes #2222
+- **FIX**: `optString` and `getString` no longer throw a `TypeError` when the url repeats a query
+  key (`/products?tag=red&tag=blue` reads the last value, `blue`) or when a number was pushed
+  (`{'page': 2}` reads as '2').
+- **FIX**: `AutoRouter.declarative(key: ...)` uses the key it is given.
+- **FIX**: since 11.2.0 pages ignored the app's `Theme.pageTransitionsTheme` when the app's
+  `MaterialApp` came from `package:flutter/material.dart`; they use it again, fixes #2340
+- **FIX**: a deferred page popped before its library loads no longer throws "setState() called
+  after dispose()".
+- **FIX**: leaving a page no longer leaks, one more object on each visit, in a nested router, an
+  `AutoTabsRouter` (the tab fade animation, and the `PageController` of `.pageView` and the tab-bar
+  view) or an `AutoRouter.declarative` (its `HeroController`). Disposing a `RootStackRouter` now
+  disposes its delegate, url provider and navigation history too, and disposing them twice is safe.
+- **FIX**: a navigation stops when its nested router is disposed while a guard runs, fixes #2248
+- **FIX**: a nested router keeps its open pages when its page builds it in another place, such as a
+  list-detail page when a foldable phone folds.
+- **FIX**: a pushed route with children keeps its fragment in the url (`/books#top`, not `/books`);
+  `PageRouteInfo.copyWith` no longer drops `fragment`, `stringMatch`, `redirectedFrom` or
+  `argsEquality`.
+- **FIX**: on web, a deep link to an app that builds its router after the first frame keeps one
+  history entry.
+- **FIX**: on web, a deep link with an encoded character adds no second history entry.
+- **FIX**: on web, the browser's back button leaves a page whose query params changed in place (`/page` to
+  `/page?p=true`): it shows `/page` again, instead of staying on `/page?p=true`, flutter/flutter#108714.
+- **FIX**: on web, the browser forward button returns to a page pushed over one with the same url.
+- **FIX**: on web, going back returns to a previous page with the same url, such as a `Book` page
+  pushed twice with different args.
+- **FIX**: on web, a url with a letter outside ASCII follows the pages; a '#' in a path param
+  survives a refresh, fixes #1812
+- **FIX**: `back()` and the browser's back button return to the first of a route pushed twice with
+  equal arguments, instead of the page before both; `back()` twice in a row works, and on native
+  platforms `back()` over two pages with the same url returns to the first.
+- **FIX**: the args and the children a guard sets with `overrideNext` show on the page and open
+  in its nested router, also on a guard re-check.
+- **FIX**: a guard re-check no longer runs an async simple guard twice.
+- **FIX**: a page popped while guards are reevaluated stays closed, fixes #1643, #1785
+- **FIX**: `replaceAll()` right after the reevaluate listenable changes replaces the stack, fixes #2172
+- **FIX**: `replaceAll` and `pushAll` open routes of a closed nested router together, fixes #2214
+- **FIX**: `popAndPushAll` from a router's only page replaces that page, fixes #1948
+- **FIX**: `removeWhere` on a page below a page of the same route no longer removes the top page,
+  fixes #1943
+- **FIX**: a guard's redirect page leaves no history entry behind, fixes #2331
+- **FIX**: awaiting `pushAll` waits for its guards to decide (see the breaking change).
+- **FIX**: `pushAndPopUntil` no longer shows the pages it removes, fixes #1797
+- **FIX**: `pushAndPopUntil(scopedPopUntil: false)` removes the pages a nested router's predicate
+  rejects instead of animating them out, and leaves the page of a nested router that goes with its
+  shell under the new page, not a blank shell (#1797).
+- **FIX**: `navigate()` opens the right tab when two tabs share a route, keeps the path params it
+  inherits (#1816), and fills a path param into the parent path that holds it (#2066).
+- **FIX**: `navigatePath()` with an absolute path from a nested page opens its page, fixes #2317
+- **FIX**: `currentHierarchy()` lists the children of a router nested twice, fixes #2321
+- **FIX**: a tabs page opened at its own url (`/tabs`) now records its first tab in the url, so
+  going back to that entry from another tab shows the first tab.
+- **FIX**: observers hear `didInitTabRoute`, not `didChangeTabRoute`, when a swipe opens a tab
+  for the first time.
+- **FIX**: the url follows the active tab when two tabs share a parent route, fixes #1874
+- **FIX**: removing a tab before the active tab keeps the active tab shown (#1786, also in the page-view kind); removing the
+  active tab no longer throws a `RangeError` (#2308); a tab-bar `AutoTabsRouter` removed
+  mid-animation no longer crashes (#1765).
+- **FIX**: screen readers work again in `AutoTabsRouter.pageView` and `.tabBar`: tabs beside the
+  open tab no longer reach them, fixes #2170
+- **FIX**: back on a tab away from the home tab shows the home tab instead of closing the app on
+  Android 13 and later, fixes #2059; back acts on the tab on screen, not a hidden one, fixes #2225
+- **FIX**: a `PopScope` on a declarative nested router's page blocks the back gesture, fixes #2023
+- **FIX**: a Hero flies from a page to the first page of a nested router, fixes #2024, #1873
+- **FIX**: a `customRouteBuilder` page shows new query params after `replace()`, fixes #1857
+- **FIX**: observers hear the right events: `navigateTo()` back to a page right after closing a
+  dialog tells it `didPopNext` (#1774); a page in a nested router hears `didPop` when its host
+  route is popped (#1863) and hears its host route covered and uncovered (#1954).
+- **FIX**: "Can not resolve initial route" names the link no route matched and the catch-all
+  `RedirectRoute(path: '*', redirectTo: '/')` that answers it, fixes #2119
+- **FIX**: the example app builds for Android again on Flutter 3.47.
+- **FIX**: routes with equal list or set url params are equal and hash equally, so
+  `TagsRoute(tags: {'a'}) == TagsRoute(tags: {'a'})`.
+- **FIX**: a path param whose name starts another param's name expands whole: with params `id`
+  and `idx`, `/a/:idx` no longer becomes `/a/1x`, also through a `RedirectRoute`.
+- **FIX**: `pop()` right after `push()` closes the pushed page instead of the page under it; on
+  the first page it no longer leaves only the pushed one, flutter/flutter#145573. System back,
+  `pop` or `maybePop` in the same frame as `replaceAll([Home])` keeps the new page instead of
+  leaving none.
+- **FIX**: `navigate`, `navigatePath` and `replaceAll` close the routes pushed with
+  `Navigator.push` over the page they land on, flutter/flutter#171962
+- **FIX**: a pushed page's future completes with its route's `currentResult` when the back gesture
+  or system back closes it, as `Navigator.push` does, instead of null, flutter/flutter#171130
+- **FIX**: two buttons pressed at once open only the first page, and a finger lifted from a
+  button after another page opened over it opens nothing, flutter/flutter#160504
+- **FIX**: opening a deeper page by its path (`/a`, then `/a/b`) no longer builds the pages under
+  it again, flutter/flutter#147639
+- **FIX**: routes added to the router before a hot reload open by path, push or link, also as
+  children of a nested router on screen, flutter/flutter#105553
+- **FIX**: on web, the browser's back button walks back through one route pushed several times
+  with different params, flutter/flutter#186052
+- **FIX**: on web, the browser's back button leaves the login page a guard redirected to after a
+  logout, instead of showing it again on every press, flutter/flutter#135359
+- **FIX**: on web, an app the user comes back to with the browser's back button, or reloads, reads
+  the state it saved with `pushPathState`, instead of null, flutter/flutter#108697
+- **FIX**: with state restoration, a link that starts an app the platform ended in the background
+  opens its page instead of being ignored, flutter/flutter#161858
+- **FIX**: a page built under a deep link (Home under `/b`) hears `didPushNext` when it subscribes
+  to `AutoRouteObserver`, flutter/flutter#70272
+- **FIX**: a widget with `AutoRouteAwareStateMixin` shown in a dialog no longer throws,
+  flutter/flutter#62023
+- **FIX**: widgets laid out before a nested router stay in the semantics tree, so screen readers
+  read them, flutter/flutter#150978
+- **FIX**: the predictive back gesture belongs to the page on screen when a nested router sits
+  under a root page, flutter/flutter#152323
+- **FIX**: a page closed in the same frame as its dialog animates out with it instead of
+  vanishing at once, flutter/flutter#111137
+- **FIX**: an empty list query param leaves no '?' at the end of the url (`/items`, not `/items?`),
+  flutter/flutter#127373
+- **FIX**: a path param named with a '$' (`:user$id`) is filled into the url, fixes #1163
+- **FIX**: `replace()` and `pushAndPopUntil()` with a route of the same name and new nested
+  children show only those children; before, both kept the nested pages they showed, fixes #1363
+- **FIX**: `popUntilRouteWithName` and `popUntilRouteWithPath` with a page that isn't in the stack
+  stop at the first page instead of leaving a blank screen, fixes #1502
+- **FIX**: `pushPath` of an unknown relative path in a nested router calls `onFailure`, or throws,
+  instead of pushing the router's first page again, fixes #1648
+- **FIX**: a link that comes while the first page waits on its guard keeps its pages, instead of
+  the first page coming back on top once its guard resolves, fixes #1668
+- **CHORE**: `AutoRoutePage` no longer removes a popped page from its router's stack itself. It did
+  so to stop a flicker on Flutter 3.38 to 3.41 (flutter/flutter#178570), which Flutter 3.44 fixed.
+- **PERF**: a url is matched against the routes several times faster, and the matcher splits urls
+  at '/' itself; a tab switch builds the readable url once instead of on every read.
 ## 11.2.0
 - **CHORE:** Migrate to material_ui and cupertino_ui packages
 ## 11.1.0

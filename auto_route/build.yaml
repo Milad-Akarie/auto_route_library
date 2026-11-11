@@ -1,0 +1,12 @@
+# build_runner counts `example/**` among a package's own sources by default,
+# so a build run from this folder would also build the example's files as
+# part of auto_route. Its routers would then collect pages only under
+# auto_route's `lib/`, find none, and rewrite the example's committed
+# `.gr.dart` files to empty. The example is its own package with its own
+# build: run it from `example/`, or with `--workspace` from the repo root.
+targets:
+  $default:
+    sources:
+      exclude:
+        - example/**
+        - example.old/**

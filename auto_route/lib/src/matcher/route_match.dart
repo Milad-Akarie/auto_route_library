@@ -1,15 +1,46 @@
 import 'dart:convert';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
-import 'package:path/path.dart' as p;
+import 'package:path/path.dart' as p show posix;
 
-import '../../auto_route.dart';
-
-/// This is the result returned by [RouteMatcher]
+/// This is the result returned by `RouteMatcher`
 /// when a match is found
 @immutable
 class RouteMatch<T> {
+  /// Default constructor
+  new({
+    required this._config,
+    required this.segments,
+    required this.stringMatch,
+    required this.key,
+    this.children,
+    this.args,
+    this.params = const Parameters({}),
+    this.queryParams = const Parameters({}),
+    this.fragment = '',
+    this.redirectedFrom,
+    this.autoFilled = false,
+  }) : _evaluatedGuards = const [],
+       id = UniqueKey();
+
+  const new _internal({
+    required this._config,
+    required this.segments,
+    required this.stringMatch,
+    required this.key,
+    required this.id,
+    this.children,
+    this.args,
+    this.params = const Parameters({}),
+    this.queryParams = const Parameters({}),
+    this.fragment = '',
+    this.redirectedFrom,
+    this.autoFilled = false,
+    this._evaluatedGuards = const [],
+  });
+
   /// The extracted path params either from rawPath or
   /// [PageRouteInfo] implementation
   final Parameters params;
@@ -19,7 +50,7 @@ class RouteMatch<T> {
   final Parameters queryParams;
 
   /// The list of child matches of this match
-  final List<RouteMatch>? children;
+  final List<RouteMatch<Object?>>? children;
 
   /// The url fragment form [Uri.fragment]
   final String fragment;
@@ -45,7 +76,7 @@ class RouteMatch<T> {
 
   final AutoRoute _config;
 
-  /// Whether this matched is a result of [RouteMatcher.buildPathTo]
+  /// Whether this matched is a result of `RouteMatcher.buildPathTo`
   ///
   /// this is true if match is a parent route
   /// that's not added by the user
@@ -89,17 +120,14 @@ class RouteMatch<T> {
   TitleBuilder? get titleBuilder => _config.title;
 
   /// Helper to access [AutoRoute.buildPage]
-  AutoRoutePage<R> buildPage<R>(RouteData data) => _config.buildPage<R>(data);
+  AutoRoutePage<R> buildPage<R>(RouteData<Object?> data) =>
+      _config.buildPage(data);
 
   /// The unique key of this match
   ///
   /// this key survives cloning
   /// it's used to link Routing controllers to their matches
   final LocalKey id;
-
-  /// The path parameters of the route
-  @Deprecated('Use the shorthand [params] instead')
-  Parameters get pathParams => params;
 
   final List<AutoRouteGuard> _evaluatedGuards;
 
@@ -108,40 +136,6 @@ class RouteMatch<T> {
   ///
   /// it is used to prevent re-evaluating guards
   List<AutoRouteGuard> get evaluatedGuards => _evaluatedGuards;
-
-  /// Default constructor
-  RouteMatch({
-    required AutoRoute config,
-    required this.segments,
-    required this.stringMatch,
-    required this.key,
-    this.children,
-    this.args,
-    this.params = const Parameters({}),
-    this.queryParams = const Parameters({}),
-    this.fragment = '',
-    this.redirectedFrom,
-    this.autoFilled = false,
-  })  : _config = config,
-        _evaluatedGuards = const [],
-        id = UniqueKey();
-
-  const RouteMatch._internal({
-    required AutoRoute config,
-    required this.segments,
-    required this.stringMatch,
-    required this.key,
-    this.children,
-    this.args,
-    this.params = const Parameters({}),
-    this.queryParams = const Parameters({}),
-    this.fragment = '',
-    this.redirectedFrom,
-    this.autoFilled = false,
-    required this.id,
-    List<AutoRouteGuard> evaluatedGuards = const [],
-  })  : _config = config,
-        _evaluatedGuards = evaluatedGuards;
 
   /// Whether this match has nested child-matches
   bool get hasChildren => children?.isNotEmpty == true;
@@ -157,28 +151,32 @@ class RouteMatch<T> {
   /// if [includeEmpty] is true empty segments will be included
   /// in the list
   List<String> allSegments({bool includeEmpty = false}) => [
-        if (segments.isEmpty && includeEmpty) '',
-        ...segments,
-        if (hasChildren) ...children!.last.allSegments(includeEmpty: includeEmpty)
-      ];
+    if (segments.isEmpty && includeEmpty) '',
+    ...segments,
+    if (children case [..., final last])
+      ...last.allSegments(includeEmpty: includeEmpty),
+  ];
 
-  /// Joins all segments to a valid path
-  String get fullPath => p.joinAll(allSegments());
+  /// Joins all segments to a valid path, with '/' on every platform,
+  /// Windows too.
+  String get fullPath => p.posix.joinAll(allSegments());
 
   /// Returns a flattened list of this match and it's sub-matches
   /// e.g if we have = RouteMatch1[RouteMatch2[RouteMatch3]]
   /// the result is [RouteMatch1,RouteMatch2,RouteMatch3]
-  List<RouteMatch> get flattened {
-    return [this, if (hasChildren) ...children!.last.flattened];
+  List<RouteMatch<Object?>> get flattened {
+    return [this, if (children case [..., final last]) ...last.flattened];
   }
 
   /// Returns a new instance of [RouteMatch]
   /// with the overridden values
-  RouteMatch copyWith({
+  ///
+  /// Each parameter is named after the field it sets.
+  RouteMatch<Object?> copyWith({
     String? stringMatch,
-    Parameters? pathParams,
+    Parameters? params,
     Parameters? queryParams,
-    List<RouteMatch>? children,
+    List<RouteMatch<Object?>>? children,
     String? fragment,
     List<String>? segments,
     String? redirectedFrom,
@@ -187,27 +185,28 @@ class RouteMatch<T> {
     AutoRoute? config,
     bool? autoFilled,
     List<AutoRouteGuard>? evaluatedGuards,
+    LocalKey? id,
   }) {
     return RouteMatch._internal(
       config: config ?? _config,
       stringMatch: stringMatch ?? this.stringMatch,
       segments: segments ?? this.segments,
       children: children ?? this.children,
-      params: pathParams ?? params,
+      params: params ?? this.params,
       queryParams: queryParams ?? this.queryParams,
       fragment: fragment ?? this.fragment,
       args: args ?? this.args,
       key: key ?? this.key,
       redirectedFrom: redirectedFrom ?? this.redirectedFrom,
       autoFilled: autoFilled ?? this.autoFilled,
-      id: id,
+      id: id ?? this.id,
       evaluatedGuards: evaluatedGuards ?? _evaluatedGuards,
     );
   }
 
   /// Returns a new instance of [RouteMatch]
   /// with the overridden id
-  RouteMatch withId(LocalKey newId) {
+  RouteMatch<Object?> withId(LocalKey newId) {
     return RouteMatch._internal(
       id: newId,
       config: _config,
@@ -239,21 +238,21 @@ class RouteMatch<T> {
           fullscreenDialog == other.fullscreenDialog &&
           keepHistory == other.keepHistory &&
           args == other.args &&
-          const ListEquality().equals(guards, other.guards) &&
+          const ListEquality<Object?>().equals(guards, other.guards) &&
           queryParams == other.queryParams &&
-          const ListEquality().equals(children, other.children) &&
+          const ListEquality<Object?>().equals(children, other.children) &&
           fragment == other.fragment &&
           redirectedFrom == other.redirectedFrom &&
           autoFilled == other.autoFilled &&
-          const ListEquality().equals(segments, other.segments) &&
-          const MapEquality().equals(meta, other.meta);
+          const ListEquality<Object?>().equals(segments, other.segments) &&
+          const MapEquality<Object?, Object?>().equals(meta, other.meta);
 
   @override
   int get hashCode =>
       params.hashCode ^
       queryParams.hashCode ^
-      const ListEquality().hash(children) ^
-      const ListEquality().hash(guards) ^
+      const ListEquality<Object?>().hash(children) ^
+      const ListEquality<Object?>().hash(guards) ^
       fragment.hashCode ^
       redirectedFrom.hashCode ^
       path.hashCode ^
@@ -266,56 +265,65 @@ class RouteMatch<T> {
       type.hashCode ^
       autoFilled.hashCode ^
       args.hashCode ^
-      const ListEquality().hash(segments) ^
-      const MapEquality().hash(meta);
+      const ListEquality<Object?>().hash(segments) ^
+      const MapEquality<Object?, Object?>().hash(meta);
 
   @override
   String toString() {
-    return 'RouteMatch{ routeName: $name, pathParams: $params, queryParams: $queryParams, children: $children, fragment: $fragment, segments: $segments, redirectedFrom: $redirectedFrom,  path: $path, stringMatch: $stringMatch, args: $args, guards: $guards, key: $key}';
+    return 'RouteMatch{ routeName: $name, pathParams: $params, queryParams: '
+        '$queryParams, children: ${children ?? 'null'}, fragment: $fragment, '
+        'segments: $segments, redirectedFrom: ${redirectedFrom ?? 'null'}, '
+        ' path: $path, stringMatch: $stringMatch, args: ${args ?? 'null'}, '
+        'guards: $guards, key: ${key.hashCode}}';
   }
 
   /// Returns a new instance of [PageRouteInfo] from
   /// the current [RouteMatch] instance
-  PageRouteInfo toPageRouteInfo() => PageRouteInfo.fromMatch(this);
+  PageRouteInfo toPageRouteInfo() => .fromMatch(this);
 }
 
 /// When a route is re-evaluated this class is used
 /// to hold [currentPage] instance which will be used in-case there's no need
 /// to create a new one
 @immutable
+// Inherits RouteMatch's ==, so it equals a match of the same route, params
+// and args whichever page it re-evaluates; changing that is a behavior change.
+// ignore: prefer-overriding-parent-equality
 class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
+  /// Creates a new instance of [ReevaluatableRouteMatch]
+  new({required this.currentPage, required this.originalMatch})
+    : super._internal(
+        config: originalMatch._config,
+        stringMatch: originalMatch.stringMatch,
+        segments: originalMatch.segments,
+        key: originalMatch.key,
+        params: originalMatch.params,
+        queryParams: originalMatch.queryParams,
+        fragment: originalMatch.fragment,
+        redirectedFrom: originalMatch.redirectedFrom,
+        autoFilled: originalMatch.autoFilled,
+        id: originalMatch.id,
+        children: originalMatch.children,
+        evaluatedGuards: originalMatch.evaluatedGuards,
+        args: originalMatch.args as T?,
+      );
+
   /// The current page instance
   final AutoRoutePage<R> currentPage;
 
   /// The original match that was used to create this instance
-  final RouteMatch originalMatch;
-
-  /// Creates a new instance of [ReevaluatableRouteMatch]
-  ReevaluatableRouteMatch({
-    required this.currentPage,
-    required this.originalMatch,
-  }) : super._internal(
-          config: originalMatch._config,
-          stringMatch: originalMatch.stringMatch,
-          segments: originalMatch.segments,
-          key: originalMatch.key,
-          params: originalMatch.params,
-          queryParams: originalMatch.queryParams,
-          fragment: originalMatch.fragment,
-          redirectedFrom: originalMatch.redirectedFrom,
-          autoFilled: originalMatch.autoFilled,
-          id: originalMatch.id,
-          children: originalMatch.children,
-          evaluatedGuards: originalMatch.evaluatedGuards,
-          args: originalMatch.args,
-        );
+  final RouteMatch<Object?> originalMatch;
 
   @override
+  // An override of RouteMatch.copyWith: it changes the original match and keeps
+  // the page being reevaluated, so currentPage and originalMatch are not its to
+  // set.
+  // ignore: avoid-incomplete-copy-with
   ReevaluatableRouteMatch<T, R> copyWith({
     String? stringMatch,
-    Parameters? pathParams,
+    Parameters? params,
     Parameters? queryParams,
-    List<RouteMatch>? children,
+    List<RouteMatch<Object?>>? children,
     String? fragment,
     List<String>? segments,
     String? redirectedFrom,
@@ -324,12 +332,13 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
     AutoRoute? config,
     bool? autoFilled,
     List<AutoRouteGuard>? evaluatedGuards,
+    LocalKey? id,
   }) {
-    return ReevaluatableRouteMatch<T, R>(
+    return ReevaluatableRouteMatch(
       currentPage: currentPage,
       originalMatch: super.copyWith(
         stringMatch: stringMatch,
-        pathParams: pathParams,
+        params: params,
         queryParams: queryParams,
         children: children,
         fragment: fragment,
@@ -340,6 +349,7 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
         config: config ?? _config,
         autoFilled: autoFilled ?? this.autoFilled,
         evaluatedGuards: evaluatedGuards ?? _evaluatedGuards,
+        id: id,
       ),
     );
   }
@@ -357,7 +367,16 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
 ///         ]),
 ///      ]
 ///  );
+@immutable
 class HierarchySegment {
+  /// Default constructor
+  const new(
+    this.name, {
+    this.pathParams,
+    this.queryParams,
+    this.children = const [],
+  });
+
   /// The name of the route
   final String name;
 
@@ -365,15 +384,10 @@ class HierarchySegment {
   final List<HierarchySegment> children;
 
   /// The path parameters of the route
-  final Parameters? pathParams, queryParams;
+  final Parameters? pathParams;
 
-  /// Default constructor
-  const HierarchySegment(
-    this.name, {
-    this.pathParams,
-    this.queryParams,
-    this.children = const [],
-  });
+  /// The overridden query params
+  final Parameters? queryParams;
 
   /// Returns a pretty json output of this hierarchy
   Map<String, dynamic> toJson() {
@@ -381,13 +395,15 @@ class HierarchySegment {
       'name': name,
       if (pathParams?.isNotEmpty == true) 'pathParams': pathParams!.rawMap,
       if (queryParams?.isNotEmpty == true) 'queryParams': queryParams!.rawMap,
-      if (children.isNotEmpty) 'children': children.map((e) => e.toJson()).toList(),
+      if (children.isNotEmpty)
+        'children': children.map((e) => e.toJson()).toList(),
     };
   }
 
   @override
   String toString() {
-    return '$name: {pathParams: $pathParams, queryParams: $queryParams, children: $children}';
+    return '$name: {pathParams: ${pathParams ?? 'null'}, queryParams: '
+        '${queryParams ?? 'null'}, children: $children}';
   }
 
   @override
@@ -398,10 +414,14 @@ class HierarchySegment {
           name == other.name &&
           pathParams == other.pathParams &&
           queryParams == other.queryParams &&
-          const ListEquality().equals(children, other.children);
+          const ListEquality<Object?>().equals(children, other.children);
 
   @override
-  int get hashCode => name.hashCode ^ pathParams.hashCode ^ queryParams.hashCode ^ const ListEquality().hash(children);
+  int get hashCode =>
+      name.hashCode ^
+      pathParams.hashCode ^
+      queryParams.hashCode ^
+      const ListEquality<Object?>().hash(children);
 }
 
 /// An extension to create a pretty json output of
@@ -412,14 +432,18 @@ extension PrettyHierarchySegmentX on List<HierarchySegment> {
   String get prettyMap {
     const encoder = JsonEncoder.withIndent('  ');
 
-    Map toMap(List<HierarchySegment> segments) {
-      return Map.fromEntries(segments.map(
-        (e) => MapEntry(e.name, {
-          if (e.pathParams?.isNotEmpty == true) 'pathParams': e.pathParams!.rawMap,
-          if (e.queryParams?.isNotEmpty == true) 'queryParams': e.queryParams!.rawMap,
-          if (e.children.isNotEmpty) 'children': toMap(e.children),
-        }),
-      ));
+    Map<Object?, Object?> toMap(List<HierarchySegment> segments) {
+      return Map.fromEntries(
+        segments.map(
+          (e) => MapEntry(e.name, {
+            if (e.pathParams?.isNotEmpty == true)
+              'pathParams': e.pathParams!.rawMap,
+            if (e.queryParams?.isNotEmpty == true)
+              'queryParams': e.queryParams!.rawMap,
+            if (e.children.isNotEmpty) 'children': toMap(e.children),
+          }),
+        ),
+      );
     }
 
     return encoder.convert(toMap(this));

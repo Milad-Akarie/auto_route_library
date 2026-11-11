@@ -1,21 +1,25 @@
 import 'package:material_ui/material_ui.dart';
 
-/// all of the methods in this file map to existing, already-tested flutter widgets
-/// so no-need to include them in test-coverage
+/// all of the methods in this file map to existing, already-tested flutter
+/// widgets so no-need to include them in test-coverage
 
 // coverage:ignore-file
 /// a class that holds presets of common route transition builder
 class TransitionsBuilders {
-  const TransitionsBuilders._();
+  const new _();
 
   /// creates an animation when the route slides from right direction
   static const RouteTransitionsBuilder slideRight = _slideRight;
 
   static Widget _slideRight(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return SlideTransition(
-      position: Tween<Offset>(
-        begin: const Offset(-1.0, 0.0),
+      position: Tween(
+        begin: const Offset(-1, 0),
         end: Offset.zero,
       ).animate(animation),
       child: child,
@@ -26,10 +30,14 @@ class TransitionsBuilders {
   static const RouteTransitionsBuilder slideLeft = _slideLeft;
 
   static Widget _slideLeft(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return SlideTransition(
-      position: Tween<Offset>(
-        begin: const Offset(1.0, 0.0),
+      position: Tween(
+        begin: const Offset(1, 0),
         end: Offset.zero,
       ).animate(animation),
       child: child,
@@ -40,10 +48,14 @@ class TransitionsBuilders {
   static const RouteTransitionsBuilder slideRightWithFade = _slideRightWithFade;
 
   static Widget _slideRightWithFade(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return SlideTransition(
-      position: Tween<Offset>(
-        begin: const Offset(-1.0, 0.0),
+      position: Tween(
+        begin: const Offset(-1, 0),
         end: Offset.zero,
       ).animate(animation),
       child: FadeTransition(opacity: animation, child: child),
@@ -54,10 +66,14 @@ class TransitionsBuilders {
   static const RouteTransitionsBuilder slideLeftWithFade = _slideLeftWithFade;
 
   static Widget _slideLeftWithFade(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return SlideTransition(
-      position: Tween<Offset>(
-        begin: const Offset(1.0, 0.0),
+      position: Tween(
+        begin: const Offset(1, 0),
         end: Offset.zero,
       ).animate(animation),
       child: FadeTransition(opacity: animation, child: child),
@@ -68,10 +84,14 @@ class TransitionsBuilders {
   static const RouteTransitionsBuilder slideTop = _slideTop;
 
   static Widget _slideTop(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return SlideTransition(
-      position: Tween<Offset>(
-        begin: const Offset(0.0, -1.0),
+      position: Tween(
+        begin: const Offset(0, -1),
         end: Offset.zero,
       ).animate(animation),
       child: child,
@@ -82,10 +102,14 @@ class TransitionsBuilders {
   static const RouteTransitionsBuilder slideBottom = _slideBottom;
 
   static Widget _slideBottom(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return SlideTransition(
-      position: Tween<Offset>(
-        begin: const Offset(0.0, 1.0),
+      position: Tween(
+        begin: const Offset(0, 1),
         end: Offset.zero,
       ).animate(animation),
       child: child,
@@ -96,7 +120,11 @@ class TransitionsBuilders {
   static const RouteTransitionsBuilder fadeIn = _fadeIn;
 
   static Widget _fadeIn(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return FadeTransition(opacity: animation, child: child);
   }
 
@@ -104,7 +132,11 @@ class TransitionsBuilders {
   static const RouteTransitionsBuilder zoomIn = _zoomIn;
 
   static Widget _zoomIn(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return ScaleTransition(scale: animation, child: child);
   }
 
@@ -112,7 +144,11 @@ class TransitionsBuilders {
   static const RouteTransitionsBuilder noTransition = _noTransition;
 
   static Widget _noTransition(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return child;
   }
 }

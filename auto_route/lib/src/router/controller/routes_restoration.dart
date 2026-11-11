@@ -1,0 +1,137 @@
+part of 'routing_controller.dart';
+
+// Saves the pages of every router for state restoration, and reads them back.
+//
+// Flutter's Router saves only the route information, so the pages are saved
+// in its state: a list with one map per page, holding plain values the
+// platform's codecs can write. 'name' is the route name, 'path' and 'query'
+// its path and query params, 'fragment' its fragment, and 'children' the pages
+// of its nested router. A tabs router lists all its tabs, the active one
+// last. Route args are objects of the app, which can't be saved.
+extension on RoutingController {
+  List<Object?> _savedRoutes() {
+    final pages = _pages.map((page) => page.routeData).toList();
+    if (this case final TabsRouter tabs when tabs.activeIndex < pages.length) {
+      pages.add(pages.removeAt(tabs.activeIndex));
+    }
+    return [for (final data in pages) _savedRoute(data)];
+  }
+
+  Map<String, Object?> _savedRoute(RouteData<Object?> data) {
+    final child = _innerControllerOfMatch(data.matchId);
+    final List<Object?>? children;
+    if (child != null) {
+      // A declarative router builds its pages from the app's own state.
+      children = child.managedByWidget ? null : child._savedRoutes();
+    } else {
+      // A nested router that isn't built yet holds its routes as pending
+      // children.
+      children = [for (final match in data.pendingChildren) _savedMatch(match)];
+    }
+    // A route pushed on top shares its query params and fragment with the
+    // pages under it, which keep the ones they were opened with apart.
+    return _savedMatch(
+      data.route,
+      queryParams: data._ownQueryParams,
+      fragment: data._ownFragment,
+      children: children,
+    );
+  }
+}
+
+Map<String, Object?> _savedMatch(
+  RouteMatch<Object?> match, {
+  Parameters? queryParams,
+  String? fragment,
+  List<Object?>? children,
+}) {
+  queryParams ??= match.queryParams;
+  fragment ??= match.fragment;
+  children ??= [
+    for (final child in match.children ?? const <RouteMatch<Object?>>[])
+      _savedMatch(child),
+  ];
+  return {
+    'name': match.name,
+    if (match.params.isNotEmpty) 'path': _plainValues(match.params.rawMap),
+    if (queryParams.isNotEmpty) 'query': _plainValues(queryParams.rawMap),
+    if (fragment.isNotEmpty) 'fragment': fragment,
+    if (children.isNotEmpty) 'children': children,
+  };
+}
+
+Map<String, Object?> _plainValues(Map<String, Object?> values) {
+  Object? plain(Object? value) => switch (value) {
+    null || String() || num() || bool() => value,
+    Iterable() => [for (final item in value) plain(item)],
+    _ => value.toString(),
+  };
+  return {for (final entry in values.entries) entry.key: plain(entry.value)};
+}
+
+// Reads back the routes saved by _savedRoutes; null if [saved] isn't such a
+// list.
+List<PageRouteInfo>? _restoredRoutes(Object? saved) {
+  if (saved is! List) return null;
+  final routes = <PageRouteInfo>[];
+  for (final item in saved) {
+    if (item is! Map) return null;
+    final name = item['name'];
+    final path = item['path'];
+    final query = item['query'];
+    final fragment = item['fragment'];
+    final children = item['children'];
+    if (name is! String ||
+        (path != null && path is! Map) ||
+        (query != null && query is! Map) ||
+        (fragment != null && fragment is! String)) {
+      return null;
+    }
+    final restoredChildren = children == null
+        ? null
+        : _restoredRoutes(children);
+    if (children != null && restoredChildren == null) return null;
+    routes.add(
+      PageRouteInfo(
+        name,
+        rawPathParams: path == null ? const {} : Map.from(path as Map),
+        rawQueryParams: query == null ? const {} : Map.from(query as Map),
+        fragment: fragment as String?,
+        initialChildren: restoredChildren,
+      ),
+    );
+  }
+  return routes;
+}
+
+// The restored routes, less those whose page can't be built without the
+// args it was opened with, which aren't saved, and less the routes nested
+// in those. Builds each page once to find out, as the router will.
+List<RouteMatch<Object?>> _buildableMatches(
+  List<RouteMatch<Object?>> matches,
+  RoutingController router,
+) {
+  final buildable = <RouteMatch<Object?>>[];
+  for (final match in matches) {
+    try {
+      RouteData<Object?>(
+        route: match,
+        router: router,
+        stackKey: UniqueKey(),
+        pendingChildren: const [],
+        type: match.type ?? router.root.defaultRouteType,
+      ).buildPage<Object?>();
+      // A page that needs args it can't get is skipped; that is the error to
+      // catch.
+    } on MissingRequiredParameterError {
+      continue;
+    }
+    final children = match.children;
+    buildable.add(
+      children == null
+          ? match
+          : match.copyWith(children: _buildableMatches(children, router)),
+    );
+  }
+  return buildable;
+}

@@ -1,0 +1,331 @@
+# Proves every fix in this fork on each platform, on every push and pull
+# request: that the committed routers regenerate unchanged, the headless
+# tests on the Dart VM and in Chrome, the code generator's tests, then the
+# example app's integration tests (auto_route/example.old/integration_test) on an
+# Android emulator, an iOS simulator, web through `flutter drive`, and macOS
+# desktop.
+# Every job's work stops within 15 minutes, so the headless tests, Android
+# and iOS each run their suite in parts, one job each. The macOS jobs run on arm64
+# runners; Intel macOS isn't supported. Those runners are often short, so the
+# macOS jobs may wait up to 30 minutes for one (see the ios job).
+name: tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: 3.47.9
+
+jobs:
+  analyze:
+    name: Analyze, and the committed routers regenerate unchanged
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: subosito/flutter-action@v2.23.0
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - name: Analyze the package
+        working-directory: auto_route
+        run: flutter analyze
+      - name: Analyze the example app and its integration tests
+        working-directory: auto_route/example.old
+        run: flutter analyze
+      - name: Analyze the generator
+        if: success() || failure()
+        working-directory: auto_route_generator
+        run: flutter pub get && dart analyze
+      - name: Committed routers regenerate unchanged
+        if: success() || failure()
+        run: .github/scripts/check_generated_routers.sh
+      - name: Every lint rule is on and nothing is ignored
+        if: success() || failure()
+        run: bash .github/scripts/check_lint_rules_on.sh
+
+  generator:
+    name: Generator tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: subosito/flutter-action@v2.23.0
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      # The step stops two minutes before the job's limit, so a run that
+      # doesn't fit fails instead of being canceled, and the next step names
+      # the test it was on.
+      - name: Generator tests
+        working-directory: auto_route_generator
+        timeout-minutes: 13
+        shell: bash
+        run: flutter pub get && dart test --reporter github --file-reporter "json:$RUNNER_TEMP/test-results.json" 2>&1 | tee "$RUNNER_TEMP/test-output.txt"
+      # The job logs need a sign-in; annotations and the summary don't.
+      - name: Name each failed test
+        if: failure()
+        working-directory: auto_route_generator
+        run: python3 ../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/test-output.txt"
+
+  headless:
+    name: Headless tests on ${{ matrix.platform-name }} (part ${{ matrix.part }} of ${{ matrix.parts }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    # Each job runs a share of the test files (see test_files_for_shard.sh).
+    # In Chrome a file costs about 4.6 s on CI, almost all of it loading, so
+    # its 407 files take about 31 minutes in all: 5 parts of about 6 minutes.
+    # The VM runs files side by side, 379 s for all of them: 2 parts.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { platform: tester, platform-name: the VM, part: 1, parts: 2 }
+          - { platform: tester, platform-name: the VM, part: 2, parts: 2 }
+          - { platform: chrome, platform-name: Chrome, part: 1, parts: 5 }
+          - { platform: chrome, platform-name: Chrome, part: 2, parts: 5 }
+          - { platform: chrome, platform-name: Chrome, part: 3, parts: 5 }
+          - { platform: chrome, platform-name: Chrome, part: 4, parts: 5 }
+          - { platform: chrome, platform-name: Chrome, part: 5, parts: 5 }
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: subosito/flutter-action@v2.23.0
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      # The step stops two minutes before the job's limit, so a run that
+      # doesn't fit fails instead of being canceled, and the next step names
+      # the test it was on.
+      - name: Headless tests
+        working-directory: auto_route
+        timeout-minutes: 13
+        shell: bash
+        run: |
+          files=$(../.github/scripts/test_files_for_shard.sh $(( ${{ matrix.part }} - 1 )) ${{ matrix.parts }})
+          flutter test --reporter github --platform ${{ matrix.platform }} --file-reporter "json:$RUNNER_TEMP/test-results.json" \
+            $files 2>&1 | tee "$RUNNER_TEMP/test-output.txt"
+      # The job logs need a sign-in; annotations and the summary don't.
+      - name: Name each failed test
+        if: failure()
+        working-directory: auto_route
+        run: python3 ../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/test-output.txt"
+
+  android:
+    name: Integration tests on Android (half ${{ matrix.half }} of 2)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    # Two jobs, each running half of the suite in one launch of the app.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - half: 1
+            shard-index: 0
+          - half: 2
+            shard-index: 1
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-java@v6.1.0
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: subosito/flutter-action@v2.23.0
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      # The emulator needs 7.4 GB free for its data partition, and some
+      # runners have about 6 GB, so it dies at once and the action waits out
+      # its boot timeout. Removing toolchains these jobs don't use (Haskell,
+      # .NET, CodeQL) frees the space; the step prints how much.
+      - name: Free disk space for the emulator
+        run: |
+          df -h /
+          sudo rm -rf /usr/local/.ghcup /usr/share/dotnet /opt/hostedtoolcache/CodeQL
+          df -h /
+      # The emulator action downloads its system image once and fails the job
+      # when the download comes back corrupt ("Error on ZipFile"); it has no
+      # retry of its own. Downloading it here, with retries, leaves the action
+      # an image that is already installed.
+      - name: Download the emulator's system image
+        run: |
+          sdkmanager="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$sdkmanager" --licenses > /dev/null
+          for attempt in 1 2 3; do
+            "$sdkmanager" --install 'system-images;android-35;google_apis;x86_64' --channel=0 > /dev/null && exit 0
+            echo "::warning title=Retried the system image download::Attempt $attempt failed."
+          done
+          exit 1
+      # The step stops two minutes before the job's limit, so a run that
+      # doesn't fit fails instead of being canceled, and the next step names
+      # the test it was on.
+      - name: Integration tests on an Android emulator
+        uses: ReactiveCircus/android-emulator-runner@v2.38.0
+        timeout-minutes: 13
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          # A healthy boot takes about 40 s, so an emulator that died at once
+          # fails after 3 minutes instead of the default 10.
+          emulator-boot-timeout: 180
+          working-directory: auto_route/example.old
+          # The script retries once when the tool can't connect to the app in time.
+          script: bash ../../.github/scripts/android_integration_tests.sh ${{ matrix.shard-index }}
+      # The job logs need a sign-in; annotations and the summary don't.
+      - name: Name each failed test
+        if: failure()
+        working-directory: auto_route/example.old
+        run: python3 ../../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/test-output.txt"
+
+  ios:
+    name: Integration tests on iOS (part ${{ matrix.part }} of 4)
+    runs-on: macos-26
+    # GitHub seems to stop looking for a runner when the job's time limit runs out:
+    # in 40 runs, every macOS job that never got one was canceled 900 to 902 s
+    # after it was queued, while those that got one waited up to 602 s. A
+    # canceled job fails the run despite continue-on-error. So these jobs may
+    # wait 30 minutes, and their steps keep the work itself within 15.
+    timeout-minutes: 30
+    # Four jobs, each running a quarter of the suite in one launch of the app.
+    # With 271 tests, half of them took 451 s to build and run on one runner,
+    # while on a slower one, whose Xcode build took 266 s instead of 99 s and
+    # whose simulator took 244 s to boot, half ran out of time after 13 tests.
+    # A third took 426 to 614 s of test time, and on a slow runner its step ran
+    # out of its limit (the step stops 14 minutes after the job started). A
+    # quarter takes about 320 to 460 s. Four iOS jobs and the macOS job are the
+    # five macOS jobs that can run at once.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - part: 1
+            shard-index: 0
+          - part: 2
+            shard-index: 1
+          - part: 3
+            shard-index: 2
+          - part: 4
+            shard-index: 3
+    # GitHub never picked up an arm64 macOS runner in five runs; the maintainer's Mac runs iOS and macOS before every merge.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Note when the job started
+        run: echo "JOB_STARTED=$(date +%s)" >> "$GITHUB_ENV"
+      - uses: subosito/flutter-action@v2.23.0
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - name: Boot an iPhone simulator
+        run: |
+          udid=$(xcrun simctl list devices available --json | python3 -c '
+          import json, sys
+          devices = json.load(sys.stdin)["devices"]
+          iphones = [d for runtime, ds in devices.items() if ".iOS-" in runtime for d in ds if d["name"].startswith("iPhone")]
+          print(iphones[-1]["udid"])
+          ')
+          xcrun simctl boot "$udid"
+          # While the simulator boots, start Flutter and fetch the packages,
+          # which the tests would otherwise do after it: about 75 s here.
+          (cd auto_route/example.old && flutter pub get)
+          xcrun simctl bootstatus "$udid"
+          echo "SIMULATOR_UDID=$udid" >> "$GITHUB_ENV"
+          # The tests stop 14 minutes after the job started on its runner, so a
+          # run that doesn't fit fails, and the next step names how far it got,
+          # with the cleanup steps, about 40 s, still inside 15 minutes.
+          minutes=$(( (JOB_STARTED + 14 * 60 - $(date +%s)) / 60 ))
+          echo "TEST_MINUTES=$(( minutes > 1 ? minutes : 1 ))" >> "$GITHUB_ENV"
+      - name: Integration tests on the iOS simulator
+        working-directory: auto_route/example.old
+        timeout-minutes: ${{ fromJSON(env.TEST_MINUTES) }}
+        shell: bash
+        # Verbose, with the time on each line, so a run that stops before its
+        # first test shows whether it waited on the install, the launch or the
+        # app's connection. Lines starting with :: are GitHub's commands and
+        # keep their start.
+        run: >-
+          flutter test -v --reporter github --file-reporter "json:$RUNNER_TEMP/test-results.json"
+          integration_test/all_tests.dart --total-shards 4 --shard-index ${{ matrix.shard-index }} -d "$SIMULATOR_UDID" 2>&1
+          | perl -MPOSIX -pe 'BEGIN { $| = 1 } print strftime("[%H:%M:%S] ", gmtime) unless /^::/'
+          | tee "$RUNNER_TEMP/test-output.txt"
+      # The job logs need a sign-in; annotations and the summary don't.
+      - name: Name each failed test
+        if: failure()
+        working-directory: auto_route/example.old
+        run: python3 ../../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/test-output.txt"
+
+  web:
+    name: Integration tests on web
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: subosito/flutter-action@v2.23.0
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      # The runner image ships ChromeDriver matching its Chrome.
+      - name: Start ChromeDriver
+        run: |
+          "$CHROMEWEBDRIVER/chromedriver" --port=4444 &
+          sleep 2
+      - name: Integration tests in headless Chrome
+        working-directory: auto_route/example.old
+        shell: bash
+        run: >-
+          flutter drive
+          --driver=test_driver/integration_test.dart
+          --target=integration_test/all_tests.dart
+          -d web-server
+          --browser-name=chrome
+          --headless 2>&1 | tee "$RUNNER_TEMP/test-output.txt"
+      # flutter drive writes no results file, so this names the failure by its last lines.
+      - name: Name the failure
+        if: failure()
+        working-directory: auto_route/example.old
+        run: python3 ../../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/test-output.txt"
+
+  macos:
+    name: Integration tests on macOS
+    runs-on: macos-26
+    # May wait 30 minutes for a runner, as the ios job explains.
+    timeout-minutes: 30
+    # GitHub never picked up an arm64 macOS runner in five runs; the maintainer's Mac runs iOS and macOS before every merge.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: subosito/flutter-action@v2.23.0
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      # The work stops within 15 minutes, as in every job.
+      - name: Integration tests on macOS desktop
+        working-directory: auto_route/example.old
+        timeout-minutes: 13
+        shell: bash
+        run: flutter test --reporter github --file-reporter "json:$RUNNER_TEMP/test-results.json" integration_test/all_tests.dart -d macos 2>&1 | tee "$RUNNER_TEMP/test-output.txt"
+      # The job logs need a sign-in; annotations and the summary don't.
+      - name: Name each failed test
+        if: failure()
+        working-directory: auto_route/example.old
+        run: python3 ../../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/test-output.txt"

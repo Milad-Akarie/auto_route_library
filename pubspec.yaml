@@ -1,8 +1,23 @@
-name: melos_root
+# A Dart pub workspace: auto_route and its example resolve together, so the
+# example always runs on the local auto_route.
+#
+# auto_route_generator stays outside it. On Flutter 3.47.9, flutter_test pins
+# test_api 0.7.12, and every release of package:test that allows analyzer 14
+# (which the generator needs) requires test_api 0.7.13 or later, so the three
+# can't share one resolution. The generator resolves on its own and overrides
+# auto_route with ../auto_route; the override below gives the workspace the
+# local generator. Once flutter_test allows test_api 0.7.13 or later, add the
+# generator to the workspace and drop both overrides.
+name: auto_route_workspace
 publish_to: none
 
 environment:
-  sdk: ">=3.3.0 <4.0.0"
-dev_dependencies:
-  melos: ^3.0.0
-  test: ^1.28.0
+  sdk: ^3.13.0
+
+workspace:
+  - auto_route
+  - auto_route/example.old
+
+dependency_overrides:
+  auto_route_generator:
+    path: auto_route_generator

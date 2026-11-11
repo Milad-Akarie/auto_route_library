@@ -1,36 +1,71 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:auto_route_generator/build_utils.dart';
+import 'package:auto_route_generator/src/models/router_config.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
-
-import '../models/router_config.dart';
 
 /// Extracts and holds router configs
 class RouterConfigResolver {
   /// Default constructor
-  RouterConfigResolver();
+  const new();
 
   /// Resolves a [ClassElement] into a consumable [RouterConfig]
   RouterConfig resolve(
     ConstantReader autoRouter,
     AssetId input,
     ClassElement clazz, {
-    bool usesPartBuilder = false,
-    int? cacheHash,
+    required bool isPartOfLibrary,
+    required int cacheHash,
   }) {
-    final deferredLoading = autoRouter.peek('deferredLoading')?.boolValue ?? false;
-    final replaceInRouteName = autoRouter.peek('replaceInRouteName')?.stringValue;
-    final argsEquality = autoRouter.peek('argsEquality')?.boolValue ?? false;
-    final generateForDir = autoRouter.read('generateForDir').listValue.map((e) => e.toStringValue()!);
+    final isDeferredLoading =
+        autoRouter.peek('deferredLoading')?.boolValue ?? false;
+    final replaceInRouteName = autoRouter
+        .peek('replaceInRouteName')
+        ?.stringValue;
+    if (replaceInRouteName != null) {
+      _checkReplaceInRouteName(replaceInRouteName, clazz);
+    }
+    final hasArgsEquality = autoRouter.peek('argsEquality')?.boolValue ?? false;
+    final generateForDir = autoRouter
+        .read('generateForDir')
+        .listValue
+        .map((e) => e.toStringValue()!);
 
     return RouterConfig(
       routerClassName: clazz.displayName,
       replaceInRouteName: replaceInRouteName,
-      deferredLoading: deferredLoading,
-      usesPartBuilder: usesPartBuilder,
+      isDeferredLoading: isDeferredLoading,
+      isPartOfLibrary: isPartOfLibrary,
       path: input.path,
       cacheHash: cacheHash,
       generateForDir: List.of(generateForDir),
-      argsEquality: argsEquality,
+      hasArgsEquality: hasArgsEquality,
+    );
+  }
+
+  /// Throws unless [value] is a pattern and a replacement split by one
+  /// comma, the replacement being something a route name can hold, so a
+  /// wrong value fails the build with a message instead of giving routes
+  /// that don't compile or quietly keep their `Route` suffix.
+  void _checkReplaceInRouteName(String value, ClassElement clazz) {
+    final parts = value.split(',');
+    if (parts case [final pattern, final replacement]
+        when pattern.trim().isNotEmpty) {
+      if (!RegExp(r'^[A-Za-z0-9_$]*$').hasMatch(replacement.trim())) {
+        throwError(
+          'The replacement in replaceInRouteName must be letters, digits, '
+          r"'_' or '$' to make a route name, "
+          "but ${clazz.displayName} has '${replacement.trim()}' in '$value'.",
+          element: clazz,
+        );
+      }
+      return;
+    }
+    throwError(
+      'replaceInRouteName must be a pattern and its replacement split by '
+      "one comma, like 'Page|Screen,Route', "
+      "but ${clazz.displayName} has '$value'.",
+      element: clazz,
     );
   }
 }

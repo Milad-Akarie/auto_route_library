@@ -1,35 +1,44 @@
-import 'package:auto_route/src/router/parser/route_information_parser.dart';
+import 'dart:async';
+
+import 'package:auto_route/src/router/parser/default_route_parser.dart';
+import 'package:auto_route/src/router/provider/browser_entry_state.dart'
+    if (dart.library.js_interop) 'package:auto_route/src/router/provider/browser_entry_state_web.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-/// The route information provider that propagates the platform route information changes.
+/// The route information provider that propagates the platform route
+/// information changes.
 ///
-/// This provider also reports the new route information from the [Router] widget
-/// back to engine using message channel method, the
+/// This provider also reports the new route information from the [Router]
+/// widget back to engine using message channel method, the
 /// [SystemNavigator.routeInformationUpdated].
 ///
 /// Each time [SystemNavigator.routeInformationUpdated] is called, the
 /// [SystemNavigator.selectMultiEntryHistory] method is also called. This
 /// overrides the initialization behavior of
 /// [Navigator.reportsRouteUpdateToEngine].
-class AutoRouteInformationProvider extends RouteInformationProvider with WidgetsBindingObserver, ChangeNotifier {
-  AutoRouteInformationProvider._({required RouteInformation initialRouteInformation, this.neglectIf})
-      : _value = initialRouteInformation;
-
-  /// if true is return the route will be
-  /// reported to engine
-  bool Function(String? location)? neglectIf;
-
+class AutoRouteInformationProvider extends RouteInformationProvider
+    with WidgetsBindingObserver, ChangeNotifier {
   /// Create a platform route information provider.
   ///
-  /// Use the [initialRouteInformation] to set the default route information for this
-  /// provider.
-  factory AutoRouteInformationProvider(
-      {RouteInformation? initialRouteInformation, bool Function(String? location)? neglectWhen}) {
-    final initialRouteInfo = initialRouteInformation ??
+  /// Use the [initialRouteInformation] to set the default route information for
+  /// this provider.
+  factory({
+    RouteInformation? initialRouteInformation,
+    bool Function(String? location)? neglectWhen,
+  }) {
+    // On web the engine starts the app with no state, even when the browser
+    // entry it opens at holds the state the app saved there, as when the
+    // user comes back to the app from another site (flutter/flutter#108697).
+    // So the state is read from the entry itself.
+    final initialRouteInfo =
+        initialRouteInformation ??
         RouteInformation(
-          uri: Uri.parse(WidgetsBinding.instance.platformDispatcher.defaultRouteName),
+          uri: Uri.parse(
+            WidgetsBinding.instance.platformDispatcher.defaultRouteName,
+          ),
+          state: browserEntryState(),
         );
 
     return AutoRouteInformationProvider._(
@@ -37,38 +46,69 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
       neglectIf: neglectWhen,
     );
   }
+  new _({required RouteInformation initialRouteInformation, this.neglectIf})
+    : _value = initialRouteInformation;
+
+  /// if true is return the route will be
+  /// reported to engine
+  bool Function(String? location)? neglectIf;
 
   @override
-  void routerReportsNewRouteInformation(RouteInformation routeInformation,
-      {RouteInformationReportingType type = RouteInformationReportingType.none}) {
+  void routerReportsNewRouteInformation(
+    RouteInformation routeInformation, {
+    RouteInformationReportingType type = .none,
+  }) {
     if (neglectIf != null && neglectIf!(routeInformation.uri.toString())) {
       return;
     }
 
-    var replace = type == RouteInformationReportingType.neglect ||
-        (type == RouteInformationReportingType.none &&
-            _valueInEngine.uri == routeInformation.uri &&
-            _valueInEngine.state == routeInformation.state);
+    // On web DefaultRouteParser hands over the uri escaped for the engine.
+    // Compare and keep the app's own uri, and escape one that skipped it.
+    final appRouteInformation =
+        routeInformation is AutoRouteInformation &&
+            routeInformation.appUri != null
+        ? RouteInformation(
+            uri: routeInformation.appUri,
+            state: routeInformation.state,
+          )
+        : routeInformation;
+    final reportedUri =
+        identical(appRouteInformation, routeInformation) && kIsWeb
+        ? escapeForWebEngine(routeInformation.uri)
+        : routeInformation.uri;
 
-    if (!replace && routeInformation is AutoRouteInformation) {
-      replace = routeInformation.replace;
+    // The routes saved for state restoration stay with the Router.
+    final state = UrlState.platformState(routeInformation.state);
+    var shouldReplace =
+        type == .neglect ||
+        (type == .none &&
+            _valueInEngine.uri == appRouteInformation.uri &&
+            UrlState.platformState(_valueInEngine.state) == state);
+
+    if (!shouldReplace && routeInformation is AutoRouteInformation) {
+      shouldReplace = routeInformation.replace;
     }
-    SystemNavigator.selectMultiEntryHistory();
-    SystemNavigator.routeInformationUpdated(
-      uri: routeInformation.uri,
-      state: routeInformation.state,
-      replace: replace,
+    unawaited(SystemNavigator.selectMultiEntryHistory());
+    unawaited(
+      SystemNavigator.routeInformationUpdated(
+        uri: reportedUri,
+        state: state,
+        replace: shouldReplace,
+      ),
     );
-    _value = routeInformation;
-    _valueInEngine = routeInformation;
+    _value = appRouteInformation;
+    _valueInEngine = appRouteInformation;
   }
 
   @override
   RouteInformation get value => _value;
   RouteInformation _value;
 
-  RouteInformation _valueInEngine =
-      RouteInformation(uri: Uri.parse(WidgetsBinding.instance.platformDispatcher.defaultRouteName));
+  // The browser entry the app starts at holds the state saved in it, too.
+  RouteInformation _valueInEngine = RouteInformation(
+    uri: Uri.parse(WidgetsBinding.instance.platformDispatcher.defaultRouteName),
+    state: browserEntryState(),
+  );
 
   void _platformReportsNewRouteInformation(RouteInformation routeInformation) {
     if (_value == routeInformation) return;
@@ -101,8 +141,11 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
 
   @override
   Future<bool> didPushRouteInformation(RouteInformation routeInformation) {
-    assert(hasListeners);
+    assert(
+      hasListeners,
+      'The route information provider has no listener to report to.',
+    );
     _platformReportsNewRouteInformation(routeInformation);
-    return SynchronousFuture<bool>(true);
+    return SynchronousFuture(true);
   }
 }

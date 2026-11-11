@@ -1,66 +1,66 @@
 /// RouterConfig
 class RouterConfig {
+  /// Default constructor
+  const new({
+    required this._routerClassName,
+    required this.path,
+    required this._cacheHash,
+    required this.generateForDir,
+    required this.replaceInRouteName,
+    required this.isDeferredLoading,
+    required this.isPartOfLibrary,
+    required this.hasArgsEquality,
+  });
+
+  /// Deserializes a map to an instance of [RouterConfig]
+  factory fromJson(Map<String, dynamic> map) {
+    return RouterConfig(
+      routerClassName: map['routerClassName'] as String,
+      replaceInRouteName: map['replaceInRouteName'] as String?,
+      isDeferredLoading: map['deferredLoading'] as bool,
+      isPartOfLibrary: map['usesPartBuilder'] as bool,
+      path: map['path'] as String,
+      cacheHash: map['cacheHash'] as int?,
+      generateForDir: (map['generateForDir'] as List<Object?>).cast(),
+      hasArgsEquality: map['argsEquality'] as bool,
+    );
+  }
+
   /// The name of the router class
-  final String routerClassName;
+  final String _routerClassName;
 
   /// The string to replace in route names
   final String? replaceInRouteName;
 
   /// Whether the router should use deferred loading
-  final bool deferredLoading;
+  final bool isDeferredLoading;
 
   /// Whether the router should use part builder
-  final bool usesPartBuilder;
+  final bool isPartOfLibrary;
 
   /// The path to the router file
   final String path;
 
   /// The cache hash of the router properties
-  final int? cacheHash;
+  final int? _cacheHash;
 
   /// The list of directories to generate for
   final List<String> generateForDir;
 
   /// Whether to generate equality operator and hashCode for route args
-  final bool argsEquality;
-
-  /// Default constructor
-  const RouterConfig({
-    required this.routerClassName,
-    this.replaceInRouteName,
-    this.deferredLoading = false,
-    this.usesPartBuilder = false,
-    required this.path,
-    required this.cacheHash,
-    required this.generateForDir,
-    this.argsEquality = false,
-  });
+  final bool hasArgsEquality;
 
   /// Serializes this instance to a map
   Map<String, dynamic> toJson() {
     return {
-      'routerClassName': routerClassName,
+      'routerClassName': _routerClassName,
       'replaceInRouteName': replaceInRouteName,
-      'deferredLoading': deferredLoading,
-      'usesPartBuilder': usesPartBuilder,
+      'deferredLoading': isDeferredLoading,
+      'usesPartBuilder': isPartOfLibrary,
       'path': path,
-      'cacheHash': cacheHash,
+      'cacheHash': _cacheHash,
       'generateForDir': generateForDir,
-      'argsEquality': argsEquality,
+      'argsEquality': hasArgsEquality,
     };
-  }
-
-  /// Deserializes a map to an instance of [RouterConfig]
-  factory RouterConfig.fromJson(Map<String, dynamic> map) {
-    return RouterConfig(
-      routerClassName: map['routerClassName'] as String,
-      replaceInRouteName: map['replaceInRouteName'] as String?,
-      deferredLoading: map['deferredLoading'] as bool,
-      usesPartBuilder: map['usesPartBuilder'] as bool,
-      path: map['path'] as String,
-      cacheHash: map['cacheHash'] as int?,
-      generateForDir: (map['generateForDir'] as List<dynamic>).cast<String>(),
-      argsEquality: map['argsEquality'] as bool,
-    );
   }
 }
