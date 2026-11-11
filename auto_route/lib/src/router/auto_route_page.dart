@@ -98,17 +98,27 @@ class AutoRoutePage<T> extends Page<T> {
   /// removed page's route and leave its own to be popped. Nor does a new page
   /// take the route of a page the app removed itself, see [markRemoved].
   ///
-  /// The result type isn't compared: a navigate builds the pages on its way to
-  /// the target with its own type, and they are still the same pages.
+  /// Nor does a page whose result type the route can't hold: Flutter's
+  /// navigator casts a route's page to the route's result type when the route
+  /// closes, as [Page.canUpdate] keeps it by comparing types. A page of a
+  /// narrower type fits, such as one a `navigate<bool>` builds on its way to
+  /// its target. A page that takes over a screen the navigator shows is built
+  /// with that screen's type, so it always fits.
   @override
   bool canUpdate(Page<Object?> other) {
     final canUpdate =
         other is AutoRoutePage &&
         other.routeKey == routeKey &&
         routeData.stackKey == other.routeData.stackKey &&
+        other._canBeTakenOverBy(this) &&
         (other.key == key || (_shownPages[this] != true && !other.isRemoved));
     return canUpdate;
   }
+
+  // Whether the route showing this page can show [page] instead: the route's
+  // result type is this page's or wider, and Flutter casts the route's page
+  // to it.
+  bool _canBeTakenOverBy(Object page) => page is Page<T>;
 
   @override
   PopInvokedWithResultCallback<T> get onPopInvoked {

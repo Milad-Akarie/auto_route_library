@@ -241,6 +241,10 @@ class RouteData<R> {
     return _route.buildPage(this);
   }
 
+  // Calls [create] with this route's result type, [R], which the navigator
+  // casts the route's page to.
+  X _withResultType<X>(X Function<S>(RouteData<S> data) create) => create(this);
+
   void _onStartReevaluating(RouteMatch<Object?> newMatch) {
     _updateRoute(newMatch);
     _ownQueryParams = newMatch.queryParams;

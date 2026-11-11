@@ -3067,12 +3067,26 @@ abstract class StackRouter extends RoutingController {
         }
       }
     }
-    final data = _createRouteData<T>(
-      match,
-      routeData,
-      popCompleter: Completer<T?>(),
-    );
-    final page = data.buildPage<T>();
+    // A page that takes over a screen the navigator shows, as a navigation to
+    // that screen does, keeps the screen's result type: the navigator keeps
+    // the screen's route, and casts its page to the route's type when it
+    // closes.
+    final screen = takenOver ?? _shownDataThatLeftWithId(match.id);
+    final page = switch (screen) {
+      null => _createRouteData<T>(
+        match,
+        routeData,
+        popCompleter: Completer<T?>(),
+      ).buildPage<T>(),
+      final shown => shown._withResultType(
+        <R>(_) => _createRouteData<R>(
+          match,
+          routeData,
+          popCompleter: Completer<R?>(),
+        ).buildPage<R>(),
+      ),
+    };
+    final data = page.routeData;
     if (index != null) {
       _pages.insert(index, page);
     } else {
@@ -3086,7 +3100,23 @@ abstract class StackRouter extends RoutingController {
     if (takenOver != null) {
       _openChildrenInTakenOverRouter(data, onFailure: onFailure);
     }
-    return data.popped;
+    return switch (data.popped) {
+      final Future<T?> popped => popped,
+      // The caller named a type the screen's result doesn't have.
+      final popped => popped.then((result) => result is T ? result : null),
+    };
+  }
+
+  // The data of the page with match [id] that the navigator shows, once it
+  // has left the stack for a new page of its route to take its place, as
+  // navigate takes off the page it reaches again.
+  RouteData<Object?>? _shownDataThatLeftWithId(LocalKey id) {
+    for (final page in _pagesAtLastLeaveReport.reversed) {
+      if (page.routeData.matchId == id && !_pages.contains(page)) {
+        return page.routeData;
+      }
+    }
+    return null;
   }
 
   // The data of the page the navigator shows on top, once that page has left

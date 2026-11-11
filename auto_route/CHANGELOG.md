@@ -5,6 +5,10 @@
   closes. It never completed, and each call waiting on it kept the pages it worked with in memory: one more page on
   every `replaceAll` in release builds, and in debug builds and tests also the nested routers and page widgets of every
   link through nested routers.
+- **FIX**: a screen opened with a result type, such as with `push<int>`, and then reached again by `navigate`, a link,
+  `replace` or `replaceAll` closes again, even with system back. Since 12.5.0 closing it threw
+  `type 'AutoRoutePage<Object?>' is not a subtype of type 'Page<int>'`. The page that takes over a screen now keeps
+  its result type, and a page whose type the screen's route can't hold gets a route of its own, as in Flutter.
 - **BEHAVIOR CHANGE**: `AutoTabsRouter` passes a new `homeIndex` on when it is rebuilt with one, so back goes to the new
   home tab. A `homeIndex` past the end of the tabs counts as no home tab instead of throwing (#1759).
 - **BEHAVIOR CHANGE**: a guard that rejects a page of a nested router when the guards are reevaluated now updates the

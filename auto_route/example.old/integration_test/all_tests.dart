@@ -202,6 +202,7 @@ import 'tabs_scaffold_build_count_test.dart' as tabs_scaffold_build_count;
 import 'tabs_url_without_initial_test.dart' as tabs_url_without_initial;
 import 'theme_change_test.dart' as theme_change;
 import 'theme_page_transitions_test.dart' as theme_page_transitions;
+import 'typed_screen_reached_again_test.dart' as typed_screen_reached_again;
 import 'typed_url_test.dart' as typed_url;
 import 'universal_link_test.dart' as universal_link;
 import 'unmatched_deep_link_test.dart' as unmatched_deep_link;
@@ -411,6 +412,7 @@ void main() {
   tabs_url_without_initial.main();
   theme_change.main();
   theme_page_transitions.main();
+  typed_screen_reached_again.main();
   typed_url.main();
   universal_link.main();
   unmatched_deep_link.main();
