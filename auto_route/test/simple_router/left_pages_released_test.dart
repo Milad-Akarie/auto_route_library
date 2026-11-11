@@ -125,8 +125,10 @@ void main() {
   // with DetailsRoute and then HomeRoute.
   // Happened: none completed, though each one's page had left the stack.
   // Should: each completes once its page leaves the stack, as a removed
-  // route's future does in Flutter, including when a new page of the same
-  // route takes the page's place.
+  // route's future does in Flutter. A navigation that reaches the screen
+  // already shown keeps it, so its future stays pending until the screen
+  // leaves, as Flutter's Navigator keeps a route, with its future, for a page
+  // of the same type and key.
   testWidgets(
     'The future of a navigation completes once its page leaves the stack',
     (tester) async {
@@ -142,18 +144,19 @@ void main() {
       await tester.pumpAndSettle();
       expect(completed, ['link']);
 
-      unawaited(router.navigatePath('/'));
+      track('home again', router.navigatePath('/'));
       await tester.pumpAndSettle();
-      expect(completed, ['link', 'home']);
+      expect(completed, isNot(contains('home')));
 
       track(
         'replaceAll',
         router.replaceAll([const NamedRoute('DetailsRoute')]),
       );
       await tester.pumpAndSettle();
+      expect(completed, ['link', 'home', 'home again']);
       unawaited(router.replaceAll([const NamedRoute('HomeRoute')]));
       await tester.pumpAndSettle();
-      expect(completed, ['link', 'home', 'replaceAll']);
+      expect(completed, ['link', 'home', 'home again', 'replaceAll']);
     },
   );
 }

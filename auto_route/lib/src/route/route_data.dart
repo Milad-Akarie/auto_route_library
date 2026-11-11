@@ -270,6 +270,13 @@ class RouteData<R> {
     }
   }
 
+  // The pop completer while the code that opened this route still waits on
+  // it.
+  Completer<R?>? get _pendingPopCompleter => switch (_popCompleter) {
+    final completer? when !completer.isCompleted => completer,
+    _ => null,
+  };
+
   /// Completes the pop completer with the given result
   void onPopInvoked(R? result) {
     if (router.ignorePopCompleters) {

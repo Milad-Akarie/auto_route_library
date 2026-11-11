@@ -1946,19 +1946,31 @@ abstract class StackRouter extends RoutingController {
     for (final (data, kind) in leaves) {
       data._reportLeave(kind);
     }
+    final shownWaits = _pendingPopCompletersOf(_pages);
     _completeFuturesOf(
-      previousPages.where((page) => !stillShown.contains(page.routeData)),
+      previousPages.where(
+        (page) =>
+            !stillShown.contains(page.routeData) &&
+            !shownWaits.contains(page.routeData._popCompleter),
+      ),
     );
   }
 
+  // The pop completers that the code which opened [pages] waits on.
+  Set<Completer<Object?>> _pendingPopCompletersOf(
+    Iterable<AutoRoutePage<Object?>> pages,
+  ) => {for (final page in pages) ?page.routeData._pendingPopCompleter};
+
   // Completes with null the future that the push, navigate or replaceAll of
   // each of [pages] returned, as a removed route's does in Flutter, once the
-  // page has left the stack for good: removed, replaced, taken over by a new
-  // page of the same route, or gone with its router. Left pending, each call
-  // awaiting it stays suspended and holds the pages it worked with, whose own
-  // futures older calls await, so the pages an app left stayed in memory: one
-  // more on every replaceAll, and in debug builds, which keep every local of a
-  // suspended call, the nested routers of every link too.
+  // page has left the stack for good: removed, replaced, or gone with its
+  // router. A page that a new page took over, as a navigation to its screen
+  // does, isn't passed here: the screen stays, and the new page holds its
+  // future until the screen closes. Left pending, each call awaiting it stays
+  // suspended and holds the pages it worked with, whose own futures older
+  // calls await, so the pages an app left stayed in memory: one more on every
+  // replaceAll, and in debug builds, which keep every local of a suspended
+  // call, the nested routers of every link too.
   void _completeFuturesOf(Iterable<AutoRoutePage<Object?>> pages) {
     for (final page in pages) {
       page.routeData.onPopInvoked(null);
@@ -2358,17 +2370,21 @@ abstract class StackRouter extends RoutingController {
         ._push(route, onFailure: onFailure, insertAt: index);
   }
 
+  // Not async: its future is the last page's, which a page that reaches the
+  // screen already shown keeps until the screen closes. A suspended call
+  // would hold the pages and routers it took off until then, in debug builds,
+  // which keep every local of a suspended call.
   Future<T?> _popUntilOrPushAll<T extends Object?>(
     List<RouteMatch<Object?>> matches, {
     required Completer<void> pushed,
     required ValueChanged<RouteMatch<Object?>> onLastRouteAdded,
     OnNavigationFailure? onFailure,
     bool isReevaluating = false,
-  }) async {
+  }) {
     final kept = isReevaluating ? 0 : _keepPagesUnderTarget(matches);
     final toPush = kept == 0 ? matches : matches.sublist(kept);
     final anchor = toPush.firstOrNull;
-    if (anchor == null) return null;
+    if (anchor == null) return Future.value();
     final anchorPage = _pages.lastWhereOrNull((p) => p.routeKey == anchor.key);
     if (anchorPage != null) {
       for (final candidate in List<AutoRoutePage<Object?>>.unmodifiable(
@@ -2387,7 +2403,7 @@ abstract class StackRouter extends RoutingController {
         }
       }
     }
-    return await _pushAllGuarded(
+    return _pushAllGuarded(
       toPush,
       onFailure: onFailure,
       updateAncestorsPathData: false,
@@ -2634,8 +2650,13 @@ abstract class StackRouter extends RoutingController {
       },
     );
     if (!wasRejected) return;
+    // A page that took over a previous page's screen holds its caller, who
+    // keeps waiting on the previous page put back.
+    final previousWaits = _pendingPopCompletersOf(previousPages);
     for (final page in _pages.where(
-      (added) => !previousPages.contains(added),
+      (added) =>
+          !previousPages.contains(added) &&
+          !previousWaits.contains(added.routeData._popCompleter),
     )) {
       page.routeData.onPopInvoked(null);
     }
@@ -3070,7 +3091,9 @@ abstract class StackRouter extends RoutingController {
     // A page that takes over a screen the navigator shows, as a navigation to
     // that screen does, keeps the screen's result type: the navigator keeps
     // the screen's route, and casts its page to the route's type when it
-    // closes.
+    // closes. It also keeps the wait of the code that opened the screen,
+    // which ends when the screen closes, as Flutter's Navigator keeps the
+    // future of a route it keeps.
     final screen = takenOver ?? _shownDataThatLeftWithId(match.id);
     final page = switch (screen) {
       null => _createRouteData<T>(
@@ -3079,10 +3102,10 @@ abstract class StackRouter extends RoutingController {
         popCompleter: Completer<T?>(),
       ).buildPage<T>(),
       final shown => shown._withResultType(
-        <R>(_) => _createRouteData<R>(
+        <R>(data) => _createRouteData<R>(
           match,
           routeData,
-          popCompleter: Completer<R?>(),
+          popCompleter: data._pendingPopCompleter ?? Completer(),
         ).buildPage<R>(),
       ),
     };

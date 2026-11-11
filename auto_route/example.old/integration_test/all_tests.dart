@@ -171,6 +171,8 @@ import 'route_aware_mixin_test.dart' as route_aware_mixin;
 import 'route_aware_pop_order_test.dart' as route_aware_pop_order;
 import 'route_leave_test.dart' as route_leave;
 import 'route_not_found_tree_test.dart' as route_not_found_tree;
+import 'screen_reached_again_keeps_caller_test.dart'
+    as screen_reached_again_keeps_caller;
 import 'set_query_param_test.dart' as set_query_param;
 import 'simultaneous_taps_test.dart' as simultaneous_taps;
 import 'state_after_reload_test.dart' as state_after_reload;
@@ -382,6 +384,7 @@ void main() {
   route_aware_pop_order.main();
   route_leave.main();
   route_not_found_tree.main();
+  screen_reached_again_keeps_caller.main();
   set_query_param.main();
   simultaneous_taps.main();
   state_after_reload.main();

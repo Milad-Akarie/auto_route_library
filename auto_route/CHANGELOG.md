@@ -1,10 +1,13 @@
 ## 12.6.0
 - **FIX**, **BEHAVIOR CHANGE**: the future that `push`, `navigate`, `navigatePath` or `replaceAll` returns now completes
   with `null` once its page leaves the stack, as a removed route's does in Flutter: when a later `navigate` or
-  `replaceAll` takes the page off, when a new page of the same route takes its place, or when the page's nested router
-  closes. It never completed, and each call waiting on it kept the pages it worked with in memory: one more page on
-  every `replaceAll` in release builds, and in debug builds and tests also the nested routers and page widgets of every
-  link through nested routers.
+  `replaceAll` takes the page off, or when the page's nested router closes. It never completed, and each call waiting
+  on it kept the pages it worked with in memory: one more page on every `replaceAll` in release builds, and in debug
+  builds and tests also the nested routers and page widgets of every link through nested routers. A navigation that
+  reaches a screen already shown keeps that screen, so the code that opened it keeps waiting and gets the result the
+  screen closes with, as Flutter's Navigator keeps the route of a page with the same type and key. The first build of
+  12.6.0 (b705ff78) answered that code `null` at once: a picker answered `null` while still open, and a link to the
+  redirect a guard showed with `redirectUntil` left a blank screen.
 - **FIX**: a screen opened with a result type, such as with `push<int>`, and then reached again by `navigate`, a link,
   `replace` or `replaceAll` closes again, even with system back. Since 12.5.0 closing it threw
   `type 'AutoRoutePage<Object?>' is not a subtype of type 'Page<int>'`. The page that takes over a screen now keeps
