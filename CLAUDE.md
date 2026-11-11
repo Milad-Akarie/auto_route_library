@@ -10,6 +10,7 @@ This repository is its own product: a maintained fork of the auto_route package.
 5. Before solving an issue, check whether other issues are similar or rest on the same groundwork. Do the groundwork first, in its own commit, then each issue on top, one commit each.
 6. No pull requests and no new issues upstream. `Co-authored-by` trailers for code taken from others stay.
 7. Before changing code for an issue, reproduce exactly the bug that was reported: the reporter's setup, platform, steps and, when they matter, versions. Read every comment on the issue, including the comments it links to. If the reproduction or the comments show it is intended behavior, a misuse or already answered, change no code. Commit a test that documents the behavior, or none, and say why in the report. This keeps us from fixing something that should not be fixed.
+8. Phil's rule, since 2026-11-11: what navigation should do is checked against native navigation on iOS, Android, the web and macOS (their docs, their source or a small native run) and against Flutter's own Navigator, never against another Dart routing package. A fix's test comment names the native behavior it holds to.
 
 Also: never push (the maintainer merges into `dev` and pushes), run `dart format` on every file you change, American English, made-up names in code and fixtures.
 
