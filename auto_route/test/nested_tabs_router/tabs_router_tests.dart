@@ -1,4 +1,7 @@
+import 'dart:ui' show AppLifecycleState;
+
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../main_router.dart';
@@ -121,4 +124,83 @@ void runGeneralTests(String tabsType, {bool useDefaultRoutes = false}) {
       expect(router.urlState.path, '/');
     },
   );
+
+  group('With a page pushed in Tab2Route and Tab1Route shown', () {
+    /// Pushes Tab2Nested2Route on top of Tab2Route's stack, then shows
+    /// Tab1Route, leaving a tab out of view with a page it could pop.
+    Future<TabsRouter> pushInTab2ThenShowTab1(WidgetTester tester) async {
+      final tabsRouter = router.innerRouterOf<TabsRouter>(TabsHostRoute.name)!;
+      tabsRouter.setActiveIndex(1);
+      await tester.pumpAndSettle();
+      router.push(const Tab2Nested2Route());
+      await tester.pumpAndSettle();
+      expectTopPage(router, Tab2Nested2Route.name);
+      tabsRouter.setActiveIndex(0);
+      await tester.pumpAndSettle();
+      expectTopPage(router, Tab1Route.name);
+      return tabsRouter;
+    }
+
+    testWidgets(
+      'System back should not be handled, and Tab2Route should keep its page',
+      (WidgetTester tester) async {
+        await pumpRouter(tester);
+        final tabsRouter = await pushInTab2ThenShowTab1(tester);
+
+        final handled = await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        expect(handled, isFalse);
+        expectTopPage(router, Tab1Route.name);
+
+        tabsRouter.setActiveIndex(1);
+        await tester.pumpAndSettle();
+        expectTopPage(router, Tab2Nested2Route.name);
+      },
+    );
+
+    testWidgets(
+      'Showing Tab2Route again should let system back pop its page',
+      (WidgetTester tester) async {
+        await pumpRouter(tester);
+        final tabsRouter = await pushInTab2ThenShowTab1(tester);
+        tabsRouter.setActiveIndex(1);
+        await tester.pumpAndSettle();
+
+        final handled = await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        expect(handled, isTrue);
+        expectTopPage(router, Tab2Nested1Route.name);
+      },
+    );
+
+    testWidgets(
+      'The platform should be told the app handles back only while Tab2Route is shown',
+      (WidgetTester tester) async {
+        // The framework reports nothing about back until the app has a
+        // lifecycle state, and a test starts without one.
+        tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+        bool? frameworkHandlesBack;
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          (call) async {
+            if (call.method == 'SystemNavigator.setFrameworkHandlesBack') {
+              frameworkHandlesBack = call.arguments as bool;
+            }
+            return null;
+          },
+        );
+        addTearDown(
+          () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, null),
+        );
+        await pumpRouter(tester);
+
+        final tabsRouter = await pushInTab2ThenShowTab1(tester);
+        expect(frameworkHandlesBack, isFalse);
+
+        tabsRouter.setActiveIndex(1);
+        await tester.pumpAndSettle();
+        expect(frameworkHandlesBack, isTrue);
+      },
+    );
+  });
 }

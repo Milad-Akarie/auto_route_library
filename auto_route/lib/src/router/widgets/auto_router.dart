@@ -145,6 +145,11 @@ class AutoRouterState extends State<AutoRouter> {
       );
       _parentController.attachChildController(_controller!);
       _controller!.addListener(_rebuildListener);
+      // A tab's stack may handle back only while its tab is shown,
+      // which changes without this stack's own controller notifying.
+      if (_parentController is TabsRouter) {
+        _parentController.addListener(_rebuildListener);
+      }
       // defer the setup of initial routes to the next frame
       // so that we can have access to the context inside guards
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -159,19 +164,31 @@ class AutoRouterState extends State<AutoRouter> {
     }
   }
 
+  /// Whether this stack is shown: it isn't a tab, or it is the active tab.
+  bool get _isShown {
+    final parent = _parentController;
+    return parent is! TabsRouter || parent.currentChild?.key == _controller!.routeData.key;
+  }
+
   @override
   Widget build(BuildContext context) {
     assert(_controller != null);
-    final navigator = NavigatorPopHandler(
-      enabled: _controller!.hasEntries,
-      child: AutoRouteNavigator(
-        router: _controller!,
-        clipBehavior: widget.clipBehavior,
-        key: GlobalObjectKey(_controller.hashCode),
-        navRestorationScopeId: widget.navRestorationScopeId,
-        navigatorObservers: _navigatorObservers,
-        placeholder: widget.placeholder,
-        routeTraversalEdgeBehavior: widget.traversalEdgeBehavior,
+    final isShown = _isShown;
+    // A tab out of view must neither block back for the tab being shown nor
+    // tell the platform, through the routes above it, that it can handle back.
+    final navigator = NotificationListener<NavigationNotification>(
+      onNotification: (_) => !isShown,
+      child: NavigatorPopHandler(
+        enabled: _controller!.hasEntries && isShown,
+        child: AutoRouteNavigator(
+          router: _controller!,
+          clipBehavior: widget.clipBehavior,
+          key: GlobalObjectKey(_controller.hashCode),
+          navRestorationScopeId: widget.navRestorationScopeId,
+          navigatorObservers: _navigatorObservers,
+          placeholder: widget.placeholder,
+          routeTraversalEdgeBehavior: widget.traversalEdgeBehavior,
+        ),
       ),
     );
     final stateHash = _controller!.stateHash;
@@ -198,6 +215,9 @@ class AutoRouterState extends State<AutoRouter> {
     super.dispose();
     if (_controller != null) {
       _controller!.removeListener(_rebuildListener);
+      if (_parentController is TabsRouter) {
+        _parentController.removeListener(_rebuildListener);
+      }
       _controller!.dispose();
       _parentController.removeChildController(_controller!);
       _controller = null;
